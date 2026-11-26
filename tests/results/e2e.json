@@ -1,17 +1,17 @@
 {
  "base": "http://127.0.0.1:8765/",
- "date": "2026-11-26T18:15:04.753Z",
- "passed": 18,
+ "date": "2026-11-26T19:03:14.850Z",
+ "passed": 19,
  "failed": 0,
  "perf": {
-  "loadMs": 335,
-  "readyMs": 613,
-  "lcp": 144,
-  "cls": 0.005710923486108164,
-  "dcl": 270.6000000005588,
-  "transfer": 412172,
-  "tipMaxMs": 152,
-  "tipAvgMs": 24
+  "loadMs": 190,
+  "readyMs": 293,
+  "lcp": 112,
+  "cls": 0.0038970465333111343,
+  "dcl": 180.40000000037253,
+  "transfer": 437721,
+  "tipMaxMs": 95,
+  "tipAvgMs": 21
  },
  "tests": [
   {
@@ -19,109 +19,116 @@
    "ok": true,
    "checks": 3,
    "notes": [
-    "Ladezeit 335 ms, bereit nach 613 ms, LCP 144 ms, CLS 0.006"
+    "Ladezeit 190 ms, bereit nach 293 ms, LCP 112 ms, CLS 0.004"
    ],
-   "ms": 1432
+   "ms": 1107
   },
   {
    "name": "Hand spielen: Tipp „vorher“ erscheint binnen 2 Sekunden, keine neue Hand ohne „Nächste Hand“",
    "ok": true,
    "checks": 15,
    "notes": [
-    "64 Tipps, Ø 24 ms, max. 152 ms"
+    "60 Tipps, Ø 21 ms, max. 95 ms"
    ],
-   "ms": 23549
+   "ms": 23627
   },
   {
    "name": "Ungültiger Betrag, Tastatursteuerung, Tipp-Modi „nachher“ und „aus“",
    "ok": true,
-   "checks": 10,
+   "checks": 13,
    "notes": [],
-   "ms": 4591
+   "ms": 6011
   },
   {
    "name": "Live-Anzeige und Gegnerdetails, Dialog mit Esc schließen",
    "ok": true,
    "checks": 3,
    "notes": [],
-   "ms": 88
+   "ms": 62
   },
   {
    "name": "Alle Bereiche öffnen; Range-Matrix, Gegnerliste, Fortschritt, Hilfe",
    "ok": true,
    "checks": 13,
    "notes": [],
-   "ms": 4832
+   "ms": 4809
   },
   {
    "name": "Export und Import der Datenbank, beschädigte Datei wird abgelehnt",
    "ok": true,
-   "checks": 5,
+   "checks": 8,
    "notes": [],
-   "ms": 1091
+   "ms": 2364
+  },
+  {
+   "name": "Sicherheit: manipulierte Sicherung mit Skript in Lerndaten wird abgelehnt (keine Ausführung)",
+   "ok": true,
+   "checks": 2,
+   "notes": [],
+   "ms": 276
   },
   {
    "name": "Handhistorie und Replayer: vor, zurück, damals/später bekannt, Entscheidung erneut treffen",
    "ok": true,
    "checks": 5,
    "notes": [],
-   "ms": 4831
+   "ms": 6123
   },
   {
    "name": "Training: Kategorie starten, Situation bewerten, Quiz",
    "ok": true,
    "checks": 5,
    "notes": [],
-   "ms": 1488
+   "ms": 1469
   },
   {
    "name": "Einstellungen: Darstellung, neue Session mit Seed",
    "ok": true,
    "checks": 3,
    "notes": [],
-   "ms": 30940
+   "ms": 945
   },
   {
    "name": "Neuladen während einer laufenden Hand: exakte Wiederaufnahme",
    "ok": true,
    "checks": 3,
    "notes": [],
-   "ms": 3181
+   "ms": 3150
   },
   {
    "name": "Mehrere Tabs: zweiter Tab ist schreibgeschützt",
    "ok": true,
    "checks": 3,
    "notes": [],
-   "ms": 391
+   "ms": 397
   },
   {
    "name": "Daten bleiben nach Neustart erhalten",
    "ok": true,
    "checks": 1,
    "notes": [],
-   "ms": 483
+   "ms": 476
   },
   {
    "name": "Offline: Service Worker installiert, Seite lädt und spielt ohne Netz",
    "ok": true,
    "checks": 3,
    "notes": [],
-   "ms": 3666
+   "ms": 3888
   },
   {
    "name": "Browser ohne Sprachfunktion: Meldung, Trainer läuft weiter",
    "ok": true,
    "checks": 2,
    "notes": [],
-   "ms": 6264
+   "ms": 9746
   },
   {
    "name": "Darstellung auf Smartphone, Tablet und Desktop (kein horizontales Scrollen)",
    "ok": true,
    "checks": 32,
    "notes": [],
-   "ms": 23006
+   "ms": 22004
   },
   {
    "name": "Barrierefreiheit: Namen für Bedienelemente, Bilder mit Alt, Fokusreihenfolge, Kontrast",
@@ -130,14 +137,14 @@
    "notes": [
     "Kontrast Nebentext 6.48:1, Text 17.07:1"
    ],
-   "ms": 509
+   "ms": 490
   },
   {
    "name": "Portable Einzeldatei (file://): lädt, spielt, Coach per Blob-Worker",
    "ok": true,
    "checks": 2,
    "notes": [],
-   "ms": 6556
+   "ms": 9664
   },
   {
    "name": "Konsole: keine JavaScript-Fehler, keine 404",

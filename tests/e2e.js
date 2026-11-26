@@ -178,6 +178,39 @@ async function playHand(page, policy) {
     ok(/Sicherung_PokerTrainer_/.test(dl2.suggestedFilename()), 'automatische Sicherung vor dem Import');
     await page.waitForTimeout(500);
     ok(before === await page.evaluate(() => JSON.stringify(window.PT.stats.dbList(window.PTUI.S.db))), 'Export und Import ergeben dieselbe Datenbank');
+    // Sicherung vor Import enthält die bisherigen Daten, nicht die importierten (Prüfbefund C4)
+    const nBefore = JSON.parse(before).length;
+    const alt = await page.evaluate(() => { const l = window.PT.stats.dbList(window.PTUI.S.db).slice(0, 1); return window.PT.stats.dbExport(window.PT.stats.dbFromList(l).db || window.PT.stats.dbFromList(l), 'alt'); });
+    const altPath = path.join(OUT, 'import-ein-gegner.json'); fs.writeFileSync(altPath, alt);
+    await page.click('[data-g="import"]'); await page.setInputFiles('#fileIn', altPath);
+    await page.waitForSelector('#impOk');
+    const [dl3] = await Promise.all([page.waitForEvent('download'), page.click('#impOk')]);
+    const bkPath = path.join(OUT, 'sicherung-vor-import.json'); await dl3.saveAs(bkPath);
+    const bk = JSON.parse(fs.readFileSync(bkPath, 'utf8'));
+    ok(bk.payload && bk.payload.opponents.length === nBefore, 'Sicherung vor Import enthält die bisherigen ' + nBefore + ' Gegner (enthalten: ' + (bk.payload ? bk.payload.opponents.length : '–') + ')');
+    await page.waitForTimeout(500);
+    const imp = JSON.parse(alt).opponents[0];
+    const after = await page.evaluate((id) => { const l = window.PT.stats.dbList(window.PTUI.S.db); return { withHands: l.filter(r => r.hands > 0).map(r => r.id), rec: window.PTUI.S.db.opps[id] ? window.PTUI.S.db.opps[id].hands : null }; }, imp.id);
+    ok(after.rec === imp.hands && after.withHands.every(id => id === imp.id), 'danach gilt die importierte Datenbank (Sitzgegner ohne Hände werden ergänzt)');
+    // ursprünglichen Stand wiederherstellen
+    await page.click('[data-g="import"]'); await page.setInputFiles('#fileIn', exportPath);
+    await page.waitForSelector('#impOk');
+    await Promise.all([page.waitForEvent('download'), page.click('#impOk')]);
+    await page.waitForTimeout(500);
+    ok(before === await page.evaluate(() => JSON.stringify(window.PT.stats.dbList(window.PTUI.S.db))), 'Ausgangsstand wiederhergestellt');
+  });
+  await test('Sicherheit: manipulierte Sicherung mit Skript in Lerndaten wird abgelehnt (keine Ausführung)', async () => {
+    const mal = await page.evaluate(() => {
+      const L = window.PT.training.newLearning(); L.quiz.correct = '<img src=x onerror="document.title=\'XSS\'">';
+      return window.PT.stats.backupExport({ opponents: window.PT.stats.dbList(window.PTUI.S.db), hero: window.PTUI.S.heroRec, hands: [], learning: L, settings: window.PTUI.S.settings, table: window.PTUI.S.table }, 'x');
+    });
+    const malPath = path.join(OUT, 'xss-sicherung.json'); fs.writeFileSync(malPath, mal);
+    await page.evaluate(() => { location.hash = '#gegner'; }); await page.waitForTimeout(200);
+    await page.click('[data-g="import"]'); await page.setInputFiles('#fileIn', malPath);
+    await page.waitForSelector('#modal:not([hidden])');
+    ok(/abgelehnt/.test(await page.textContent('#modalH')), 'Sicherung abgelehnt');
+    await page.keyboard.press('Escape');
+    ok(!/XSS/.test(await page.title()), 'kein Skript ausgeführt');
   });
 
   await test('Handhistorie und Replayer: vor, zurück, damals/später bekannt, Entscheidung erneut treffen', async () => {

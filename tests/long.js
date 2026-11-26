@@ -90,8 +90,12 @@ function save() { fs.mkdirSync(path.join(__dirname, 'results'), { recursive: tru
   }
   if (parts.includes('coach')) {
     const { execFileSync } = require('child_process'), t0 = Date.now();
-    const runEval = (hands, seeds, mode) => execFileSync('node', [path.join(__dirname, 'coach-eval.js'), String(hands), seeds, mode], { encoding: 'utf8', maxBuffer: 1e7 }).trim().split('\n').map(l => JSON.parse(l));
-    const ex = runEval(2500, '21,22,23,24', 'exploit'), gt = runEval(2500, '21,22', 'gto');
+    // Seeds parallel in eigenen Prozessen (gleiche Ergebnisse wie nacheinander, nur schneller)
+    const { execFile } = require('child_process');
+    const one = (hands, seed, mode) => new Promise((res, rej) => execFile('node', [path.join(__dirname, 'coach-eval.js'), String(hands), String(seed), mode], { encoding: 'utf8', maxBuffer: 1e7 }, (e, so) => e ? rej(e) : res(so.trim().split('\n').map(l => JSON.parse(l)))));
+    const jobs = [[21, 'exploit'], [22, 'exploit'], [23, 'exploit'], [24, 'exploit'], [21, 'gto'], [22, 'gto']].map(([sd, m]) => one(2500, sd, m).then(r => ({ m, r })));
+    const done = await Promise.all(jobs);
+    const ex = [].concat(...done.filter(d => d.m === 'exploit').map(d => d.r)), gt = [].concat(...done.filter(d => d.m === 'gto').map(d => d.r));
     const avg = (arr, k) => arr.reduce((s, x) => s + x[k], 0) / arr.length;
     out.coach = { exploit: ex, gto: gt, exploitAvgCoach: avg(ex, 'coachBB100'), exploitAvgBot: avg(ex, 'botBB100'), gtoAvgCoach: avg(gt, 'coachBB100'), gtoAvgBot: avg(gt, 'botBB100'), ms: Date.now() - t0 };
     console.log('coach', JSON.stringify(out.coach)); save();

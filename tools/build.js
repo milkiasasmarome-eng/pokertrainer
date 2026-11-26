@@ -15,12 +15,17 @@ if (!index.includes('?v=' + VERSION)) throw new Error('index.html: Version passt
 const assets = ['./', 'index.html', 'manifest.webmanifest', 'assets/css/app.css?v=' + VERSION, 'assets/js/worker.js?v=' + VERSION]
   .concat(scripts.map(s => s + '?v=' + VERSION))
   .concat(['assets/icons/favicon.svg', 'assets/icons/favicon-32.png', 'assets/icons/apple-touch-icon.png', 'assets/icons/icon-192.png', 'assets/icons/icon-512.png', 'assets/icons/icon-maskable-512.png']);
-const sw = `/* PokerTrainer ${VERSION} – Service Worker (automatisch erzeugt mit tools/build.js). Offline-Betrieb, versionierter Cache, kontrollierte Aktualisierung. */
+// Inhaltsprüfsumme aller zwischengespeicherten Dateien: jede inhaltliche Änderung erzeugt einen neuen Cache, auch ohne Versionssprung
+const crypto = require('crypto'), hsh = crypto.createHash('sha256');
+assets.filter(a => a !== './').forEach(a => hsh.update(fs.readFileSync(path.join(root, a.replace(/\?.*$/, '')))));
+const HASH = hsh.digest('hex').slice(0, 12);
+const sw = `/* PokerTrainer ${VERSION} – Service Worker (automatisch erzeugt mit tools/build.js). Offline-Betrieb, Cache je Inhaltsstand, kontrollierte Aktualisierung. */
 'use strict';
-var VERSION = '${VERSION}', CACHE = 'pokertrainer-' + VERSION;
+var VERSION = '${VERSION}', CACHE = 'pokertrainer-' + VERSION + '-${HASH}';
 var ASSETS = ${JSON.stringify(assets, null, 2)};
 self.addEventListener('install', function (e) {
-  e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(ASSETS); }));
+  // cache: 'reload' umgeht den HTTP-Cache, damit ein neuer Stand wirklich frisch geladen wird
+  e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(ASSETS.map(function (u) { return new Request(u, { cache: 'reload' }); })); }));
 });
 self.addEventListener('activate', function (e) {
   e.waitUntil(caches.keys().then(function (keys) {
@@ -32,6 +37,9 @@ self.addEventListener('fetch', function (e) {
   var req = e.request;
   if (req.method !== 'GET' || new URL(req.url).origin !== self.location.origin) return;
   if (req.mode === 'navigate') {
+    // Nur die App selbst (Startseite des Bereichs) kommt aus dem Cache; andere Seiten (README, Einzeldatei, 404) direkt aus dem Netz
+    var scope = new URL(self.registration.scope).pathname, p = new URL(req.url).pathname;
+    if (p !== scope && p !== scope + 'index.html') return;
     e.respondWith(caches.open(CACHE).then(function (c) {
       return c.match('index.html').then(function (hit) {
         return hit || fetch(req).catch(function () { return c.match('./'); });
@@ -70,5 +78,5 @@ let single = index
   .replace('<title>PokerTrainer 2.0', '<title>PokerTrainer 2.0 (Offline-Datei)');
 if (/src="assets\//.test(single) || /href="assets\//.test(single)) throw new Error('Einzeldatei verweist noch auf externe Dateien');
 fs.mkdirSync(path.join(root, 'dist'), { recursive: true });
-fs.writeFileSync(path.join(root, 'dist', 'PokerTrainer_' + VERSION.replace(/\.0$/, '') + '.html'), single);
-console.log('Build ' + VERSION + ': sw.js (' + assets.length + ' Dateien), dist/PokerTrainer_' + VERSION.replace(/\.0$/, '') + '.html (' + Math.round(single.length / 1024) + ' KB)');
+fs.writeFileSync(path.join(root, 'dist', 'PokerTrainer_' + VERSION.split('.').slice(0, 2).join('.') + '.html'), single);
+console.log('Build ' + VERSION + ': sw.js (' + assets.length + ' Dateien), dist/PokerTrainer_' + VERSION.split('.').slice(0, 2).join('.') + '.html (' + Math.round(single.length / 1024) + ' KB)');

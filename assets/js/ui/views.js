@@ -52,7 +52,7 @@ function renderQuiz() {
     quizState = { q: PT.training.quiz(t, PT.makeRng()), answered: null };
   }
   var q = quizState.q, a = quizState.answered;
-  box.innerHTML = '<p class="small">' + esc(PT.training.QUIZ_TYPES[q.type]) + ' · bisher ' + Q.correct + ' von ' + Q.n + ' richtig</p><p><b>' + esc(q.q) + '</b></p><div class="btnrow">' +
+  box.innerHTML = '<p class="small">' + esc(PT.training.QUIZ_TYPES[q.type]) + ' · bisher ' + esc(String(Q.correct | 0)) + ' von ' + esc(String(Q.n | 0)) + ' richtig</p><p><b>' + esc(q.q) + '</b></p><div class="btnrow">' +
     q.opts.map(function (o, i) { var cls = a == null ? '' : i === q.ok ? ' primary2' : i === a ? ' danger' : ''; return '<button class="btn' + cls + '" type="button" data-qa="' + i + '"' + (a != null ? ' disabled' : '') + '>' + esc(o) + '</button>'; }).join('') + '</div>' +
     (a != null ? '<p class="' + (a === q.ok ? 'good' : 'bad') + '"><b>' + (a === q.ok ? 'Richtig.' : 'Nicht ganz.') + '</b> ' + esc(q.expl) + '</p><button class="btn" type="button" data-qnext="1">Nächste Frage</button>' : '');
 }
@@ -101,11 +101,11 @@ function filtered() {
 function renderList() {
   var l = filtered(), box = $('hlist'); if (!box) return;
   if (!l.length) { box.innerHTML = '<p class="muted">Keine Hände' + ((hist.list || []).length ? ' für diesen Filter.' : ' gespeichert. Spiele am Tisch oder im Training.') + '</p>'; return; }
-  box.innerHTML = '<p class="small">' + l.length + ' Hände</p><table class="grid"><thead><tr><th>Zeit</th><th>Hand</th><th>Pos.</th><th>Karten</th><th>Board</th><th class="n">Ergebnis</th><th>Bewertung</th></tr></thead><tbody>' +
+  box.innerHTML = '<p class="small">' + l.length + ' Hände</p><div class="scroll"><table class="grid hlist"><thead><tr><th>Zeit</th><th>Hand</th><th>Pos.</th><th>Karten</th><th>Board</th><th class="n">Ergebnis</th><th>Bewertung</th></tr></thead><tbody>' +
     l.slice(0, 300).map(function (h) {
       var worst = h.decisions.reduce(function (m, d) { return !m || d.score < m.score ? d : m; }, null);
       return '<tr class="click" tabindex="0" data-hid="' + esc(h.id) + '"><td>' + esc(H.dateTxt(h.ts)) + '</td><td>#' + h.no + (h.training ? ' <span class="pill">' + esc((PT.training.SCEN[h.training] || {}).name || 'Training') + '</span>' : '') + '</td><td>' + esc(h.seats[h.heroSeat].pos) + '</td><td><span class="cards">' + H.cardsHtml(h.hero, 'sm') + '</span></td><td><span class="cards">' + H.cardsHtml(h.board.join(''), 'sm') + '</span></td><td class="n ' + (h.heroNet > 0 ? 'good' : h.heroNet < 0 ? 'bad' : '') + '">' + U.fmtSigned(h.heroNet) + '</td><td>' + (worst ? H.gradeHtml({ grade: worst.grade, simple: PT.coach.GRADE_SIMPLE[worst.grade], lossBB: null }) : '–') + '</td></tr>';
-    }).join('') + '</tbody></table>' + (l.length > 300 ? '<p class="muted">Es werden die neuesten 300 angezeigt; nutze Filter oder Export.</p>' : '');
+    }).join('') + '</tbody></table></div>' + (l.length > 300 ? '<p class="muted">Es werden die neuesten 300 angezeigt; nutze Filter oder Export.</p>' : '');
 }
 function openReplay(h) {
   var holes = {}; holes[h.heroSeat] = PT.parseCards(h.hero);
@@ -301,18 +301,25 @@ function importText(text, fname, expect) {
   $('impNo').onclick = H.closeModal;
   $('impOk').onclick = function () {
     if (S.hand && !S.hand.done) { H.closeModal(); H.toast('Import ist nur zwischen zwei Händen möglich.'); return; }
-    backupNow('vor-Import');
+    var btn = $('impOk'); btn.disabled = true; btn.textContent = 'Sichere aktuelle Daten …';
+    var newProf = null;
+    try { if (r.kind === 'backup' && r.learning) newProf = PT.training.profile(r.learning); }
+    catch (e) { H.openModal('Import abgelehnt', '<p>Die Lerndaten der Datei lassen sich nicht auswerten.</p><p>Die bestehenden Daten bleiben unverändert.</p>'); return; }
+    // Erst wenn die Sicherung der bisherigen Daten fertig erzeugt ist, werden die Daten ersetzt.
+    backupNow('vor-Import').then(applyImport, function () { H.openModal('Import abgebrochen', '<p>Die Sicherung der aktuellen Daten ist fehlgeschlagen. Es wurde nichts geändert.</p>'); });
+  };
+  function applyImport() {
     S.db = r.db;
     var p = [];
     if (r.kind === 'backup') {
       if (r.hero) S.heroRec = r.hero;
-      if (r.learning) { S.learning = r.learning; S.prof = PT.training.profile(S.learning); p.push(PTUI.persistLearning()); }
+      if (r.learning) { S.learning = r.learning; S.prof = newProf; p.push(PTUI.persistLearning()); }
       if (r.hands && r.hands.length) p.push(Store.clear('hands').then(function () { return Store.put('hands', r.hands.slice(-3000)); }));
     }
     PT.session.syncStatuses(S.table, S.db);
     p.push(PTUI.persistAllOpps(), PTUI.persist([]));
     Promise.all(p).then(function () { H.closeModal(); H.toast('Import abgeschlossen: ' + r.count + ' Gegner übernommen.'); PTUI.route(); });
-  };
+  }
 }
 function backupNow(tag) {
   return Store.all('hands').then(function (hands) {
@@ -346,7 +353,7 @@ views.fortschritt = function (el) {
     html += '<div class="grid2"><div class="panel"><h3>Nach Situation</h3>' + table3(Object.keys(PT.coach.SPOTS).map(function (t) { return [PT.coach.SPOTS[t], prof.spots[t], t]; }), true) + '</div>' +
       '<div class="panel"><h3>Gegen Gegnertypen</h3>' + table3(Object.keys(prof.opptyp).map(function (t) { return [t, prof.opptyp[t]]; })) +
       '<h3>Lernziele</h3><ul>' + goals.map(function (g) { return '<li class="' + (g.ok ? 'good' : '') + '">' + (g.ok ? '✓ ' : '○ ') + esc(g.text) + ' – aktuell ' + (g.current == null ? '–' : num(g.current, 1)) + ' (' + g.n + ')</li>'; }).join('') + '</ul>' +
-      '<h3>Wissensquiz</h3><p>' + L.quiz.correct + ' von ' + L.quiz.n + ' richtig' + (L.quiz.n ? ' (' + pct(L.quiz.correct / L.quiz.n) + ')' : '') + '</p></div></div>';
+      '<h3>Wissensquiz</h3><p>' + esc(String(L.quiz.correct | 0)) + ' von ' + esc(String(L.quiz.n | 0)) + ' richtig' + (L.quiz.n ? ' (' + pct(L.quiz.correct / L.quiz.n) + ')' : '') + '</p></div></div>';
     html += '<div class="panel"><h3>Spielgeld-Ergebnis (getrennt von der Entscheidungsqualität)</h3><p>' + n + ' Hände am Tisch · Ergebnis ' + num(m * n, 1) + ' BB · ' + num(m * 100, 1) + ' BB/100' + (ci != null ? ' (95-%-Intervall ± ' + num(ci, 0) + ' BB/100)' : '') + '</p>' +
       '<p class="small">Bei No-Limit Hold\'em liegt die Standardabweichung typischerweise bei 80–120 BB je 100 Hände. Erst nach vielen tausend Händen sagt das Ergebnis etwas über die Spielstärke aus.</p></div>';
     el.innerHTML = html;
@@ -377,7 +384,7 @@ views.einstellungen = function (el) {
   var c = S.table.cfg, st = S.settings, D = PT.session.DIFFICULTY;
   function opt(v2, t, cur) { return '<option value="' + v2 + '"' + (String(cur) === String(v2) ? ' selected' : '') + '>' + t + '</option>'; }
   var blinds = [[25, 50], [50, 100], [100, 200], [200, 500]];
-  el.innerHTML = '<div class="grid2"><div class="panel"><h2>Tisch und Spielbedingungen</h2><form class="form" id="fTable" onsubmit="return false">' +
+  el.innerHTML = '<div class="grid2"><div class="panel"><h2>Tisch und Spielbedingungen</h2><form class="form" id="fTable">' +
     '<div class="row"><label for="sBl">Blinds</label><select id="sBl">' + blinds.map(function (b) { return opt(b[0] + '/' + b[1], fmt(b[0]) + ' / ' + fmt(b[1]), c.sb + '/' + c.bb); }).join('') + '</select></div>' +
     '<div class="row"><label for="sSt">Startstack (BB)</label><input id="sSt" type="number" min="10" max="1000" value="' + c.startBB + '"></div>' +
     '<div class="row"><label for="sRb">Automatischer Nachkauf unter (BB)</label><input id="sRb" type="number" min="0" max="1000" step="1" value="' + c.rebuyBelowBB + '"><div class="hint">Unter diesem Stack wird vor der nächsten Hand auf den Startstack aufgefüllt (0 = nur bei 0).</div></div>' +
@@ -389,11 +396,11 @@ views.einstellungen = function (el) {
     '<div class="row"><label for="sRc">Rake-Obergrenze (BB)</label><input id="sRc" type="number" min="0" max="20" step="0.5" value="' + c.rake.capBB + '"></div>' +
     '<div class="row"><label for="sSeed">Startwert (Seed, optional)</label><input id="sSeed" type="text" inputmode="numeric" value="' + (st.seed != null ? st.seed : '') + '" placeholder="zufällig"><div class="hint">Gleicher Seed + gleiche Aktionen = gleicher Spielverlauf (auch mit Coach an oder aus).</div></div>' +
     '<div class="btnrow"><button class="btn primary2" type="button" id="sApply">Neue Session mit diesen Bedingungen</button></div><p class="small">Eine neue Session setzt Stacks und Tisch zurück. Gegnerdatenbank, Handhistorie und Lernfortschritt bleiben erhalten.</p></form></div>' +
-    '<div class="panel"><h2>Coach, Ansicht und Sprache</h2><form class="form" onsubmit="return false">' +
+    '<div class="panel"><h2>Coach, Ansicht und Sprache</h2><form class="form" id="fCoach">' +
     '<div class="row"><label for="cTm">Tipp-Modus</label><select id="cTm">' + opt('vorher', 'vorher', st.tipMode) + opt('nachher', 'nachher', st.tipMode) + opt('aus', 'aus', st.tipMode) + '</select></div>' +
     '<div class="row"><label for="cSm">Strategiemodus</label><select id="cSm">' + opt('exploit', 'Exploitativ (nutzt Gegnerwerte)', st.smode) + opt('gto', 'Gleichgewichtsnah (ausgewogenes Modell)', st.smode) + '</select></div>' +
     '<div class="row"><label for="cDp">Erklärtiefe</label><select id="cDp">' + opt('auto', 'automatisch (nach Lernstand)', st.depth) + opt('einsteiger', 'Einsteiger', st.depth) + opt('fortgeschritten', 'Fortgeschritten', st.depth) + opt('experte', 'Experte', st.depth) + '</select></div>' +
-    '<div class="row"><label for="cLv">Analysegenauigkeit</label><select id="cLv">' + ['schnell', 'standard', 'praezise', 'tief'].map(function (k) { return opt(k, PT.equity.LEVELS[k].name, st.level); }).join('') + '</select><div class="hint">Schnell und Standard halten die Obergrenze von 5.000 Simulationen je Entscheidung ein. Präzise und Tiefenanalyse rechnen länger.</div></div>' +
+    '<div class="row"><label for="cLv">Analysegenauigkeit</label><select id="cLv">' + ['schnell', 'standard', 'praezise', 'tief'].map(function (k) { return opt(k, PT.equity.LEVELS[k].name, st.level); }).join('') + '</select><div class="hint">Der automatische Tipp am Tisch rechnet immer mit höchstens 5.000 Simulationen je Entscheidung (Schnell oder Standard). Präzise und Tiefenanalyse gelten für die Schaltfläche „Tiefenanalyse“ und die Nachanalyse im Replayer.</div></div>' +
     '<div class="row"><label for="cSp">Spielgeschwindigkeit</label><select id="cSp">' + opt('langsam', 'langsam', st.speed) + opt('normal', 'normal', st.speed) + opt('schnell', 'schnell', st.speed) + opt('sehrschnell', 'sehr schnell', st.speed) + '</select></div>' +
     '<div class="row"><label for="cAd">Erweiterte Analyseansicht</label><input id="cAd" type="checkbox"' + (st.advanced ? ' checked' : '') + '></div>' +
     '<div class="row"><label for="cTh">Darstellung</label><select id="cTh">' + opt('auto', 'automatisch', st.theme) + opt('light', 'hell', st.theme) + opt('dark', 'dunkel', st.theme) + '</select></div>' +

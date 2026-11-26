@@ -338,7 +338,7 @@ function handFeatures(hole, board) {
   if (cat === 1) {
     var p = (sc >> 16) & 15;
     if (pp && p > uniq[0]) desc = 'Overpair';
-    else if (pp) desc = 'Pocket Pair unter dem Board';
+    else if (pp) desc = p > uniq[uniq.length - 1] ? 'Pocket Pair unter einer Overcard' + (uniq.filter(function (r) { return r > p; }).length > 1 ? ' (mehrere Overcards)' : '') : 'Pocket Pair unter dem Board';
     else if (br.indexOf(p) >= 0 && (h0 === p || h1 === p)) {
       desc = p === uniq[0] ? 'Top Pair' : p === uniq[1] ? 'Second Pair' : 'schwaches Paar';
       if (p === uniq[0]) { var kick = h0 === p ? h1 : h0; desc += kick >= 11 ? ' (guter Kicker)' : kick <= 7 ? ' (schwacher Kicker)' : ''; }
@@ -375,7 +375,7 @@ function handFeatures(hole, board) {
 
 PT.ranges = { empty: empty, full: full, band: band, bandClass: bandClass, fromClassWeights: fromClassWeights, removeDead: removeDead,
   total: total, combosCount: combosCount, classWeights: classWeights, widthOf: widthOf, hash: hashRange,
-  chart: chart, rangeFromChart: rangeFromChart, RFI_W: RFI_W, BLUFF3: BLUFF3, BLUFF4: BLUFF4,
+  chart: chart, rangeFromChart: rangeFromChart, RFI_W: RFI_W, DEF_W: DEF_W, V3_W: V3_W, BLUFF3: BLUFF3, BLUFF4: BLUFF4,
   PRIOR: PRIOR, PRIOR_K: PRIOR_K, smooth: smooth, preflopRange: preflopRange, profileOf: profileOf,
   drawInfo: drawInfo, rangeStrength: rangeStrength, likelihood: likelihood, narrowPostflop: narrowPostflop,
   analyzeBoard: analyzeBoard, handFeatures: handFeatures };

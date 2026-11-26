@@ -12,7 +12,7 @@ function makeHandRecord(h, meta) {
     training: meta.training || null, button: rec.button, sb: rec.sb, bb: rec.bb, n: rec.n,
     seats: rec.seats.map(function (s) { return { seat: s.seat, id: s.id, name: s.name, pos: s.pos, start: s.start, hero: !!s.hero, typ: s.hero ? null : (meta.types ? meta.types[s.id] || null : null) }; }),
     hero: hero ? PT.cardsStr(hero.cards) : '', heroSeat: hero ? hero.seat : 0,
-    board: rec.board.slice(), actions: rec.actions, shown: rec.shown, net: rec.net, won: rec.won, returned: rec.returned, rake: rec.rake, showdown: rec.showdown, sawFlop: rec.sawFlop,
+    board: rec.board.slice(), actions: rec.actions, shown: rec.shown, net: rec.net, won: rec.won, returned: rec.returned, rake: rec.rake, rakeCfg: rec.rakeCfg || null, showdown: rec.showdown, sawFlop: rec.sawFlop,
     heroNet: hero ? rec.net[hero.seat] : 0,
     pots: h.result.pots.map(function (p) { return { amount: p.amount, winners: p.winners.slice(), eligible: p.eligible.slice() }; }),
     decisions: (meta.decisions || []).map(slimDecision),
@@ -24,7 +24,7 @@ function slimDecision(d) {
     cats: d.cats || [], tags: d.tags || [], evs: (d.evs || []).slice(0, 6), mode: d.mode, snap: d.snap || null, pos: d.pos };
 }
 function unionTags(ds) { var o = []; ds.forEach(function (d) { (d.tags || []).forEach(function (t) { if (o.indexOf(t) < 0) o.push(t); }); }); return o; }
-var HAND_KEYS = ['v', 'id', 'ts', 'no', 'session', 'seed', 'training', 'button', 'sb', 'bb', 'n', 'seats', 'hero', 'heroSeat', 'board', 'actions', 'shown', 'net', 'won', 'returned', 'rake', 'showdown', 'sawFlop', 'heroNet', 'pots', 'decisions', 'tags'];
+var HAND_KEYS = ['v', 'id', 'ts', 'no', 'session', 'seed', 'training', 'button', 'sb', 'bb', 'n', 'seats', 'hero', 'heroSeat', 'board', 'actions', 'shown', 'net', 'won', 'returned', 'rake', 'rakeCfg', 'showdown', 'sawFlop', 'heroNet', 'pots', 'decisions', 'tags'];
 function validHand(h) {
   if (!h || typeof h !== 'object' || Array.isArray(h)) return 'kein Datensatz';
   for (var k in h) if (HAND_KEYS.indexOf(k) < 0) return 'unbekanntes Feld';
@@ -50,6 +50,69 @@ function validHand(h) {
     if (x.chosen != null && (typeof x.chosen !== 'string' || x.chosen.length > 80)) return 'ungültige Aktion';
   }
   if (!Array.isArray(h.net) || h.net.length !== h.n) return 'ungültiges Ergebnis';
+  for (var q = 0; q < h.n; q++) if (typeof h.net[q] !== 'number' || !isFinite(h.net[q])) return 'ungültiges Ergebnis';
+  if (!isInt(h.heroSeat, 0, h.n - 1)) return 'ungültiger Heldenplatz';
+  if (h.shown != null) {
+    if (!Array.isArray(h.shown) || h.shown.length > h.n) return 'ungültige aufgedeckte Karten';
+    for (var w = 0; w < h.shown.length; w++) { var sw = h.shown[w], swc = sw && PT.parseCards(sw.cards || ''); if (!sw || !isInt(sw.seat, 0, h.n - 1) || !swc || swc.length !== 2) return 'ungültige aufgedeckte Karten'; }
+  }
+  if (h.pots != null) {
+    if (!Array.isArray(h.pots) || h.pots.length > 7) return 'ungültige Pots';
+    for (var pp = 0; pp < h.pots.length; pp++) { var po = h.pots[pp]; if (!po || !isInt(po.amount, 0, 1e13) || !seatList(po.winners, h.n) || !seatList(po.eligible, h.n)) return 'ungültige Pots'; }
+  }
+  if (h.rakeCfg != null && (typeof h.rakeCfg !== 'object' || typeof h.rakeCfg.pct !== 'number' || !(h.rakeCfg.pct >= 0 && h.rakeCfg.pct <= 0.2) || !isInt(h.rakeCfg.cap, 0, 1e9) || typeof h.rakeCfg.nfnd !== 'boolean')) return 'ungültige Rake-Angaben';
+  for (var d2 = 0; d2 < h.decisions.length; d2++) {
+    var x2 = h.decisions[d2];
+    if (!isInt(x2.st, 0, 3) || !strList(x2.cats, 12) || !strList(x2.tags, 20)) return 'ungültige Entscheidung';
+    if (x2.snap != null && validSnap(x2.snap, h)) return 'ungültige Momentaufnahme';
+  }
+  if (h.tags != null && !strList(h.tags, 40)) return 'ungültige Tags';
+  if (h.training != null && (typeof h.training !== 'string' || !TAG_RE.test(h.training))) return 'ungültige Trainingskategorie';
+  return null;
+}
+function seatList(a, n) { if (!Array.isArray(a) || a.length > n) return false; for (var i = 0; i < a.length; i++) if (!isInt(a[i], 0, n - 1)) return false; return true; }
+var TAG_RE = /^[a-z0-9-]{1,32}$/;
+function strList(a, max) { if (!Array.isArray(a) || a.length > max) return false; for (var i = 0; i < a.length; i++) if (typeof a[i] !== 'string' || !TAG_RE.test(a[i])) return false; return true; }
+/** Momentaufnahme einer Entscheidung (öffentliche Sicht des Helden + Gegnerwerte + Seed) streng prüfen */
+var NAME_RE2 = /^[A-Za-zÀ-ÖØ-öø-ÿ0-9 .'\-]{1,40}$/, ID_RE2 = /^[A-Za-z0-9_-]{1,40}$/, POS_OK = ['UTG', 'HJ', 'CO', 'BTN', 'SB', 'BB'];
+function cardList(a, n0, n1) {
+  if (!Array.isArray(a) || a.length < n0 || a.length > n1) return false;
+  for (var i = 0; i < a.length; i++) if (!isInt(a[i], 0, 51) || a.indexOf(a[i]) !== i) return false;
+  return true;
+}
+function validView(v, n) {
+  if (!v || typeof v !== 'object' || Array.isArray(v)) return false;
+  if (!isInt(v.n, 2, 6) || (n != null && v.n !== n) || !isInt(v.seat, 0, v.n - 1) || !isInt(v.street, 0, 3) || !isInt(v.button, 0, v.n - 1) || !isInt(v.bb, 2, 1e7) || !isInt(v.sb, 1, v.bb)) return false;
+  if (!cardList(v.cards, 2, 2) || !cardList(v.board, 0, 5) || v.cards.some(function (c) { return v.board.indexOf(c) >= 0; })) return false;
+  var ints = ['pot', 'cur', 'raises', 'limpers', 'callsSince', 'lastFull'];
+  for (var i = 0; i < ints.length; i++) if (v[ints[i]] != null && !isInt(v[ints[i]], 0, 1e13)) return false;
+  if ((v.pfa != null && !isInt(v.pfa, -1, v.n - 1)) || (v.opener != null && !isInt(v.opener, -1, v.n - 1))) return false;
+  var L = v.legal; if (!L || typeof L !== 'object') return false;
+  var ln = ['toCall', 'callAmt', 'minTo', 'maxTo', 'minFull', 'cur', 'bet', 'stack'], lb = ['canCheck', 'canCall', 'canFold', 'canRaise', 'isBet', 'reopened'];
+  for (var a = 0; a < ln.length; a++) if (!isInt(L[ln[a]], 0, 1e13)) return false;
+  for (var b = 0; b < lb.length; b++) if (typeof L[lb[b]] !== 'boolean') return false;
+  if (!Array.isArray(v.players) || v.players.length !== v.n) return false;
+  for (var p = 0; p < v.players.length; p++) {
+    var q = v.players[p];
+    if (!q || q.seat !== p || typeof q.id !== 'string' || !ID_RE2.test(q.id) || typeof q.name !== 'string' || !NAME_RE2.test(q.name) || POS_OK.indexOf(q.pos) < 0 ||
+      !isInt(q.stack, 0, 1e13) || !isInt(q.bet, 0, 1e13) || !isInt(q.total, 0, 1e13) || !isInt(q.start, 0, 1e13) || typeof q.folded !== 'boolean' || typeof q.allIn !== 'boolean') return false;
+  }
+  if (!Array.isArray(v.actions) || v.actions.length > 400) return false;
+  for (var j = 0; j < v.actions.length; j++) {
+    var x = v.actions[j];
+    if (!x || !isInt(x.st, 0, 3) || !isInt(x.s, 0, v.n - 1) || ['sb', 'bb', 'fold', 'check', 'call', 'bet', 'raise'].indexOf(x.t) < 0 || !isInt(x.a, 0, 1e13)) return false;
+  }
+  return true;
+}
+function validSnap(sn, h) {
+  if (typeof sn !== 'object' || Array.isArray(sn)) return 'Format';
+  for (var k in sn) if (['view', 'opps', 'seed'].indexOf(k) < 0) return 'Feld';
+  if (!isInt(sn.seed, 0, 4294967295)) return 'Seed';
+  if (!validView(sn.view, h ? h.n : null)) return 'Sicht';
+  if (!sn.opps || typeof sn.opps !== 'object' || Array.isArray(sn.opps)) return 'Gegner';
+  var ids = Object.keys(sn.opps);
+  if (ids.length > 5) return 'Gegner';
+  for (var i = 0; i < ids.length; i++) { if (!ID_RE2.test(ids[i]) || S.validRecord(sn.opps[ids[i]], false) || sn.opps[ids[i]].id !== ids[i]) return 'Gegner'; }
   return null;
 }
 
@@ -68,14 +131,51 @@ function addDecision(L, d) {
   L.decisions.push({ ts: d.ts, s: d.score, l: Math.round((d.lossBB || 0) * 100) / 100, st: d.st, p: d.pos, t: d.tags || [], c: d.cats || [], o: d.opptyp || null, tr: d.training || null, g: d.grade, se: d.session || 0 });
   if (L.decisions.length > DEC_MAX) L.decisions.splice(0, L.decisions.length - DEC_MAX);
 }
+var OPP_TYPES = ['unbekannt', 'sehr loose', 'loose-passiv', 'Nit', 'LAG', 'TAG'], DEC_KEYS = ['ts', 's', 'l', 'st', 'p', 't', 'c', 'o', 'tr', 'g', 'se'];
+var GOAL_KINDS = ['score', 'loss', 'minspot'];
+function validDecision(d) {
+  if (!d || typeof d !== 'object' || Array.isArray(d)) return false;
+  for (var k in d) if (DEC_KEYS.indexOf(k) < 0) return false;
+  return typeof d.s === 'number' && d.s >= 0 && d.s <= 100 && typeof d.l === 'number' && isFinite(d.l) && isInt(d.st, 0, 3) && strList(d.t, 20) && strList(d.c, 12) &&
+    (d.o == null || OPP_TYPES.indexOf(d.o) >= 0) && (d.p == null || S.POSITIONS.indexOf(d.p) >= 0) && (d.g == null || C.GRADES.indexOf(d.g) >= 0) &&
+    (d.tr == null || (typeof d.tr === 'string' && TAG_RE.test(d.tr))) && (d.se == null || isInt(d.se, 0, 1e15)) && (d.ts == null || typeof d.ts === 'number');
+}
+function validSrs(it) {
+  return !!it && typeof it.key === 'string' && it.key.length <= 80 && /^[A-Za-z0-9_:|.-]+$/.test(it.key) && typeof it.cat === 'string' && TAG_RE.test(it.cat) && isInt(it.box, 0, 10) &&
+    typeof it.due === 'number' && isInt(it.seed, 0, 4294967295) && typeof it.label === 'string' && it.label.length <= 400 && isInt(it.reviews, 0, 1e6) &&
+    (it.view == null || (typeof it.view === 'object' && !validSnap({ view: it.view.view, opps: it.view.opps, seed: it.seed }, null)));
+}
+function validGoal(go) {
+  return !!go && typeof go.id === 'string' && /^[A-Za-z0-9_-]{1,20}$/.test(go.id) && GOAL_KINDS.indexOf(go.kind) >= 0 && typeof go.target === 'number' && isFinite(go.target) &&
+    typeof go.text === 'string' && go.text.length <= 200 && (go.window == null || isInt(go.window, 1, 10000)) && (go.min == null || isInt(go.min, 1, 10000));
+}
+function validQuiz(Q) {
+  if (!Q || typeof Q !== 'object' || !isInt(Q.n, 0, 1e9) || !isInt(Q.correct, 0, Q.n) || !Q.byType || typeof Q.byType !== 'object' || Array.isArray(Q.byType)) return false;
+  for (var qt in Q.byType) { var bt = Q.byType[qt]; if (!TAG_RE.test(qt) || !bt || !isInt(bt.n, 0, 1e9) || !isInt(bt.c, 0, bt.n)) return false; }
+  return true;
+}
 function validLearning(L) {
-  if (!L || typeof L !== 'object' || L.v !== 1) return 'ungültiges Format';
+  if (!L || typeof L !== 'object' || Array.isArray(L) || L.v !== 1) return 'ungültiges Format';
   if (!Array.isArray(L.decisions) || L.decisions.length > DEC_MAX) return 'Entscheidungen ungültig';
-  for (var i = 0; i < L.decisions.length; i++) { var d = L.decisions[i]; if (!d || typeof d.s !== 'number' || d.s < 0 || d.s > 100 || typeof d.l !== 'number' || !isInt(d.st, 0, 3) || !Array.isArray(d.t) || !Array.isArray(d.c)) return 'Entscheidung ' + (i + 1) + ' ungültig'; }
+  for (var i = 0; i < L.decisions.length; i++) if (!validDecision(L.decisions[i])) return 'Entscheidung ' + (i + 1) + ' ungültig';
   if (!Array.isArray(L.srs) || L.srs.length > 1000) return 'Wiederholungen ungültig';
-  if (!L.quiz || typeof L.quiz.n !== 'number') return 'Quiz ungültig';
+  for (var j = 0; j < L.srs.length; j++) if (!validSrs(L.srs[j])) return 'Wiederholung ' + (j + 1) + ' ungültig';
+  if (!validQuiz(L.quiz)) return 'Quiz ungültig';
   if (!Array.isArray(L.sessions) || L.sessions.length > 5000) return 'Sessions ungültig';
+  if (!Array.isArray(L.goals) || L.goals.length > 20) return 'Ziele ungültig';
+  for (var g = 0; g < L.goals.length; g++) if (!validGoal(L.goals[g])) return 'Ziel ' + (g + 1) + ' ungültig';
   return null;
+}
+/** Gespeicherte Lerndaten reparieren statt verwerfen: ungültige Einträge werden entfernt, der Rest bleibt erhalten. */
+function repairLearning(L) {
+  if (!L || typeof L !== 'object' || Array.isArray(L) || L.v !== 1) return null;
+  var out = newLearning(), removed = 0;
+  if (Array.isArray(L.decisions)) L.decisions.slice(-DEC_MAX).forEach(function (d) { if (validDecision(d)) out.decisions.push(d); else removed++; });
+  if (Array.isArray(L.srs)) L.srs.slice(-300).forEach(function (it) { if (validSrs(it)) out.srs.push(it); else removed++; });
+  if (validQuiz(L.quiz)) out.quiz = L.quiz; else removed++;
+  if (Array.isArray(L.goals) && L.goals.length <= 20 && L.goals.every(validGoal)) out.goals = L.goals; else removed++;
+  if (typeof L.created === 'number') out.created = L.created;
+  return { learning: out, removed: removed };
 }
 function mean(a) { return a.length ? a.reduce(function (s, x) { return s + x; }, 0) / a.length : null; }
 function sd(a) { if (a.length < 2) return null; var m = mean(a); return Math.sqrt(a.reduce(function (s, x) { return s + (x - m) * (x - m); }, 0) / (a.length - 1)); }
@@ -87,7 +187,7 @@ function stat(list) {
 }
 /** Kompetenzprofil aus allen Entscheidungen */
 function profile(L) {
-  var D = L.decisions, out = { all: stat(D), spots: {}, streets: {}, positions: {}, cats: {}, opptyp: {}, trend: null, sessions: [] };
+  var D = L.decisions, out = { all: stat(D), spots: {}, streets: {}, positions: {}, cats: Object.create(null), opptyp: Object.create(null), trend: null, sessions: [] };
   Object.keys(C.SPOTS).forEach(function (t) { var l = D.filter(function (d) { return d.t.indexOf(t) >= 0; }); out.spots[t] = stat(l); });
   [0, 1, 2, 3].forEach(function (s) { out.streets[s] = stat(D.filter(function (d) { return d.st === s; })); });
   S.POSITIONS.forEach(function (p) { out.positions[p] = stat(D.filter(function (d) { return d.p === p; })); });
@@ -136,7 +236,7 @@ function goalStatus(L, prof) {
 var BOX_DAYS = [0, 1, 3, 7, 16, 35];
 function srsAdd(L, item, now) {
   if (L.srs.some(function (x) { return x.key === item.key; })) return;
-  L.srs.push({ key: item.key, cat: item.cat, seed: item.seed >>> 0, view: item.view || null, label: item.label || '', box: 0, due: now + 10 * 60000, created: now, reviews: 0, last: null });
+  L.srs.push({ key: item.key, cat: item.cat, seed: item.seed >>> 0, view: item.view || null, label: String(item.label || '').slice(0, 300), box: 0, due: now + 10 * 60000, created: now, reviews: 0, last: null });
   if (L.srs.length > 300) L.srs.splice(0, L.srs.length - 300);
 }
 function srsDue(L, now) { return L.srs.filter(function (x) { return x.due <= now; }).sort(function (a, b) { return a.due - b.due; }); }
@@ -174,7 +274,7 @@ function generate(cat, seed, opts) {
   opts = opts || {};
   var sc = SCEN[cat] || SCEN['preflop-open'], rng0 = PT.makeRng('szenario|' + cat + '|' + (seed >>> 0));
   var cfg = PT.session.defaultConfig(); cfg.difficulty = opts.difficulty || 'gemischt';
-  for (var attempt = 0; attempt < 80; attempt++) {
+  for (var attempt = 0, maxAtt = sc.any ? 240 : 80; attempt < maxAtt; attempt++) {
     var r = PT.makeRng('szenario|' + cat + '|' + (seed >>> 0) + '|' + attempt);
     var pos = sc.pos[Math.floor(r() * sc.pos.length)], posIdx = PT.POS6.indexOf(pos);
     var button = (0 - posIdx + 6) % 6;
@@ -313,7 +413,7 @@ function quiz(type, rng) {
       else { cnt = 3; txt = ' wenn ein Bube auf dem Board liegt'; }
     }
     var s4 = shuffleOpts(String(cnt), [String(cnt + 2), String(Math.max(1, cnt - 2)), String(cnt * 2)]);
-    q = 'Wie viele Kombinationen von ' + hh[0] + ' gibt es' + (txt || ' ohne bekannte Karten') + '?';
+    q = 'Wie viele Kombinationen von ' + hh[0] + ' gibt es' + (txt ? ',' + txt : ' ohne bekannte Karten') + '?';
     expl = 'Paare: 6 Kombinationen, suited: 4, offsuit: 12. Jede sichtbare Karte eines Rangs entfernt die Kombinationen mit genau dieser Karte' + (blk ? ' – hier bleiben ' + cnt + '.' : '.');
     opts = s4.opts; ok = s4.ok;
   } else if (type === 'spr') {
@@ -356,7 +456,7 @@ function handText(h) {
   return lines.join('\n');
 }
 
-PT.training = { makeHandRecord: makeHandRecord, validHand: validHand, newLearning: newLearning, addDecision: addDecision, validLearning: validLearning,
+PT.training = { makeHandRecord: makeHandRecord, validHand: validHand, newLearning: newLearning, addDecision: addDecision, validLearning: validLearning, repairLearning: repairLearning, validView: validView, validSnap: validSnap,
   profile: profile, goalStatus: goalStatus, srsAdd: srsAdd, srsDue: srsDue, srsReview: srsReview, BOX_DAYS: BOX_DAYS, SCEN: SCEN, generate: generate,
   quiz: quiz, QUIZ_TYPES: QUIZ_TYPES, handText: handText, levelOf: levelOf, defaultGoals: defaultGoals };
 })(typeof globalThis !== 'undefined' ? globalThis : (typeof self !== 'undefined' ? self : this));

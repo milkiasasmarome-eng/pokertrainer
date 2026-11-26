@@ -3,7 +3,7 @@
 (function (G) {
 'use strict';
 var PT = G.PT || (G.PT = {});
-PT.VERSION = '2.0.0';
+PT.VERSION = '2.0.1';
 PT.BUILD = '2026-11-26';
 
 // ---------- Hilfen ----------
@@ -23,7 +23,8 @@ function fmtSigned(u) { return (u > 0 ? '+' : u < 0 ? '−' : '±') + fmt(Math.a
 function fmtBB(u, bb, d) {
   if (u == null || !isFinite(u)) return '–';
   var x = u / (bb || 100), dd = d == null ? (Math.abs(x) >= 10 ? 0 : 1) : d;
-  return (x < 0 ? '−' : '') + Math.abs(x).toFixed(dd).replace('.', ',') + ' BB';
+  var t = Math.abs(x).toFixed(dd), zero = Number(t) === 0;
+  return (x < 0 && !zero ? '−' : '') + t.replace('.', ',') + ' BB';
 }
 function pct(x, d) { if (x == null || !isFinite(x)) return '–'; return (x * 100).toFixed(d || 0).replace('.', ',') + ' %'; }
 /** „4,50“ / „4.50“ / „4“ → Cent; sonst null */

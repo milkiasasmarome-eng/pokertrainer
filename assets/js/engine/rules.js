@@ -106,7 +106,7 @@ function Hand(cfg) {
   this.sb = cfg.sb || 50; this.bb = cfg.bb || 100; this.rake = cfg.rake || null;
   var names = POS_BY_N[N];
   this.p = cfg.players.map(function (x, i) {
-    if (!U.isInt(x.stack, 0, 1e12)) throw new Error('Ungültiger Stack');
+    if (!U.isInt(x.stack, 1, 1e12)) throw new Error('Ungültiger Stack (mindestens 1 Cent je Spieler)');
     return { seat: i, id: x.id, name: x.name, isHero: !!x.isHero, start: x.stack, stack: x.stack, bet: 0, total: 0,
       folded: false, allIn: false, acted: false, actedAt: 0, cards: [], pos: names[(i - cfg.button + N) % N], sittingOut: x.stack === 0 };
   });
@@ -331,6 +331,7 @@ Hand.prototype.publicRecord = function () {
     won: this.result ? this.p.map(function (q) { return this.result.payout[q.seat] || 0; }, this) : [],
     returned: this.returned.slice(),
     rake: this.result ? this.result.rake : 0,
+    rakeCfg: this.rake ? { pct: this.rake.pct, cap: this.rake.cap, nfnd: !!this.rake.nfnd } : null,
     sawFlop: this.sawFlop ? this.sawFlop.slice() : [],
     ended: this.done
   };

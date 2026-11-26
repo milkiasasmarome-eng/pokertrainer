@@ -24,7 +24,7 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="PokerTrainer 2.0: grüner Pokertisch mit Karten und Coach-Hinweis">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="stylesheet" href="assets/css/app.css?v=2.0.0">
+<link rel="stylesheet" href="assets/css/app.css?v=2.0.1">
 </head>
 <body>
 <a class="skip" href="#main">Zum Inhalt springen</a>
@@ -67,6 +67,7 @@
           </div>
           <div class="result2" id="result2"></div>
           <div class="trainbar" id="trainbar" hidden></div>
+          <div class="tipmini" id="tipMini" aria-hidden="true"></div>
           <div class="actions" id="actions">
             <div class="mainacts">
               <button class="act fold" id="bFold" type="button">Fold<kbd>F</kbd></button>
@@ -110,7 +111,7 @@
               </label>
             </div>
             <div class="tipbox" id="tipBox" aria-live="polite"></div>
-            <p class="faust" id="faust">Modellschätzung, kein Solver-Ergebnis</p>
+            <p class="faust" id="faust">Faustregel, kein Solver-Ergebnis</p>
             <div class="tipfoot">
               <label class="switch"><input type="checkbox" id="speechOn" checked> Sprachausgabe</label>
               <button class="ghost" id="bSay" type="button">Vorlesen</button>
@@ -134,7 +135,7 @@
     <section class="view" id="view-hilfe" hidden></section>
   </main>
   <footer class="foot">
-    <span>PokerTrainer <span id="verText">2.0.0</span> · nur Spielgeld, kein Glücksspiel · Daten bleiben in deinem Browser</span>
+    <span>PokerTrainer <span id="verText">2.0.1</span> · nur Spielgeld, kein Glücksspiel · Daten bleiben in deinem Browser</span>
     <a href="#hilfe/datenschutz">Datenschutz &amp; Rechtliches</a>
   </footer>
 </div>
@@ -147,25 +148,25 @@
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <input type="file" id="fileIn" accept=".json,application/json,text/plain" hidden>
 <!--ENGINE-->
-<script src="assets/js/engine/core.js?v=2.0.0"></script>
-<script src="assets/js/engine/evaluator.js?v=2.0.0"></script>
-<script src="assets/js/engine/preflop-data.js?v=2.0.0"></script>
-<script src="assets/js/engine/rules.js?v=2.0.0"></script>
-<script src="assets/js/engine/ranges.js?v=2.0.0"></script>
-<script src="assets/js/engine/equity.js?v=2.0.0"></script>
-<script src="assets/js/engine/stats.js?v=2.0.0"></script>
-<script src="assets/js/engine/bots.js?v=2.0.0"></script>
-<script src="assets/js/engine/session.js?v=2.0.0"></script>
-<script src="assets/js/engine/ev.js?v=2.0.0"></script>
-<script src="assets/js/engine/cfr.js?v=2.0.0"></script>
-<script src="assets/js/engine/coach.js?v=2.0.0"></script>
-<script src="assets/js/engine/training.js?v=2.0.0"></script>
-<script src="assets/js/engine/speech.js?v=2.0.0"></script>
+<script src="assets/js/engine/core.js?v=2.0.1"></script>
+<script src="assets/js/engine/evaluator.js?v=2.0.1"></script>
+<script src="assets/js/engine/preflop-data.js?v=2.0.1"></script>
+<script src="assets/js/engine/rules.js?v=2.0.1"></script>
+<script src="assets/js/engine/ranges.js?v=2.0.1"></script>
+<script src="assets/js/engine/equity.js?v=2.0.1"></script>
+<script src="assets/js/engine/stats.js?v=2.0.1"></script>
+<script src="assets/js/engine/bots.js?v=2.0.1"></script>
+<script src="assets/js/engine/session.js?v=2.0.1"></script>
+<script src="assets/js/engine/ev.js?v=2.0.1"></script>
+<script src="assets/js/engine/cfr.js?v=2.0.1"></script>
+<script src="assets/js/engine/coach.js?v=2.0.1"></script>
+<script src="assets/js/engine/training.js?v=2.0.1"></script>
+<script src="assets/js/engine/speech.js?v=2.0.1"></script>
 <!--/ENGINE-->
 <!--UI-->
-<script src="assets/js/ui/store.js?v=2.0.0"></script>
-<script src="assets/js/ui/app.js?v=2.0.0"></script>
-<script src="assets/js/ui/views.js?v=2.0.0"></script>
+<script src="assets/js/ui/store.js?v=2.0.1"></script>
+<script src="assets/js/ui/app.js?v=2.0.1"></script>
+<script src="assets/js/ui/views.js?v=2.0.1"></script>
 <!--/UI-->
 </body>
 </html>

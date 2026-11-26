@@ -1,6 +1,6 @@
 {
- "app": "2.0.0",
- "date": "2026-11-26T18:16:14.726Z",
+ "app": "2.0.1",
+ "date": "2026-11-26T18:52:19.964Z",
  "node": "v22.23.5",
  "cpus": 2,
  "eval7": {
@@ -33,18 +33,18 @@
  },
  "sim": {
   "hands": 1000000,
-  "actions": 8931953,
+  "actions": 8871942,
   "errorCount": 0,
   "errors": [],
-  "invalidRejected": 33947,
+  "invalidRejected": 33724,
   "botFallbacks": 0,
-  "showdowns": 261680,
-  "sidePots": 8996,
-  "splitPots": 9602,
-  "allIns": 122208,
+  "showdowns": 251620,
+  "sidePots": 8778,
+  "splitPots": 9347,
+  "allIns": 121201,
   "swaps": 41662,
-  "rebuys": 78415,
-  "maxActions": 31,
+  "rebuys": 77207,
+  "maxActions": 29,
   "configs": [
    "{\"cfg\":{},\"heroMode\":null}",
    "{\"cfg\":{},\"heroMode\":null}",
@@ -55,7 +55,7 @@
    "{\"cfg\":{\"startBB\":300},\"heroMode\":null}",
    "{\"cfg\":{\"difficulty\":\"experte\",\"swapEvery\":10},\"heroMode\":\"random\"}"
   ],
-  "ms": 186198
+  "ms": 153746
  },
  "calib": {
   "hands": 200000,
@@ -68,20 +68,20 @@
      "pfr": 8.6,
      "threeBet": 4.6,
      "fourBet": 2.1,
-     "foldTo3Bet": 34.6,
-     "foldTo4Bet": 66.9,
-     "steal": 17.7,
+     "foldTo3Bet": 34.9,
+     "foldTo4Bet": 66.5,
+     "steal": 17.6,
      "foldToSteal": 39,
-     "cbetFlop": 47.5,
-     "cbetTurn": 38,
-     "cbetRiver": 39,
-     "foldToCbet": 28.3,
-     "foldToCbetTurn": 32,
-     "checkRaise": 2.4,
-     "afq": 26.7,
-     "wtsd": 50.2,
-     "wsd": 49.9,
-     "af": 0.61
+     "cbetFlop": 47.3,
+     "cbetTurn": 38.7,
+     "cbetRiver": 37.4,
+     "foldToCbet": 44.5,
+     "foldToCbetTurn": 31.5,
+     "checkRaise": 2.5,
+     "afq": 26.9,
+     "wtsd": 43.6,
+     "wsd": 52.4,
+     "af": 0.74
     },
     "targets": {
      "vpip": [
@@ -106,7 +106,7 @@
      "vpip": true,
      "pfr": true,
      "af": true,
-     "wtsd": false
+     "wtsd": true
     },
     "hudTypeMatch": "40/40"
    },
@@ -117,21 +117,21 @@
      "vpip": 44.1,
      "pfr": 24.8,
      "threeBet": 12.6,
-     "fourBet": 7,
-     "foldTo3Bet": 40.5,
-     "foldTo4Bet": 73.2,
-     "steal": 51,
+     "fourBet": 7.1,
+     "foldTo3Bet": 40.2,
+     "foldTo4Bet": 73.6,
+     "steal": 51.1,
      "foldToSteal": 38.1,
      "cbetFlop": 64.8,
-     "cbetTurn": 48.4,
-     "cbetRiver": 42,
-     "foldToCbet": 55.3,
-     "foldToCbetTurn": 35.1,
-     "checkRaise": 5.9,
-     "afq": 51.4,
-     "wtsd": 30.4,
-     "wsd": 45.8,
-     "af": 2.59
+     "cbetTurn": 48,
+     "cbetRiver": 43.1,
+     "foldToCbet": 55.2,
+     "foldToCbetTurn": 35.2,
+     "checkRaise": 6,
+     "afq": 51.3,
+     "wtsd": 29.8,
+     "wsd": 45.4,
+     "af": 2.58
     },
     "targets": {
      "vpip": [
@@ -161,22 +161,22 @@
     "stats": {
      "vpip": 11.5,
      "pfr": 8.4,
-     "threeBet": 2.5,
-     "fourBet": 2.6,
-     "foldTo3Bet": 76.8,
-     "foldTo4Bet": 40.4,
-     "steal": 20,
-     "foldToSteal": 87,
-     "cbetFlop": 55.4,
-     "cbetTurn": 43.6,
-     "cbetRiver": 43.4,
-     "foldToCbet": 53.4,
-     "foldToCbetTurn": 42.4,
-     "checkRaise": 3.5,
-     "afq": 47.5,
+     "threeBet": 2.4,
+     "fourBet": 2.7,
+     "foldTo3Bet": 75.9,
+     "foldTo4Bet": 39.6,
+     "steal": 19.9,
+     "foldToSteal": 86.9,
+     "cbetFlop": 55.3,
+     "cbetTurn": 43.5,
+     "cbetRiver": 41.5,
+     "foldToCbet": 53.3,
+     "foldToCbetTurn": 40.9,
+     "checkRaise": 3.2,
+     "afq": 47.4,
      "wtsd": 39.7,
-     "wsd": 57.8,
-     "af": 2.58
+     "wsd": 57.5,
+     "af": 2.57
     },
     "targets": {
      "vpip": [
@@ -200,23 +200,23 @@
     "hands": 239600,
     "stats": {
      "vpip": 21,
-     "pfr": 16.7,
-     "threeBet": 6.6,
+     "pfr": 16.8,
+     "threeBet": 6.7,
      "fourBet": 5,
-     "foldTo3Bet": 65.6,
-     "foldTo4Bet": 68,
+     "foldTo3Bet": 65.2,
+     "foldTo4Bet": 69,
      "steal": 38.3,
      "foldToSteal": 75,
      "cbetFlop": 61.5,
-     "cbetTurn": 49.6,
-     "cbetRiver": 43.1,
+     "cbetTurn": 49.7,
+     "cbetRiver": 44,
      "foldToCbet": 51.4,
-     "foldToCbetTurn": 42.4,
-     "checkRaise": 5.7,
-     "afq": 56.4,
-     "wtsd": 36.1,
-     "wsd": 52.1,
-     "af": 3.21
+     "foldToCbetTurn": 42,
+     "checkRaise": 5.8,
+     "afq": 56.2,
+     "wtsd": 34.8,
+     "wsd": 51.2,
+     "af": 3.16
     },
     "targets": {
      "vpip": [
@@ -252,21 +252,21 @@
      "vpip": 30.5,
      "pfr": 25.1,
      "threeBet": 10.2,
-     "fourBet": 7.3,
-     "foldTo3Bet": 59.5,
+     "fourBet": 7.4,
+     "foldTo3Bet": 59.3,
      "foldTo4Bet": 74.2,
-     "steal": 57,
-     "foldToSteal": 64.8,
-     "cbetFlop": 65.6,
-     "cbetTurn": 50.9,
-     "cbetRiver": 44.8,
-     "foldToCbet": 53.6,
-     "foldToCbetTurn": 39.2,
-     "checkRaise": 7.2,
-     "afq": 60.4,
-     "wtsd": 32.4,
-     "wsd": 47.5,
-     "af": 3.79
+     "steal": 57.1,
+     "foldToSteal": 65,
+     "cbetFlop": 65.7,
+     "cbetTurn": 51.4,
+     "cbetRiver": 45.4,
+     "foldToCbet": 53.3,
+     "foldToCbetTurn": 40.5,
+     "checkRaise": 7.3,
+     "afq": 60.1,
+     "wtsd": 31,
+     "wsd": 46.3,
+     "af": 3.75
     },
     "targets": {
      "vpip": [
@@ -293,7 +293,7 @@
      "threeBet": true,
      "af": true
     },
-    "hudTypeMatch": "29/30"
+    "hudTypeMatch": "27/30"
    },
    "bal": {
     "players": 20,
@@ -302,21 +302,21 @@
      "vpip": 22.6,
      "pfr": 17.8,
      "threeBet": 7.2,
-     "fourBet": 5.4,
-     "foldTo3Bet": 64,
-     "foldTo4Bet": 68.5,
+     "fourBet": 5.3,
+     "foldTo3Bet": 63.9,
+     "foldTo4Bet": 71,
      "steal": 40,
      "foldToSteal": 72.1,
      "cbetFlop": 60.4,
-     "cbetTurn": 46.9,
-     "cbetRiver": 39.8,
+     "cbetTurn": 47,
+     "cbetRiver": 40,
      "foldToCbet": 54,
-     "foldToCbetTurn": 40.4,
-     "checkRaise": 6,
-     "afq": 56.3,
-     "wtsd": 34.3,
-     "wsd": 52.1,
-     "af": 3.31
+     "foldToCbetTurn": 41.3,
+     "checkRaise": 6.2,
+     "afq": 55.8,
+     "wtsd": 33.3,
+     "wsd": 51,
+     "af": 3.27
     },
     "targets": {
      "vpip": [
@@ -341,7 +341,66 @@
     "hudTypeMatch": "20/20"
    }
   },
-  "ms": 36483,
-  "ok": false
+  "ms": 29766,
+  "ok": true
+ },
+ "coach": {
+  "exploit": [
+   {
+    "seed": 21,
+    "coachBB100": 61.6,
+    "botBB100": 16.5,
+    "avgMs": 25.1,
+    "maxMs": 291,
+    "maxIt": 5000
+   },
+   {
+    "seed": 22,
+    "coachBB100": 28,
+    "botBB100": -10.1,
+    "avgMs": 25,
+    "maxMs": 345,
+    "maxIt": 4800
+   },
+   {
+    "seed": 23,
+    "coachBB100": -18.1,
+    "botBB100": -15.7,
+    "avgMs": 24.6,
+    "maxMs": 314,
+    "maxIt": 4800
+   },
+   {
+    "seed": 24,
+    "coachBB100": 8.3,
+    "botBB100": 28.3,
+    "avgMs": 23.3,
+    "maxMs": 344,
+    "maxIt": 4800
+   }
+  ],
+  "gto": [
+   {
+    "seed": 21,
+    "coachBB100": 43.1,
+    "botBB100": 16.5,
+    "avgMs": 25,
+    "maxMs": 318,
+    "maxIt": 4800
+   },
+   {
+    "seed": 22,
+    "coachBB100": 17.7,
+    "botBB100": -10.1,
+    "avgMs": 25.1,
+    "maxMs": 372,
+    "maxIt": 4800
+   }
+  ],
+  "exploitAvgCoach": 19.95,
+  "exploitAvgBot": 4.75,
+  "gtoAvgCoach": 30.4,
+  "gtoAvgBot": 3.2,
+  "ms": 94262
  }
 }

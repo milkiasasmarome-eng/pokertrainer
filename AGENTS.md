@@ -7,7 +7,7 @@ Dieses Repository enthält den PokerTrainer 2.0: einen eigenständigen No-Limit-
 1. **Nur Spielgeld, keine Verbindung nach außen.** Keine Server, keine Tracker, keine externen Skripte/Schriften/CDNs, keine KI-API zur Laufzeit. Die CSP in `index.html` erlaubt nur eigene Dateien.
 2. **Kein Hilfsprogramm für fremde Pokerplattformen.** Keine Overlays, Bildschirmauslesung, Eingabemasken für fremde Hände, keine Daten echter Spieler. Tipps nur für Hände, die der Trainer selbst austeilt.
 3. **Fairness:** Bots und Coach sehen nie verdeckte Karten anderer Spieler. Entscheidungen erhalten nur `PT.bots.publicView(hand, seat)` (eigene Karten + öffentliche Informationen). Die Kartenverteilung hängt nur vom Seed und der Handnummer ab (`PT.session.streams`).
-4. **Ehrliche Kennzeichnung:** Empfehlungen sind Modellschätzungen („Modellschätzung, kein Solver-Ergebnis“). Nie als GTO-Solver bezeichnen.
+4. **Ehrliche Kennzeichnung:** Empfehlungen sind Modellschätzungen; im Tippfeld steht sichtbar „Faustregel, kein Solver-Ergebnis“ (Projektvorgabe). Nie als GTO-Solver bezeichnen.
 5. **Oberfläche auf Deutsch**, Poker-Fachbegriffe englisch.
 6. **Datenformate nur mit Migration ändern** (siehe `PT.stats.dbImport`, `migrateV1`, `PTUI.Store.findLegacy`), vorher Sicherung anbieten.
 
@@ -31,3 +31,8 @@ node tests/e2e.js                                  # Browser-Tests (Playwright +
 - Die Obergrenze von 5.000 Simulationen je Live-Entscheidung (Stufen Schnell/Standard) ist eine Projektvorgabe; Tests prüfen sie.
 - Neue Fehler: reproduzierbaren Test in `tests/run.js` ergänzen.
 - Projektstand und Lernprotokoll werden außerhalb des Repos im Claude-Projekt „Poker“ gepflegt (`PokerTrainer_Stand`).
+
+## Hinweise aus der unabhängigen Prüfung (2.0.1)
+- Preflop folgt der Coach dem Faustregel-Chart; Abweichungen nur bei belegtem Exploit (`coach.preflopAnchor`). Wer die EV-Annahmen ändert, muss `tests/run.js` „Regression Prüfer C“ grün halten.
+- Importierte Daten sind nicht vertrauenswürdig: jede neue Ausgabe von Daten aus Sicherungen über `esc()`, jedes neue Feld in `validHand`/`validLearning` prüfen.
+- Der automatische Tipp darf 5.000 Simulationen je Entscheidung nicht überschreiten (`input.live`).

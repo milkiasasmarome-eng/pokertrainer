@@ -557,6 +557,98 @@ test('Sprachausgabe: nur der jüngste Tipp wird gesprochen, ältere brechen ab; 
   ok(PT.toSpeech('AKs vom BTN, 25 %') === 'Ass König suited vom Button, 25 Prozent', 'Aussprache: ' + PT.toSpeech('AKs vom BTN, 25 %'));
 });
 
+
+// ---------- Regressionstests zu den unabhängigen Prüfberichten (Prüfer A: Regeln/Mathematik, Prüfer C: Strategie/UX/Sicherheit) ----------
+function spot(heroPos, heroCards, board, script) {
+  const button = (0 - PT.POS6.indexOf(heroPos) + 6) % 6, ids = ['g001', 'g002', 'g003', 'g004', 'g005'];
+  const players = [{ id: 'hero', name: 'Du', stack: 10000, isHero: true }].concat(ids.map(id => ({ id, name: PT.bots.nameOf(id), stack: 10000 })));
+  const deck = PT.rules.deckFor({ n: 6, button, board: board ? (PT.parseCards(board) || []).map(PT.cardStr) : [], seats: players }, { 0: PT.parseCards(heroCards) });
+  const h = new PT.Hand({ players, button, sb: 50, bb: 100, deck, no: 1 }).start();
+  const seatOf = p => p === 'H' ? 0 : h.p.findIndex(q => q.pos === p);
+  for (const [p, t, amt] of script) {
+    const s = seatOf(p); let g = 0;
+    while (h.toAct !== s && g++ < 20) { const L = h.legal(h.toAct); h.act(h.toAct, L.canCheck ? { type: 'check' } : { type: 'fold' }); }
+    const r = h.act(s, amt ? { type: t, amount: Math.round(amt * 100) } : { type: t }); if (!r.ok) throw new Error(p + ' ' + t + ': ' + r.error);
+  }
+  let g = 0; while (h.toAct !== 0 && !h.done && g++ < 20) { const L = h.legal(h.toAct); h.act(h.toAct, L.canCheck ? { type: 'check' } : { type: 'fold' }); }
+  return h;
+}
+function coachOn(h, mode) { return PT.coach.analyze({ view: PT.bots.publicView(h, 0), opps: {}, settings: { mode: mode || 'exploit', level: 'standard' }, seed: 1, live: true }); }
+
+test('Regression Prüfer A: Check-Raise-Nenner, Replay mit Rake, Dead Money je Spieler, Stack 0, Heldenplatz', () => {
+  const r = PT.stats.newRecord('g001', PT.bots.nameOf('g001')); r.hands = 1; r.stats.checkRaise = [0, 2];
+  ok(!PT.stats.validRecord(r, false), 'Check-Raise: bis zu einer Gelegenheit je Straße gültig');
+  const db = PT.stats.newDb(); db.opps.g001 = r; const im = PT.stats.dbImport(PT.stats.dbExport(db, 'x')); ok(im.ok, 'Export/Import mit Check-Raise-Nenner > Hände');
+  let thrown = false; try { new PT.Hand({ players: [{ id: 'a', name: 'A', stack: 0 }, { id: 'b', name: 'B', stack: 10000 }], button: 0, sb: 50, bb: 100, no: 1 }); } catch (e) { thrown = true; }
+  ok(thrown, 'Stack 0 wird abgelehnt');
+  const rake = { pct: 0.05, cap: 300, nfnd: true };
+  const h = new PT.Hand({ players: [{ id: 'a', name: 'A', stack: 10000, isHero: true }, { id: 'b', name: 'B', stack: 10000 }], button: 0, sb: 50, bb: 100, rng: PT.makeRng(3), rake }).start();
+  h.act(0, { type: 'call' }); h.act(1, { type: 'check' }); h.act(1, { type: 'bet', amount: 200 }); h.act(0, { type: 'fold' });
+  const rec = PT.training.makeHandRecord(h, { session: 1, seed: 1, decisions: [] });
+  ok(!PT.training.validHand(rec), 'Handdatensatz mit Rake-Konfiguration gültig');
+  const rp = PT.rules.replay(rec, { 0: h.p[0].cards, 1: h.p[1].cards });
+  eq(rp.hand.result.rake, h.result.rake, 'Replay rechnet mit derselben Rake'); eq(rp.hand.p.map(q => q.stack).join('/'), h.p.map(q => q.stack).join('/'), 'Replay-Stacks');
+  const bad1 = JSON.parse(JSON.stringify(rec)); bad1.heroSeat = 99; ok(!!PT.training.validHand(bad1), 'Heldenplatz außerhalb abgelehnt');
+  const bad2 = JSON.parse(JSON.stringify(rec)); bad2.shown = [{ seat: 7, cards: 'AsKs' }]; ok(!!PT.training.validHand(bad2), 'aufgedeckte Karten mit ungültigem Platz abgelehnt');
+  // Dead Money: gefoldete Beiträge einzeln im richtigen Pot (Main vs. Side)
+  const rng = PT.makeRng(5), hero = PT.parseCards('AhKh'), board = PT.parseCards('2c7d9s');
+  const w = PT.ranges.full();
+  const a1 = PT.equity.potShare({ hero, heroTotal: 500, board, rng, iters: 3000, opps: [{ w, total: 2300 }], dead_: [500, 500] });
+  const exact = PT.equity.potShare({ hero, heroTotal: 500, board, rng: PT.makeRng(5), iters: 3000, opps: [{ w, total: 2300 }, { w, total: 500, folded: true }, { w, total: 500, folded: true }] });
+  ok(Math.abs(a1.win - exact.win) < 1e-6, 'Dead Money einzeln = gefoldete Spieler einzeln (' + Math.round(a1.win) + ' vs ' + Math.round(exact.win) + ')');
+});
+
+test('Regression Prüfer A: EV-Call-Zweig mit Call-Range, Jam-Raise-Zweig, Monte-Carlo-Stoppregel', () => {
+  const h = spot('BTN', '9s9c', '2c7d9hJsQd', [['H', 'raise', 2.5], ['BB', 'call'], ['BB', 'check'], ['H', 'bet', 3], ['BB', 'call'], ['BB', 'check'], ['H', 'check'], ['BB', 'check']]);
+  const a = coachOn(h, 'gto'), bet = a.actions.filter(x => x.type === 'bet')[0];
+  ok(bet && bet.parts && bet.parts.branches && bet.parts.branches.length >= 1, 'Bet bewertet');
+  // Ohne Raise-Hände im Call-Zweig liegt die Equity im Call-Zweig höher als gegen die gesamte Weiterspiel-Range
+  const call = bet.parts.branches.filter(b => b.callers.length)[0];
+  ok(call && call.eq >= 0.35, 'Equity im Call-Zweig plausibel (' + (call ? call.eq.toFixed(3) : '–') + ')');
+  // MC: zweistufige Stoppregel hält das Budget ein und liefert Standardfehler > 0 auch am Rand
+  const r = PT.equity.equity({ hero: PT.parseCards('AsAd'), board: PT.parseCards('AhKc2d7s'), ranges: [PT.ranges.full()], level: 'standard', rng: PT.makeRng(1), budget: { left: 5000, used: 0, calls: [] } });
+  ok(r.eq > 0.9 && (r.exact || r.se > 0), 'Randfall mit Fehlerangabe');
+});
+
+test('Regression Prüfer C: Preflop nach Faustregel-Chart (kein 3-Bet/Open mit beliebigen Händen, kein Open-Limp)', () => {
+  const a1 = coachOn(spot('BB', '7c2s', '', [['BTN', 'raise', 2.5]]), 'exploit');
+  ok(a1.best === 'fold', 'BB 72o gegen BTN-Open: Fold (ist ' + a1.bestLabel + ')');
+  const a2 = coachOn(spot('CO', '7d2c', '', []), 'exploit');
+  ok(a2.best === 'fold', 'CO 72o ungeöffnet: Fold (ist ' + a2.bestLabel + ')');
+  const a3 = coachOn(spot('UTG', 'TsTd', '', []), 'exploit');
+  ok(a3.best === 'raise', 'UTG TT: Open-Raise statt Limp (ist ' + a3.bestLabel + ')');
+  const a4 = coachOn(spot('BTN', '8d6c', '', [['H', 'raise', 2.5], ['SB', 'raise', 8.25]]), 'exploit');
+  ok(a4.best !== 'raise', 'BTN 86o gegen SB-3-Bet: keine 4-Bet (ist ' + a4.bestLabel + ')');
+  const g = PT.coach.grade(a4, { type: 'fold' }); ok(g.score >= 80, 'Fold mit 86o gegen 3-Bet ist kein Fehler (' + g.grade + ')');
+  const a5 = coachOn(spot('BTN', 'AsAd', '', [['CO', 'raise', 2.5]]), 'exploit');
+  ok(a5.best === 'raise', 'AA gegen Open: 3-Bet');
+  const gr = PT.coach.grade(a1, { type: 'raise', amount: 900 }); ok(gr.score <= 45, '3-Bet mit 72o höchstens „Ungenau“ (' + gr.grade + ')');
+  ok(a1.label === 'Faustregel, kein Solver-Ergebnis', 'Hinweis „Faustregel, kein Solver-Ergebnis“');
+  ok(!/ 0 % aller/.test(coachOn(spot('UTG', 'AsAd', '', [])).text.einsteiger), 'kein „besten 0 %“');
+});
+
+test('Regression Prüfer C: keine Multiway-Bluffs ohne Rückhalt, keine Flop-Overbets, Live-Tipp ≤ 5.000 Simulationen', () => {
+  const h = spot('BB', 'Ks8c', '6s4c3sQd2h', [['HJ', 'raise', 2.5], ['CO', 'call'], ['BTN', 'call'], ['H', 'call']]);
+  const a = coachOn(h, 'exploit'); ok(a.best === 'check', 'Ks8c auf 6s4c3s gegen 3 Gegner: Check (ist ' + a.bestLabel + ')');
+  const f = coachOn(spot('BTN', 'KhKd', 'Tc4cJs', [['H', 'raise', 2.5], ['BB', 'call'], ['BB', 'check']]), 'exploit');
+  ok(!f.actions.some(x => /Overbet/.test(x.label)), 'keine Overbet-Kandidaten auf dem Flop');
+  const deep = PT.coach.analyze({ view: PT.bots.publicView(h, 0), opps: {}, settings: { mode: 'exploit', level: 'tief' }, seed: 1, live: true });
+  ok(deep.iters <= 5000, 'Live-Tipp auch bei Stufe „Tiefenanalyse“ ≤ 5.000 (' + deep.iters + ')');
+});
+
+test('Regression Prüfer C: Importprüfung Lerndaten (XSS, __proto__, Ziele, Momentaufnahmen), Reparatur beim Laden', () => {
+  const L = PT.training.newLearning();
+  const x1 = JSON.parse(JSON.stringify(L)); x1.quiz.correct = '<img src=x onerror=alert(1)>'; ok(!!PT.training.validLearning(x1), 'Quizzähler als Text abgelehnt');
+  const x2 = JSON.parse(JSON.stringify(L)); x2.decisions.push({ ts: 1, s: 50, l: 0, st: 0, p: 'BB', t: [], c: [], o: '__proto__', tr: null, g: 'Gut', se: 1 }); ok(!!PT.training.validLearning(x2), '__proto__ als Gegnertyp abgelehnt');
+  const x3 = JSON.parse(JSON.stringify(L)); x3.goals = {}; ok(!!PT.training.validLearning(x3), 'Ziele als Objekt abgelehnt');
+  const x4 = JSON.parse(JSON.stringify(L)); x4.decisions.push({ ts: 1, s: 50, l: 0, st: 0, p: 'BB', t: ['<b>'], c: [], o: null, tr: null, g: 'Gut', se: 1 }); ok(!!PT.training.validLearning(x4), 'Tag mit HTML abgelehnt');
+  const rep = PT.training.repairLearning(x2); ok(rep && rep.removed === 1 && !PT.training.validLearning(rep.learning), 'Reparatur entfernt nur den ungültigen Eintrag');
+  let threw = false; try { PT.training.profile(rep.learning); } catch (e) { threw = true; } ok(!threw, 'Profil nach Reparatur berechenbar');
+  const sim = require('./sim-lib.js'); let n = 0, bad = 0;
+  sim.run({ hands: 40, seed: 12, onHand: (h) => { if (!h.p[0].cards.length) return; const view = PT.bots.publicView(h, 0); n++; if (PT.training.validView(view, h.N) !== true) bad++; } });
+  eq(bad, 0, 'öffentliche Sicht besteht die Prüfung (' + n + ' Hände)');
+});
+
 const out = { app: PT.VERSION, date: new Date().toISOString(), node: process.version, quick: QUICK, passed: results.filter(r => r.ok).length, failed: results.filter(r => !r.ok).length, tests: results };
 fs.mkdirSync(path.join(__dirname, 'results'), { recursive: true });
 fs.writeFileSync(path.join(__dirname, 'results', QUICK ? 'unit-quick.json' : 'unit.json'), JSON.stringify(out, null, 1));
