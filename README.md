@@ -51,12 +51,16 @@ node tools/build.js            # sw.js und dist/PokerTrainer_2.0.html erzeugen
 node tests/run.js --quick      # schnelle Testsuite (läuft auch in GitHub Actions)
 node tests/run.js              # vollständige Testsuite
 node tests/long.js             # Langläufer: 7-Karten-Enumeration, 1.000.000 Hände, Kalibrierung, Coach-Vergleich
+npm ci --prefix tests          # Testwerkzeuge (Playwright, axe-core) – nur für Tests, nicht Teil der Website
+node tests/e2e.js http://127.0.0.1:8767/   # Browsertests inkl. Start/Wiederherstellung, Sicherheit, Barrierefreiheit
+node tools/check-version.js    # gleiche Version in Website, PWA, Offline-Datei, CHANGELOG, Doku
+node tools/check-build.js      # Build zweimal: gleiche Ausgabe, eingecheckter Stand aktuell
 python3 -m http.server 8000    # lokal ansehen: http://localhost:8000/
 ```
 
 Bei jeder Änderung: Version in `assets/js/engine/core.js` (`PT.VERSION`) und in den `?v=`-Parametern von `index.html` und `assets/js/worker.js` anheben, `node tools/build.js` ausführen, Tests laufen lassen, `CHANGELOG.md` ergänzen. Ein Push auf `main` startet Tests und Veröffentlichung (GitHub Actions → GitHub Pages).
 
-Hinweise für KI-Assistenten und neue Mitwirkende: [AGENTS.md](AGENTS.md). Ausführlich: [docs/ARCHITEKTUR.md](docs/ARCHITEKTUR.md), [docs/METHODEN.md](docs/METHODEN.md), [docs/TESTBERICHT.md](docs/TESTBERICHT.md), [docs/AUDIT.md](docs/AUDIT.md), [docs/QUELLEN.md](docs/QUELLEN.md).
+Hinweise für KI-Assistenten und neue Mitwirkende: [AGENTS.md](AGENTS.md). Ausführlich: [docs/ARCHITEKTUR.md](docs/ARCHITEKTUR.md), [docs/METHODEN.md](docs/METHODEN.md), [docs/TESTBERICHT.md](docs/TESTBERICHT.md), [docs/AUDIT.md](docs/AUDIT.md), [docs/QUELLEN.md](docs/QUELLEN.md), [docs/BARRIEREFREIHEIT.md](docs/BARRIEREFREIHEIT.md), [docs/BENCHMARK_EXPORT.md](docs/BENCHMARK_EXPORT.md).
 
 ## Grenzen
 

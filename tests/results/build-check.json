@@ -1,0 +1,15 @@
+{
+ "ok": true,
+ "before": {
+  "sw.js": "cca888451463637a38738e0e8d477eda829a767e2ddb62d95729db1c44d094d5",
+  "dist/PokerTrainer_2.0.html": "40d916824a270cd599d4f589afacf3f3aab0c60b8d6ceef90dae139eec39b863"
+ },
+ "first": {
+  "sw.js": "cca888451463637a38738e0e8d477eda829a767e2ddb62d95729db1c44d094d5",
+  "dist/PokerTrainer_2.0.html": "40d916824a270cd599d4f589afacf3f3aab0c60b8d6ceef90dae139eec39b863"
+ },
+ "second": {
+  "sw.js": "cca888451463637a38738e0e8d477eda829a767e2ddb62d95729db1c44d094d5",
+  "dist/PokerTrainer_2.0.html": "40d916824a270cd599d4f589afacf3f3aab0c60b8d6ceef90dae139eec39b863"
+ }
+}

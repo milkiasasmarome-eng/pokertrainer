@@ -100,7 +100,7 @@ var HALF_LIFE = 100, LAMBDA = Math.pow(0.5, 1 / HALF_LIFE), H_MAX = 1 / (1 - LAM
 /* Erkennung veränderter Spielweise: gewichteter Zwei-Anteile-Test „Kurzzeit gegen älter“ (siehe docs/GEGNERGEDAECHTNIS.md).
    Alarm ab |z| ≥ Z_ON, Ende unter Z_OFF (Hysterese), nur mit Mindestzahl gewichteter Gelegenheiten. */
 var CHANGE_KEYS = ['vpip', 'pfr', 'threeBet', 'cbetFlop', 'foldToCbet', 'afq', 'wtsd'];
-var CHANGE = { zOn: 3.75, zOff: 2.0, minRecent: 15, minOld: 40, minExp: 5, cc: 0.5 };
+var CHANGE = { zOn: 3.75, zOff: 2.0, minRecent: 15, minOld: 40, minExp: 5, cc: 0.5, deffAfq: 1.6 };  // deffAfq: gemessen 1,11 (Prüfer A) plus Sicherheitszuschlag für Korrelation in der Hand
 function rnd(x) { return Math.round(x * RND) / RND; }
 /** Nur für Messreihen (tests/gedaechtnis-eval.js): Parameter des Gedächtnisses setzen. Die App nutzt die Standardwerte. */
 function setMemoryParams(o) {
@@ -125,9 +125,11 @@ function addRecent(rc, I) {
  * nd = [n, d] Langzeit, rc = [a, s1, s2] Kurzzeit. Varianz der Differenz unter H0 (gleicher Anteil p) exakt:
  * p(1−p)·Σ(wᵢ/s1 − (1−wᵢ)/w2)² = p(1−p)·[s2/s1² − 2(s1−s2)/(s1·w2) + (d − 2s1 + s2)/w2²].
  */
-function changeTest(nd, rc) {
+function changeTest(nd, rc, key) {
   if (!nd || !rc) return null;
-  var n = nd[0], d = nd[1], a = Math.min(rc[0], n), s1 = Math.min(rc[1], d), s2 = Math.min(rc[2], s1), w2 = d - s1;
+  var n = nd[0], d = nd[1];
+  if (!isFinite(n) || !isFinite(d) || !isFinite(rc[0]) || !isFinite(rc[1]) || !isFinite(rc[2])) return null;
+  var a = Math.min(rc[0], n), s1 = Math.min(rc[1], d), s2 = Math.min(rc[2], s1), w2 = d - s1;
   if (!(s1 >= CHANGE.minRecent) || !(w2 >= CHANGE.minOld) || !(s2 > 0)) return null;
   var pr = Math.min(1, Math.max(0, a / s1)), po = Math.min(1, Math.max(0, (n - a) / w2)), pb = (n + 0.5) / (d + 1), neff = s1 * s1 / s2;
   // Mindestzahl erwarteter Treffer und Nicht-Treffer im Kurzzeitfenster (Normalnäherung erst dann brauchbar)
@@ -135,13 +137,16 @@ function changeTest(nd, rc) {
   var V = s2 / (s1 * s1) - 2 * (s1 - s2) / (s1 * w2) + (d - 2 * s1 + s2) / (w2 * w2);
   if (!(V > 1e-12)) return null;
   var diff = pr - po, adj = Math.max(0, Math.abs(diff) - CHANGE.cc / neff);  // Stetigkeitskorrektur
-  var z = (diff < 0 ? -adj : adj) / Math.sqrt(pb * (1 - pb) * V);
+  // AFq zählt mehrere, korrelierte Gelegenheiten je Hand: Varianz mit gemessenem Design-Effekt erhöhen (Prüfer A, Befund 9)
+  var deff = key === 'afq' ? CHANGE.deffAfq : 1;
+  var z = (diff < 0 ? -adj : adj) / Math.sqrt(pb * (1 - pb) * V * deff);
+  if (!isFinite(z)) return null;
   return { z: z, recent: pr, older: po, long: n / d, s1: s1, neff: neff, old: w2 };
 }
 /** Hysterese der Veränderungsanzeige; r.chg[k] = [Hand des Alarmbeginns, Richtung ±1] */
 function updateChange(r) {
   for (var i = 0; i < CHANGE_KEYS.length; i++) {
-    var k = CHANGE_KEYS[i], t = changeTest(r.stats[k], r.recent.stats[k]), cur = r.chg[k];
+    var k = CHANGE_KEYS[i], t = changeTest(r.stats[k], r.recent.stats[k], k), cur = r.chg[k];
     if (cur && (!t || Math.abs(t.z) < CHANGE.zOff || (t.z > 0 ? 1 : -1) !== cur[1])) { delete r.chg[k]; cur = null; }
     if (!cur && t && Math.abs(t.z) >= CHANGE.zOn) r.chg[k] = [r.hands, t.z > 0 ? 1 : -1];
   }
@@ -236,7 +241,7 @@ function changeProfile(r) {
   var o = { detected: false, keys: [], tested: CHANGE_KEYS.slice(), z: {}, params: { halfLife: HALF_LIFE, zOn: CHANGE.zOn, zOff: CHANGE.zOff, minRecent: CHANGE.minRecent, minOld: CHANGE.minOld } };
   if (!r || !r.recent) return o;
   CHANGE_KEYS.forEach(function (k) {
-    var t = changeTest(r.stats[k], r.recent.stats[k]); o.z[k] = t ? t.z : null;
+    var t = changeTest(r.stats[k], r.recent.stats[k], k); o.z[k] = t ? t.z : null;
     var c = r.chg && r.chg[k];
     if (c && t) o.keys.push({ key: k, label: STAT_LABEL[k], dir: c[1], z: t.z, recent: t.recent, older: t.older, long: t.long, since: c[0], ago: r.hands - c[0], neff: t.neff });
   });
@@ -250,7 +255,7 @@ function changeProfile(r) {
 function effectiveStats(r) {
   var st = r ? r.stats : emptyStats(), out = {}, changed = [], ch = r && r.recent && r.chg ? r.chg : {};
   STATS.forEach(function (k) {
-    if (Object.prototype.hasOwnProperty.call(ch, k) && changeTest(st[k], r.recent.stats[k])) { out[k] = [r.recent.stats[k][0], r.recent.stats[k][1]]; changed.push(k); }  // wie profile().est
+    if (Object.prototype.hasOwnProperty.call(ch, k) && changeTest(st[k], r.recent.stats[k], k)) { out[k] = [r.recent.stats[k][0], r.recent.stats[k][1]]; changed.push(k); }  // wie profile().est
     else out[k] = [st[k][0], st[k][1]];
   });
   return { stats: out, changed: changed, hands: r ? (changed.length ? Math.min(r.hands, Math.round(r.recent.h)) : r.hands) : 0, longHands: r ? r.hands : 0 };

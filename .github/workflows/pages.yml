@@ -1,8 +1,19 @@
 name: Tests und Veröffentlichung
 
-# Ablauf: Bei jedem Push auf main laufen Build-Prüfung und Regressionstests.
-# Nur wenn sie bestehen, wird die Website auf den Branch gh-pages kopiert; GitHub Pages veröffentlicht von dort.
+# Ablauf bei jedem Push auf main:
+#   1. Pflichttests (parallel):
+#      - "Schnelltests": Build zweimal (reproduzierbar, eingecheckter Stand aktuell), Versionsgleichheit
+#        (Website, PWA/sw.js, Offline-Datei, CHANGELOG, Doku), schnelle Regressionstests, vollständige Suite mit
+#        mathematischen Referenztests (alle 2.598.960 Fünf-Karten-Hände, Equity gegen exakte Enumeration, Pot-Aufteilung).
+#      - "Browsertests": Playwright mit Chromium (Grundfunktionen, Start/Wiederherstellung, Sicherheit/Daten,
+#        Barrierefreiheit mit axe-core, Netzwerkprotokoll ohne fremde Verbindungen).
+#   2. Nur wenn beide bestehen: Kopie der Website auf den Branch gh-pages; GitHub Pages veröffentlicht von dort.
+#   3. Danach Live-Smoke-Test der veröffentlichten Seite (Version im HTML, sw.js, Offline-Datei, Start im Browser),
+#      mit Wartezeit und Wiederholung, bis GitHub Pages den neuen Stand ausliefert.
+# Testergebnisse (JSON, Screenshots, Accessibility-Bäume) werden als Workflow-Artefakte hochgeladen.
+# Langläufer (1 Mio. Hände, Kalibrierung) laufen getrennt: .github/workflows/langlauf.yml (workflow_dispatch).
 # Frühere Versionen bleiben in der Historie von main und gh-pages erhalten (Wiederherstellung: git revert auf main).
+# Die Website-Adresse bleibt https://milkiasasmarome-eng.github.io/pokertrainer/.
 
 on:
   push:
@@ -18,24 +29,77 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  test:
-    name: Regressionstests
+  unit:
+    name: Schnelltests, Build, Version, Mathematik
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
         with:
           node-version: 22
-      - name: Build prüfen (Service Worker aktuell)
+      - name: Build reproduzierbar und eingecheckt (zweimal bauen, gleiche Ausgabe)
+        run: node tools/check-build.js
+      - name: Eingecheckter Build entspricht den Quellen
         run: |
-          node tools/build.js
-          git diff --exit-code -- sw.js || (echo "sw.js ist nicht aktuell: node tools/build.js ausführen und committen" && exit 1)
-      - name: Schnelle Testsuite
+          git diff --exit-code -- sw.js dist/ || (echo "sw.js oder dist/ ist nicht aktuell - node tools/build.js ausführen und committen" && exit 1)
+      - name: Versionsgleichheit (Website, PWA, Offline-Datei, CHANGELOG, Doku)
+        run: node tools/check-version.js
+      - name: Schnelle Regressionstests
         run: node tests/run.js --quick
+      - name: Vollständige Suite mit mathematischen Referenztests
+        run: node tests/run.js
+      - name: Testergebnisse hochladen
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-ergebnisse
+          path: |
+            tests/results/unit.json
+            tests/results/unit-quick.json
+            tests/results/build-check.json
+          if-no-files-found: warn
+
+  e2e:
+    name: Browsertests (Playwright, Chromium)
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: Testwerkzeuge installieren (nur tests/, nicht Teil der Website)
+        run: npm ci --prefix tests --no-audit --no-fund
+      - name: Chromium installieren
+        run: tests/node_modules/.bin/playwright install --with-deps chromium
+      - name: Website lokal ausliefern
+        run: |
+          python3 -m http.server 8767 --bind 127.0.0.1 > /tmp/server.log 2>&1 &
+          for i in $(seq 1 20); do curl -sf http://127.0.0.1:8767/index.html > /dev/null && break; sleep 0.5; done
+      - name: Browsertests
+        env:
+          CHROME: ''
+        run: node tests/e2e.js http://127.0.0.1:8767/
+      - name: Browsertests Gegnergedächtnis (Migration auf Datenformat 3)
+        env:
+          PLAYWRIGHT: ${{ github.workspace }}/tests/node_modules/playwright
+        run: node tests/e2e-gedaechtnis.js http://127.0.0.1:8767/
+      - name: Testergebnisse und Screenshots hochladen
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browsertest-ergebnisse
+          path: |
+            tests/results/e2e.json
+            tests/results/e2e-gedaechtnis.json
+            tests/results/screens/
+            tests/results/a11y/
+          if-no-files-found: warn
 
   deploy:
     name: Website veröffentlichen
-    needs: test
+    needs: [unit, e2e]
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
@@ -62,3 +126,29 @@ jobs:
           if git diff --cached --quiet; then echo "Keine Änderungen an der Website."; exit 0; fi
           git commit -m "Website aus ${GITHUB_SHA::7} (Tests bestanden)"
           git push origin gh-pages
+
+  smoke:
+    name: Live-Smoke-Test der veröffentlichten Seite
+    needs: deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: Testwerkzeuge und Chromium
+        run: |
+          npm ci --prefix tests --no-audit --no-fund
+          tests/node_modules/.bin/playwright install --with-deps chromium
+      - name: Live-Seite prüfen (bis zu 20 Versuche im Abstand von 30 s)
+        env:
+          CHROME: ''
+        run: node tests/smoke-live.js https://milkiasasmarome-eng.github.io/pokertrainer/ --versuche=20 --warten=30 --browser
+      - name: Ergebnis hochladen
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: live-smoke
+          path: tests/results/smoke-live.json
+          if-no-files-found: warn

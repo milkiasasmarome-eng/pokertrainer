@@ -179,3 +179,10 @@ Gewählt: H = 100, z_on = 3,75 – unter den untersuchten Kombinationen diejenig
 - Die Bots passen sich an die Langzeitwerte des Helden an, nicht an sein Kurzzeitgedächtnis; ein Held, der mitten in der Session umstellt, wird entsprechend langsamer ausgenutzt.
 - Postflop-Werte mit wenigen Gelegenheiten (C-Bet Flop, Fold gegen C-Bet) werden bei H = 100 kaum geprüft; eine längere Halbwertszeit nur für diese Werte wäre möglich, verlängert aber die Verzögerung.
 - Die Fehlalarmrate ist per Simulation kalibriert, nicht analytisch beschränkt.
+
+## Nachprüfung (Prüfagent A, 2.1)
+
+- **AFq:** zählt mehrere, korrelierte Gelegenheiten je Hand (Design-Effekt an echten Bots gemessen 1,11). Der Veränderungstest rechnet für AFq deshalb mit einer um den Faktor 1,6 erhöhten Varianz (gemessener Wert plus Zuschlag für Korrelation in der Hand).
+- **Import mit anderer Halbwertszeit:** Dabei werden nicht nur das Kurzzeitgedächtnis, sondern auch die Kartenzähler (sd/hid) und die Veränderungsmarken (chg) zurückgesetzt. Der Kopfwert der Halbwertszeit ist wie alle Kopfwerte nicht durch die Prüfsumme geschützt; die Prüfsumme schützt die Gegnerdatensätze.
+- **Fehlalarm über lange Zeiträume:** Das Ziel gilt je 1.000 Hände. Über 5.000 Hände eines Gegners ergibt sich hochgerechnet eine Fehlalarmwahrscheinlichkeit von etwa 15–18 % (nicht gemessen).
+- **NaN-Zähler** (nur bei beschädigten Daten im Speicher möglich): der Test liefert kein Ergebnis statt z = NaN.

@@ -17,7 +17,7 @@ Lokal in deinem Browser gespeichert werden (IndexedDB, Rückfall localStorage):
 
 Diese Speicherung ist für die Funktion der App erforderlich (§ 25 Abs. 2 Nr. 2 TDDDG). Die Daten verlassen deinen Browser nur, wenn du sie selbst exportierst. Jeder Browser und jedes Gerät hat eigene, getrennte Daten.
 
-Du kannst alle Daten jederzeit unter **Einstellungen → Daten** exportieren, importieren und vollständig löschen. Zusätzlich kannst du sie über die Browser-Einstellungen („Websitedaten löschen“) entfernen.
+Du kannst alle Daten jederzeit unter **Einstellungen → Daten** exportieren, importieren und vollständig löschen. Exportdateien (Sicherung, Rohsicherung, Handhistorie, Benchmark-Export) entstehen nur auf deinen Wunsch als Datei auf deinem Gerät; der Benchmark-Export enthält keine Zeitstempel, Sitzungskennungen oder Einstellungen außer Analysemodus und -stufe. Zusätzlich kannst du sie über die Browser-Einstellungen („Websitedaten löschen“) entfernen.
 
 ## 2. Was die App nicht tut
 

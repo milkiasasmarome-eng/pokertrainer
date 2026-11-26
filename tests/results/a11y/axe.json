@@ -1,0 +1,264 @@
+{
+ "axe": "4.14.1",
+ "tags": [
+  "wcag2a",
+  "wcag2aa",
+  "wcag21a",
+  "wcag21aa",
+  "wcag22aa"
+ ],
+ "runs": [
+  {
+   "label": "light Tisch mit Tipp",
+   "wcag": [],
+   "bestPractice": [],
+   "incomplete": [
+    {
+     "id": "color-contrast",
+     "n": 13
+    }
+   ]
+  },
+  {
+   "label": "light Tisch, Modus nachher",
+   "wcag": [],
+   "bestPractice": [],
+   "incomplete": [
+    {
+     "id": "color-contrast",
+     "n": 11
+    }
+   ]
+  },
+  {
+   "label": "light Gegnerdialog",
+   "wcag": [],
+   "bestPractice": [],
+   "incomplete": [
+    {
+     "id": "label-content-name-mismatch",
+     "n": 1
+    },
+    {
+     "id": "skip-link",
+     "n": 1
+    }
+   ]
+  },
+  {
+   "label": "light training",
+   "wcag": [],
+   "bestPractice": [],
+   "incomplete": []
+  },
+  {
+   "label": "light analyse",
+   "wcag": [],
+   "bestPractice": [],
+   "incomplete": [
+    {
+     "id": "color-contrast",
+     "n": 31
+    },
+    {
+     "id": "label-content-name-mismatch",
+     "n": 5
+    }
+   ]
+  },
+  {
+   "label": "light ranges",
+   "wcag": [],
+   "bestPractice": [],
+   "incomplete": [
+    {
+     "id": "color-contrast",
+     "n": 2
+    },
+    {
+     "id": "label-content-name-mismatch",
+     "n": 1
+    }
+   ]
+  },
+  {
+   "label": "light gegner",
+   "wcag": [],
+   "bestPractice": [],
+   "incomplete": [
+    {
+     "id": "color-contrast",
+     "n": 2
+    }
+   ]
+  },
+  {
+   "label": "light fortschritt",
+   "wcag": [],
+   "bestPractice": [],
+   "incomplete": []
+  },
+  {
+   "label": "light einstellungen",
+   "wcag": [],
+   "bestPractice": [],
+   "incomplete": []
+  },
+  {
+   "label": "light hilfe",
+   "wcag": [],
+   "bestPractice": [],
+   "incomplete": []
+  },
+  {
+   "label": "light Fehleranzeige (Startüberwachung)",
+   "wcag": [],
+   "bestPractice": [],
+   "incomplete": [
+    {
+     "id": "skip-link",
+     "n": 1
+    }
+   ]
+  },
+  {
+   "label": "dark Tisch mit Tipp",
+   "wcag": [],
+   "bestPractice": [],
+   "incomplete": [
+    {
+     "id": "color-contrast",
+     "n": 11
+    }
+   ]
+  },
+  {
+   "label": "dark Tisch, Modus nachher",
+   "wcag": [],
+   "bestPractice": [],
+   "incomplete": [
+    {
+     "id": "color-contrast",
+     "n": 10
+    }
+   ]
+  },
+  {
+   "label": "dark Gegnerdialog",
+   "wcag": [],
+   "bestPractice": [],
+   "incomplete": [
+    {
+     "id": "label-content-name-mismatch",
+     "n": 1
+    },
+    {
+     "id": "skip-link",
+     "n": 1
+    }
+   ]
+  },
+  {
+   "label": "dark training",
+   "wcag": [],
+   "bestPractice": [],
+   "incomplete": []
+  },
+  {
+   "label": "dark analyse",
+   "wcag": [],
+   "bestPractice": [],
+   "incomplete": [
+    {
+     "id": "color-contrast",
+     "n": 31
+    },
+    {
+     "id": "label-content-name-mismatch",
+     "n": 5
+    }
+   ]
+  },
+  {
+   "label": "dark ranges",
+   "wcag": [],
+   "bestPractice": [],
+   "incomplete": [
+    {
+     "id": "color-contrast",
+     "n": 2
+    },
+    {
+     "id": "label-content-name-mismatch",
+     "n": 1
+    }
+   ]
+  },
+  {
+   "label": "dark gegner",
+   "wcag": [],
+   "bestPractice": [],
+   "incomplete": [
+    {
+     "id": "color-contrast",
+     "n": 2
+    }
+   ]
+  },
+  {
+   "label": "dark fortschritt",
+   "wcag": [],
+   "bestPractice": [],
+   "incomplete": []
+  },
+  {
+   "label": "dark einstellungen",
+   "wcag": [],
+   "bestPractice": [],
+   "incomplete": []
+  },
+  {
+   "label": "dark hilfe",
+   "wcag": [],
+   "bestPractice": [],
+   "incomplete": []
+  },
+  {
+   "label": "dark Fehleranzeige (Startüberwachung)",
+   "wcag": [],
+   "bestPractice": [],
+   "incomplete": [
+    {
+     "id": "skip-link",
+     "n": 1
+    }
+   ]
+  },
+  {
+   "label": "Smartphone Tisch mit Hinweis (abgesicherter Start)",
+   "wcag": [],
+   "bestPractice": [],
+   "incomplete": [
+    {
+     "id": "color-contrast",
+     "n": 11
+    }
+   ]
+  },
+  {
+   "label": "Smartphone Range-Matrix",
+   "wcag": [],
+   "bestPractice": [],
+   "incomplete": [
+    {
+     "id": "color-contrast",
+     "n": 7
+    },
+    {
+     "id": "label-content-name-mismatch",
+     "n": 1
+    }
+   ]
+  }
+ ]
+}

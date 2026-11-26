@@ -1,0 +1,30 @@
+name: Langläufer (manuell)
+
+# Getrennt von der Veröffentlichung: 1.000.000 simulierte Hände, Kalibrierung der Gegner, Coach-Vergleich (~10–20 min).
+# Start: GitHub → Actions → „Langläufer (manuell)“ → Run workflow.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  long:
+    name: Langläufer
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: Langläufer
+        run: node tests/long.js
+      - name: Ergebnis hochladen
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: langlauf-ergebnisse
+          path: tests/results/long.json
+          if-no-files-found: warn

@@ -2,6 +2,26 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [Unveröffentlicht] – Zweig ui-2.1
+
+### Neu
+- **Startüberwachung und Wiederherstellung** (`assets/js/recovery.js`): Zeitlimits für alle Startschritte (IndexedDB, Tab-Sperre, Daten lesen, Migrationssuche), Hinweis nach 4 s, Fehleranzeige spätestens nach 20 s oder sofort bei fehlender Programmdatei. Wiederherstellung: „Neu laden“, abgesicherter Start (`?start=sicher`, gespeicherte Daten bleiben unberührt), Rohsicherung aller lokalen Daten und erst danach „Lokale Daten zurücksetzen“. Rohsicherungen lassen sich importieren; gültige Einträge werden übernommen.
+- **Benchmark-Export** je Entscheidung (Handhistorie → „Export Benchmark“, Schema-Version 1, `docs/BENCHMARK_EXPORT.md`): Spielzustand zum Entscheidungszeitpunkt getrennt von späteren Informationen, Coach-Empfehlung, Alternativen mit EV und Unsicherheit, Equity, Modus, Stufe, Modell- und Softwareversion, Rechenaufwand, Seeds; ohne persönliche Daten, byteweise reproduzierbar, nachrechenbar.
+- **Mehrere Fenster:** Browser-Tab und installierte App teilen die Daten; das zweite Fenster ist schreibgeschützt (auch Import, Löschen, neue Session) und bietet „Hier weiterspielen“ an, sobald das erste geschlossen ist.
+- Einstellung „Tastenkürzel aus einem Zeichen“ (abschaltbar, WCAG 2.1.4); Einstellungen → Daten → „Rohsicherung exportieren“.
+- **CI:** Build-Reproduzierbarkeit (`tools/check-build.js`), Versionsgleichheit (`tools/check-version.js`), vollständige Suite, Browsertests mit Chromium und axe-core in GitHub Actions als Pflicht vor der Veröffentlichung, Live-Smoke-Test danach (`tests/smoke-live.js`), Testartefakte, Langläufer getrennt (`langlauf.yml`).
+
+### Behoben
+- Trainer blieb dauerhaft bei „Lade …“, wenn IndexedDB nicht antwortete oder blockiert war.
+- Import einer vollständigen Sicherung mit Lerndaten brach mit einem Skriptfehler ab (Dialog blieb bei „Sichere aktuelle Daten …“).
+- Die Markierung „Migration aus Entwurf 2 erledigt“ ging beim ersten Speichern verloren; die alte Datenbank wurde bei jedem Start erneut gesichert.
+- Beschädigte Einträge im lokalen Speicher (Einstellungen außerhalb des Wertebereichs, laufende Hand, Hände) konnten Folgefehler auslösen oder ungeprüft angezeigt werden; Handdatensätze werden jetzt vor jeder Anzeige, Sicherung und jedem Export streng geprüft (endliche Zahlen, Wertebereiche, bekannte Felder).
+- Barrierefreiheit (axe-core, WCAG 2.2 AA, hell und dunkel: 0 Verstöße, Bericht `docs/BARRIEREFREIHEIT.md`): Range-Matrix ohne ungültige Grid-Rollen und mit Pfeiltasten, Kontraste (gefoldete Plätze, Abzeichen, Dunkelmodus), Namen von Schaltern und Plätzen, Fokusfalle und inerter Hintergrund in Dialogen, nicht abgeschnittener Fokus, sparsame Live-Ansagen statt Ansage bei jeder Bot-Aktion, Zielgrößen ≥ 24 px, reduzierte Bewegung auch beim Scrollen.
+
+### Geändert
+- Importdateien werden im Web Worker geprüft (23 MB in 1,3 s, längste Blockade der Oberfläche 0,3 s); Dateien über 60 MB werden vor dem Lesen abgelehnt.
+- Antwortet IndexedDB nicht oder ist sie fehlerhaft, arbeitet der Trainer nur im Arbeitsspeicher (statt in einem zweiten, abweichenden Speicher im localStorage); „Jetzt aktualisieren“ schließt vorher alle Schreibvorgänge ab.
+
 ## [2.0.1] – 2026-11-26
 
 Korrekturen nach zwei unabhängigen Prüfungen (Details: `docs/AUDIT.md`).

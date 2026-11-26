@@ -7,7 +7,7 @@ var $ = function (id) { return document.getElementById(id); }, esc = U.esc, fmt 
 var N = 6, MAX_HANDS = 3000;
 var SPEED = { langsam: 1100, normal: 650, schnell: 220, sehrschnell: 70 };
 var DEFAULTS = { tipMode: 'vorher', smode: 'exploit', depth: 'auto', level: 'standard', speech: true, speechRate: 1.05, speed: 'normal', theme: 'auto',
-  advanced: false, fourColor: false, recordHands: true, seed: null };
+  advanced: false, fourColor: false, recordHands: true, seed: null, shortcuts: true };
 var S = PTUI.S = {
   settings: U.deepClone(DEFAULTS), db: PT.stats.newDb(), heroRec: PT.stats.newRecord('hero', 'Du'), table: null, hand: null, finished: null,
   learning: PT.training.newLearning(), prof: null, decisionNo: 0, cur: null, analysis: null, verdict: null, handDecisions: [], pendingGrades: [],
@@ -16,8 +16,22 @@ var S = PTUI.S = {
 };
 
 // ---------- Hilfen ----------
+function reducedMotion() { try { return !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { return false; } }
+function scrollMode() { return reducedMotion() ? 'auto' : 'smooth'; }
+/** Kurze Statusmeldung für Screenreader (eine Live-Region, sparsam: Zug des Spielers, Tipp, Handende, Moduswechsel). */
+function announce(text) {
+  var el = $('announce'); if (!el || !text) return;
+  clearTimeout(announce._t); el.textContent = '';
+  announce._t = setTimeout(function () { el.textContent = text; }, 40);
+}
+function withTimeout(p, ms, what) {
+  return new Promise(function (res, rej) {
+    var t = setTimeout(function () { var e = new Error(what + ': keine Antwort nach ' + Math.round(ms / 1000) + ' s'); e.kind = 'timeout'; rej(e); }, ms);
+    Promise.resolve(p).then(function (v) { clearTimeout(t); res(v); }, function (e) { clearTimeout(t); rej(e); });
+  });
+}
 function today() { var d = new Date(); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
-function dateTxt(ts) { if (!ts) return '–'; try { return new Date(ts).toLocaleString('de-DE', { dateStyle: 'short', timeStyle: 'short' }); } catch (e) { return new Date(ts).toISOString(); } }
+function dateTxt(ts) { if (typeof ts !== 'number' || !isFinite(ts) || ts <= 0 || ts > 8.64e15) return '–'; try { return new Date(ts).toLocaleString('de-DE', { dateStyle: 'short', timeStyle: 'short' }); } catch (e) { return new Date(ts).toISOString(); } }
 function plain(u) { return (u / 100).toFixed(2).replace('.', ','); }
 function bbTxt(u, d) { return U.fmtBB(u, S.table ? S.table.cfg.bb : 100, d); }
 function cardHtml(c, cls) {
@@ -49,26 +63,69 @@ function termify(textEsc) {
   return out;
 }
 function openModal(title, html) {
-  S.modalReturn = document.activeElement;
-  $('modalH').textContent = title; $('modalBody').innerHTML = html; $('modal').hidden = false; $('modalX').focus();
+  // Rückgabeziel nur beim ersten Öffnen merken (Folgedialoge, z. B. „Import bestätigen“ → „Import abgelehnt“, behalten das ursprüngliche Ziel)
+  if ($('modal').hidden) S.modalReturn = document.activeElement;
+  $('modalH').textContent = title; $('modalBody').innerHTML = html; $('modal').hidden = false;
+  $('app').setAttribute('inert', '');  // Hintergrund für Tastatur und Screenreader sperren
+  $('modalX').focus();
 }
 function closeModal() {
   $('modal').hidden = true; $('modalBody').innerHTML = '';
-  if (S.modalReturn && S.modalReturn.focus && document.body.contains(S.modalReturn)) S.modalReturn.focus();
+  $('app').removeAttribute('inert');
+  var r = S.modalReturn; S.modalReturn = null;
+  if (r && r.focus && document.body.contains(r)) r.focus();
+  else { var m = $('main'); if (m) m.focus({ preventScroll: true }); }
+}
+/** Fokusfalle: Tab und Umschalt+Tab bleiben im offenen Dialog. */
+function trapFocus(e, root) {
+  var f = Array.prototype.filter.call(root.querySelectorAll('a[href], button, input, select, textarea, summary, [tabindex]:not([tabindex="-1"])'), function (x) { return !x.disabled && !x.hidden && x.offsetParent !== null; });
+  if (!f.length) { e.preventDefault(); return; }
+  var i = f.indexOf(document.activeElement);
+  if (e.shiftKey && i <= 0) { e.preventDefault(); f[f.length - 1].focus(); }
+  else if (!e.shiftKey && (i === f.length - 1 || i < 0)) { e.preventDefault(); f[0].focus(); }
 }
 function showTerm(k) { openModal(k, '<p>' + esc(PT.glossary[k] || '') + '</p><p class="muted">Weitere Begriffe im Bereich Hilfe → Glossar.</p>'); }
 function showMsg(text, info) { var m = $('msg'); m.textContent = text || ''; m.classList.toggle('info', !!info); }
 
 // ---------- Analyse-Dienst (Web Worker, Rückfall Hauptthread) ----------
+/** Neuer Worker mit der Engine (Website: worker.js, Einzeldatei: Blob aus dem eingebetteten Code). Wirft, wenn nicht möglich. */
+function newWorker() {
+  if (typeof Worker !== 'function') throw new Error('Web Worker nicht verfügbar');
+  if (window.PT_INLINE) {
+    var src = document.getElementById('pt-engine').textContent + '\n' + document.getElementById('pt-worker').textContent;
+    return new Worker(URL.createObjectURL(new Blob([src], { type: 'text/javascript' })));
+  }
+  return new Worker('assets/js/worker.js?v=' + PT.VERSION);
+}
+function runJob(kind, input) {
+  if (kind === 'analyze') return PT.coach.analyze(input);
+  if (kind === 'import') return PT.dataport.parseImport(input.text);
+  throw new Error('unbekannter Auftrag');
+}
+/**
+ * Einmaliger Auftrag in einem eigenen Worker (z. B. Prüfung großer Importdateien), damit die Oberfläche bedienbar bleibt.
+ * Rückfall: Hauptthread. Zeitlimit: Ablehnung, der Worker wird beendet.
+ */
+function offThread(kind, input, timeoutMs) {
+  return new Promise(function (res, rej) {
+    var w = null, done = false, t = null;
+    function fin(ok, v) { if (done) return; done = true; clearTimeout(t); try { if (w) w.terminate(); } catch (e) { /* leer */ } (ok ? res : rej)(v); }
+    function main() { setTimeout(function () { try { fin(true, runJob(kind, input)); } catch (e) { fin(false, e); } }, 20); }
+    try { w = newWorker(); } catch (e) { w = null; }
+    if (!w) { main(); return; }
+    w.onmessage = function (e) { var m = e.data || {}; if (m.ok) fin(true, m.result); else fin(false, new Error(m.error || 'Fehler')); };
+    w.onerror = function (e) { if (e && e.preventDefault) e.preventDefault(); try { w.terminate(); } catch (x) { /* leer */ } w = null; if (!done) main(); };
+    t = setTimeout(function () { fin(false, new Error('Zeitüberschreitung')); }, timeoutMs || 60000);
+    try { w.postMessage({ id: 1, kind: kind, input: input }); } catch (e) { try { w.terminate(); } catch (x) { /* leer */ } w = null; main(); }
+  });
+}
+PTUI.offThread = offThread;
 var Analyzer = (function () {
   var worker = null, seq = 0, pending = {}, broken = false, busySince = 0;
   function spawn() {
     if (broken) return null;
     try {
-      if (window.PT_INLINE) {
-        var src = document.getElementById('pt-engine').textContent + '\n' + document.getElementById('pt-worker').textContent;
-        worker = new Worker(URL.createObjectURL(new Blob([src], { type: 'text/javascript' })));
-      } else worker = new Worker('assets/js/worker.js?v=' + PT.VERSION);
+      worker = newWorker();
       worker.onmessage = function (e) {
         var m = e.data || {}, p = pending[m.id]; if (!p) return;
         delete pending[m.id]; busySince = 0;
@@ -88,7 +145,7 @@ var Analyzer = (function () {
   function runMain(kind, input) {
     return new Promise(function (res, rej) {
       setTimeout(function () {
-        try { res(kind === 'analyze' ? PT.coach.analyze(input) : null); } catch (e) { rej(e); }
+        try { res(runJob(kind, input)); } catch (e) { rej(e); }
       }, 0);
     });
   }
@@ -111,21 +168,42 @@ var Analyzer = (function () {
     try { if (worker) worker.terminate(); } catch (e) { /* leer */ }
     worker = null;
   }
-  return { run: run, cancel: cancel, mode: function () { return broken ? 'Hauptthread' : (worker || !broken ? 'Web Worker' : 'Hauptthread'); } };
+  return { run: run, cancel: cancel, mode: function () { return broken || typeof Worker !== 'function' ? 'Hauptthread' : 'Web Worker'; } };
 })();
 PTUI.Analyzer = Analyzer;
 
 // ---------- Speicherung ----------
-function metaRecord() { return { k: 'state', v: 2, table: S.table, settings: S.settings, heroRec: S.heroRec, app: PT.VERSION, saved: Date.now() }; }
+// Offene Schreibvorgänge werden gesammelt, damit ein Update oder Neuladen erst nach dem Speichern erfolgt.
+var pendingWrites = [];
+function track(p) {
+  var q = Promise.resolve(p).catch(function () { /* Fehler meldet storageError */ });
+  pendingWrites.push(q);
+  q.then(function () { var i = pendingWrites.indexOf(q); if (i >= 0) pendingWrites.splice(i, 1); });
+  return p;
+}
+/** Wartet, bis alle Schreibvorgänge (auch die Speicherung der zuletzt beendeten Hand) abgeschlossen sind – höchstens ms. */
+function flushWrites(ms) {
+  var all = Promise.all(pendingWrites.slice());
+  return withTimeout(all, ms || 4000, 'Speichern').catch(function () { /* nach Zeitlimit trotzdem fortfahren */ });
+}
+PTUI.flushWrites = flushWrites; PTUI.track = track;
+/** Darf dieser Tab dauerhaft schreiben (Import, Löschen, neue Session)? */
+function canWrite(quiet) {
+  if (S.readonly) { if (!quiet) toast('Dieser Tab ist schreibgeschützt, weil der PokerTrainer in einem anderen Tab oder App-Fenster geöffnet ist.', 5000); return false; }
+  return true;
+}
+PTUI.canWrite = canWrite;
+// legacyDone bleibt bei jedem Speichern erhalten (sonst würde die Migration aus Entwurf 2 bei jedem Start erneut angeboten)
+function metaRecord() { var m = { k: 'state', v: 2, table: S.table, settings: S.settings, heroRec: S.heroRec, app: PT.VERSION, saved: Date.now() }; if (S.legacyDone) m.legacyDone = true; return m; }
 function persist(changedIds) {
   if (S.readonly) return Promise.resolve();
   var seen = {}, recs = (changedIds || []).filter(function (id) { if (seen[id] || !S.db.opps[id]) return false; seen[id] = 1; return true; }).map(function (id) { return S.db.opps[id]; });
   var p = [Store.put('meta', JSON.parse(JSON.stringify(metaRecord())))];
   if (recs.length) p.push(Store.put('opps', recs));
-  return Promise.all(p).then(function () { if (S.notes.storageErr) { S.notes.storageErr = ''; renderNotice(); } }, storageError);
+  return track(Promise.all(p).then(function () { if (S.notes.storageErr) { S.notes.storageErr = ''; renderNotice(); } }, storageError));
 }
-function persistAllOpps() { return Store.put('opps', PT.stats.dbList(S.db), true).catch(storageError); }
-function persistLearning() { if (S.readonly) return Promise.resolve(); return Store.put('learn', { k: 'learning', v: S.learning }).catch(storageError); }
+function persistAllOpps() { if (S.readonly) return Promise.resolve(); return track(Store.put('opps', PT.stats.dbList(S.db), true).catch(storageError)); }
+function persistLearning() { if (S.readonly) return Promise.resolve(); return track(Store.put('learn', { k: 'learning', v: S.learning }).catch(storageError)); }
 function storageError(e) { S.notes.storageErr = 'Speichern fehlgeschlagen (' + ((e && (e.name || e.message)) || e) + '). Bitte eine Sicherung exportieren.'; renderNotice(); }
 PTUI.persist = persist; PTUI.persistAllOpps = persistAllOpps; PTUI.persistLearning = persistLearning;
 
@@ -181,14 +259,18 @@ function renderSeats() {
     var d = seatData(i), me = i === 0, act = h && !h.done && !S.reveal && h.toAct === i;
     var win = h && h.done && !S.reveal && h.result && h.result.net[i] > 0;
     var cls = 'seat s' + i + (me ? ' me' : '') + (d.folded ? ' folded' : '') + (act ? ' act' : '') + (win ? ' win' : '');
-    var inner = '<span class="r1"><span class="nm">' + esc(d.name) + '</span><span class="pos">' + esc(d.pos || '') + '</span></span>' +
-      '<span class="stk">' + fmt(d.stack) + ' <small>' + U.fmtBB(d.stack, bb) + '</small>' + (d.allIn && h && !h.done ? ' · All-in' : '') + '</span>';
+    // Sichtbare Kurzform; für Screenreader ausgeschriebene Fassung mit Kommas (Name, Position, Stack, Werte)
+    var inner = '<span class="r1"><span class="nm">' + esc(d.name) + '</span><span class="sr">, </span><span class="pos">' + esc(d.pos || '') + '</span></span>' +
+      '<span class="stk"><span class="sr">, Stack </span>' + fmt(d.stack) + ' <small>' + U.fmtBB(d.stack, bb) + '</small>' + (d.allIn && h && !h.done ? ' · All-in' : '') + '</span>';
     if (me) {
       inner += '<span class="hud2">' + (S.training ? 'Training: ' + esc(S.training.name) : 'Session ' + U.fmtSigned(S.table ? PT.session.heroNet(S.table) : 0)) + '</span>';
     } else {
       var pr = PT.stats.profile(S.db.opps[d.id]);
-      inner += '<span class="hud" title="VPIP / PFR / 3-Bet in Prozent">' + '<span class="lbl">VPIP/PFR/3B </span><b>' + v(pr.vpip) + '/' + v(pr.pfr) + '/' + v(pr.threeBet) + '</b></span>' +
-        '<span class="hud2">' + pr.hands + ' H<span class="bel"> · ' + esc(pr.bel) + '</span> · <span class="typ">' + esc(pr.typ) + '</span></span>';
+      var pv = function (x) { return x == null ? 'unbekannt' : x + ' %'; };
+      inner += '<span class="hud" title="VPIP / PFR / 3-Bet in Prozent"><span aria-hidden="true"><span class="lbl">VPIP/PFR/3B </span><b>' + v(pr.vpip) + '/' + v(pr.pfr) + '/' + v(pr.threeBet) + '</b></span>' +
+        '<span class="sr">, VPIP ' + pv(pr.vpip) + ', PFR ' + pv(pr.pfr) + ', 3-Bet ' + pv(pr.threeBet) + '</span></span>' +
+        '<span class="hud2"><span aria-hidden="true">' + pr.hands + ' H<span class="bel"> · ' + esc(pr.bel) + '</span> · <span class="typ">' + esc(pr.typ) + '</span></span>' +
+        '<span class="sr">, ' + pr.hands + (pr.hands === 1 ? ' Hand' : ' Hände') + ', Belastbarkeit ' + esc(pr.bel) + ', Spielertyp ' + esc(pr.typ) + '</span></span>';
     }
     var hole = '';
     if (h && d.cards.length && !d.folded) {
@@ -198,13 +280,16 @@ function renderSeats() {
     }
     var marks = '';
     if (h) {
-      if (h.button === i) marks += '<span class="chipmark d" title="Dealer-Button">D</span>';
-      else if (h.sbSeat() === i) marks += '<span class="chipmark sb" title="Small Blind">SB</span>';
-      else if (h.bbSeat() === i) marks += '<span class="chipmark bb" title="Big Blind">BB</span>';
+      // Marker nur visuell: Position steht bereits im Namen des Platzes; Dealer-Button für Screenreader ausgeschrieben
+      if (h.button === i) marks += '<span class="chipmark d" title="Dealer-Button" aria-hidden="true">D</span><span class="sr">, Dealer-Button</span>';
+      else if (h.sbSeat() === i) marks += '<span class="chipmark sb" title="Small Blind" aria-hidden="true">SB</span>';
+      else if (h.bbSeat() === i) marks += '<span class="chipmark bb" title="Big Blind" aria-hidden="true">BB</span>';
     }
-    var extra = '<span class="hole">' + hole + '</span>' + marks + '<span class="lastact">' + esc(lastActLabel(h, i)) + '</span>';
-    var plate = me ? '<div class="plate" aria-label="Dein Platz">' + inner + extra + '</div>'
-      : '<button class="plate" type="button" data-opp="' + esc(d.id) + '" aria-label="Werte von ' + esc(d.name) + ' anzeigen">' + inner + extra + '</button>';
+    var la = lastActLabel(h, i);
+    var extra = '<span class="hole">' + (hole ? '<span class="sr">, </span>' + hole : '') + '</span>' + marks + (la ? '<span class="sr">, letzte Aktion </span>' : '') + '<span class="lastact">' + esc(la) + '</span>';
+    // Zugänglicher Name = sichtbarer Inhalt (Name, Position, Stack, Werte, Karten); der Zusatz nennt die Funktion
+    var plate = me ? '<div class="plate" role="group" aria-label="Dein Platz">' + inner + extra + '</div>'
+      : '<button class="plate" type="button" data-opp="' + esc(d.id) + '">' + inner + extra + '<span class="sr">' + (act ? ', ist am Zug' : '') + ', alle Werte anzeigen</span></button>';
     if (h && !h.done && d.bet > 0) bets += '<span class="bet b' + i + '">' + fmt(d.bet) + '</span>';
     html += '<div class="' + cls + '">' + plate + '</div>';
   }
@@ -258,17 +343,17 @@ function renderControls() {
   var h = S.hand, my = myTurn(), L = my ? h.legal(0) : null;
   $('bFold').disabled = !my || !L.canFold;
   $('bCall').disabled = !my;
-  $('bCall').innerHTML = (L ? (L.canCheck ? 'Check' : 'Call ' + fmt(L.callAmt) + (L.callAmt >= L.stack ? ' (All-in)' : '')) : 'Check / Call') + '<kbd>C</kbd>';
+  $('bCall').innerHTML = (L ? (L.canCheck ? 'Check' : 'Call ' + fmt(L.callAmt) + (L.callAmt >= L.stack ? ' (All-in)' : '')) : 'Check / Call') + '<kbd aria-hidden="true">C</kbd>';
   var canR = my && L.canRaise;
   $('bRaise').disabled = !canR;
-  $('bRaise').innerHTML = (L && L.isBet ? 'Bet' : 'Raise auf') + '<kbd>R</kbd>';
+  $('bRaise').innerHTML = (L && L.isBet ? 'Bet' : 'Raise auf') + '<kbd aria-hidden="true">R</kbd>';
   $('amt').disabled = !canR; $('slider').disabled = !canR;
   var pre = canR ? presetList(h, L) : [];
-  $('presets').innerHTML = pre.map(function (p, i) { return '<button class="preset" type="button" data-amt="' + p[1] + '" title="' + fmt(p[1]) + '">' + esc(p[0]) + (i < 9 ? '<kbd>' + (i + 1) + '</kbd>' : '') + '</button>'; }).join('');
+  $('presets').innerHTML = pre.map(function (p, i) { return '<button class="preset" type="button" data-amt="' + p[1] + '" title="' + fmt(p[1]) + '"' + (i < 9 ? ' aria-keyshortcuts="' + (i + 1) + '"' : '') + '>' + esc(p[0]) + '<span class="sr"> (' + fmt(p[1]) + ')</span>' + (i < 9 ? '<kbd aria-hidden="true">' + (i + 1) + '</kbd>' : '') + '</button>'; }).join('');
   var nextOk = S.ready && !S.readonly && (!h || h.done) && !S.reveal;
   $('bNext').disabled = !nextOk;
   $('bNext').classList.toggle('pulse', nextOk);
-  $('bNext').innerHTML = (S.training ? 'Nächste Situation' : 'Nächste Hand') + '<kbd>N</kbd>';
+  $('bNext').innerHTML = (S.training ? 'Nächste Situation' : 'Nächste Hand') + '<kbd aria-hidden="true">N</kbd>';
 }
 function renderStatus() {
   var t = S.table; if (!t) { $('status').textContent = 'Lade …'; return; }
@@ -292,7 +377,7 @@ function factsHtml(a) {
 }
 function evTableHtml(a) {
   var maxAbs = Math.max.apply(null, a.actions.map(function (x) { return Math.abs(x.ev); }).concat([1]));
-  return '<table class="evtable"><thead><tr><th>Aktion</th><th>EV</th><th>±</th><th></th></tr></thead><tbody>' + a.actions.slice(0, 9).map(function (x, i) {
+  return '<table class="evtable"><caption class="sr">EV je Aktion in Big Blinds, mit Unsicherheit</caption><thead><tr><th scope="col">Aktion</th><th scope="col">EV</th><th scope="col"><span aria-hidden="true">±</span><span class="sr">Unsicherheit</span></th><th scope="col"><span class="sr">Balken</span></th></tr></thead><tbody>' + a.actions.slice(0, 9).map(function (x, i) {
     var w = Math.round(50 * Math.abs(x.ev) / maxAbs);
     return '<tr' + (i === 0 ? ' class="best"' : '') + '><td>' + esc(x.label) + '</td><td>' + bbTxt(x.ev, 2) + '</td><td>' + bbTxt(x.u, 1) + '</td><td><span class="evbar' + (x.ev < 0 ? ' neg' : '') + '" style="width:' + w + 'px"></span></td></tr>';
   }).join('') + '</tbody></table>';
@@ -300,7 +385,7 @@ function evTableHtml(a) {
 function depthOf() { var d = S.settings.depth; if (d !== 'auto') return d; return S.prof ? S.prof.level : 'einsteiger'; }
 function analysisHtml(a, full) {
   var d = depthOf(), txt = a.text[d] || a.text.fortgeschritten, adv = S.settings.advanced;
-  var html = '<div class="tipaction">' + esc(a.bestLabel) + ' <span class="badge c-' + a.classification + '">' + esc(a.classText) + '</span></div>' +
+  var html = '<div class="tipaction"><span class="sr">Empfehlung: </span>' + esc(a.bestLabel) + ' <span class="badge c-' + esc(a.classification) + '">' + esc(a.classText) + '</span></div>' +
     '<p class="tipreason">' + termify(esc(txt)) + '</p>' + factsHtml(a);
   if (a.sizeNote) html += '<div class="small">' + esc(a.sizeNote) + '</div>';
   if (a.learnerHint && d === 'einsteiger') html += '<div class="small">' + esc(a.learnerHint) + '</div>';
@@ -384,9 +469,9 @@ function renderTrainbar() {
 }
 function render() {
   document.body.classList.toggle('simple', !S.settings.advanced);
-  $('bView').textContent = S.settings.advanced ? 'Erweitert' : 'Einfach';
+  // Feste Beschriftung, Zustand über aria-pressed (WCAG 2.5.3: sichtbarer Text = zugänglicher Name)
+  $('bView').textContent = 'Erweitert';
   $('bView').setAttribute('aria-pressed', String(!!S.settings.advanced));
-  $('bView').setAttribute('aria-label', 'Erweiterte Ansicht');  // feste Bezeichnung, Zustand über aria-pressed
   document.body.classList.toggle('four', !!S.settings.fourColor);
   renderStatus(); renderSeats(); renderCenter(); renderControls(); renderTip(); renderLog(); renderNotice(); renderTrainbar();
 }
@@ -454,6 +539,22 @@ function learnerSummary() {
   Object.keys(S.prof.spots).forEach(function (k) { var s = S.prof.spots[k]; spots[k] = { n: s.n, score: s.smooth == null ? 70 : s.smooth }; });
   return { spots: spots, cats: S.prof.cats };
 }
+// Zusammenfassung für Screenreader, wenn der Spieler am Zug ist: Straße, Board, Aktionen seit der eigenen letzten Aktion, Betrag
+function cardName(c) { return PT.cards.RANK_NAME_DE[c >> 2] + ' ' + PT.cards.SUIT_NAME[c & 3]; }
+function turnText(h) {
+  var L = h.legal(0), parts = [], i = h.actions.length - 1, acts = [];
+  for (; i >= 0; i--) { var x = h.actions[i]; if (x.s === 0 && x.t !== 'sb' && x.t !== 'bb') break; }
+  for (var k = i + 1; k < h.actions.length; k++) {
+    var a = h.actions[k]; if (a.s === 0) continue;
+    acts.push(h.p[a.s].name + ' ' + ({ sb: 'Small Blind', bb: 'Big Blind', check: 'Check', call: 'Call', fold: 'Fold', bet: 'Bet ' + fmt(a.a), raise: 'Raise auf ' + fmt(a.a) }[a.t] || a.t) + (a.ai ? ' All-in' : ''));
+  }
+  parts.push('Du bist am Zug, ' + PT.rules.STREET_NAME[h.street] + '.');
+  if (h.street === 0 && i < 0) parts.push('Deine Karten: ' + h.p[0].cards.map(cardName).join(', ') + '.');
+  if (h.street > 0) parts.push('Board: ' + h.board.map(cardName).join(', ') + '.');
+  if (acts.length) parts.push(acts.slice(-8).join(', ') + '.');
+  parts.push('Pot ' + fmt(h.potTotal()) + '. ' + (L.canCheck ? 'Check möglich.' : 'Call ' + fmt(L.callAmt) + '.'));
+  return parts.join(' ');
+}
 function coachSettings(level) { return { mode: S.settings.smode, level: level || S.settings.level, depth: depthOf() }; }
 function onHeroTurn() {
   var h = S.hand;
@@ -466,13 +567,19 @@ function onHeroTurn() {
   var L = h.legal(0);
   $('amt').value = L.canRaise ? plain(L.minTo) : ''; $('slider').value = 0;
   render();
+  S.turnSaid = { t: Date.now(), text: turnText(h) };
+  announce(S.turnSaid.text);
   var cur = S.cur;
   cur.promise = Analyzer.run('analyze', { view: view, opps: opps, settings: coachSettings(), seed: seed, learner: learnerSummary(), live: true }).then(function (a) {
     cur.analysis = a;
     if (S.cur === cur) {
       S.analysis = { decision: id, a: a };
       a.shownAfter = Math.round(performance.now() - cur.t0);
-      if (S.settings.tipMode === 'vorher' && myTurn()) { renderTip(); speakText(a.text.speech); }
+      if (S.settings.tipMode === 'vorher' && myTurn()) {
+        renderTip(); speakText(a.text.speech);
+        var tipSay = 'Coach empfiehlt ' + a.bestLabel + ' (' + a.classText + ').';
+        announce(S.turnSaid && Date.now() - S.turnSaid.t < 1500 ? S.turnSaid.text + ' ' + tipSay : tipSay);
+      }
     }
     return a;
   }, function (e) { if (e && e.message === 'abgebrochen') return null; if (S.cur === cur) showMsg('Analyse fehlgeschlagen: ' + (e && e.message)); return null; });
@@ -513,14 +620,13 @@ function gradeDecision(cur, chosen) {
     var isAggr = chosen.type === 'bet' || chosen.type === 'raise';
     var has = !isAggr || a.actions.some(function (x) { return (x.type === 'bet' || x.type === 'raise') && x.amount === chosen.amount; });
     if (has) return a;
-    return Analyzer.run('analyze', { view: cur.view, opps: cur.opps, settings: coachSettings(), seed: cur.seed, extra: [chosen.amount], learner: learnerSummary(), live: true }).catch(function () { return a; });
+    return Analyzer.run('analyze', { view: cur.view, opps: cur.opps, settings: coachSettings(), seed: cur.seed, extra: [chosen.amount], learner: learnerSummary(), live: true })
+      .then(function (a2) { a2._extra = [chosen.amount]; return a2; }, function () { return a; });
   }).then(function (a) {
     if (!a) return null;
     var g = PT.coach.grade(a, chosen);
-    var dec = { i: cur.idx, st: cur.street, chosen: chosen.label, rec: a.bestLabel, cls: a.classification, eq: Math.round(a.equity.eq * 1000) / 1000,
-      need: a.potOdds ? Math.round(a.potOdds.need * 1000) / 1000 : null, grade: g.grade, score: g.score, loss: Math.round(g.loss), cats: g.cats, tags: a.spotTags,
-      evs: a.actions.slice(0, 6).map(function (x) { return { l: x.label, ev: Math.round(x.ev), u: Math.round(x.u) }; }), mode: a.mode, pos: cur.pos,
-      snap: { view: cur.view, opps: cur.opps, seed: cur.seed } };
+    // Entscheidungsdatensatz inkl. Benchmark-Zusatzfeldern (Versionen, Stufe, Rechenaufwand, Alternativen mit EV und Unsicherheit)
+    var dec = PT.training.makeDecision({ idx: cur.idx, street: cur.street, pos: cur.pos, view: cur.view, opps: cur.opps, seed: cur.seed, chosen: chosen, extra: a._extra || null }, a, g);
     S.handDecisions.push(dec);
     var opp = a.opponents.filter(function (o) { return o.name === a.mainOpp; })[0];
     var tagsD = a.spotTags.slice(); if (cur.training && cur.target && tagsD.indexOf(cur.training) < 0 && PT.coach.SPOTS[cur.training]) tagsD.push(cur.training);  // Zielentscheidung zählt für ihre Trainingskategorie
@@ -537,7 +643,7 @@ function gradeDecision(cur, chosen) {
     S.verdict = { g: g, a: a, decision: cur.id };
     if (S.cur === cur || !myTurn()) {
       renderTip();
-      if (S.settings.tipMode === 'nachher') speakText(g.grade + '. ' + (g.score >= 80 ? '' : 'Empfohlen war ' + g.bestLabel + '.'));
+      if (S.settings.tipMode === 'nachher') { speakText(g.grade + '. ' + (g.score >= 80 ? '' : 'Empfohlen war ' + g.bestLabel + '.')); announce('Bewertung: ' + g.grade + '. ' + (g.score >= 80 ? '' : 'Empfohlen war ' + g.bestLabel + '.')); }
     }
     return dec;
   }).catch(function (e) { console.warn('Bewertung fehlgeschlagen', e); return null; });
@@ -556,19 +662,19 @@ function handEnded() {
   }
   var decisionsP = Promise.all(S.pendingGrades);
   var types = {}; h.p.forEach(function (q) { if (!q.isHero) types[q.id] = PT.stats.playerType(S.db.opps[q.id]); });
-  decisionsP.then(function () {
+  track(decisionsP.then(function () {
     if (!S.settings.recordHands || S.readonly) return;
-    var rec = PT.training.makeHandRecord(h, { session: S.sessionId, seed: S.table.seed, decisions: S.handDecisions.slice(), types: types, training: h.isTraining ? S.training && S.training.curCat : null });
+    var rec = PT.training.makeHandRecord(h, { session: S.sessionId, seed: S.table.seed, tseed: h.isTraining && S.training ? S.training.seed : null, decisions: S.handDecisions.slice(), types: types, training: h.isTraining ? S.training && S.training.curCat : null });
     return Store.addHand(rec, MAX_HANDS).catch(storageError);
-  });
+  }));
   if (notes.length) showMsg(notes.join(' '), true);
   if (h.result.showdown && !h.p[0].folded && S.shownBoard < h.board.length) { S.reveal = true; revealStep(); }
-  else { S.reveal = false; render(); }
+  else { S.reveal = false; render(); announce('Hand beendet. ' + resultText(h)); }
 }
 function revealStep() {
   var h = S.hand;
   S.shownBoard = S.shownBoard < 3 ? 3 : S.shownBoard + 1;
-  if (S.shownBoard >= h.board.length) { S.shownBoard = h.board.length; S.reveal = false; render(); return; }
+  if (S.shownBoard >= h.board.length) { S.shownBoard = h.board.length; S.reveal = false; render(); announce('Hand beendet. ' + resultText(h)); return; }
   render();
   S.timer = setTimeout(revealStep, Math.max(450, (SPEED[S.settings.speed] || 650) + 200));
 }
@@ -602,6 +708,7 @@ function setMode(mode) {
   S.settings.tipMode = mode;
   if (S.speech) S.speech.stop();
   renderTip();
+  announce('Tipp-Modus: ' + mode);
   if (mode === 'vorher' && myTurn() && S.analysis && S.cur && S.analysis.decision === S.cur.id) speakText(S.analysis.a.text.speech);
   persist([]);
 }
@@ -663,7 +770,10 @@ function bind() {
     if (act === 'trainstop') PTUI.stopTraining();
     else if (act === 'showrange' && S.analysis) { PTUI.lastRange = S.analysis.a; location.hash = '#ranges/aktuell'; }
     else if (act === 'legacydl' && S.legacyBackup) download(S.legacyBackup.name, S.legacyBackup.text);
-    else if (act === 'swupdate' && S.swWaiting) { if (S.hand && !S.hand.done) { toast('Bitte erst die laufende Hand beenden, dann aktualisieren.'); return; } S.swUpdating = true; S.swWaiting.postMessage({ type: 'SKIP_WAITING' }); }
+    else if (act === 'swupdate') swUpdate();
+    else if (act === 'reload' || act === 'takeover') { if (S.hand && !S.hand.done && !S.readonly) toast('Die laufende Hand wird nach dem Neuladen exakt fortgesetzt.'); persist([]); flushWrites(3000).then(function () { location.reload(); }); }
+    else if (act === 'normalstart') { if (window.PTRecovery) window.PTRecovery.go(window.PTRecovery.normalUrl()); else location.href = location.pathname + '#tisch'; }
+    else if (act === 'rawbackup' && window.PTRecovery) window.PTRecovery.backup().then(function (n) { toast('Rohsicherung „' + n + '“ heruntergeladen.'); }, function (e2) { toast('Rohsicherung fehlgeschlagen: ' + ((e2 && e2.message) || e2)); });
     else if (act === 'dismiss') { S.notes[b.getAttribute('data-note')] = ''; renderNotice(); }
   });
   window.addEventListener('hashchange', route);
@@ -671,13 +781,16 @@ function bind() {
     var g = e.target && e.target.closest && e.target.closest('[data-goto]');
     if (!g) return;
     e.preventDefault();
-    var t = $(g.getAttribute('data-goto')); if (t) { t.scrollIntoView({ behavior: 'smooth', block: 'start' }); t.setAttribute('tabindex', '-1'); t.focus({ preventScroll: true }); }
+    var t = $(g.getAttribute('data-goto')); if (t) { t.scrollIntoView({ behavior: scrollMode(), block: 'start' }); t.setAttribute('tabindex', '-1'); t.focus({ preventScroll: true }); }
   });
   document.addEventListener('keydown', function (e) {
     if (e.ctrlKey || e.metaKey || e.altKey) return;
-    if (!$('modal').hidden) { if (e.key === 'Escape') closeModal(); return; }
+    if ($('recovery')) return;
+    if (!$('modal').hidden) { if (e.key === 'Escape') { e.preventDefault(); closeModal(); } else if (e.key === 'Tab') trapFocus(e, $('modal')); return; }
     if (S.view !== 'tisch') return;
     var tg = e.target, tag = tg && tg.tagName;
+    // WCAG 2.1.4: Kürzel aus einem Zeichen lassen sich abschalten (Einstellungen → Tastenkürzel); Enter im Betragsfeld bleibt
+    if (!S.settings.shortcuts && !(tg && tg.id === 'amt' && e.key === 'Enter')) return;
     if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') { if (tg.id === 'amt' && e.key === 'Enter') { e.preventDefault(); onRaise(); } return; }
     // Auf fokussierten Links, Schaltflächen und aufklappbaren Elementen gelten Enter und Leertaste dem Element selbst
     if ((e.key === 'Enter' || e.key === ' ') && tg && tg.closest && tg.closest('a, button, summary, [role="button"], [role="tab"], [tabindex="0"]')) return;
@@ -696,25 +809,49 @@ function bind() {
 }
 
 // ---------- Mehrere Tabs ----------
-function acquireLock() {
+// Nur ein Tab (oder ein App-Fenster der installierten PWA) schreibt. Weitere sind schreibgeschützt und
+// bieten an, zu übernehmen, sobald der schreibende Tab geschlossen wurde.
+function bcCheck() {
   return new Promise(function (res) {
+    try {
+      var bc = new BroadcastChannel('pokertrainer'), other = false;
+      bc.onmessage = function (ev) { if (ev.data === 'wer' && !S.readonly) bc.postMessage('ich'); else if (ev.data === 'ich') other = true; };
+      S.bc = bc;
+      bc.postMessage('wer');
+      setTimeout(function () { res(!other); }, 250);
+    } catch (e2) { res(true); }
+  });
+}
+/** Schreibender Tab beantwortet Anfragen neuer Tabs auch über BroadcastChannel (Rückfall ohne Web Locks). */
+function bcRespond() {
+  try { if (S.bc) return; var bc = S.bc = new BroadcastChannel('pokertrainer'); bc.onmessage = function (ev) { if (ev.data === 'wer' && !S.readonly) bc.postMessage('ich'); }; } catch (e) { /* leer */ }
+}
+function acquireLock() {
+  if (Store.safeMode()) return Promise.resolve(true);  // abgesicherter Start schreibt nie in den Speicher
+  var p = new Promise(function (res) {
     try {
       if (navigator.locks && navigator.locks.request) {
         navigator.locks.request('pokertrainer-tisch', { ifAvailable: true }, function (lock) {
           if (!lock) { res(false); return Promise.resolve(); }
           res(true); return new Promise(function () { /* bis zum Schließen halten */ });
-        }).catch(function () { res(true); });
+        }).catch(function () { bcCheck().then(res); });
         return;
       }
     } catch (e) { /* leer */ }
-    // Rückfall: BroadcastChannel-Abfrage
-    try {
-      var bc = new BroadcastChannel('pokertrainer'), other = false;
-      bc.onmessage = function (ev) { if (ev.data === 'wer') bc.postMessage('ich'); else if (ev.data === 'ich') other = true; };
-      bc.postMessage('wer');
-      setTimeout(function () { res(!other); }, 250);
-    } catch (e2) { res(true); }
+    bcCheck().then(res);
   });
+  // Antwortet die Web-Locks-Schnittstelle nicht, entscheidet die BroadcastChannel-Abfrage
+  return withTimeout(p, 3000, 'Tab-Sperre').catch(function () { return bcCheck(); });
+}
+function waitForTakeover() {
+  try {
+    if (!(navigator.locks && navigator.locks.request)) return;
+    navigator.locks.request('pokertrainer-tisch', function () {
+      S.notes.readonly = { html: '<span>Der andere Tab bzw. das App-Fenster mit dem PokerTrainer wurde geschlossen.</span><button class="btn" type="button" data-act="takeover">Hier weiterspielen (neu laden)</button>' };
+      renderNotice(); announce('Der andere Tab wurde geschlossen. Du kannst hier weiterspielen.');
+      return new Promise(function () { /* Sperre halten, bis neu geladen wird */ });
+    }).catch(function () { /* leer */ });
+  } catch (e) { /* leer */ }
 }
 
 // ---------- Service Worker ----------
@@ -729,17 +866,75 @@ function registerSW() {
       var nw = reg.installing; if (!nw) return;
       nw.addEventListener('statechange', function () { if (nw.state === 'installed' && navigator.serviceWorker.controller) waiting(nw); });
     });
+    PTUI.swReg = reg;
     setInterval(function () { reg.update().catch(function () {}); }, 60 * 60 * 1000);
   }).catch(function () { /* offline-fähig nur ohne SW */ });
   var reloading = false;
-  // Neu laden nur bei einem vom Nutzer bestätigten Update, nicht bei der ersten Installation
-  navigator.serviceWorker.addEventListener('controllerchange', function () { if (reloading || !S.swUpdating) return; reloading = true; persist([]).then(function () { location.reload(); }); });
+  // Neu laden nur bei einem vom Nutzer bestätigten Update, nicht bei der ersten Installation.
+  // Vorher werden alle offenen Schreibvorgänge abgeschlossen (laufende Hand: Update ist bis Handende gesperrt).
+  navigator.serviceWorker.addEventListener('controllerchange', function () {
+    if (reloading) return;
+    if (!S.swUpdating) {
+      // Update wurde in einem anderen Tab bestätigt: dieser Tab läuft noch mit dem alten Programmstand
+      if (S.hadController) { S.notes.update = { html: '<span>In einem anderen Tab wurde eine neue Version aktiviert. Bitte nach dieser Hand neu laden.</span><button class="btn" type="button" data-act="reload">Neu laden</button>' }; renderNotice(); }
+      S.hadController = true;
+      return;
+    }
+    reloading = true; persist([]); flushWrites(4000).then(function () { location.reload(); });
+  });
+}
+function swUpdate() {
+  if (!S.swWaiting) return;
+  if (S.hand && !S.hand.done) { toast('Bitte erst die laufende Hand beenden, dann aktualisieren.'); return; }
+  if (S.reveal) { toast('Einen Moment – die Hand wird noch aufgedeckt.'); return; }
+  S.swUpdating = true;
+  S.notes.update = { html: '<span>Daten werden gespeichert, dann wird aktualisiert …</span>' }; renderNotice();
+  persist([]); flushWrites(4000).then(function () { S.swWaiting.postMessage({ type: 'SKIP_WAITING' }); });
 }
 
 // ---------- Start ----------
 function legacyBackupText(list) {
   var body = JSON.stringify(list);
   return '{"format":"PokerTrainer-DB","version":1,"exported":' + JSON.stringify(new Date().toISOString()) + ',"count":' + list.length + ',"checksum":"' + U.fnv1a(body) + '","opponents":' + body + '}\n';
+}
+var ENUMS = { tipMode: ['vorher', 'nachher', 'aus'], smode: ['exploit', 'gto'], depth: ['auto', 'einsteiger', 'fortgeschritten', 'experte'], level: ['schnell', 'standard', 'praezise', 'tief'],
+  speed: Object.keys(SPEED), theme: ['auto', 'light', 'dark'] };
+/** Gespeicherte Einstellung nur übernehmen, wenn Typ und Wertebereich stimmen (beschädigte Daten führen sonst zu Folgefehlern). */
+function validSetting(k, x) {
+  if (k === 'seed') return x === null || U.isInt(x, 0, 4294967295);
+  if (ENUMS[k]) return ENUMS[k].indexOf(x) >= 0;
+  if (k === 'speechRate') return typeof x === 'number' && x >= 0.5 && x <= 2;
+  return typeof x === typeof DEFAULTS[k];
+}
+/** Prüft die gespeicherte laufende Hand, bevor sie nachgespielt wird. */
+function validRunning(run) {
+  var isInt = U.isInt;
+  if (!run || typeof run !== 'object' || Array.isArray(run)) return false;
+  if (!isInt(run.no, 1, 1e12) || !isInt(run.button, 0, N - 1) || typeof run.ts !== 'number' || !isFinite(run.ts) || !Array.isArray(run.acts) || run.acts.length > 400) return false;
+  return run.acts.every(function (x) {
+    return x && typeof x === 'object' && isInt(x.s, 0, N - 1) && ['fold', 'check', 'call', 'bet', 'raise', 'allin'].indexOf(x.type) >= 0 && (x.amount == null || isInt(x.amount, 0, 1e12));
+  });
+}
+function storageNotice() {
+  var inf = Store.info(), dl = '<button class="btn" type="button" data-act="rawbackup">Rohsicherung herunterladen</button>';
+  if (inf.reason === 'safe') return { html: '<span><b>Abgesicherter Start:</b> Gespeicherte Daten werden weder geladen noch verändert. Gespielt wird nur in dieser Sitzung.</span><span><button class="btn" type="button" data-act="normalstart">Normal starten</button> ' + dl + '</span>' };
+  if (inf.reason === 'timeout' || inf.reason === 'blocked' || inf.reason === 'error') return { html: '<span>Der lokale Speicher (IndexedDB) ist gerade nicht nutzbar (' + esc(inf.detail || inf.reason) + '). Diese Sitzung wird nicht gespeichert; vorhandene Daten bleiben unverändert.</span><span><button class="btn" type="button" data-act="reload">Neu laden</button> ' + dl + '</span>' };
+  if (inf.reason === 'fallback') return 'IndexedDB ist in diesem Browser nicht verfügbar (z. B. im privaten Modus). Daten werden im localStorage gespeichert – dort ist Platz für deutlich weniger Hände, und im privaten Modus gehen sie beim Schließen verloren. Bitte regelmäßig eine Sicherung exportieren.';
+  if (inf.mode === 'mem') return 'Dieser Browser erlaubt hier kein dauerhaftes Speichern. Bitte regelmäßig eine Sicherung exportieren.';
+  return '';
+}
+function bootFailed(e, stage) {
+  console.error(e);
+  // Sicherer Zustand: nur noch Arbeitsspeicher, gespeicherte Daten bleiben unverändert; Fehleranzeige mit Wiederherstellung
+  Store.goMem('error', (stage ? stage + ': ' : '') + ((e && e.message) || e));
+  try {
+    S.db = PT.stats.newDb(); S.heroRec = PT.stats.newRecord('hero', 'Du'); S.learning = PT.training.newLearning(); S.prof = PT.training.profile(S.learning);
+    S.hand = null; S.table = PT.session.newTable(PT.session.defaultConfig(), S.db, null); PT.session.syncStatuses(S.table, S.db);
+    S.notes.storage = storageNotice(); S.notes.resume = '';
+    S.ready = true;
+    route();
+  } catch (e2) { console.error(e2); }
+  if (window.PTRecovery) window.PTRecovery.fail('boot', (stage ? stage + ': ' : '') + ((e && e.message) || e), { canContinue: S.ready });
 }
 /**
  * Datenbank im Speicher noch im Format 2 (oder 1): vor der Umwandlung die unveränderten alten Datensätze als Datei
@@ -776,33 +971,49 @@ function boot() {
   });
   bind();
   $('verText').textContent = PT.VERSION;
-  initSpeech();
+  try { initSpeech(); } catch (e) { console.warn('Sprachausgabe nicht verfügbar', e); S.speech = null; S.notes.speech = 'Dein Browser bietet keine Sprachfunktion. Der Trainer läuft ohne Ton weiter, die Tipps erscheinen als Text.'; }
   render();
+  var stage = 'Tab-Sperre';
   acquireLock().then(function (ok) {
     S.readonly = !ok;
-    if (!ok) S.notes.readonly = 'Der PokerTrainer ist bereits in einem anderen Tab geöffnet. Dieser Tab ist schreibgeschützt, damit keine Daten überschrieben werden.';
+    if (ok) bcRespond();
+    if (!ok) { S.notes.readonly = 'Der PokerTrainer ist bereits in einem anderen Tab oder App-Fenster geöffnet. Dieser Tab ist schreibgeschützt, damit keine Daten überschrieben werden.'; waitForTakeover(); }
+    stage = 'Speicher öffnen';
     return Store.init();
   }).then(function () {
-    return Promise.all([Store.get('meta', 'state'), Store.all('opps'), Store.get('learn', 'learning')]);
+    stage = 'Daten lesen';
+    return withTimeout(Promise.all([Store.get('meta', 'state'), Store.all('opps'), Store.get('learn', 'learning')]), 8000, 'Daten lesen');
   }).then(function (r) {
-    var meta = r[0], opps = r[1] || [], learn = r[2];
-    var oldFmt = PT.stats.needsMigration(opps);
-    S.db = PT.stats.dbFromList(opps);
-    if (S.db.skipped) S.notes.storage = S.db.skipped + ' beschädigte Gegner-Einträge im Speicher wurden übersprungen.';
-    if (meta && meta.settings) Object.keys(DEFAULTS).forEach(function (k) { if (meta.settings[k] !== undefined && typeof meta.settings[k] === typeof DEFAULTS[k] || (k === 'seed')) S.settings[k] = meta.settings[k]; });
-    if (meta && meta.heroRec) { var hr = PT.stats.loadRecord(meta.heroRec); if (hr) S.heroRec = hr; }
+    stage = 'Daten prüfen';
+    var meta = r[0] && typeof r[0] === 'object' && !Array.isArray(r[0]) ? r[0] : null, opps = Array.isArray(r[1]) ? r[1] : [], learn = r[2] && typeof r[2] === 'object' ? r[2] : null;
+    var skipped = [];
+    if (r[0] != null && !meta) skipped.push('Einstellungen');
+    var oppObjs = opps.filter(function (x) { return x && typeof x === 'object' && !Array.isArray(x); });
+    var oldFmt = PT.stats.needsMigration(oppObjs);  // Datenformat 1/2 im Speicher → Umwandlung auf Format 3 mit Sicherung
+    S.db = PT.stats.dbFromList(oppObjs);
+    var badOpps = (S.db.skipped || 0) + (opps.length - oppObjs.length);
+    if (badOpps) skipped.push(badOpps + ' Gegner-Einträge');
+    if (meta && meta.settings && typeof meta.settings === 'object') Object.keys(DEFAULTS).forEach(function (k) { var x = meta.settings[k]; if (x !== undefined && validSetting(k, x)) S.settings[k] = x; });
+    if (meta && meta.heroRec) { var hr = PT.stats.loadRecord(meta.heroRec); if (hr) S.heroRec = hr; else skipped.push('eigene Werte'); }
     if (learn && learn.v) {
       if (!PT.training.validLearning(learn.v)) S.learning = learn.v;
-      else { var rep = PT.training.repairLearning(learn.v); if (rep) { S.learning = rep.learning; console.warn('Lerndaten repariert, entfernte Einträge: ' + rep.removed); } }
+      else { var rep = PT.training.repairLearning(learn.v); if (rep) { S.learning = rep.learning; if (rep.removed) skipped.push(rep.removed + ' Lerneinträge'); } else skipped.push('Lerndaten'); }
     }
     S.prof = PT.training.profile(S.learning);
     if (meta && PT.session.validTable(meta.table)) S.table = meta.table;
-    return migrateStoredDb(opps, oldFmt).then(function () { return Store.findLegacy(); }).then(function (legacy) {
-      if (legacy && !(meta && meta.legacyDone)) {
+    else if (meta && meta.table) skipped.push('Tischstand');
+    if (skipped.length) S.notes.storage = 'Beschädigte Einträge im lokalen Speicher wurden übersprungen: ' + skipped.join(', ') + '. Die übrigen Daten wurden geladen.';
+    stage = 'Migration';
+    // Umstellung auf Format 3 mit Sicherungs-Download ist ein bekannter, längerer Schritt: Startüberwachung verlängern (kein „hängender Start“)
+    if (oldFmt && !S.readonly && window.PTRecovery) window.PTRecovery.busy('Lade … (Gegnerdatenbank wird gesichert und umgestellt)', 60000);
+    return withTimeout(migrateStoredDb(oppObjs, oldFmt), 45000, 'Umstellung der Gegnerdatenbank').then(function () {
+      return withTimeout(Store.findLegacy(), 5000, 'Suche nach alten Daten').catch(function () { return null; });
+    }).then(function (legacy) {
+      if (legacy && !(meta && meta.legacyDone) && !S.readonly) {
         var list = Array.isArray(legacy.opps) ? legacy.opps : [];
         var text = legacyBackupText(list), name = 'Sicherung_PokerTrainer_' + today() + '_Datenbank.json';
         S.legacyBackup = { name: name, text: text };
-        Store.put('backup', { k: 'legacy-' + today(), name: name, text: text, ts: Date.now() });
+        track(Store.put('backup', { k: 'legacy-' + today(), name: name, text: text, ts: Date.now() }));
         S.dlReady.then(function () { download(name, text); });
         var old = PT.stats.dbFromList(list), n = 0;
         Object.keys(old.opps).forEach(function (id) { if (!S.db.opps[id]) { S.db.opps[id] = old.opps[id]; n++; } });
@@ -813,28 +1024,27 @@ function boot() {
       }
     }).then(function () { return meta; });
   }).then(function (meta) {
+    stage = 'Tisch';
     if (!S.table) S.table = PT.session.newTable(PT.session.defaultConfig(), S.db, S.settings.seed != null ? S.settings.seed : null);
     PT.session.syncStatuses(S.table, S.db);
     applyTheme();
     var running = S.table.running;
     if (running) {
-      var h = PT.session.resumeHand(S.table, S.heroRec);
+      var backupT = JSON.parse(JSON.stringify(S.table)), h = null;
+      try { h = validRunning(running) ? PT.session.resumeHand(S.table, S.heroRec) : null; } catch (e) { console.warn('Wiederaufnahme fehlgeschlagen', e); h = null; }
       if (h && !h.done) { S.hand = h; S.notes.resume = 'Die beim Schließen laufende Hand #' + h.no + ' wurde exakt wiederhergestellt.'; }
       else if (h && h.done) { S.hand = h; }
-      else { S.table.running = null; S.notes.resume = 'Eine beim Schließen laufende Hand konnte nicht wiederhergestellt werden und wurde verworfen.'; }
+      else { S.table = backupT; S.table.running = null; S.hand = null; S.notes.resume = 'Eine beim Schließen laufende Hand konnte nicht wiederhergestellt werden und wurde verworfen.'; }
     }
-    var mr = metaRecord(); if (S.legacyDone || (meta && meta.legacyDone)) mr.legacyDone = true;
-    if (!S.readonly) Store.put('meta', JSON.parse(JSON.stringify(mr))).catch(storageError);
-    if (Store.mode() === 'mem') S.notes.storage = 'Dieser Browser erlaubt hier kein dauerhaftes Speichern. Bitte regelmäßig eine Sicherung exportieren.';
+    if (meta && meta.legacyDone) S.legacyDone = true;
+    var mr = metaRecord();
+    if (!S.readonly) track(Store.put('meta', JSON.parse(JSON.stringify(mr))).catch(storageError));
+    var sn = storageNotice(); if (sn) S.notes.storage = sn;
     S.ready = true;
     route();
+    if (window.PTRecovery) window.PTRecovery.ready();
     if (S.hand && !S.hand.done) drive();
-  }).catch(function (e) {
-    console.error(e);
-    S.table = S.table || PT.session.newTable(PT.session.defaultConfig(), S.db); S.ready = true;
-    S.notes.storage = 'Gespeicherte Daten konnten nicht geladen werden (' + ((e && e.message) || e) + ').';
-    route();
-  });
+  }).catch(function (e) { bootFailed(e, stage); });
   registerSW();
 }
 PTUI.h = { $: $, esc: esc, cardHtml: cardHtml, cardsHtml: cardsHtml, backHtml: backHtml, openModal: openModal, closeModal: closeModal, toast: toast, download: download,

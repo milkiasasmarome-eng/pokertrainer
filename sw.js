@@ -1,12 +1,13 @@
 /* PokerTrainer 2.0.1 – Service Worker (automatisch erzeugt mit tools/build.js). Offline-Betrieb, Cache je Inhaltsstand, kontrollierte Aktualisierung. */
 'use strict';
-var VERSION = '2.0.1', CACHE = 'pokertrainer-' + VERSION + '-c46c356d357b';
+var VERSION = '2.0.1', CACHE = 'pokertrainer-' + VERSION + '-35d749c01a9e';
 var ASSETS = [
   "./",
   "index.html",
   "manifest.webmanifest",
   "assets/css/app.css?v=2.0.1",
   "assets/js/worker.js?v=2.0.1",
+  "assets/js/recovery.js?v=2.0.1",
   "assets/js/engine/core.js?v=2.0.1",
   "assets/js/engine/evaluator.js?v=2.0.1",
   "assets/js/engine/preflop-data.js?v=2.0.1",
@@ -20,6 +21,7 @@ var ASSETS = [
   "assets/js/engine/cfr.js?v=2.0.1",
   "assets/js/engine/coach.js?v=2.0.1",
   "assets/js/engine/training.js?v=2.0.1",
+  "assets/js/engine/export.js?v=2.0.1",
   "assets/js/engine/speech.js?v=2.0.1",
   "assets/js/ui/store.js?v=2.0.1",
   "assets/js/ui/app.js?v=2.0.1",
