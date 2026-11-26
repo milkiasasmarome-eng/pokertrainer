@@ -31,19 +31,38 @@ function eqClass(i, j) { var t = pfTable(); return t ? t[i * 169 + j] : 0.5; }
  * (zählen gegen das Simulationsbudget). Preflop aus der Klassentabelle.
  */
 var ceCache = new Map();
+/** Umfang einer Anfrage: so viele Stichproben würde comboEquitiesRaw ziehen (ohne Budget-Kürzung durch andere Aufrufe) */
+function ceAllow(o) { return o.budget ? Math.max(0, Math.min(o.budget.left, o.maxIter || 4000)) : 2000; }
+/** Ist der gespeicherte Eintrag für die Anfrage gut genug? Nur nach Art und Umfang (Prüfbefund 2.1, Prüfer A, Befund 5), nie nach dem Wert. */
+function ceUsable(hit, o) {
+  var m = hit.info.method;
+  if (m === 'exakt' || m === 'Tabelle') return !hit.info.failed;
+  if (hit.info.partial) return false;                       // Teilergebnis (zu wenig Budget) nie für spätere Anfragen
+  var n = Math.max(1, hit.info.n || 1);
+  return Math.floor(hit.info.iters / n) >= Math.floor(ceAllow(o) / n);   // Monte Carlo: mindestens so viele Runouts je Kombination wie jetzt möglich
+}
+function ceBetter(a, b) { // ist a mindestens so gut wie b?
+  var ea = a.info.method === 'exakt' || a.info.method === 'Tabelle', eb = b.info.method === 'exakt' || b.info.method === 'Tabelle';
+  if (ea !== eb) return ea; if (ea) return true;
+  if (!!a.info.partial !== !!b.info.partial) return !a.info.partial;
+  return a.info.iters >= b.info.iters;
+}
 function comboEquities(hero, board, w, o) {
   o = o || {};
   var ck = PT.cardsStr(hero) + '|' + PT.cardsStr(board) + '|' + PT.cardsStr(o.dead || []) + '|' + R.hash(w) + '|' + (o.exactMax || 0);
-  if (ceCache.has(ck)) { var hit = ceCache.get(ck); return { e: hit.e, info: Object.assign({}, hit.info, { cached: true, iters: 0 }) }; }
+  var hit = ceCache.get(ck);
+  // Kopie liefern: Aufrufer dürfen das Array nicht mit dem Cache teilen
+  if (hit && ceUsable(hit, o)) return { e: Float32Array.from(hit.e), info: Object.assign({}, hit.info, { cached: true, iters: 0 }) };
   var res = comboEquitiesRaw(hero, board, w, o);
-  ceCache.set(ck, res); if (ceCache.size > 60) ceCache.delete(ceCache.keys().next().value);
+  if (!res.info.failed && (!hit || ceBetter(res, hit))) { ceCache.delete(ck); ceCache.set(ck, { e: Float32Array.from(res.e), info: Object.assign({}, res.info) }); if (ceCache.size > 60) ceCache.delete(ceCache.keys().next().value); }
   return res;
 }
 function comboEquitiesRaw(hero, board, w, o) {
   var e = new Float32Array(NC), dead = H.deadMaskOf(hero.concat(board).concat(o.dead || [])), ks = [], k;
   for (k = 0; k < NC; k++) if (w[k] > 0 && !dead[C1[k]] && !dead[C2[k]]) ks.push(k);
   var info = { method: 'exakt', evals: 0, iters: 0, n: ks.length, se: 0 };
-  if (!ks.length) return { e: e, info: info };
+  // Leere Range (Prüfbefund 2.1, Prüfer A, Befund 7): gekennzeichnet statt „exakt“ mit SE 0
+  if (!ks.length) { info.method = 'leere Range'; info.failed = true; info.se = null; info.reason = 'keine mögliche Kombination'; return { e: e, info: info }; }
   if (board.length === 0) {
     var hc = H.classIdx(hero[0], hero[1]);
     for (var t = 0; t < ks.length; t++) e[ks[t]] = eqClass(hc, CLS[ks[t]]);
@@ -322,10 +341,13 @@ function subsetEq(ctx, parts) {
 }
 
 // ---------- Aktionen ----------
+/** Aktuelle Equity mit Kennzeichnung: fehlt sie (null/NaN), neutraler Rückfall 0,5 mit Flag statt stiller Werte (Prüfer A, Befund 7) */
+function eqOf(ctx) { var ok = ctx.eqNow != null && isFinite(ctx.eqNow); return { eq: ok ? ctx.eqNow : 0.5, failed: !ok || !!ctx.eqFailed, approx: !ok || !!ctx.eqFailed || !!ctx.eqApprox, reason: !ok ? 'Equity nicht berechenbar' : ctx.eqReason || null }; }
+function flag(parts, q) { if (q.approx) parts.approx = true; if (q.failed) parts.failed = true; if (q.reason && (q.approx || q.failed)) parts.reason = q.reason; return parts; }
 function evCheck(ctx) {
-  var Rz = realization(ctx, 'check');
-  var ev = Rz * ctx.eqNow * ctx.pot;
-  return { ev: ev, dEdq: Rz * ctx.pot, parts: { realization: Rz, equity: ctx.eqNow, pot: ctx.pot } };
+  var Rz = realization(ctx, 'check'), q = eqOf(ctx);
+  var ev = Rz * q.eq * ctx.pot;
+  return { ev: ev, dEdq: Rz * ctx.pot, parts: flag({ realization: Rz, equity: q.eq, pot: ctx.pot }, q) };
 }
 /** Pot Odds anhand des tatsächlich zahlbaren Betrags und des gewinnbaren Pots (Side Pots berücksichtigt) */
 function potOdds(ctx) {
@@ -361,8 +383,8 @@ function evCall(ctx) {
     var behind = Math.max(0, Math.min(me.stack - c, ctx.maxOppStack));
     implied = pHit * Math.min(behind, potAfter) * (0.2 + 0.25 * (main ? main.prof.station : 0.4));
   }
-  var ev = Rz * ctx.eqNow * potAfter - c + implied;
-  return { ev: ev, dEdq: Rz * potAfter, parts: { realization: Rz, equity: ctx.eqNow, potAfter: potAfter, call: c, implied: implied } };
+  var q = eqOf(ctx), ev = Rz * q.eq * potAfter - c + implied;
+  return { ev: ev, dEdq: Rz * potAfter, parts: flag({ realization: Rz, equity: q.eq, potAfter: potAfter, call: c, implied: implied }, q) };
 }
 function evBet(ctx, to, kind) {
   var me = ctx.me, a = to - me.bet, pot = ctx.pot, L = ctx.L;
