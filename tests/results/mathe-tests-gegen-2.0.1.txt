@@ -1,0 +1,58 @@
+FEHLER    A2 potShare: Range durch bekannte Karten vollständig entfernt → Fehlschlag statt Zufallszahl
+   failed und win = null (ist {"win":176})
+   Grund genannt: undefined
+   zweiter Gegner leer → Fehlschlag
+   Board-Karte entfernt einzige Kombination
+FEHLER    A2 potShare: einzeln gültige Ranges ohne gemeinsame konfliktfreie Verteilung → Fehlschlag, kein stiller 0-Gewinn
+   zwei Gegner mit derselben Einzelkombination (ist {"win":0})
+   früher Abbruch nach höchstens 64 Versuchen (ist 500)
+   überlappende Einzelkombinationen (gemeinsame Karte Ks)
+   kein Budget → Fehlschlag mit Grund
+FEHLER    A2 equity: leere Range und unmögliche Verteilung → {eq: null, failed, reason}; Budget wird nicht verbraucht
+   leere Range gekennzeichnet
+   keine konfliktfreie Verteilung gekennzeichnet: undefined
+   Budget kaum verbraucht (5000 statt 5.000)
+   lo ist Zahl oder null
+FEHLER    A2 evCall: Rückfall bei fehlgeschlagener Side-Pot-Rechnung, gekennzeichnet in parts
+   parts: approx, failed, reason ({"allin":true,"expectedWin":176,"call":900,"winnable":2000})
+   kein expectedWin aus ungültiger Rechnung erwartet undefined, erhalten 176
+FEHLER    A3 Cache: erst kleines Budget, dann großes → neue Rechnung mit besserer Qualität
+   zweite Anfrage rechnet neu (cached true, 0 Simulationen)
+   bessere Qualität: SE 0.0289 statt 0.0289
+FEHLER    A3 Cache: Stufen, Zeitabbruch, Mindestanzahl, exakt vor Monte Carlo
+   Schnell nach Präzise nutzt den genaueren Eintrag
+   Zeitabbruch gekennzeichnet (undefined, n undefined)
+   nach Zeitabbruch neue Rechnung
+   Mindestanzahl 300 nicht durch 200er-Eintrag bedient
+FEHLER    A4 exactHU: sehr kleine Deadline → Abbruch, Monte-Carlo-Rückfall, nie „exakt“
+   nicht als exakt gekennzeichnet (exact true, Methode exakt)
+   Abbruch der Aufzählung vermerkt
+   Monte-Carlo-Rückfall mit Intervall (89.7 % ± 0.0)
+   Laufzeit begrenzt (318 ms)
+FEHLER    A4 potShare und Monte Carlo halten die Deadline
+   potShare bricht an der Zeitgrenze ab (200000 Versuche)
+   Monte Carlo: Zeitabbruch gekennzeichnet (undefined Stichproben)
+FEHLER    A5 Range-Kennung: Unterschiede < 0,0005 ergeben verschiedene Kennungen
+   eine Kombination +0,0004 → andere Kennung
+   neue Kombination mit Gewicht 0,0004 → andere Kennung
+   Träger: Gewicht 1e-12 → andere Kennung
+   Kollisionen unter 500 gestörten Verteilungen erwartet 0, erhalten 476
+FEHLER    A5 Range-Kennung: gleiche Verteilung in anderer Skalierung → gleiche Kennung; Format
+   abweichende Kennungen bei 36 Skalierungen erwartet 0, erhalten 35
+   zufällige Skalierungen: 400 von 400 abweichend (Rundungsgrenze, nur Cache-Fehlgriff)
+   Format h2 + 64 Bit
+   leere Range erwartet "h2leer", erhalten "ztntfp"
+FEHLER    A5 Equity-Cache: verschiedene Verteilungen mit früher gleicher Kennung liefern ihre eigene Equity
+   Cache liefert die Equity der zweiten Range (0.03984, richtig 0.01032)
+FEHLER    MC: Intervall für beschränkte Größen (Ränder, Split-lastig, Binomial)
+   Ausnahme: Q.summarize is not a function
+FEHLER    MC: Stichprobenumfang hängt nicht von den Werten ab (fester Umfang bei Budgetgrenze, Pilot nicht in der Schätzung)
+   Budget 1.000: beide Fälle genau 1.000 Stichproben (/)
+   Budgetgrenze vor dem Ziel-SE gekennzeichnet
+   Zwei-Stufen-Verfahren: Schätzung nur aus der zweiten Stufe (undefined von 397)
+   Ziel-SE erreicht (0.0050)
+FEHLER    MC: keine Randverzerrung (Regression 2.0.1: exakt 0,9886, MC-Mittel 0,9903 auf Präzise)
+   Verzerrung z = 6.23 (Mittel 0.99027, exakt 0.98864)
+   Abdeckung 85.3 %
+BESTANDEN MC: Abdeckung der 95-%-Intervalle (Stichprobe der Referenzfälle, Stufe Schnell und Budget 1.000)
+1 bestanden, 14 fehlgeschlagen
