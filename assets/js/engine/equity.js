@@ -45,7 +45,8 @@ function planSize(n0, sum, sum2, T) {
   var s = summarize(n0, sum, sum2, Z99);
   var mu = s.lo > 0.5 ? s.lo : s.hi < 0.5 ? s.hi : 0.5;
   var phiU = Math.min(1, s.phi * (1 + Z99 * Math.sqrt(2 / Math.max(1, n0 - 1))));
-  return Math.ceil(phiU * mu * (1 - mu) / (T * T));
+  // Untergrenze: Die Pseudo-Beobachtungen in summarize ergeben se ≥ ≈ 0,71/n; darunter wäre das Ziel nie erreichbar
+  return Math.max(Math.ceil(phiU * mu * (1 - mu) / (T * T)), Math.ceil(0.75 / T));
 }
 
 // ---------- Cache mit Qualitätsangabe ----------
@@ -54,10 +55,10 @@ function planSize(n0, sum, sum2, T) {
 // schlechteren ersetzt.
 var cache = new Map(), CACHE_MAX = 300;
 function cacheGet(k) { if (!cache.has(k)) return null; var v = cache.get(k); cache.delete(k); cache.set(k, v); return v; }
-function better(a, b) { // ist a mindestens so gut wie b?
+function better(a, b) { // ist a mindestens so gut wie b? Nur nach Art und Umfang, nie nach dem geschätzten Fehler (sonst wertabhängige Auswahl)
   if (a.exact) return true;
   if (b.exact) return false;
-  return a.se < b.se || (a.se === b.se && a.n >= b.n);
+  return a.n >= b.n;
 }
 function cachePut(k, v) {
   var old = cache.get(k);
@@ -72,12 +73,14 @@ function cacheClear() { cache.clear(); }
  *   (nicht abgebrochen und se ≤ Ziel-SE)  oder  (n ≥ nMax: die Anfrage könnte selbst nicht mehr Stichproben ziehen).
  */
 function usable(e, req) {
+  // Prüfbefund 2.1 (Prüfer A, Befund 1): Die Entscheidung hängt nur vom Umfang ab, nicht vom geschätzten Standardfehler.
+  // Ein wertabhängiges Kriterium (se ≤ Ziel) bevorzugt Einträge nahe 0/1 und verzerrt die zurückgegebene Equity.
   if (e.eq == null) return false;
   if (e.exact) return true;
   if (req.exactPossible) return false;
   if (e.n < req.minN) return false;
-  if (!e.aborted && e.se <= req.seT) return true;
-  return e.n >= req.nMax;
+  var nWorst = Math.ceil(0.25 / (req.seT * req.seT));  // Umfang, der für jede Equity das Fehlerziel erreicht
+  return e.n >= Math.min(nWorst, req.nMax);
 }
 
 function prepRange(w, deadMask) {
@@ -87,6 +90,25 @@ function prepRange(w, deadMask) {
     if (x > 0 && !deadMask[C1[k]] && !deadMask[C2[k]]) { if (x === Infinity) bad = true; tot += x; idx.push(k); cum.push(tot); }
   }
   return { idx: idx, cum: cum, tot: tot, ok: !bad && isFinite(tot) && tot > 0 };
+}
+/** Alle verträglichen Kombinationstupel der Gegner mit Gewicht (Produkt der Einzelgewichte); null, wenn zu viele */
+var JOINT_MAX = 2000000;
+function jointTuples(R, nR) {
+  var prod = 1; for (var j = 0; j < nR; j++) { prod *= R[j].idx.length; if (prod > JOINT_MAX) return null; }
+  var tup = [], cum = [], tot = 0, cur = new Array(nR), used = {};
+  function wOf(r, i) { return r.cum[i] - (i ? r.cum[i - 1] : 0); }
+  (function rec(j, wAcc) {
+    if (j === nR) { tot += wAcc; cum.push(tot); for (var q = 0; q < nR; q++) tup.push(cur[q]); return; }
+    var r = R[j];
+    for (var i = 0; i < r.idx.length; i++) {
+      var k = r.idx[i], a = C1[k], b = C2[k];
+      if (used[a] || used[b]) continue;
+      used[a] = used[b] = true; cur[j] = k;
+      rec(j + 1, wAcc * wOf(r, i));
+      used[a] = used[b] = false;
+    }
+  })(0, 1);
+  return { tup: tup, cum: cum, tot: tot };
 }
 function bsearch(cum, x) { var lo = 0, hi = cum.length - 1; while (lo < hi) { var mid = (lo + hi) >> 1; if (cum[mid] > x) hi = mid; else lo = mid + 1; } return lo; }
 function failed(reason, extra) { return Object.assign({ eq: null, win: null, se: null, lo: null, hi: null, iters: 0, n: 0, failed: true, reason: reason, method: 'nicht berechenbar', exact: false }, extra || {}); }
@@ -212,7 +234,7 @@ function monteCarlo(hero, board, R, deadMask, L, rng, budget, deadline, minIter)
   var usePilot = cap >= nWC + PILOT && nWC >= 4 * PILOT;
   // planned: Umfang, der für das Ziel nötig ist (fester Weg: ungünstigster Fall); target: tatsächlich angestrebter Umfang
   var phase = usePilot ? 0 : 1, planned = usePilot ? 0 : Math.max(nWC, minN), target = usePilot ? PILOT : Math.min(planned, cap);
-  var aborted = null, timeOut = false;
+  var aborted = null, timeOut = false, J = null, jointEmpty = false;
   var s = [0, 0], s2 = [0, 0], cnt = [0, 0], wins = [0, 0], ties = [0, 0];
   while (true) {
     if (cnt[phase] >= target) {
@@ -220,11 +242,21 @@ function monteCarlo(hero, board, R, deadMask, L, rng, budget, deadline, minIter)
       break;
     }
     if (it >= cap) { aborted = 'budget'; break; }
-    if (cnt[0] + cnt[1] === 0 && it >= NO_VALID_ABORT) break;
+    if (cnt[0] + cnt[1] === 0 && it >= NO_VALID_ABORT && !J) {
+      // Rejection Sampling findet keine verträgliche Verteilung: vollständige Aufzählung der Kombinationstupel (wenn klein genug).
+      // So scheitern seltene, aber gültige Lagen nicht mehr (Prüfer A, Befund 4); ein Fehlschlag ist dann belegt.
+      J = jointTuples(R, nR);
+      if (!J) break;                                  // zu groß zum Aufzählen: wie bisher als nicht berechenbar melden
+      if (!J.tot) { jointEmpty = true; break; }        // nachweislich keine verträgliche Verteilung
+    }
     it++;
     if ((it & 127) === 0 && U.now() > deadline) { aborted = 'zeit'; timeOut = true; break; }
     var ok = false;
-    for (var tr = 0; tr < 50 && !ok; tr++) {
+    if (J) {
+      stamp++; ok = true;
+      var ti = bsearch(J.cum, rng() * J.tot) * nR;
+      for (j = 0; j < nR; j++) { var kj = J.tup[ti + j]; mark[C1[kj]] = stamp; mark[C2[kj]] = stamp; oArr[j][0] = C1[kj]; oArr[j][1] = C2[kj]; }
+    } else for (var tr = 0; tr < 50 && !ok; tr++) {
       stamp++; ok = true;
       for (j = 0; j < nR; j++) {
         var r = R[j], kk = r.idx[bsearch(r.cum, rng() * r.tot)];
@@ -249,6 +281,7 @@ function monteCarlo(hero, board, R, deadMask, L, rng, budget, deadline, minIter)
   if (budget) { budget.left -= it; budget.used += it; if (budget.calls) budget.calls.push(it); }
   var nAll = cnt[0] + cnt[1];
   if (!nAll) {
+    if (jointEmpty) return failed('keine konfliktfreie Verteilung der Gegnerkarten (alle Kombinationstupel geprüft)', { iters: it, rejected: rejected, method: 'Monte Carlo' });
     if (it >= NO_VALID_ABORT && rejected === it) return failed('keine konfliktfreie Verteilung der Gegnerkarten gefunden (' + (it * 50) + ' Ziehungen verworfen)', { iters: it, rejected: rejected, method: 'Monte Carlo' });
     return failed(timeOut ? 'Zeitgrenze vor der ersten Stichprobe erreicht' : 'kein Simulationsbudget', { iters: it, rejected: rejected, method: 'Monte Carlo', aborted: aborted });
   }
@@ -344,7 +377,10 @@ function potShare(o) {
     var why = it === 0 ? 'kein Simulationsbudget' : rejected === it ? 'keine konfliktfreie Verteilung der Gegnerkarten gefunden' : 'Zeitgrenze vor der ersten Stichprobe erreicht';
     return { win: null, se: null, iters: it, n: 0, rejected: rejected, pots: pots, refund: refund, failed: true, reason: why, aborted: aborted };
   }
-  var m = sum / n, vr = n > 1 ? Math.max(0, (sum2 - sum * m) / (n - 1)) : 0;
+  // Standardfehler mit je einer Pseudo-Beobachtung bei 0 und beim höchstmöglichen Gewinn (Untergrenze wie in summarize):
+  // nie 0 für eine Schätzung, auch wenn alle Stichproben gleich ausfielen
+  var wMax = refund; pots.forEach(function (pt) { if (pt.eligible.indexOf(0) >= 0) wMax += pt.amount; });
+  var m = sum / n, S = Math.max(0, sum2 - sum * m), vr = (S + m * m + (wMax - m) * (wMax - m)) / (n + 1);
   return { win: m, se: Math.sqrt(vr / n), iters: it, n: n, rejected: rejected, pots: pots, refund: refund, aborted: aborted };
 }
 

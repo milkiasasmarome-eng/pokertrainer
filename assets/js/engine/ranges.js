@@ -37,15 +37,23 @@ function widthOf(w) { return total(w) / NC; }
  */
 var HASH_Q = 68719476736; // 2^36
 function hashRange(w) {
-  var tot = 0, k, x, inf = false;
-  for (k = 0; k < NC; k++) { x = w[k]; if (x > 0) { if (x === Infinity) inf = true; else tot += x; } }
-  if (inf || !isFinite(tot)) return 'h2inf';
-  if (!(tot > 0)) return 'h2leer';
+  var tot = 0, k, x, inf = false, mx = 0;
+  for (k = 0; k < NC; k++) { x = w[k]; if (x > 0) { if (x === Infinity) inf = true; else if (x > mx) mx = x; } }
+  if (inf) {
+    // ungültige Range (unendliche Gewichte): eigener Schlüssel je Lage der unendlichen Einträge, keine Sammelkennung
+    HS[0] = 0x811c9dc5 | 0; HS[1] = 0x9747b28c | 0;
+    for (k = 0; k < NC; k++) if (w[k] === Infinity) hashWord(k);
+    return 'h2inf' + ((fmix32(HS[0]) >>> 0).toString(16)) + ((fmix32(HS[1]) >>> 0).toString(16));
+  }
+  // erst durch das Maximum teilen: kein Überlauf der Summe bei sehr großen Gewichten (z. B. 1e306)
+  for (k = 0; k < NC; k++) { x = w[k]; if (x > 0) tot += x / mx; }
+  if (!(tot > 0) || !isFinite(tot)) return 'h2leer';
+  tot *= mx;
   HS[0] = 0x811c9dc5 | 0; HS[1] = 0x9747b28c | 0;
   var n = 0;
   for (k = 0; k < NC; k++) {
     x = w[k]; if (!(x > 0)) continue;
-    var q = Math.round(x / tot * HASH_Q);
+    var q = Math.round((x / mx) / (tot / mx) * HASH_Q);
     hashWord(k); hashWord((q % 4294967296) | 0); hashWord(Math.floor(q / 4294967296) | 0);
     n++;
   }

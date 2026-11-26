@@ -285,3 +285,18 @@ Verglichen wird jede einzelne Bewertung: Der Wert von `evaluate` wird über die 
 - **Nicht neu gebaut:** `tools/build.js` (`sw.js`, `dist/PokerTrainer_2.0.html`) habe ich nicht ausgeführt, um Konflikte mit den anderen Zweigen zu vermeiden. Vor der Veröffentlichung neu bauen, sonst enthält die Einzeldatei die Engine 2.0.1.
 - **Kosten der neuen Planung:** Ohne Budgetgrenze braucht die Monte-Carlo-Equity im Mittel mehr Simulationen als 2.0.1 (siehe oben), weil sie den Ziel-SE mit einer oberen Varianzschranke plant. Im Coach greifen fast immer die Budgetgrenzen, dort ändert sich die Zahl nicht.
 - **Seltene Ereignisse:** Bei exakt sehr kleiner Equity (etwa unter 1/n) ist das Intervall konservativ (Überdeckung). Gemessen wurde das nur an einem Fall.
+
+## Nachprüfung durch Prüfagent A (2.1) und Korrekturen
+
+Ein unabhängiger Prüfagent hat die Mathematik von 2.1 erneut geprüft (eigene exakte Enumeration, eigene Handbewertung über alle 133.784.560 Sieben-Karten-Hände, Beta-CDF gegen scipy). Ohne Befund: Handbewertung, Monte-Carlo-Schätzung und Intervall (Abdeckung 92,3–100 % an 10 eigenen Fällen, Ausreißer im Nachlauf mit 2.000 Läufen 94,3 %), Zeitgrenzen, potShare-Abrechnung, Range-Kennung, Beta-CDF. Befunde und Korrekturen:
+
+| Nr. | Schwere | Befund | Korrektur |
+|---|---|---|---|
+| 1 | mittel | Cache-Nutzung nach geschätztem Standardfehler wählt wertabhängig aus und verzerrt nahe 0/1 (Bias +0,0038 im Mehrgegner-Fall) | Nutzung nur nach Umfang: exakt, oder n ≥ min(0,25/Ziel-SE², Umfang der Anfrage) |
+| 2 | gering | Ersetzung im Cache nach geschätztem SE | Ersetzung nur nach Art (exakt) und Umfang |
+| 3 | gering | Ziel-SE in Split-lastigen Lagen oft verfehlt | Planungsuntergrenze 0,75/Ziel-SE; der gemeldete SE bleibt konservativ (Pseudo-Beobachtungen), dort teils über dem Ziel, die Abdeckung ist davon nicht betroffen. Die frühere Aussage „Ziel-SE wird fast immer erreicht“ gilt für Split-lastige Lagen nicht. |
+| 4 | gering–mittel | Seltene, aber gültige Mehrgegner-Verteilungen scheiterten nach 64 Versuchen | Rückfall auf vollständige Aufzählung der Kombinationstupel (bis 2 Mio.); Fehlschlag nur noch, wenn nachweislich keine verträgliche Verteilung existiert |
+| 6 | gering | Sammelkennung „h2inf“ für ungültige Ranges, Überlauf der Summe bei Gewichten ~1e306 | Kennung je Lage der unendlichen Einträge; Normierung über das Maximum |
+| 8 | gering | potShare meldete SE 0 für Schätzungen | Pseudo-Beobachtungen bei 0 und beim höchstmöglichen Gewinn |
+
+Befunde 5 und 7 (comboEquities-Cache ohne Qualitätsangabe; leere Range wird im Coach still zu 0,5 „exakt“) und 12 (Bayes-Beleg vergleicht größenabhängige Fold-Rate mit größenunabhängigem Rohwert) betreffen ev.js/coach.js und sind im Testbericht behandelt. Regressionstests: `tests/unit/pruefer-a-2.1.js`.
