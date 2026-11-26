@@ -81,6 +81,10 @@ jobs:
         env:
           CHROME: ''
         run: node tests/e2e.js http://127.0.0.1:8767/
+      - name: Browsertests Gegnergedächtnis (Migration auf Datenformat 3)
+        env:
+          PLAYWRIGHT: ${{ github.workspace }}/tests/node_modules/playwright
+        run: node tests/e2e-gedaechtnis.js http://127.0.0.1:8767/
       - name: Testergebnisse und Screenshots hochladen
         if: always()
         uses: actions/upload-artifact@v4
@@ -88,6 +92,7 @@ jobs:
           name: browsertest-ergebnisse
           path: |
             tests/results/e2e.json
+            tests/results/e2e-gedaechtnis.json
             tests/results/screens/
             tests/results/a11y/
           if-no-files-found: warn

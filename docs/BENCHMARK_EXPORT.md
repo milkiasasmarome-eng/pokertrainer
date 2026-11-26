@@ -78,7 +78,7 @@ Er ist kein Hilfsmittel für fremde Pokerplattformen: Er enthält ausschließlic
 | `stacks[]` | je Platz: `seat`, `name`, `position`, `stack`, `bet` (Einsatz dieser Straße), `committed` (in der Hand eingezahlt), `start`, `folded`, `allIn`, `hero` |
 | `actions[]` | bisherige Aktionen: `street`, `seat`, `type` (`sb`, `bb`, `fold`, `check`, `call`, `bet`, `raise`), `amount` (bei Bet/Raise: „auf“-Betrag), `allIn` |
 | `legal` | `fold`, `check`, `call`, `callAmount`, `raise`, `isBet`, `minTo`, `maxTo` |
-| `opponents[]` | beobachtete Gegnerwerte zum Entscheidungszeitpunkt: `id`, `name`, `hands`, `stats` (je Wert `[Zähler, Nenner]`), `agg`, `pos`, `shown` (bis zu 10 früher aufgedeckte Blätter, ohne Zeitstempel) |
+| `opponents[]` | beobachtete Gegnerwerte zum Entscheidungszeitpunkt, wie sie der Coach erhielt (Datenformat der Gegnerdatenbank, seit 2.1 Format 3): `id`, `name`, `hands`, `stats` (je Wert `[Zähler, Nenner]`), `agg`, `pos`, `shown` (bis zu 10 früher aufgedeckte Blätter), ab Format 3 `recent` (Kurzzeitgedächtnis), `cards` (Kartenkenntnis), `chg`. Entfernt: alle Zeitstempel (`ts`, `lastSeen`, `firstSeen`) und der Tischstatus |
 | `publicView` | unveränderte öffentliche Sicht (`PT.bots.publicView(hand, 0)`), die der Coach erhalten hat – maßgeblich für Nachrechnungen |
 
 **`coach`** (Empfehlung zum Entscheidungszeitpunkt)

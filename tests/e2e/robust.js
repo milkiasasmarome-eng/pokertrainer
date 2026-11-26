@@ -363,6 +363,23 @@ module.exports = async function (H) {
     await c.close();
   });
 
+  await test('Daten: Umstellung auf Datenformat 3 mit Sicherungs-Download beim Start gilt nicht als hängender Start', async () => {
+    const { c, p } = await fresh();
+    await p.goto(BASE + 'index.html#tisch'); await ready(p); await playOne(p); await playOne(p); await p.waitForTimeout(500);
+    const opps = await p.evaluate(IDB.all, 'opps');
+    const v2 = opps.map(r => { const o = Object.assign({}, r); delete o.recent; delete o.cards; delete o.chg; return o; });
+    await p.evaluate(IDB.put, ['opps', v2]);
+    const dlP = p.waitForEvent('download', { timeout: 20000 });
+    await p.reload(); await ready(p, 30000);
+    const dl = await dlP;
+    ok(/Sicherung_PokerTrainer_\d{4}-\d\d-\d\d_Datenbank\.json/.test(dl.suggestedFilename()), 'Sicherung vor der Umstellung: ' + dl.suggestedFilename());
+    ok(/Format 3/.test(await p.textContent('#notice')), 'Hinweis zur Umstellung');
+    await p.waitForTimeout(500);
+    ok(await p.locator('#recovery').count() === 0 && await p.evaluate(() => window.PTRecovery.state) === 'ready', 'keine Fehleranzeige, Startüberwachung „bereit“');
+    ok(await playOne(p), 'Hand nach der Umstellung gespielt');
+    await c.close();
+  });
+
   await test('Daten: vollständige Sicherung, Löschen (mit Sicherung) und Wiederherstellung ergeben denselben Stand', async () => {
     const { c, p } = await fresh();
     await p.goto(BASE + 'index.html#tisch'); await ready(p); for (let i = 0; i < 3; i++) await playOne(p); await p.waitForTimeout(800);

@@ -122,6 +122,7 @@ und `revealedLater` (spätere Informationen). Format, Felder, Datenschutz und Na
 | Schnelle Regressionstests | `node tests/run.js --quick` | Pflicht |
 | Vollständige Suite mit mathematischen Referenztests | `node tests/run.js` | Pflicht |
 | Browsertests (Grundfunktionen, Start/Wiederherstellung, Sicherheit/Daten, Barrierefreiheit, Netzwerk) | `node tests/e2e.js` mit Playwright/Chromium, axe-core aus `tests/package.json` | Pflicht |
+| Browsertests Gegnergedächtnis (Migration auf Format 3 mit Sicherung) | `node tests/e2e-gedaechtnis.js` | Pflicht |
 | Live-Smoke-Test nach der Veröffentlichung (Version im HTML, sw.js, Offline-Datei, Start im Browser; Wiederholung bis 10 min) | `node tests/smoke-live.js --browser` | nach dem Deployment |
 | Langläufer | `node tests/long.js` | getrennt, `langlauf.yml` (manuell) |
 
