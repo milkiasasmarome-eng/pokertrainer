@@ -249,13 +249,16 @@ table.grid tbody tr.click:hover,table.grid tbody tr.click:focus{background:var(-
   .nm{font-size:13px}
   .hud{font-size:11px}
   .hud .lbl{display:none}
-  .hud2 .bel{display:none}
+  .hud2{line-height:1.2}
   .center .result{display:none}
   .result2{display:block}
   .hud2{font-size:11px}
   .s0{--x:50%;--y:90%}.s1{--x:17%;--y:67%}.s2{--x:17%;--y:31%}.s3{--x:50%;--y:10%}.s4{--x:83%;--y:31%}.s5{--x:83%;--y:67%}
-  .s1 .hole,.s2 .hole{left:calc(100% + 4px)}
-  .s4 .hole,.s5 .hole{right:calc(100% + 4px)}
+  /* Seitenplätze: Karten über bzw. unter dem Namensschild, damit sie sich in der Mitte nicht überlappen */
+  .s1 .hole,.s5 .hole{left:50%;right:auto;top:auto;bottom:calc(100% + 4px);transform:translateX(-50%)}
+  .s2 .hole,.s4 .hole{left:50%;right:auto;top:calc(100% + 4px);transform:translateX(-50%)}
+  .s1 .lastact,.s5 .lastact{top:auto;bottom:-12px}
+  .s1 .chipmark,.s5 .chipmark{top:auto;bottom:-11px}
   .s0 .hole{bottom:calc(100% + 6px)}
   .s3 .hole{top:calc(100% + 6px)}
   .b0{--bx:50%;--by:74%}.b1{--bx:36%;--by:58%}.b2{--bx:36%;--by:42%}.b3{--bx:50%;--by:29%}.b4{--bx:64%;--by:42%}.b5{--bx:64%;--by:58%}

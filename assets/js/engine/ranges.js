@@ -355,9 +355,13 @@ function handFeatures(hole, board) {
       if (dead[c]) continue;
       arr[arr.length - 1] = c; barr[barr.length - 1] = c;
       var ns = E.evaluate(arr), nc = ns >> 20, nb = (b5 + 1 >= 5) ? E.evaluate(barr) >> 20 : -1;
-      var target = Math.max(2, cat + 1);
-      if (cat >= 4) target = cat + 1;
-      if (nc >= target && nc > nb) {
+      // Verbesserung muss von den eigenen Karten kommen; Two Pair mit einem Board-Paar zählt nicht als Out
+      var bc0 = E.evaluate(board) >> 20, ownCat = cat > bc0 ? cat : 0;
+      var target = Math.max(2, ownCat + 1);
+      if (ownCat >= 4) target = ownCat + 1;
+      var nbAll = E.evaluate(board.concat([c])) >> 20;
+      if (nc === 2 && (bc0 >= 1 || nbAll >= 1) && ownCat === 0) target = 3;
+      if (nc >= target && nc > nb && nc > nbAll) {
         outs++;
         var bd2 = analyzeBoard(board.concat([c]));
         if ((nc <= 4 && bd2.suitMax >= 3 && !(analyzeBoard(board).suitMax >= 3)) || (nc <= 5 && bd2.paired && !analyzeBoard(board).paired)) dirty++;

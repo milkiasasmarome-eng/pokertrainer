@@ -28,7 +28,8 @@ if (!isMainThread) {
 
 const PT = require('./load.js').load();
 const parts = process.argv.slice(2).length ? process.argv.slice(2) : ['eval7', 'sim', 'calib', 'coach'];
-const out = { app: PT.VERSION, date: new Date().toISOString(), node: process.version, cpus: require('os').cpus().length };
+let prev = {}; try { prev = JSON.parse(fs.readFileSync(path.join(__dirname, 'results', 'long.json'), 'utf8')); } catch (e) { /* neu */ }
+const out = Object.assign(prev, { app: PT.VERSION, date: new Date().toISOString(), node: process.version, cpus: require('os').cpus().length });
 function runWorker(data) { return new Promise((res, rej) => { const w = new Worker(__filename, { workerData: data }); w.on('message', res); w.on('error', rej); }); }
 function save() { fs.mkdirSync(path.join(__dirname, 'results'), { recursive: true }); fs.writeFileSync(path.join(__dirname, 'results', 'long.json'), JSON.stringify(out, null, 1)); }
 

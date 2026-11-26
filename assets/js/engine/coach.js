@@ -76,17 +76,23 @@ function composition(w, board) {
     for (var k = 0; k < NC; k++) if (w[k] > 0) { o.total += w[k]; var x = H.classTop(CLS[k]); if (x <= 0.05) o.strong += w[k]; else if (x <= 0.15) o.good += w[k]; else if (x <= 0.35) o.medium += w[k]; else o.air += w[k]; }
     return o;
   }
-  var arr = [0, 0].concat(board), bcat = board.length === 5 ? E.evaluate(board) >> 20 : -1;
+  // Kategorien relativ zum Board: nur was die eigenen Karten beitragen, zählt (Board-Paare sind keine eigene Hand)
+  var arr = [0, 0].concat(board), bcat = E.evaluate(board) >> 20;
   var br = board.map(function (c) { return c >> 2; }), top = Math.max.apply(null, br);
   for (var k2 = 0; k2 < NC; k2++) {
     var ww = w[k2]; if (!(ww > 0)) continue; o.total += ww;
-    arr[0] = C1[k2]; arr[1] = C2[k2];
-    var sc = E.evaluate(arr), cat = sc >> 20;
-    if (cat >= 2 && cat > bcat) o.strong += ww;
-    else if (cat === 1 && ((sc >> 16) & 15) >= top) o.good += ww;
-    else if (cat >= 1 && cat > bcat) o.medium += ww;
-    else if (board.length < 5 && R.drawInfo(C1[k2], C2[k2], board).strong) o.draw += ww;
-    else o.air += ww;
+    var a = C1[k2], b = C2[k2], ra = a >> 2, rb = b >> 2;
+    arr[0] = a; arr[1] = b;
+    var sc = E.evaluate(arr), cat = sc >> 20, cls;
+    if (cat > bcat) {
+      if (cat >= 3 || (cat === 2 && bcat === 0)) cls = 'strong';
+      else {
+        // genau ein eigenes Paar (ggf. zusätzlich zu einem Board-Paar)
+        var pr = ra === rb ? ra : (br.indexOf(ra) >= 0 ? ra : rb), pocket = ra === rb;
+        cls = (pocket && pr > top) || pr >= top ? 'good' : 'medium';
+      }
+    } else cls = board.length < 5 && R.drawInfo(a, b, board).strong ? 'draw' : 'air';
+    o[cls] += ww;
   }
   return o;
 }
@@ -107,7 +113,9 @@ function analyze(input) {
   var budget = { left: maxSim, used: 0, calls: [] };
   var rng = PT.makeRng(input.seed != null ? input.seed : 'coach');
   var deadline = t0 + (live ? Math.min(L0.ms, 1400) : L0.ms);
-  var res = {}, prep = prepare(input, v, L0, budget, rng);
+  var res = {}, scale = level === 'praezise' ? 4 : level === 'tief' ? 10 : 1;
+  budget.scale = scale;
+  var prep = prepare(input, v, L0, budget, rng);
   ['exploit', 'gto'].forEach(function (mode) { res[mode] = analyzeMode(input, v, mode, level, L0, budget, rng, deadline, set, prep); });
   var main = set.mode === 'gto' ? res.gto : res.exploit, other = set.mode === 'gto' ? res.exploit : res.gto;
   var out = main;
@@ -138,7 +146,7 @@ function prepare(input, v, L0, budget, rng) {
       out[k].defW = w;
     });
   }
-  var seats = Object.keys(out), share = Math.floor(Math.min(budget.left, 2000) / Math.max(1, seats.length));
+  var seats = Object.keys(out), share = Math.floor(Math.min(budget.left, 2000 * (budget.scale || 1)) / Math.max(1, seats.length));
   seats.forEach(function (k) {
     var o = out[k], u = new Float64Array(NC);
     for (var i = 0; i < NC; i++) { var a = o.ex.w[i], b = o.gto.w[i], c = o.defW ? o.defW[i] : 0; if (a > 0 || b > 0 || c > 0) u[i] = 1; }
@@ -184,13 +192,13 @@ function analyzeMode(input, v, mode, level, L0, budget, rng, deadline, set, prep
     var o0 = relevant[0];
     eqNow = o0 ? o0.eqHU : 1; eqSE = o0 ? (o0.eqInfo.se || 0) : 0; eqMethod = o0 ? o0.eqInfo.method : 'kein Gegner';
     if (street === 0 && o0 && budget.left > 300) {
-      var mc = Q.equity({ hero: v.cards, board: board, ranges: [o0.w], level: level, rng: rng, budget: { left: Math.min(gto ? 800 : 1000, budget.left), used: 0, calls: budget.calls }, deadline: deadline });
+      var mc = Q.equity({ hero: v.cards, board: board, ranges: [o0.w], level: level, rng: rng, budget: { left: Math.min((gto ? 800 : 1000) * (budget.scale || 1), budget.left), used: 0, calls: budget.calls }, deadline: deadline });
       budget.left -= mc.iters || 0; budget.used += mc.iters || 0;
       if (mc.eq != null) { eqNow = mc.eq; eqSE = mc.se || 0; eqMethod = mc.method; ctx.kappaPF = o0.eqHU > 0 ? mc.eq / o0.eqHU : 1; }
     }
     ctx.kappa = 1;
   } else {
-    var share = Math.min(budget.left, level === 'schnell' ? 600 : (gto ? 900 : 1200));
+    var share = Math.min(budget.left, level === 'schnell' ? 600 : (gto ? 900 : 1200) * (budget.scale || 1));
     var j = share >= 100 ? Q.equity({ hero: v.cards, board: board, ranges: relevant.map(function (o) { return o.w; }), level: level, rng: rng, budget: { left: share, used: 0, calls: budget.calls }, deadline: deadline, minIter: Math.min(300, share) }) : { eq: null, iters: 0, method: 'Näherung' };
     budget.left -= j.iters || 0; budget.used += j.iters || 0;
     var prodHU = relevant.reduce(function (p, o) { return p * (o.eqHU == null ? 0.5 : o.eqHU); }, 1);
