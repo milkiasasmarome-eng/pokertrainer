@@ -82,7 +82,21 @@ function cfrLines(d) {
   L.push('', 'Konvergenz (10 Gruppen, mit Raises, Exploitability im Modellspiel): ' + Object.keys(c.convergence).map(it => it + ' Iterationen ' + de(100 * c.convergence[it], 3) + ' %').join(', ') + '.', '');
   return L;
 }
-function all(d) { return lines(d).concat(sizingLines(d), cfrLines(d)); }
+function decisionLines(d) {
+  const L = [], e = d && d.decisionEval ? d.decisionEval : null;
+  if (!e) return L;
+  const g = e.groups, a = g['alle'];
+  L.push('### Gepaarte Rollout-Bewertung je Entscheidungspunkt (2.1 − 2.0.1)', '',
+    e.sessions + ' Sessions, ' + n0(e.hands) + ' Hände, ' + n0(a.points) + ' Entscheidungspunkte; verschiedene Empfehlung in ' + n0(a.differPoints) + ' Punkten (' + de(100 * a.differShare) + ' %). ' +
+    'Je Unterschied ' + e.K + ' gepaarte Rollouts je Aktion (' + e.method + '). Mittlere EV-Differenz je verschiedenem Punkt **' + de(a.meanDiffBB, 3) + ' BB** [' + de(a.lo, 3) + '; ' + de(a.hi, 3) + '] → ' + a.verdict +
+    '; umgerechnet auf alle Punkte ' + de(a.perPointBB, 4) + ' BB je Entscheidung [' + de(a.perPointLo, 4) + '; ' + de(a.perPointHi, 4) + '].', '',
+    '| Gruppe | Punkte mit Unterschied | Anteil an allen Punkten | mittlere Differenz (BB) | 95-%-Intervall | Urteil |', '|---|---:|---:|---:|---|---|');
+  Object.keys(g).forEach(k => { const r = g[k]; L.push('| ' + k + ' | ' + n0(r.differPoints) + ' | ' + (r.differShare != null ? de(100 * r.differShare) + ' %' : '–') + ' | ' + de(r.meanDiffBB, 3) + ' | [' + de(r.lo, 3) + '; ' + de(r.hi, 3) + '] | ' + r.verdict + ' |'); });
+  L.push('', 'Häufigste Paare (Empfehlung 2.1 ↔ 2.0.1, Beträge durch # ersetzt): ' + e.topPairs.slice(0, 8).map(p => p.pair + ' (' + p.n + ', ' + de(p.meanDiffBB, 2) + ' BB)').join('; ') + '.', '',
+    'Grenze: Nach der ersten Aktion spielt der Held mit der festen Politik g004 weiter; gemessen wird die erste Aktion, nicht die ganze Linie des Coaches. Die verdeckten Karten der Gegner sind die echten (nur Auswertung).', '');
+  return L;
+}
+function all(d) { return lines(d).concat(decisionLines(d), sizingLines(d), cfrLines(d)); }
 if (require.main === module) {
   const root = path.join(__dirname, '..'), file = path.join(root, 'docs', 'STRATEGIE.md');
   let data = null; try { data = JSON.parse(fs.readFileSync(path.join(root, 'tests', 'results', 'strategy.json'), 'utf8')); } catch (e) { /* fehlt */ }
@@ -92,4 +106,4 @@ if (require.main === module) {
   fs.writeFileSync(file, doc);
   console.log('docs/STRATEGIE.md: automatischer Block aktualisiert');
 }
-module.exports = { lines, sizingLines, cfrLines, all };
+module.exports = { lines, sizingLines, cfrLines, decisionLines, all };

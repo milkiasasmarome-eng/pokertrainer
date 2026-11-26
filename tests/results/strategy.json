@@ -9529,5 +9529,467 @@
     }
    }
   ]
+ },
+ "decisionEval": {
+  "K": 100,
+  "sessions": 24,
+  "hands": 9600,
+  "method": "gepaarte Rollouts je Entscheidungspunkt; Fortsetzung des Helden mit Gegner-KI-Profil g004; Cluster-Bootstrap über Hände (2.000 Wiederholungen)",
+  "groups": {
+   "alle": {
+    "differPoints": 1021,
+    "meanDiffBB": 0.822,
+    "lo": -0.082,
+    "hi": 1.718,
+    "hands": 759,
+    "points": 12967,
+    "differShare": 0.0787,
+    "perPointBB": 0.0647,
+    "perPointLo": -0.0064,
+    "perPointHi": 0.1353,
+    "verdict": "nicht belegt"
+   },
+   "Gegner-KI (bekannt)": {
+    "differPoints": 639,
+    "meanDiffBB": 1.466,
+    "lo": 0.622,
+    "hi": 2.32,
+    "hands": 458,
+    "points": 6442,
+    "differShare": 0.0992,
+    "perPointBB": 0.1455,
+    "perPointLo": 0.0617,
+    "perPointHi": 0.2301,
+    "verdict": "2.1 belegt besser"
+   },
+   "unbekannte Strategien": {
+    "differPoints": 382,
+    "meanDiffBB": -0.256,
+    "lo": -2.274,
+    "hi": 1.67,
+    "hands": 301,
+    "points": 6525,
+    "differShare": 0.0585,
+    "perPointBB": -0.015,
+    "perPointLo": -0.1331,
+    "perPointHi": 0.0978,
+    "verdict": "nicht belegt"
+   },
+   "preflop": {
+    "differPoints": 234,
+    "meanDiffBB": -0.14,
+    "lo": -2.122,
+    "hi": 1.842,
+    "hands": 232,
+    "verdict": "nicht belegt"
+   },
+   "postflop Bet vs. Check": {
+    "differPoints": 451,
+    "meanDiffBB": 1.425,
+    "lo": 0.17,
+    "hi": 2.607,
+    "hands": 332,
+    "verdict": "2.1 belegt besser"
+   },
+   "postflop Größe": {
+    "differPoints": 288,
+    "meanDiffBB": 0.024,
+    "lo": -1.249,
+    "hi": 1.279,
+    "hands": 243,
+    "verdict": "nicht belegt"
+   },
+   "postflop gegen Einsatz": {
+    "differPoints": 48,
+    "meanDiffBB": 4.634,
+    "lo": -3.961,
+    "hi": 12.821,
+    "hands": 48,
+    "verdict": "nicht belegt"
+   },
+   "Multiway (postflop)": {
+    "differPoints": 160,
+    "meanDiffBB": 0.476,
+    "lo": -2.133,
+    "hi": 3.073,
+    "hands": 138,
+    "verdict": "nicht belegt"
+   },
+   "Preflop": {
+    "differPoints": 234,
+    "meanDiffBB": -0.14,
+    "lo": -2.122,
+    "hi": 1.842,
+    "hands": 232,
+    "verdict": "nicht belegt"
+   },
+   "Flop": {
+    "differPoints": 411,
+    "meanDiffBB": 0.871,
+    "lo": -0.288,
+    "hi": 2.001,
+    "hands": 404,
+    "verdict": "nicht belegt"
+   },
+   "Turn": {
+    "differPoints": 217,
+    "meanDiffBB": 1.385,
+    "lo": -0.678,
+    "hi": 3.698,
+    "hands": 212,
+    "verdict": "nicht belegt"
+   },
+   "River": {
+    "differPoints": 159,
+    "meanDiffBB": 1.342,
+    "lo": -0.956,
+    "hi": 3.512,
+    "hands": 159,
+    "verdict": "nicht belegt"
+   }
+  },
+  "bySession": [
+   {
+    "id": "s5001",
+    "comp": "bots",
+    "startBB": 100,
+    "path": "2.1",
+    "hands": 400,
+    "points": 548,
+    "differ": 66,
+    "meanDiffBB": 2.065,
+    "ms": 39741
+   },
+   {
+    "id": "s5002",
+    "comp": "bots",
+    "startBB": 100,
+    "path": "2.0.1",
+    "hands": 400,
+    "points": 518,
+    "differ": 75,
+    "meanDiffBB": 0.27,
+    "ms": 25287
+   },
+   {
+    "id": "s5011",
+    "comp": "bots",
+    "startBB": 100,
+    "path": "2.1",
+    "hands": 400,
+    "points": 517,
+    "differ": 58,
+    "meanDiffBB": 0.345,
+    "ms": 31708
+   },
+   {
+    "id": "s5012",
+    "comp": "bots",
+    "startBB": 100,
+    "path": "2.0.1",
+    "hands": 400,
+    "points": 522,
+    "differ": 55,
+    "meanDiffBB": 1.945,
+    "ms": 28626
+   },
+   {
+    "id": "s5021",
+    "comp": "bots",
+    "startBB": 100,
+    "path": "2.1",
+    "hands": 400,
+    "points": 556,
+    "differ": 56,
+    "meanDiffBB": -1.061,
+    "ms": 40850
+   },
+   {
+    "id": "s5022",
+    "comp": "bots",
+    "startBB": 100,
+    "path": "2.0.1",
+    "hands": 400,
+    "points": 564,
+    "differ": 55,
+    "meanDiffBB": 0.579,
+    "ms": 28632
+   },
+   {
+    "id": "s5031",
+    "comp": "mixed",
+    "startBB": 100,
+    "path": "2.1",
+    "hands": 400,
+    "points": 564,
+    "differ": 40,
+    "meanDiffBB": 2.637,
+    "ms": 26663
+   },
+   {
+    "id": "s5032",
+    "comp": "mixed",
+    "startBB": 100,
+    "path": "2.0.1",
+    "hands": 400,
+    "points": 582,
+    "differ": 28,
+    "meanDiffBB": 5.045,
+    "ms": 30367
+   },
+   {
+    "id": "s5041",
+    "comp": "bots",
+    "startBB": 40,
+    "path": "2.1",
+    "hands": 400,
+    "points": 492,
+    "differ": 48,
+    "meanDiffBB": -0.109,
+    "ms": 25281
+   },
+   {
+    "id": "s5042",
+    "comp": "bots",
+    "startBB": 40,
+    "path": "2.0.1",
+    "hands": 400,
+    "points": 529,
+    "differ": 56,
+    "meanDiffBB": 1.963,
+    "ms": 33280
+   },
+   {
+    "id": "s5051",
+    "comp": "bots",
+    "startBB": 200,
+    "path": "2.1",
+    "hands": 400,
+    "points": 566,
+    "differ": 55,
+    "meanDiffBB": 2.06,
+    "ms": 42922
+   },
+   {
+    "id": "s5052",
+    "comp": "bots",
+    "startBB": 200,
+    "path": "2.0.1",
+    "hands": 400,
+    "points": 484,
+    "differ": 47,
+    "meanDiffBB": 4.603,
+    "ms": 28839
+   },
+   {
+    "id": "s5061",
+    "comp": "synth:maniac",
+    "startBB": 100,
+    "path": "2.1",
+    "hands": 400,
+    "points": 477,
+    "differ": 12,
+    "meanDiffBB": 14.314,
+    "ms": 16767
+   },
+   {
+    "id": "s5062",
+    "comp": "synth:maniac",
+    "startBB": 100,
+    "path": "2.0.1",
+    "hands": 400,
+    "points": 475,
+    "differ": 13,
+    "meanDiffBB": -2.318,
+    "ms": 26610
+   },
+   {
+    "id": "s5071",
+    "comp": "synth:station",
+    "startBB": 100,
+    "path": "2.1",
+    "hands": 400,
+    "points": 776,
+    "differ": 41,
+    "meanDiffBB": 1.172,
+    "ms": 44818
+   },
+   {
+    "id": "s5072",
+    "comp": "synth:station",
+    "startBB": 100,
+    "path": "2.0.1",
+    "hands": 400,
+    "points": 786,
+    "differ": 47,
+    "meanDiffBB": -1.031,
+    "ms": 45099
+   },
+   {
+    "id": "s5081",
+    "comp": "synth:rock",
+    "startBB": 100,
+    "path": "2.1",
+    "hands": 400,
+    "points": 424,
+    "differ": 26,
+    "meanDiffBB": 2.139,
+    "ms": 12781
+   },
+   {
+    "id": "s5082",
+    "comp": "synth:rock",
+    "startBB": 100,
+    "path": "2.0.1",
+    "hands": 400,
+    "points": 433,
+    "differ": 43,
+    "meanDiffBB": 3.501,
+    "ms": 17284
+   },
+   {
+    "id": "s5091",
+    "comp": "synth:mdf",
+    "startBB": 100,
+    "path": "2.1",
+    "hands": 400,
+    "points": 563,
+    "differ": 67,
+    "meanDiffBB": -3.171,
+    "ms": 24748
+   },
+   {
+    "id": "s5092",
+    "comp": "synth:mdf",
+    "startBB": 100,
+    "path": "2.0.1",
+    "hands": 400,
+    "points": 508,
+    "differ": 46,
+    "meanDiffBB": 0.162,
+    "ms": 24719
+   },
+   {
+    "id": "s5101",
+    "comp": "synth:random",
+    "startBB": 100,
+    "path": "2.1",
+    "hands": 400,
+    "points": 483,
+    "differ": 18,
+    "meanDiffBB": -2.066,
+    "ms": 26911
+   },
+   {
+    "id": "s5102",
+    "comp": "synth:random",
+    "startBB": 100,
+    "path": "2.0.1",
+    "hands": 400,
+    "points": 517,
+    "differ": 16,
+    "meanDiffBB": -11.343,
+    "ms": 37936
+   },
+   {
+    "id": "s5111",
+    "comp": "synth:switcher",
+    "startBB": 100,
+    "path": "2.1",
+    "hands": 400,
+    "points": 522,
+    "differ": 25,
+    "meanDiffBB": -4.719,
+    "ms": 27693
+   },
+   {
+    "id": "s5112",
+    "comp": "synth:switcher",
+    "startBB": 100,
+    "path": "2.0.1",
+    "hands": 400,
+    "points": 561,
+    "differ": 28,
+    "meanDiffBB": 3.447,
+    "ms": 28829
+   }
+  ],
+  "topPairs": [
+   {
+    "pair": "Bet ¾ Pot ↔ Check",
+    "n": 212,
+    "meanDiffBB": 1.349
+   },
+   {
+    "pair": "Bet Pot ↔ Check",
+    "n": 89,
+    "meanDiffBB": 3.141
+   },
+   {
+    "pair": "Bet ⅓ Pot ↔ Check",
+    "n": 86,
+    "meanDiffBB": 0.293
+   },
+   {
+    "pair": "Call # ↔ Fold",
+    "n": 55,
+    "meanDiffBB": 6.387
+   },
+   {
+    "pair": "Open # BB ↔ Fold",
+    "n": 53,
+    "meanDiffBB": 0.533
+   },
+   {
+    "pair": "#-Bet #× ↔ Call #",
+    "n": 50,
+    "meanDiffBB": -5.271
+   },
+   {
+    "pair": "Fold ↔ Call #",
+    "n": 49,
+    "meanDiffBB": -6.932
+   },
+   {
+    "pair": "Bet Pot ↔ Bet ¾ Pot",
+    "n": 39,
+    "meanDiffBB": -0.703
+   },
+   {
+    "pair": "Bet ½ Pot ↔ Bet ⅓ Pot",
+    "n": 36,
+    "meanDiffBB": 0.69
+   },
+   {
+    "pair": "Bet ¾ Pot ↔ Bet ⅓ Pot",
+    "n": 36,
+    "meanDiffBB": 1.008
+   },
+   {
+    "pair": "Bet ½ Pot ↔ Check",
+    "n": 30,
+    "meanDiffBB": 2.267
+   },
+   {
+    "pair": "Bet Pot ↔ Bet ⅓ Pot",
+    "n": 27,
+    "meanDiffBB": 1.842
+   },
+   {
+    "pair": "Bet Pot ↔ Bet ½ Pot",
+    "n": 24,
+    "meanDiffBB": 1.147
+   },
+   {
+    "pair": "Bet ¾ Pot ↔ Bet ½ Pot",
+    "n": 23,
+    "meanDiffBB": -0.77
+   },
+   {
+    "pair": "Check ↔ Bet ⅓ Pot",
+    "n": 20,
+    "meanDiffBB": 0.39
+   }
+  ]
  }
 }
