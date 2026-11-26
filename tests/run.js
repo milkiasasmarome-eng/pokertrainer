@@ -649,6 +649,9 @@ test('Regression Prüfer C: Importprüfung Lerndaten (XSS, __proto__, Ziele, Mom
   eq(bad, 0, 'öffentliche Sicht besteht die Prüfung (' + n + ' Hände)');
 });
 
+// Weitere Testdateien in tests/unit/*.js: module.exports = function (T) { T.test(name, fn) ... }
+fs.readdirSync(path.join(__dirname, 'unit')).filter(f => f.endsWith('.js')).sort().forEach(f => require('./unit/' + f)({ PT, test, ok, eq, QUICK, spot, coachOn }));
+
 const out = { app: PT.VERSION, date: new Date().toISOString(), node: process.version, quick: QUICK, passed: results.filter(r => r.ok).length, failed: results.filter(r => !r.ok).length, tests: results };
 fs.mkdirSync(path.join(__dirname, 'results'), { recursive: true });
 fs.writeFileSync(path.join(__dirname, 'results', QUICK ? 'unit-quick.json' : 'unit.json'), JSON.stringify(out, null, 1));
