@@ -27,6 +27,7 @@ const HEROES = {
   'coach21': { kind: 'coach', root: ROOT, mode: 'exploit', name: 'Coach 2.1 (exploitativ)' },
   'coach201': { kind: 'coach', root: V201, mode: 'exploit', name: 'Coach 2.0.1 (exploitativ)' },
   'coach21-gto': { kind: 'coach', root: ROOT, mode: 'gto', name: 'Coach 2.1 (gleichgewichtsnah)' },
+  'coach21-rein': { kind: 'coach', root: ROOT, mode: 'exploit', popBlend: 0, name: 'Coach 2.1, reines Populationsmodell (Entwicklungsvariante)' },
   'coach201-gto': { kind: 'coach', root: V201, mode: 'gto', name: 'Coach 2.0.1 (gleichgewichtsnah)' },
   'bot': { kind: 'bot', id: 'g004', name: 'Gegner-KI als Held (Profil g004, Stil ausgeglichen)' },
   'potodds': { kind: 'potodds', name: 'Referenz: Pot-Odds-Schwelle' },
@@ -48,12 +49,12 @@ function plan(name) {
     for (let si = 1; si <= 4; si++) conds.forEach((cd, ci) => add('zentral', ['coach21', 'coach201'], cd, [1000 + (ci + 1) * 10 + si], H));
     for (let si = 1; si <= 4; si++) conds.forEach((cd, ci) => add('zentral', ['bot', 'potodds'], cd, [1000 + (ci + 1) * 10 + si], H));
     ['maniac', 'station', 'rock', 'mdf', 'random', 'switcher'].forEach((k, i) => add('unbekannt', ['coach21', 'coach201', 'bot'], { comp: 'synth:' + k, difficulty: 'gemischt', startBB: 100 }, [2001 + 10 * i, 2002 + 10 * i], H));
-    add('kurz', ['coach21', 'coach201', 'pushfold'], { comp: 'bots', difficulty: 'gemischt', startBB: 15 }, [3001, 3002, 3003, 3004], H);
-    add('gto', ['coach21-gto', 'coach201-gto'], { comp: 'bots', difficulty: 'gemischt', startBB: 100 }, [4001, 4002, 4003, 4004], H);
+    add('kurz', ['coach21', 'coach201', 'pushfold'], { comp: 'bots', difficulty: 'gemischt', startBB: 15 }, [3001, 3002, 3003], H);
+    add('gto', ['coach21-gto', 'coach201-gto'], { comp: 'bots', difficulty: 'gemischt', startBB: 100 }, [4001, 4002], H);
   } else if (name === 'entwicklung') {
-    add('zentral', ['coach21', 'coach201'], { comp: 'bots', difficulty: 'gemischt', startBB: 100 }, [7001, 7002], 2500);
-    add('zentral', ['coach21', 'coach201'], { comp: 'mixed', difficulty: 'gemischt', startBB: 40 }, [7011], 2500);
-    add('zentral', ['coach21', 'coach201'], { comp: 'bots', difficulty: 'experte', startBB: 200 }, [7021], 2500);
+    add('zentral', ['coach21', 'coach201', 'coach21-rein'], { comp: 'bots', difficulty: 'gemischt', startBB: 100 }, [7001, 7002], 2500);
+    add('zentral', ['coach21', 'coach201', 'coach21-rein'], { comp: 'mixed', difficulty: 'gemischt', startBB: 40 }, [7011], 2500);
+    add('zentral', ['coach21', 'coach201', 'coach21-rein'], { comp: 'bots', difficulty: 'experte', startBB: 200 }, [7021], 2500);
   } else {
     add('zentral', ['coach21', 'coach201', 'bot'], { comp: 'bots', difficulty: 'gemischt', startBB: 100 }, [9001], 400);
     add('unbekannt', ['coach21', 'coach201'], { comp: 'synth:station', difficulty: 'gemischt', startBB: 100 }, [9002], 300);
@@ -144,6 +145,8 @@ function aggregate(planName, runs, h) {
   compare('v21-v201-kurz', 'Coach 2.1 gegen Coach 2.0.1, 15 BB', 'kurz', 'coach21', 'coach201', []);
   compare('v21-pushfold', 'Coach 2.1 gegen Referenz Push/Fold, 15 BB', 'kurz', 'coach21', 'pushfold', []);
   compare('v21-v201-gto', 'Coach 2.1 gegen 2.0.1, gleichgewichtsnaher Modus', 'gto', 'coach21-gto', 'coach201-gto', []);
+  compare('rein-v201', 'Entwicklung: reines Populationsmodell gegen 2.0.1', 'zentral', 'coach21-rein', 'coach201', []);
+  compare('v21-rein', 'Entwicklung: gemittelt gegen reines Populationsmodell', 'zentral', 'coach21', 'coach21-rein', []);
   // Läufe, die in mehreren Vergleichen vorkommen, sind dort keine unabhängigen Stichproben
   const shared = runTable.filter(x => x.usedIn.length > 1).map(x => ({ id: x.id, hero: x.hero, usedIn: x.usedIn }));
   comparisons.forEach(c => { c.sharedRuns = c.runsB.concat(c.runsA).filter(id => runById[id].usedIn.length > 1); c.sharedWith = [...new Set(c.sharedRuns.flatMap(id => runById[id].usedIn))].filter(x => x !== c.id); });

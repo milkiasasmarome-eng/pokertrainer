@@ -14,37 +14,37 @@ Die Kurzfassung steht am Ende dieses Dokuments unter „Fazit“, nachdem alle M
 
 Größenstudie mit gegenfaktischen Ausspielungen (`tests/strategy/sizing-study.js`): Der Held spielt nach dem Coach. An jedem Postflop-Spot, an dem er setzen darf, wird die Hand für **jede** Kandidatenaktion kopiert (Check, Bet ⅓, ½, ¾, 1 und 1,5 Pot; gegen eine Bet: Fold, Call, Raise 2,5× und 3,5×) und mit denselben Karten und demselben Zufallsstrom der Gegner zu Ende gespielt (gemeinsame Zufallszahlen). Gemessen werden je Größe die erste Reaktion jedes Gegners, der realisierte Wert relativ zum sofortigen Fold (All-in-bereinigt, siehe Abschnitt 6) und die Vorhersage des Coaches. Die Kopien sind nur ein Messinstrument der Simulation; der Coach selbst sieht nie verdeckte Karten.
 
-Basislauf mit dem Reaktionsmodell von 2.0.1 (`label base`, Seeds 503 und 504, 6.750 Hände, 2.073 Spots, davon 1.593 ohne offenen Einsatz, Gegner-KI gemischt, 100 BB):
+Basislauf mit dem Reaktionsmodell von 2.0.1 (`label base`, Seeds 503 und 504, 7.000 Hände, 2.095 Spots, davon 1.621 ohne offenen Einsatz, Gegner-KI gemischt, 100 BB; Stand nach dem Merge von Mathe 2.1 und Gegnergedächtnis):
 
 | Größe | Fold beobachtet | Fold vorhergesagt (2.0.1, exploitativ) | Raise beobachtet | Raise vorhergesagt |
 |---|---:|---:|---:|---:|
-| ⅓ Pot | 36,7 % | 26,9 % | 4,6 % | 14,6 % |
-| ½ Pot | 48,9 % | 35,2 % | 5,0 % | 12,9 % |
-| ¾ Pot | 56,4 % | 44,3 % | 5,3 % | 11,1 % |
-| Pot | 62,8 % | 47,6 % | 5,7 % | 10,4 % |
-| 1,5 Pot | 74,2 % | 47,7 % | 6,2 % | 10,3 % |
+| ⅓ Pot | 35,2 % | 27,2 % | 4,5 % | 14,5 % |
+| ½ Pot | 47,6 % | 35,5 % | 5,0 % | 12,8 % |
+| ¾ Pot | 54,7 % | 44,6 % | 5,3 % | 11,0 % |
+| Pot | 61,6 % | 47,9 % | 5,8 % | 10,3 % |
+| 1,5 Pot | 72,6 % | 47,9 % | 6,4 % | 10,2 % |
 
-(je Größe rund 1.840 Gegnerreaktionen, Standardfehler der beobachteten Fold-Rate ≈ 1,1 Prozentpunkte). Im ersten, kürzeren Basislauf (Seeds 501/502) zeigte sich dasselbe Bild je Straße: Heads-up am River foldeten die Gegner gegen ⅓ Pot in 61 % der Fälle, vorhergesagt waren 21 %; gegen 1,5 Pot 91 % statt 43 %.
+(je Größe rund 1.870 Gegnerreaktionen, Standardfehler der beobachteten Fold-Rate ≈ 1,1 Prozentpunkte). Am River heads-up ist die Lücke am größten (Prüf-Seed 504: gegen ⅓ Pot 53,8 % Fold beobachtet, 21,8 % vorhergesagt; gegen 1,5 Pot 89,0 % statt 43,5 %).
 
 Realisierter Wert gegenüber Check (BB je Spot, gepaart über dieselben Spots, Standardfehler in Klammern) und der Wert, den das 2.0.1-Modell für dieselbe Differenz erwartete:
 
 | Hand (Modell-Equity) | ⅓ | ½ | ¾ | Pot | 1,5 Pot |
 |---|---:|---:|---:|---:|---:|
-| < 35 % realisiert | +1,05 (0,52) | +0,83 (0,64) | +0,86 (0,73) | +0,77 (0,81) | +1,53 (0,85) |
-| < 35 % Modell 2.0.1 | −1,03 | −1,37 | −1,56 | −2,23 | −4,64 |
-| 35–60 % realisiert | +0,55 (0,66) | +0,16 (0,66) | −1,00 (0,76) | −1,16 (0,82) | −0,17 (0,93) |
-| 35–60 % Modell 2.0.1 | −0,36 | −0,75 | −1,38 | −2,05 | −3,57 |
-| ≥ 60 % realisiert | +0,56 (1,31) | +1,30 (1,36) | −0,25 (1,45) | −0,14 (1,59) | +0,22 (1,70) |
-| ≥ 60 % Modell 2.0.1 | +2,49 | +3,05 | +3,44 | +3,93 | +4,90 |
+| < 35 % realisiert | +0,57 (0,50) | +0,28 (0,61) | +0,05 (0,72) | +0,65 (0,82) | +0,81 (0,87) |
+| < 35 % Modell 2.0.1 | −1,03 | −1,35 | −1,59 | −2,37 | −4,70 |
+| 35–60 % realisiert | +0,84 (0,71) | +0,12 (0,73) | −0,90 (0,82) | −0,86 (0,84) | −0,36 (0,95) |
+| 35–60 % Modell 2.0.1 | −0,38 | −0,79 | −1,47 | −2,12 | −3,56 |
+| ≥ 60 % realisiert | +0,48 (1,29) | +1,50 (1,34) | +0,04 (1,46) | −0,03 (1,58) | −0,80 (1,63) |
+| ≥ 60 % Modell 2.0.1 | +2,45 | +2,96 | +3,35 | +3,72 | +4,64 |
 
-Welche Aktion das 2.0.1-Modell unter diesen sechs wählte: Check 909-mal, ⅓ 148, ½ 83, ¾ 124, Pot 19, 1,5 Pot 310 (von 1.593 Spots; in echten Spots kommen Overbets auf dem Flop und multiway nicht als Kandidat vor).
+Welche Aktion das 2.0.1-Modell unter diesen sechs wählte: Check 913-mal, ⅓ 149, ½ 90, ¾ 129, Pot 21, 1,5 Pot 319 (von 1.621 Spots; in echten Spots ist die Overbet auf dem Flop und multiway kein Kandidat).
 
 ### Befund
 
-1. **½ Pot ist in den Daten nicht schlechter als die anderen Größen.** Über alle Spots: ⅓ +0,74 (0,47), ½ +0,73 (0,50), ¾ −0,08 (0,55), Pot −0,15 (0,61), 1,5 Pot +0,58 (0,65) BB gegenüber Check; die Unterschiede zwischen den Größen liegen innerhalb von ein bis zwei Standardfehlern. „Immer ½ Pot“ hätte über dieselben Spots +0,75 (0,50) BB gegenüber Check gebracht, die Wahl des 2.0.1-Modells +0,14 (0,49).
-2. **Zwei Modellfehler drängen ½ Pot heraus.** (a) Folds werden unterschätzt, am stärksten am River und bei großen Einsätzen (die Overbet-Korrektur und der konservative Abschlag machen die Fold-Kurve oberhalb von Pot flach). Dadurch erscheinen Bluffs und Semi-Bluffs mit schwachen Händen negativ (Modell −1 bis −4,6 BB), obwohl sie realisiert positiv sind; mit diesen Händen wählt das Modell Check statt einer kleinen oder mittleren Bet. (b) Die Equity gegen die Callrange wird überschätzt (Heads-up, gemessen gegen die tatsächliche Hand des Callers, nur zur Auswertung): Flop ½ Pot 0,44 statt 0,37 beobachtet (erster Basislauf), Turn ½ Pot 0,44 statt 0,36, River ½ Pot 0,37 statt 0,21. Mit einer zu schwachen Callrange steigt der Modellwert von Value-Bets monoton mit der Größe (≥ 60 %: +2,5 → +4,9 BB), realisiert ist die Kurve flach. Für Value „gewinnt“ deshalb die größte Größe, für schwache Hände der Check – ½ Pot ist selten das Maximum.
+1. **½ Pot ist in den Daten nicht schlechter als die anderen Größen.** Über alle Spots: ⅓ +0,64 (0,48), ½ +0,57 (0,51), ¾ −0,27 (0,57), Pot −0,04 (0,61), 1,5 Pot −0,03 (0,65) BB gegenüber Check; die Unterschiede liegen innerhalb von ein bis zwei Standardfehlern. „Immer ½ Pot“ hätte über dieselben Spots +0,60 (0,50) BB gegenüber Check gebracht, die Wahl des 2.0.1-Modells −0,12 (0,47).
+2. **Zwei Modellfehler drängen ½ Pot heraus.** (a) Folds werden unterschätzt, am stärksten am River und bei großen Einsätzen (die Overbet-Korrektur und der konservative Abschlag machen die Fold-Kurve oberhalb von Pot flach). Dadurch erscheinen Bluffs und Semi-Bluffs mit schwachen Händen negativ (Modell −1,0 bis −4,7 BB), obwohl sie realisiert eher positiv sind; mit diesen Händen wählt das Modell Check statt einer kleinen oder mittleren Bet. (b) Die Equity gegen die Callrange wird überschätzt (heads-up, gemessen gegen die tatsächliche Hand des Callers, nur zur Auswertung): Flop ½ Pot 0,47 statt 0,40 beobachtet, Turn ½ Pot 0,43 statt 0,35, River ½ Pot 0,37 statt 0,21. Mit einer zu schwachen Callrange steigt der Modellwert von Value-Bets monoton mit der Größe (≥ 60 %: +2,5 → +4,6 BB), realisiert ist die Kurve flach mit dem höchsten Punktwert bei ½ Pot. Für Value „gewinnt“ deshalb die größte Größe, für schwache Hände der Check – ½ Pot ist selten das Maximum.
 3. **Raises werden überschätzt** (Modell 10–15 %, beobachtet 4–6 %), was Bets zusätzlich bestraft.
-4. Fehlanpassung an Gegnertypen: Gegen Spieler mit HUD-Typ „Nit“ sagte 2.0.1 nach ⅓ Pot 10 % Fold voraus (beobachtet 54 %, erster Basislauf, 43 Reaktionen), weil die Untergrenze aus der Range-Zusammensetzung („starke Hände spielen immer weiter“) bei engen Ranges sehr hoch ausfällt.
+4. **Fehlanpassung an Gegnertypen:** Gegen Spieler mit HUD-Typ „Nit“ sagte 2.0.1 nach ⅓ Pot 15 % Fold voraus, beobachtet 63 % (27 Reaktionen), weil die Untergrenze aus der Range-Zusammensetzung („starke Hände spielen immer weiter“) bei engen Ranges sehr hoch ausfällt.
 
 ## 2. Reaktionsmodell 2.1
 
@@ -58,7 +58,7 @@ Ein Gegner spielt mit einer Kombination weiter, wenn ihre absolute Stärke x (Pe
 
 Die Callrange ist w·(P(weiter) − P(Raise)), die Raiserange w·P(Raise) – weiche Gewichte je Kombination statt eines harten Schnitts. Damit ist das Modell zusammensetzungsabhängig: Eine schwache Range foldet mehr als eine starke, ohne Sonderregeln für Untergrenzen oder Overbets.
 
-**Kalibrierung** (`tests/strategy/fit-response.js`): Maximum Likelihood (Nelder-Mead, Parametergrenzen) auf den beobachteten ersten Reaktionen im Basislauf. Eingehen nur am Tisch sichtbare Größen: Aktion des Gegners, Einsatzgröße, Straße, Gegnerzahl, die vom Coach aus öffentlichen Informationen geschätzte Range und die HUD-Werte. Keine verdeckten Karten, keine internen Spielstile. Prüfung auf getrenntem Seed (Training 503, Prüfung 504; je rund 5.100 Reaktionen): Log-Loss Prüfung 0,757 (2.0.1: 0,898), Training 0,765 (2.0.1: 0,925). Fold-Rate auf dem Prüf-Seed beobachtet / Modell 2.1 / Modell 2.0.1: ⅓ 33,4 / 32,8 / 27,0 %, ½ 48,0 / 43,7 / 35,1 %, ¾ 55,0 / 54,4 / 44,2 %, Pot 60,6 / 61,8 / 47,4 %, 1,5 Pot 72,4 / 71,5 / 47,5 %; River heads-up ⅓ Pot 58,3 / 50,8 / 21,5 %. Die endgültigen Parameter (Training auf 503 und 504) stehen in `ev.js` (`POP`) und in `strategy.json` (`responseFit.final`). Geschätzte Wirkung der Gegnerwerte: Passivität (VPIP − PFR) senkt die Schwelle deutlich (lp = −0,86), hoher WTSD senkt sie (lw = −0,10), hoher Fold-Wert gegen C-Bets hebt sie nur schwach (lf = 0,04); VPIP allein wirkt kaum (lv ≈ 0).
+**Kalibrierung** (`tests/strategy/fit-response.js`): Maximum Likelihood (Nelder-Mead, Parametergrenzen) auf den beobachteten ersten Reaktionen im Basislauf. Eingehen nur am Tisch sichtbare Größen: Aktion des Gegners, Einsatzgröße, Straße, Gegnerzahl, die vom Coach aus öffentlichen Informationen geschätzte Range und die HUD-Werte. Keine verdeckten Karten, keine internen Spielstile. Prüfung auf getrenntem Seed (Training 503, Prüfung 504; 4.915 bzw. 5.531 Reaktionen): Log-Loss Prüfung 0,772 (2.0.1: 0,895), Training 0,775 (2.0.1: 0,924). Fold-Rate auf dem Prüf-Seed beobachtet / Modell 2.1 / Modell 2.0.1: ⅓ 32,4 / 32,3 / 27,6 %, ½ 47,0 / 43,2 / 35,7 %, ¾ 53,7 / 54,0 / 44,7 %, Pot 59,9 / 61,4 / 47,9 %, 1,5 Pot 70,9 / 71,4 / 47,8 %; River heads-up ⅓ Pot 53,8 / 49,2 / 21,8 %. Raise gegen Bets beobachtet 4–6 %, Modell 6 %. Die endgültigen Parameter (Training auf 503 und 504) stehen in `ev.js` (`POP`) und in `strategy.json` (`responseFit.final`). Geschätzte Wirkung der Gegnerwerte: Passivität (VPIP − PFR) senkt die Schwelle deutlich (lp = −0,79), hoher WTSD senkt sie (lw = −0,12), der Fold-Wert gegen C-Bets und VPIP allein wirken kaum (lf = 0,01, lv = −0,03) – die Range-Schätzung aus VPIP/PFR erklärt den Großteil bereits.
 
 ### Validierung und Übertragbarkeit – und warum gemittelt wird
 

@@ -172,7 +172,7 @@ function splitRange(w, sc, contFrac, raiseFrac) {
  * der Gegnerpopulation geschätzt (Maximum Likelihood, tests/strategy/fit-response.js; Daten und Prüfung auf getrennten Seeds: docs/STRATEGIE.md).
  * Keine verdeckten Karten, keine internen Spielstile. Modellannahme, kein Solver-Ergebnis.
  */
-var POP = { c0: [0, 0.2273, 0.1111, 0.2789], c1: [0, 1.7256, 2.1196, 1.8653], c2: 0.0123, c3: -0.0748, tau: 0.107, c4: -0.1784, taud: 0.0157, lf: 0.0397, lw: -0.1012, r0: 0.4952, r1: 0.9409, rd: 0.1891, lv: -0.0072, lp: -0.8641, blend: 0.5 };
+var POP = { c0: [0, 0.2085, 0.0646, 0.2314], c1: [0, 1.7984, 2.2272, 2.09], c2: 0.0175, c3: -0.0599, tau: 0.1268, c4: -0.1845, taud: 0.015, lf: 0.01, lw: -0.1161, r0: 0.4171, r1: 0.9306, rd: 0.1749, lv: -0.0309, lp: -0.7881, blend: 0.5 };
 function logit(p) { p = clamp(p, 0.01, 0.99); return Math.log(p / (1 - p)); }
 function sigm(z) { return 1 / (1 + Math.exp(-z)); }
 /** Anteil der Range, der bei Schwelle th weiterspielt */
