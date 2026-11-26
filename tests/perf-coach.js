@@ -58,7 +58,7 @@ function measure(PT, buildSrc, spots, cfg, holdings) {
   });
   return out;
 }
-const CONFIGS = [{ id: 'auto-tipp', level: 'standard', live: true, reps: 12 }, { id: 'praezise', level: 'praezise', live: false, reps: 6 }];
+const CONFIGS = [{ id: 'auto-tipp', level: 'standard', live: true, reps: 12 }, { id: 'praezise', level: 'praezise', live: false, reps: 6 }, { id: 'tief', level: 'tief', live: false, reps: 4 }];
 
 async function main() {
   const which = process.argv[2] || 'beide', BASE = process.argv[3] || 'http://127.0.0.1:8766/';
