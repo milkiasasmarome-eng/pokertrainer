@@ -1,0 +1,872 @@
+{
+ "cfr": {
+  "date": "2026-11-26T20:15:35.928Z",
+  "summary": {
+   "spots": 3,
+   "sizes": [
+    0.5,
+    1
+   ],
+   "ms": 10523,
+   "buckets": {
+    "5": {
+     "comboExplMean": 0.00721,
+     "comboExplMax": 0.00833,
+     "bucketExplMean": 0.00001,
+     "msMean": 36.33333
+    },
+    "10": {
+     "comboExplMean": 0.00383,
+     "comboExplMax": 0.00507,
+     "bucketExplMean": 0.00003,
+     "msMean": 75.66667
+    },
+    "20": {
+     "comboExplMean": 0.00207,
+     "comboExplMax": 0.00282,
+     "bucketExplMean": 0.00003,
+     "msMean": 81.33333
+    },
+    "40": {
+     "comboExplMean": 0.0015,
+     "comboExplMax": 0.00185,
+     "bucketExplMean": 0.00004,
+     "msMean": 150
+    }
+   },
+   "raise": {
+    "10": {
+     "noRaiseInRaiseGameMean": 0.12788,
+     "noRaiseInRaiseGameMax": 0.2492,
+     "raiseInRaiseGameMean": 0.00912,
+     "raiseInRaiseGameMax": 0.01246,
+     "noRaiseInNoRaiseGameMean": 0.00383,
+     "msMean": 128,
+     "raiseFreqIPMean": 0.14833,
+     "raiseFreqOOPMean": 0.29733
+    },
+    "20": {
+     "noRaiseInRaiseGameMean": 0.13566,
+     "noRaiseInRaiseGameMax": 0.23539,
+     "raiseInRaiseGameMean": 0.00475,
+     "raiseInRaiseGameMax": 0.00573,
+     "noRaiseInNoRaiseGameMean": 0.00207,
+     "msMean": 416.33333,
+     "raiseFreqIPMean": 0.19667,
+     "raiseFreqOOPMean": 0.24067
+    }
+   },
+   "convergence": {
+    "100": 0.00247,
+    "300": 0.00038,
+    "700": 0.00009,
+    "2500": 0.00001
+   }
+  },
+  "rows": [
+   {
+    "spot": 0,
+    "nO": 443,
+    "nI": 270,
+    "stack": 8.59,
+    "buckets": {
+     "5": {
+      "ms": 68,
+      "bucketExpl": 0.00002,
+      "comboExpl": 0.00729,
+      "value": 0.1482,
+      "comboValue": 0.1482
+     },
+     "10": {
+      "ms": 120,
+      "bucketExpl": 0.00004,
+      "comboExpl": 0.00507,
+      "value": 0.1481,
+      "comboValue": 0.1481
+     },
+     "20": {
+      "ms": 100,
+      "bucketExpl": 0.00004,
+      "comboExpl": 0.00282,
+      "value": 0.1483,
+      "comboValue": 0.1483
+     },
+     "40": {
+      "ms": 177,
+      "bucketExpl": 0.00003,
+      "comboExpl": 0.00113,
+      "value": 0.1492,
+      "comboValue": 0.1492
+     }
+    },
+    "raise": {
+     "10": {
+      "ms": 204,
+      "noRaiseInRaiseGame": 0.2492,
+      "raiseInRaiseGame": 0.01049,
+      "noRaiseInNoRaiseGame": 0.00507,
+      "raiseFreqIP": 0.146,
+      "raiseFreqOOP": 0.071
+     },
+     "20": {
+      "ms": 945,
+      "noRaiseInRaiseGame": 0.23539,
+      "raiseInRaiseGame": 0.00573,
+      "noRaiseInNoRaiseGame": 0.00282,
+      "raiseFreqIP": 0.193,
+      "raiseFreqOOP": 0.093
+     }
+    },
+    "conv": {
+     "100": 0.002878,
+     "300": 0.000432,
+     "700": 0.000105,
+     "2500": 0.000013
+    }
+   },
+   {
+    "spot": 1,
+    "nO": 209,
+    "nI": 218,
+    "stack": 2.05,
+    "buckets": {
+     "5": {
+      "ms": 15,
+      "bucketExpl": 0.00001,
+      "comboExpl": 0.00833,
+      "value": 0.4038,
+      "comboValue": 0.4038
+     },
+     "10": {
+      "ms": 45,
+      "bucketExpl": 0.00002,
+      "comboExpl": 0.00368,
+      "value": 0.4008,
+      "comboValue": 0.4008
+     },
+     "20": {
+      "ms": 51,
+      "bucketExpl": 0.00003,
+      "comboExpl": 0.00154,
+      "value": 0.4017,
+      "comboValue": 0.4017
+     },
+     "40": {
+      "ms": 125,
+      "bucketExpl": 0.00004,
+      "comboExpl": 0.00152,
+      "value": 0.4017,
+      "comboValue": 0.4017
+     }
+    },
+    "raise": {
+     "10": {
+      "ms": 88,
+      "noRaiseInRaiseGame": 0.0802,
+      "raiseInRaiseGame": 0.01246,
+      "noRaiseInNoRaiseGame": 0.00368,
+      "raiseFreqIP": 0.054,
+      "raiseFreqOOP": 0.602
+     },
+     "20": {
+      "ms": 160,
+      "noRaiseInRaiseGame": 0.11999,
+      "raiseInRaiseGame": 0.00452,
+      "noRaiseInNoRaiseGame": 0.00154,
+      "raiseFreqIP": 0.14,
+      "raiseFreqOOP": 0.424
+     }
+    },
+    "conv": {
+     "100": 0.001884,
+     "300": 0.00033,
+     "700": 0.000076,
+     "2500": 0.000006
+    }
+   },
+   {
+    "spot": 2,
+    "nO": 282,
+    "nI": 489,
+    "stack": 8.22,
+    "buckets": {
+     "5": {
+      "ms": 26,
+      "bucketExpl": 0.00001,
+      "comboExpl": 0.006,
+      "value": -0.2696,
+      "comboValue": -0.2696
+     },
+     "10": {
+      "ms": 62,
+      "bucketExpl": 0.00003,
+      "comboExpl": 0.00273,
+      "value": -0.2693,
+      "comboValue": -0.2693
+     },
+     "20": {
+      "ms": 93,
+      "bucketExpl": 0.00003,
+      "comboExpl": 0.00185,
+      "value": -0.2702,
+      "comboValue": -0.2702
+     },
+     "40": {
+      "ms": 148,
+      "bucketExpl": 0.00004,
+      "comboExpl": 0.00185,
+      "value": -0.2702,
+      "comboValue": -0.2702
+     }
+    },
+    "raise": {
+     "10": {
+      "ms": 92,
+      "noRaiseInRaiseGame": 0.05424,
+      "raiseInRaiseGame": 0.00442,
+      "noRaiseInNoRaiseGame": 0.00273,
+      "raiseFreqIP": 0.245,
+      "raiseFreqOOP": 0.219
+     },
+     "20": {
+      "ms": 144,
+      "noRaiseInRaiseGame": 0.0516,
+      "raiseInRaiseGame": 0.004,
+      "noRaiseInNoRaiseGame": 0.00185,
+      "raiseFreqIP": 0.257,
+      "raiseFreqOOP": 0.205
+     }
+    },
+    "conv": {
+     "100": 0.002645,
+     "300": 0.00038,
+     "700": 0.000095,
+     "2500": 0.000008
+    }
+   }
+  ]
+ },
+ "responseFit": {
+  "holdout": {
+   "label": "base",
+   "comp": "bots",
+   "train": [
+    503
+   ],
+   "test": [
+    504
+   ],
+   "nTrain": 5202,
+   "nTest": 5082,
+   "params": {
+    "c0_1": 0.2358,
+    "c0_2": 0.1062,
+    "c0_3": 0.2801,
+    "c1_1": 1.6746,
+    "c1_2": 2.167,
+    "c1_3": 1.7851,
+    "c2": 0.0111,
+    "c3": -0.0528,
+    "tau": 0.1022,
+    "c4": -0.1835,
+    "taud": 0.018,
+    "lf": 0.0277,
+    "lw": -0.1123,
+    "r0": 0.6812,
+    "r1": 0.9576,
+    "rd": 0.283,
+    "lv": -0.0162,
+    "lp": -0.7618
+   },
+   "vector": [
+    0.2358,
+    0.1062,
+    0.2801,
+    1.6746,
+    2.167,
+    1.7851,
+    0.0111,
+    -0.0528,
+    0.1022,
+    -0.1835,
+    0.018,
+    0.0277,
+    -0.1123,
+    0.6812,
+    0.9576,
+    0.283,
+    -0.0162,
+    -0.7618
+   ],
+   "logLoss": {
+    "trainNew": 0.7646,
+    "trainOld": 0.9253,
+    "testNew": 0.7573,
+    "testOld": 0.8975
+   },
+   "calibTest": {
+    "bySize": [
+     {
+      "key": "0.33",
+      "n": 912,
+      "obsFold": 0.334,
+      "newFold": 0.328,
+      "oldFold": 0.27,
+      "obsRaise": 0.041,
+      "newRaise": 0.066
+     },
+     {
+      "key": "0.5",
+      "n": 911,
+      "obsFold": 0.48,
+      "newFold": 0.437,
+      "oldFold": 0.351,
+      "obsRaise": 0.045,
+      "newRaise": 0.066
+     },
+     {
+      "key": "0.75",
+      "n": 909,
+      "obsFold": 0.55,
+      "newFold": 0.544,
+      "oldFold": 0.442,
+      "obsRaise": 0.047,
+      "newRaise": 0.066
+     },
+     {
+      "key": "1",
+      "n": 909,
+      "obsFold": 0.606,
+      "newFold": 0.618,
+      "oldFold": 0.474,
+      "obsRaise": 0.05,
+      "newRaise": 0.066
+     },
+     {
+      "key": "1.5",
+      "n": 903,
+      "obsFold": 0.724,
+      "newFold": 0.715,
+      "oldFold": 0.475,
+      "obsRaise": 0.053,
+      "newRaise": 0.066
+     },
+     {
+      "key": "r2.5",
+      "n": 269,
+      "obsFold": 0.323,
+      "newFold": 0.343,
+      "oldFold": 0.359,
+      "obsRaise": 0.152,
+      "newRaise": 0.14
+     },
+     {
+      "key": "r3.5",
+      "n": 269,
+      "obsFold": 0.394,
+      "newFold": 0.431,
+      "oldFold": 0.373,
+      "obsRaise": 0.13,
+      "newRaise": 0.14
+     }
+    ],
+    "byStreetSize": [
+     {
+      "key": "St1 HU 0.33",
+      "n": 316,
+      "obsFold": 0.301,
+      "newFold": 0.291,
+      "oldFold": 0.216,
+      "obsRaise": 0.044,
+      "newRaise": 0.073
+     },
+     {
+      "key": "St1 HU 0.5",
+      "n": 316,
+      "obsFold": 0.465,
+      "newFold": 0.396,
+      "oldFold": 0.303,
+      "obsRaise": 0.047,
+      "newRaise": 0.073
+     },
+     {
+      "key": "St1 HU 0.75",
+      "n": 316,
+      "obsFold": 0.532,
+      "newFold": 0.499,
+      "oldFold": 0.402,
+      "obsRaise": 0.051,
+      "newRaise": 0.073
+     },
+     {
+      "key": "St1 HU 1",
+      "n": 316,
+      "obsFold": 0.576,
+      "newFold": 0.567,
+      "oldFold": 0.447,
+      "obsRaise": 0.051,
+      "newRaise": 0.073
+     },
+     {
+      "key": "St1 HU 1.5",
+      "n": 316,
+      "obsFold": 0.693,
+      "newFold": 0.649,
+      "oldFold": 0.47,
+      "obsRaise": 0.06,
+      "newRaise": 0.073
+     },
+     {
+      "key": "St1 HU r2.5",
+      "n": 119,
+      "obsFold": 0.294,
+      "newFold": 0.293,
+      "oldFold": 0.352,
+      "obsRaise": 0.168,
+      "newRaise": 0.154
+     },
+     {
+      "key": "St1 HU r3.5",
+      "n": 119,
+      "obsFold": 0.353,
+      "newFold": 0.362,
+      "oldFold": 0.378,
+      "obsRaise": 0.16,
+      "newRaise": 0.154
+     },
+     {
+      "key": "St1 MW 0.33",
+      "n": 155,
+      "obsFold": 0.277,
+      "newFold": 0.31,
+      "oldFold": 0.401,
+      "obsRaise": 0.019,
+      "newRaise": 0.069
+     },
+     {
+      "key": "St1 MW 0.5",
+      "n": 155,
+      "obsFold": 0.458,
+      "newFold": 0.416,
+      "oldFold": 0.476,
+      "obsRaise": 0.026,
+      "newRaise": 0.069
+     },
+     {
+      "key": "St1 MW 0.75",
+      "n": 155,
+      "obsFold": 0.542,
+      "newFold": 0.517,
+      "oldFold": 0.548,
+      "obsRaise": 0.026,
+      "newRaise": 0.069
+     },
+     {
+      "key": "St1 MW 1",
+      "n": 155,
+      "obsFold": 0.555,
+      "newFold": 0.582,
+      "oldFold": 0.556,
+      "obsRaise": 0.026,
+      "newRaise": 0.069
+     },
+     {
+      "key": "St1 MW 1.5",
+      "n": 155,
+      "obsFold": 0.645,
+      "newFold": 0.66,
+      "oldFold": 0.521,
+      "obsRaise": 0.026,
+      "newRaise": 0.069
+     },
+     {
+      "key": "St1 MW r2.5",
+      "n": 49,
+      "obsFold": 0.347,
+      "newFold": 0.373,
+      "oldFold": 0.429,
+      "obsRaise": 0.041,
+      "newRaise": 0.118
+     },
+     {
+      "key": "St1 MW r3.5",
+      "n": 49,
+      "obsFold": 0.367,
+      "newFold": 0.443,
+      "oldFold": 0.428,
+      "obsRaise": 0.041,
+      "newRaise": 0.118
+     },
+     {
+      "key": "St2 HU 0.33",
+      "n": 198,
+      "obsFold": 0.227,
+      "newFold": 0.252,
+      "oldFold": 0.213,
+      "obsRaise": 0.071,
+      "newRaise": 0.08
+     },
+     {
+      "key": "St2 HU 0.5",
+      "n": 198,
+      "obsFold": 0.369,
+      "newFold": 0.367,
+      "oldFold": 0.299,
+      "obsRaise": 0.081,
+      "newRaise": 0.08
+     },
+     {
+      "key": "St2 HU 0.75",
+      "n": 196,
+      "obsFold": 0.454,
+      "newFold": 0.489,
+      "oldFold": 0.398,
+      "obsRaise": 0.087,
+      "newRaise": 0.08
+     },
+     {
+      "key": "St2 HU 1",
+      "n": 196,
+      "obsFold": 0.515,
+      "newFold": 0.584,
+      "oldFold": 0.441,
+      "obsRaise": 0.087,
+      "newRaise": 0.08
+     },
+     {
+      "key": "St2 HU 1.5",
+      "n": 194,
+      "obsFold": 0.644,
+      "newFold": 0.732,
+      "oldFold": 0.463,
+      "obsRaise": 0.093,
+      "newRaise": 0.08
+     },
+     {
+      "key": "St2 HU r2.5",
+      "n": 52,
+      "obsFold": 0.269,
+      "newFold": 0.296,
+      "oldFold": 0.325,
+      "obsRaise": 0.25,
+      "newRaise": 0.175
+     },
+     {
+      "key": "St2 HU r3.5",
+      "n": 52,
+      "obsFold": 0.365,
+      "newFold": 0.438,
+      "oldFold": 0.34,
+      "obsRaise": 0.173,
+      "newRaise": 0.174
+     },
+     {
+      "key": "St2 MW 0.33",
+      "n": 76,
+      "obsFold": 0.316,
+      "newFold": 0.3,
+      "oldFold": 0.405,
+      "obsRaise": 0,
+      "newRaise": 0.07
+     },
+     {
+      "key": "St2 MW 0.5",
+      "n": 76,
+      "obsFold": 0.487,
+      "newFold": 0.422,
+      "oldFold": 0.474,
+      "obsRaise": 0,
+      "newRaise": 0.07
+     },
+     {
+      "key": "St2 MW 0.75",
+      "n": 76,
+      "obsFold": 0.526,
+      "newFold": 0.543,
+      "oldFold": 0.541,
+      "obsRaise": 0,
+      "newRaise": 0.07
+     },
+     {
+      "key": "St2 MW 1",
+      "n": 76,
+      "obsFold": 0.605,
+      "newFold": 0.634,
+      "oldFold": 0.545,
+      "obsRaise": 0,
+      "newRaise": 0.07
+     },
+     {
+      "key": "St2 MW 1.5",
+      "n": 76,
+      "obsFold": 0.829,
+      "newFold": 0.776,
+      "oldFold": 0.508,
+      "obsRaise": 0,
+      "newRaise": 0.07
+     },
+     {
+      "key": "St2 MW r2.5",
+      "n": 16,
+      "obsFold": 0.375,
+      "newFold": 0.363,
+      "oldFold": 0.407,
+      "obsRaise": 0.188,
+      "newRaise": 0.107
+     },
+     {
+      "key": "St2 MW r3.5",
+      "n": 16,
+      "obsFold": 0.438,
+      "newFold": 0.481,
+      "oldFold": 0.412,
+      "obsRaise": 0.188,
+      "newRaise": 0.107
+     },
+     {
+      "key": "St3 HU 0.33",
+      "n": 127,
+      "obsFold": 0.583,
+      "newFold": 0.508,
+      "oldFold": 0.215,
+      "obsRaise": 0.047,
+      "newRaise": 0.032
+     },
+     {
+      "key": "St3 HU 0.5",
+      "n": 126,
+      "obsFold": 0.651,
+      "newFold": 0.614,
+      "oldFold": 0.3,
+      "obsRaise": 0.048,
+      "newRaise": 0.032
+     },
+     {
+      "key": "St3 HU 0.75",
+      "n": 126,
+      "obsFold": 0.698,
+      "newFold": 0.712,
+      "oldFold": 0.399,
+      "obsRaise": 0.048,
+      "newRaise": 0.032
+     },
+     {
+      "key": "St3 HU 1",
+      "n": 126,
+      "obsFold": 0.794,
+      "newFold": 0.773,
+      "oldFold": 0.44,
+      "obsRaise": 0.056,
+      "newRaise": 0.032
+     },
+     {
+      "key": "St3 HU 1.5",
+      "n": 122,
+      "obsFold": 0.902,
+      "newFold": 0.843,
+      "oldFold": 0.434,
+      "obsRaise": 0.049,
+      "newRaise": 0.03
+     },
+     {
+      "key": "St3 HU r2.5",
+      "n": 23,
+      "obsFold": 0.391,
+      "newFold": 0.491,
+      "oldFold": 0.283,
+      "obsRaise": 0.13,
+      "newRaise": 0.106
+     },
+     {
+      "key": "St3 HU r3.5",
+      "n": 23,
+      "obsFold": 0.565,
+      "newFold": 0.581,
+      "oldFold": 0.287,
+      "obsRaise": 0.087,
+      "newRaise": 0.106
+     },
+     {
+      "key": "St3 MW 0.33",
+      "n": 40,
+      "obsFold": 0.6,
+      "newFold": 0.551,
+      "oldFold": 0.374,
+      "obsRaise": 0,
+      "newRaise": 0.023
+     },
+     {
+      "key": "St3 MW 0.5",
+      "n": 40,
+      "obsFold": 0.675,
+      "newFold": 0.658,
+      "oldFold": 0.438,
+      "obsRaise": 0,
+      "newRaise": 0.023
+     },
+     {
+      "key": "St3 MW 0.75",
+      "n": 40,
+      "obsFold": 0.775,
+      "newFold": 0.75,
+      "oldFold": 0.504,
+      "obsRaise": 0,
+      "newRaise": 0.023
+     },
+     {
+      "key": "St3 MW 1",
+      "n": 40,
+      "obsFold": 0.9,
+      "newFold": 0.805,
+      "oldFold": 0.513,
+      "obsRaise": 0.025,
+      "newRaise": 0.023
+     },
+     {
+      "key": "St3 MW 1.5",
+      "n": 40,
+      "obsFold": 0.925,
+      "newFold": 0.864,
+      "oldFold": 0.454,
+      "obsRaise": 0.025,
+      "newRaise": 0.023
+     },
+     {
+      "key": "St3 MW r2.5",
+      "n": 10,
+      "obsFold": 0.6,
+      "newFold": 0.661,
+      "oldFold": 0.365,
+      "obsRaise": 0,
+      "newRaise": 0.037
+     },
+     {
+      "key": "St3 MW r3.5",
+      "n": 10,
+      "obsFold": 0.7,
+      "newFold": 0.739,
+      "oldFold": 0.352,
+      "obsRaise": 0,
+      "newRaise": 0.037
+     }
+    ],
+    "byHud": [
+     {
+      "key": "LAG",
+      "n": 697,
+      "obsFold": 0.577,
+      "newFold": 0.571,
+      "oldFold": 0.4,
+      "obsRaise": 0.036,
+      "newRaise": 0.077
+     },
+     {
+      "key": "Nit",
+      "n": 45,
+      "obsFold": 0.6,
+      "newFold": 0.52,
+      "oldFold": 0.41,
+      "obsRaise": 0.044,
+      "newRaise": 0.117
+     },
+     {
+      "key": "TAG",
+      "n": 810,
+      "obsFold": 0.538,
+      "newFold": 0.553,
+      "oldFold": 0.395,
+      "obsRaise": 0.079,
+      "newRaise": 0.082
+     },
+     {
+      "key": "loose-passiv",
+      "n": 1082,
+      "obsFold": 0.385,
+      "newFold": 0.417,
+      "oldFold": 0.379,
+      "obsRaise": 0.055,
+      "newRaise": 0.068
+     },
+     {
+      "key": "sehr loose",
+      "n": 499,
+      "obsFold": 0.585,
+      "newFold": 0.535,
+      "oldFold": 0.469,
+      "obsRaise": 0.016,
+      "newRaise": 0.066
+     },
+     {
+      "key": "unbekannt",
+      "n": 1949,
+      "obsFold": 0.547,
+      "newFold": 0.523,
+      "oldFold": 0.391,
+      "obsRaise": 0.067,
+      "newRaise": 0.073
+     }
+    ]
+   }
+  },
+  "final": {
+   "label": "base",
+   "comp": "bots",
+   "train": [
+    503,
+    504
+   ],
+   "test": [
+    504
+   ],
+   "nTrain": 10284,
+   "nTest": 5082,
+   "params": {
+    "c0_1": 0.2273,
+    "c0_2": 0.1111,
+    "c0_3": 0.2789,
+    "c1_1": 1.7256,
+    "c1_2": 2.1196,
+    "c1_3": 1.8653,
+    "c2": 0.0123,
+    "c3": -0.0748,
+    "tau": 0.107,
+    "c4": -0.1784,
+    "taud": 0.0157,
+    "lf": 0.0397,
+    "lw": -0.1012,
+    "r0": 0.4952,
+    "r1": 0.9409,
+    "rd": 0.1891,
+    "lv": -0.0072,
+    "lp": -0.8641
+   },
+   "vector": [
+    0.2273,
+    0.1111,
+    0.2789,
+    1.7256,
+    2.1196,
+    1.8653,
+    0.0123,
+    -0.0748,
+    0.107,
+    -0.1784,
+    0.0157,
+    0.0397,
+    -0.1012,
+    0.4952,
+    0.9409,
+    0.1891,
+    -0.0072,
+    -0.8641
+   ],
+   "logLoss": {
+    "trainNew": 0.7592,
+    "trainOld": 0.9115,
+    "testNew": 0.7517,
+    "testOld": 0.8975
+   },
+   "note": "Endgültige Parameter: Training auf beiden Seeds (503, 504); Prüfwerte dieser Zeile sind in der Stichprobe, maßgeblich ist holdout (Training 503, Prüfung 504) und die Validierungsstudie mit dem neuen Modell"
+  }
+ }
+}

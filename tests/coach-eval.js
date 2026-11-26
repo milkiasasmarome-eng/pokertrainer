@@ -1,5 +1,5 @@
 /* Bewertet den Coach indirekt: Ein Held, der stets der Coach-Empfehlung folgt, spielt gegen die Bots;
-   Vergleich mit einem Helden, der die Bot-Logik eines TAG-Profils nutzt. Gleiche Seeds (gepaarter Vergleich). */
+   Vergleich mit einem Helden, der die Bot-Logik des Profils g004 (Stil „ausgeglichen“) nutzt. Gleiche Seeds (gepaarter Vergleich). */
 'use strict';
 const PT = require('./load.js').load();
 function play(policy, hands, seed, mode) {

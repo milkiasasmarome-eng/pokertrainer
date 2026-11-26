@@ -110,6 +110,27 @@ function rangeEq(e, w) {
   return t > 0 ? s / t : null;
 }
 
+// ---------- Absolute Handstärke (öffentlich: nur Board) ----------
+/**
+ * Für jede Kombination: Perzentil gegen alle mit dem Board verträglichen Kombinationen (x, Mitte der Gleichstände),
+ * Flag „starker Draw“ (Flush Draw oder Open-Ender, Flop/Turn) und Draw-Equity aus den Outs (Flop zwei Karten, Turn eine).
+ * Grundlage des Populationsmodells der Reaktionen (Version 2.1). Kein Wissen über verdeckte Karten, nur das Board.
+ */
+var absCache = { key: '', val: null };
+function absStrength(board) {
+  var key = PT.cardsStr(board);
+  if (absCache.key === key) return absCache.val;
+  var w = new Float64Array(NC), dead = H.deadMaskOf(board), k;
+  for (k = 0; k < NC; k++) if (!dead[C1[k]] && !dead[C2[k]]) w[k] = 1;
+  var rs = R.rangeStrength(w, board), de = new Float32Array(NC);
+  if (board.length < 5) for (k = 0; k < NC; k++) if (rs.d[k]) {
+    var di = R.drawInfo(C1[k], C2[k], board), outs = (di.fd ? 9 : 0) + (di.so >= 2 ? 8 : di.so === 1 ? 4 : 0) - (di.fd && di.so ? 2 : 0);
+    de[k] = board.length === 3 ? 1 - (1 - outs / 47) * (1 - outs / 46) : outs / 46;
+  }
+  absCache = { key: key, val: { x: rs.v, d: rs.d, de: de, w: w } };
+  return absCache.val;
+}
+
 // ---------- Reaktionsmodell ----------
 /** Stärke-Score je Kombination für die Reaktion auf einen Einsatz (Draws zählen mit). */
 function strengthScores(opp, ctx) {
@@ -140,11 +161,69 @@ function splitRange(w, sc, contFrac, raiseFrac) {
   }
   return { contW: contW, raiseW: raiseW, callW: callW, tot: tot };
 }
+// ---------- Populationsmodell der Reaktionen (Version 2.1, exploitativer Modus, Flop bis River) ----------
+/**
+ * Ein Gegner spielt gegen einen Einsatz mit einer Kombination weiter, wenn ihre absolute Stärke x (Perzentil gegen alle Hände auf dem Board)
+ * über einer Schwelle θ liegt, die mit dem Preis π = Call / (Pot nach dem Call) steigt; Draws spielen weiter, wenn ihre Draw-Equity den Preis deckt.
+ *   θ = c0[Straße] + c1[Straße]·π + c2·(Gegner − 1) + c3·[Raise des Helden] + lf·(logit f̂ − logit f₀) + lw·(logit WTSD − logit WTSD₀)
+ *       + lv·(logit VPIP − logit VPIP₀) + lp·((VPIP − PFR) − (VPIP₀ − PFR₀))   (alle Gegnerwerte geglättet, Index 0: Populationsprior)
+ *   P(weiter | x) = σ((x − θ)/τ),  Draws: max(…, σ((Equity_Draw − π − c4)/τd)),  P(Raise | x) = r0·σ((x − r1)/0,02) + rd·[Draw]
+ * f̂: geglätteter Fold-Wert des Gegners gegen C-Bets (Flop) bzw. Turn-C-Bets. Die Konstanten sind an aggregiertem, am Tisch sichtbarem Verhalten
+ * der Gegnerpopulation geschätzt (Maximum Likelihood, tests/strategy/fit-response.js; Daten und Prüfung auf getrennten Seeds: docs/STRATEGIE.md).
+ * Keine verdeckten Karten, keine internen Spielstile. Modellannahme, kein Solver-Ergebnis.
+ */
+var POP = { c0: [0, 0.2273, 0.1111, 0.2789], c1: [0, 1.7256, 2.1196, 1.8653], c2: 0.0123, c3: -0.0748, tau: 0.107, c4: -0.1784, taud: 0.0157, lf: 0.0397, lw: -0.1012, r0: 0.4952, r1: 0.9409, rd: 0.1891, lv: -0.0072, lp: -0.8641, blend: 0.5 };
+function logit(p) { p = clamp(p, 0.01, 0.99); return Math.log(p / (1 - p)); }
+function sigm(z) { return 1 / (1 + Math.exp(-z)); }
+/** Anteil der Range, der bei Schwelle th weiterspielt */
+function contShare(w, A, st, th, price) {
+  var W = 0, C = 0, P = POP;
+  for (var k = 0; k < NC; k++) { var x0 = w[k]; if (!(x0 > 0)) continue; var pc = sigm((A.x[k] - th) / P.tau); if (st < 3 && A.d[k]) pc = Math.max(pc, sigm((A.de[k] - price - P.c4) / P.taud)); W += x0; C += x0 * pc; }
+  return W > 0 ? C / W : 0;
+}
+function popRespond(opp, ctx, heroAdd, potBefore, nResp, kind, target) {
+  var st = ctx.street, A = absStrength(ctx.board), w = opp.w, sm = opp.sm, P = POP;
+  var callAmt = Math.max(0, Math.min(ctx.me.bet + heroAdd, opp.p.bet + opp.p.stack) - opp.p.bet);
+  var price = callAmt / Math.max(1, potBefore + heroAdd + callAmt), isRaise = ctx.L.toCall > 0 ? 1 : 0;
+  var fHat = st === 1 ? sm.foldToCbet : st === 2 ? sm.foldToCbetTurn : null, f0 = st === 1 ? R.PRIOR.foldToCbet : R.PRIOR.foldToCbetTurn;
+  var th = P.c0[st] + P.c1[st] * price + P.c2 * (nResp - 1) + P.c3 * isRaise + (fHat != null ? P.lf * (logit(fHat) - logit(f0)) : 0) + P.lw * (logit(sm.wtsd) - logit(R.PRIOR.wtsd))
+    + P.lv * (logit(sm.vpip) - logit(R.PRIOR.vpip)) + P.lp * ((sm.vpip - sm.pfr) - (R.PRIOR.vpip - R.PRIOR.pfr));
+  var canRaise = opp.p.stack > callAmt, contW = new Float64Array(NC), callW = new Float64Array(NC), raiseW = new Float64Array(NC), W = 0, Cn = 0, Rs = 0;
+  if (target != null) {
+    // Schwelle so verschieben, dass die Fold-Rate dem Zielwert entspricht (Mischung mit dem strukturellen Modell, siehe respond)
+    var lo = th - 0.6, hi = th + 0.6;
+    for (var it = 0; it < 24; it++) { var mid = (lo + hi) / 2; if (contShare(w, A, st, mid, price) > 1 - target) lo = mid; else hi = mid; }
+    th = (lo + hi) / 2;
+  }
+  for (var k = 0; k < NC; k++) {
+    var x0 = w[k]; if (!(x0 > 0)) continue;
+    var x = A.x[k], pc = sigm((x - th) / P.tau), draw = st < 3 && A.d[k];
+    if (draw) pc = Math.max(pc, sigm((A.de[k] - price - P.c4) / P.taud));
+    var pr = canRaise ? Math.min(pc, P.r0 * sigm((x - P.r1) / 0.02) + (draw ? P.rd : 0)) : 0;
+    W += x0; Cn += x0 * pc; Rs += x0 * pr;
+    contW[k] = x0 * pc; raiseW[k] = x0 * pr; callW[k] = x0 * (pc - pr);
+  }
+  if (!(W > 0)) return null;
+  var nObs = (opp.raw && opp.raw[st === 1 ? 'foldToCbet' : 'foldToCbetTurn'] ? opp.raw[st === 1 ? 'foldToCbet' : 'foldToCbetTurn'][1] : 0) + (opp.raw && opp.raw.wtsd ? opp.raw.wtsd[1] : 0);
+  return { f: clamp(1 - Cn / W, 0, 1), c: Math.max(0, (Cn - Rs) / W), r: Rs / W, contW: contW, callW: callW, raiseW: raiseW,
+    basis: 'Populationsmodell, angepasst an Gegnerwerte (' + nObs + ' Beobachtungen)', model: 'pop', theta: th, price: price };
+}
 /**
  * Reaktion eines Gegners auf einen Einsatz. heroAdd: Chips, die der Held hinzufügt; potBefore: Pot vor der Aktion.
  * Rückgabe: {f, c, r} (Wahrscheinlichkeiten), contW/callW/raiseW (Ranges), basis (Text)
  */
 function respond(opp, ctx, heroAdd, potBefore, nResp, kind) {
+  if (ctx.street > 0 && ctx.mode !== 'gto' && !POP.off && !respond.inner) {  // POP.off: nur für Studien (Reaktionsmodell 2.0.1)
+    var pr0 = popRespond(opp, ctx, heroAdd, potBefore, nResp, kind);
+    if (pr0 && POP.blend > 0) {
+      // Modellmittelung: Fold-Rate = Mittel aus Populationsmodell und strukturellem Modell (MDF mit Korrekturen, Stand 2.0.1).
+      // Grund: Das Populationsmodell ist an einem eher passiven Helden kalibriert; gegen einen aggressiven Helden (Gegner passen sich an)
+      // und gegen unbekannte Strategien überschätzt es Folds bei großen Einsätzen (Validierung, docs/STRATEGIE.md).
+      respond.inner = true; var old = respond(opp, ctx, heroAdd, potBefore, nResp, kind); respond.inner = false;
+      var tf = POP.blend * old.f + (1 - POP.blend) * pr0.f, pr1 = popRespond(opp, ctx, heroAdd, potBefore, nResp, kind, tf);
+      if (pr1) { pr1.basis = 'Populationsmodell gemittelt mit MDF-Modell, angepasst an Gegnerwerte'; return pr1; }
+    }
+    if (pr0) return pr0; }
   var mdf = potBefore / Math.max(1, potBefore + heroAdd), gtoDef = 1 - Math.pow(1 - mdf, 1 / Math.max(1, nResp));
   var sm = opp.sm, prof = opp.prof, def = gtoDef, basis = 'MDF';
   if (ctx.street === 0) {
@@ -397,6 +476,6 @@ function evaluateAction(ctx, act) {
   return r;
 }
 
-PT.ev = { pfTable: pfTable, eqClass: eqClass, comboEquities: comboEquities, rangeEq: rangeEq, respond: respond, splitRange: splitRange,
+PT.ev = { absStrength: absStrength, POP: POP, popRespond: popRespond, pfTable: pfTable, eqClass: eqClass, comboEquities: comboEquities, rangeEq: rangeEq, respond: respond, splitRange: splitRange,
   realization: realization, playability: playability, potOdds: potOdds, evCheck: evCheck, evCall: evCall, evBet: evBet, candidates: candidates, evaluateAction: evaluateAction, subsetEq: subsetEq };
 })(typeof globalThis !== 'undefined' ? globalThis : (typeof self !== 'undefined' ? self : this));

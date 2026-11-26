@@ -33,13 +33,19 @@ else {
     L.push('');
   }
   if (long.coach) {
-    L.push('### Coach gegen Referenz', '', 'Ein Held, der stets der Coach-Empfehlung folgt, spielt gegen die Bots; Vergleich mit einem Helden, der die Bot-Logik eines TAG-Profils nutzt (gleiche Seeds). Spielgeld-Ergebnisse streuen stark (≈ ±25 BB/100 je 2.500 Hände); sie sind nur ein grober Plausibilitätsnachweis.', '',
-      '| Modus | Seed | Coach BB/100 | TAG-Bot BB/100 | Ø ms je Analyse | max. ms | max. Simulationen |', '|---|---:|---:|---:|---:|---:|---:|');
+    L.push('### Coach gegen Referenz', '', 'Ein Held, der stets der Coach-Empfehlung folgt, spielt gegen die Bots; Vergleich mit einem Helden, der die Bot-Logik des Profils g004 (Stil „ausgeglichen“) nutzt (gleiche Seeds). Spielgeld-Ergebnisse streuen stark (≈ ±25 BB/100 je 2.500 Hände); sie sind nur ein grober Plausibilitätsnachweis.', '',
+      '| Modus | Seed | Coach BB/100 | Bot g004 BB/100 | Ø ms je Analyse | max. ms | max. Simulationen |', '|---|---:|---:|---:|---:|---:|---:|');
     long.coach.exploit.forEach(r => L.push('| exploitativ | ' + r.seed + ' | ' + r.coachBB100 + ' | ' + r.botBB100 + ' | ' + r.avgMs + ' | ' + r.maxMs + ' | ' + r.maxIt + ' |'));
     long.coach.gto.forEach(r => L.push('| gleichgewichtsnah | ' + r.seed + ' | ' + r.coachBB100 + ' | ' + r.botBB100 + ' | ' + r.avgMs + ' | ' + r.maxMs + ' | ' + r.maxIt + ' |'));
-    L.push('', 'Mittel exploitativ: Coach ' + long.coach.exploitAvgCoach.toFixed(1) + ' BB/100, TAG-Bot ' + long.coach.exploitAvgBot.toFixed(1) + ' BB/100. Mittel gleichgewichtsnah: Coach ' + long.coach.gtoAvgCoach.toFixed(1) + ', TAG-Bot ' + long.coach.gtoAvgBot.toFixed(1) + '.', '');
+    const botAhead = long.coach.exploit.concat(long.coach.gto).filter(r => r.botBB100 > r.coachBB100).length, nAll = long.coach.exploit.length + long.coach.gto.length;
+    L.push('', 'Mittel exploitativ: Coach ' + long.coach.exploitAvgCoach.toFixed(1) + ' BB/100, Bot ' + long.coach.exploitAvgBot.toFixed(1) + ' BB/100. Mittel gleichgewichtsnah: Coach ' + long.coach.gtoAvgCoach.toFixed(1) + ', Bot ' + long.coach.gtoAvgBot.toFixed(1) + '. In ' + botAhead + ' von ' + nAll + ' Läufen lag der Bot vorn (aus den Daten gezählt; die Bot-Läufe je Seed dienen beiden Modi als Basis und sind keine unabhängigen Stichproben).', '');
   }
 }
+// Strategischer Vergleich (Coach 2.1 gegen 2.0.1, Referenzen, unbekannte Strategien): Tabellen und Kennzahlen nur aus tests/results/strategy.json
+const RS = require('./report-strategy.js'), strat = load('strategy.json');
+L.push('## Strategischer Vergleich', '');
+RS.all(strat).forEach(x => L.push(x));
+L.push('');
 suite('Browser-Tests lokal (Playwright, Chrome)', e2e);
 if (e2e && e2e.perf) L.push('Gemessen (lokaler Server, Desktop-Chrome ohne Drosselung): Ladezeit ' + e2e.perf.loadMs + ' ms, bereit nach ' + e2e.perf.readyMs + ' ms, LCP ' + Math.round(e2e.perf.lcp) + ' ms, CLS ' + e2e.perf.cls.toFixed(3) + ', Tipp nach Zugbeginn Ø ' + e2e.perf.tipAvgMs + ' ms (max. ' + e2e.perf.tipMaxMs + ' ms), übertragene Daten ' + Math.round(e2e.perf.transfer / 1024) + ' KB.', '');
 L.push('## Live-Website', '');

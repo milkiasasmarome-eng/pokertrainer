@@ -3,3 +3,6 @@ tests/results/*.tmp
 tools/preflop-part-*.json
 .DS_Store
 *.log
+tests/results/sizing-study/
+tests/results/strategy-schnell.json
+tests/results/strategy-entwicklung.json

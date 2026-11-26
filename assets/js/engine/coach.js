@@ -281,7 +281,8 @@ function analyzeMode(input, v, mode, level, L0, budget, rng, deadline, set, prep
   var po = street === 0 && pre.rc === 0 ? null : X.potOdds(ctx);  // im ungeöffneten Pot ist der Limp-Preis keine benötigte Equity
   // River-Modellspiel (Gleichgewicht des vereinfachten Spiels)
   var model = null;
-  if (gto && street === 3 && relevant.length === 1 && level !== 'schnell') {
+  // input.skipModel: nur für Massensimulationen im Vergleichsrahmen (das Modellspiel erzeugt nur Text und ändert keine Empfehlung)
+  if (gto && street === 3 && relevant.length === 1 && level !== 'schnell' && !input.skipModel) {
     try { model = riverModel(v, ctx, relevant[0]); } catch (e) { model = null; }
   }
   var spotTags = spotTagsOf(v, ctx, relevant, pre);
@@ -428,21 +429,27 @@ function blockersText(v, opp, board) {
 function riverModel(v, ctx, opp) {
   var heroW = heroRangeFor(v), heroCombo = H.comboIdx(v.cards[0], v.cards[1]);
   var heroOOP = !ctx.ip, sizes = [0.5, 1.0];
-  var facing = ctx.L.toCall > 0;
-  if (facing) { var s = ctx.L.toCall / Math.max(1, ctx.pot - ctx.L.toCall); sizes = [Math.round(clamp(s, 0.2, 3) * 100) / 100]; }
-  var sol = PT.cfr.solveRiver({ oopW: heroOOP ? heroW : opp.w, ipW: heroOOP ? opp.w : heroW, board: v.board, sizes: sizes, iters: ctx.level === 'tief' ? 2500 : 700, buckets: 10, heroCombo: heroCombo, heroIsOOP: heroOOP });
+  // Nur Knoten, die das Modellspiel abbildet: erster Einsatz der Straße (selbst oder gegen eine Bet); gegen einen Raise kein Modell
+  var riverAggr = v.actions.filter(function (a) { return a.st === 3 && (a.t === 'bet' || a.t === 'raise'); });
+  if (riverAggr.length > 1) return null;
+  var facing = ctx.L.toCall > 0, potStart = Math.max(1, ctx.pot - (facing ? ctx.L.toCall : 0));
+  if (facing) { var s = ctx.L.toCall / potStart; sizes = [Math.round(clamp(s, 0.2, 3) * 100) / 100]; }
+  // Effektiver Stack in Pot-Anteilen (begrenzt Bets und Raises); Raise-Option für beide Seiten (Prüfung: tests/strategy/cfr-study.js)
+  var stack = Math.min(ctx.me.stack + ctx.me.bet, opp.p.stack + opp.p.bet) / potStart;
+  var deep = ctx.level === 'tief';
+  var sol = PT.cfr.solveRiver({ oopW: heroOOP ? heroW : opp.w, ipW: heroOOP ? opp.w : heroW, board: v.board, sizes: sizes, iters: deep ? 2500 : 700, buckets: deep ? 20 : 10, heroCombo: heroCombo, heroIsOOP: heroOOP, raise: true, stack: stack });
   if (!sol || sol.heroBucket < 0) return null;
-  var b = sol.heroBucket, node, nodeName;
+  var b = sol.heroBucket, node, nodeName, sz = sol.tree.sizes;
   if (!facing && heroOOP) nodeName = 'OOP';
   else if (!facing && !heroOOP) nodeName = 'IP nach Check';
-  else nodeName = heroOOP ? 'OOP gegen Bet ' + sizes[0] : 'IP gegen Bet ' + sizes[0];
+  else nodeName = heroOOP ? 'OOP gegen Bet ' + sz[0] : 'IP gegen Bet ' + sz[0];
   node = sol.nodes.filter(function (n) { return n.name === nodeName; })[0];
   if (!node) return null;
   var freqs = node.acts.map(function (a, i) { return { act: actName(a), f: node.s[b][i] }; });
-  return { node: nodeName, freqs: freqs, bucket: b + 1, buckets: sol.buckets, exploitability: sol.exploitability, iters: sol.iters, ms: sol.ms, sizes: sizes,
-    note: 'Vereinfachtes River-Modellspiel (Betgrößen ' + sizes.map(function (x) { return Math.round(x * 100) + ' %'; }).join(', ') + ' des Pots, keine Raises, 10 Stärkegruppen, CFR+ mit ' + sol.iters + ' Iterationen). Exploitability ' + (sol.exploitability * 100).toFixed(2).replace('.', ',') + ' % des Pots.' };
+  return { node: nodeName, freqs: freqs, bucket: b + 1, buckets: sol.buckets, exploitability: sol.exploitability, iters: sol.iters, ms: sol.ms, sizes: sz,
+    note: 'Vereinfachtes River-Modellspiel (Betgrößen ' + sz.map(function (x) { return Math.round(x * 100) + ' %'; }).join(', ') + ' des Pots, höchstens ein Raise (Pot-Raise), effektiver Stack berücksichtigt, ' + sol.buckets + ' Stärkegruppen, CFR+ mit ' + sol.iters + ' Iterationen). Exploitability im Modellspiel ' + (sol.exploitability * 100).toFixed(2).replace('.', ',') + ' % des Pots; Gleichgewicht nur dieses vereinfachten Spiels, kein No-Limit-Solver.' };
 }
-function actName(a) { if (a === 'check') return 'Check'; if (a === 'fold') return 'Fold'; if (a === 'call') return 'Call'; var s = parseFloat(a.slice(3)); return 'Bet ' + Math.round(s * 100) + ' % Pot'; }
+function actName(a) { if (a === 'check') return 'Check'; if (a === 'fold') return 'Fold'; if (a === 'call') return 'Call'; if (a.indexOf('raise') === 0) return 'Raise auf ' + Math.round(parseFloat(a.slice(5)) * 100) + ' % Pot'; var s = parseFloat(a.slice(3)); return 'Bet ' + Math.round(s * 100) + ' % Pot'; }
 function spotTagsOf(v, ctx, relevant, pre) {
   var t = [], me = ctx.me, bbN = ctx.eff / ctx.bb;
   if (v.street === 0) {
@@ -576,12 +583,18 @@ function grade(a, chosen) {
         var lo = ag[0], hi = ag[ag.length - 1];
         for (var i = 0; i < ag.length - 1; i++) if (ag[i].amount <= amt && ag[i + 1].amount >= amt) { lo = ag[i]; hi = ag[i + 1]; }
         var fr = hi.amount === lo.amount ? 0 : clamp((amt - lo.amount) / (hi.amount - lo.amount), 0, 1);
-        pick = { type: t, amount: amt, ev: lo.ev + fr * (hi.ev - lo.ev), u: Math.max(lo.u, hi.u), label: (t === 'bet' ? 'Bet ' : 'Raise auf ') + fmt(amt), interpolated: true };
+        // Interpolationsfehler (gemessen gegen Nachrechnung, docs/STRATEGIE.md): im Mittel 15 %, im 90. Perzentil 30 % des EV-Abstands der
+        // benachbarten Größen. Die Unsicherheit wird um 35 % dieses Abstands erweitert; außerhalb der bewerteten Größen um den vollen Abstand.
+        var span = Math.abs(hi.ev - lo.ev), outside = amt < ag[0].amount || amt > ag[ag.length - 1].amount, iErr = outside ? Math.max(span, 0.5 * bb) : 0.35 * span;
+        var uI = Math.max(lo.u, hi.u);
+        pick = { type: t, amount: amt, ev: lo.ev + fr * (hi.ev - lo.ev), u: Math.sqrt(uI * uI + iErr * iErr), label: (t === 'bet' ? 'Bet ' : 'Raise auf ') + fmt(amt), interpolated: true, interpErr: iErr };
       }
     }
   } else pick = a.actions.filter(function (x) { return x.type === t; })[0];
   if (!pick) return { grade: 'Fehler', simple: 'Fehler', score: 20, loss: null, text: 'Diese Aktion wurde nicht bewertet.' };
   var best = a.actions[0], loss = Math.max(0, best.ev - pick.ev), u = Math.max(best.u, pick.u || 0), pot = Math.max(a.pot, bb);
+  // Höchster Modell-EV (kann preflop vom Chart-Anker abweichen); die Bewertung misst gegen die Empfehlung, meldet den Abstand aber mit
+  var top = a.actions.reduce(function (m, x) { return x.ev > m.ev ? x : m; }, best), recGap = Math.max(0, top.ev - best.ev);
   var g;
   if (pick === best || loss <= 0.02 * bb) g = 'Optimal';
   else if (loss <= Math.max(0.1 * bb, 0.5 * u)) g = 'Sehr gut';
@@ -598,7 +611,8 @@ function grade(a, chosen) {
   var cats = GRADE_SCORE[g] <= 45 ? mistakeCats(a, pick, best) : [];
   var text = chartCap ? chartCapText(a, pick, best, loss) : gradeText(g, a, pick, best, loss);
   var tied = a.actions.some(function (x) { return x !== pick && group(x) !== group(pick) && Math.abs(pick.ev - x.ev) <= Math.max(0.1 * bb, Math.max(pick.u || 0, x.u || 0)); });
-  return { grade: g, simple: GRADE_SIMPLE[g], score: GRADE_SCORE[g], loss: loss, lossBB: loss / bb, u: u, chosenLabel: pick.label, bestLabel: best.label, text: text, cats: cats, interpolated: !!pick.interpolated, tied: tied };
+  return { grade: g, simple: GRADE_SIMPLE[g], score: GRADE_SCORE[g], loss: loss, lossBB: loss / bb, u: u, chosenLabel: pick.label, bestLabel: best.label, text: text, cats: cats, interpolated: !!pick.interpolated, tied: tied,
+    modelTopLabel: top.label, recGapBB: recGap / bb, withinU: loss <= u };
 }
 function chartCapText(a, pick, best, loss) {
   var bb = a.bb, aggr = group(pick) === 'aggr';
@@ -710,6 +724,7 @@ var GLOSSARY = {
 };
 
 PT.coach = { betaCdf: betaCdf, analyze: analyze, grade: grade, explain: explain, GRADES: GRADES, GRADE_SCORE: GRADE_SCORE, GRADE_SIMPLE: GRADE_SIMPLE, CLASS_TEXT: CLASS_TEXT,
-  MISTAKES: MISTAKES, SPOTS: SPOTS, GLOSSARY: GLOSSARY, lineOf: lineOf, preInfo: preInfo, LINE_TEXT: LINE_TEXT, composition: composition };
+  MISTAKES: MISTAKES, SPOTS: SPOTS, GLOSSARY: GLOSSARY, lineOf: lineOf, preInfo: preInfo, LINE_TEXT: LINE_TEXT, composition: composition,
+  _intern: { heroRangeFor: heroRangeFor, buildRange: buildRange, oppStats: oppStats } };  // _intern: nur für Tests und Studien
 PT.glossary = GLOSSARY;
 })(typeof globalThis !== 'undefined' ? globalThis : (typeof self !== 'undefined' ? self : this));
