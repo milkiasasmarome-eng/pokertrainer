@@ -4,7 +4,7 @@
   --room:#e6e4df;--ink:#15181b;--muted:#565c63;--panel:#fbfaf7;--panel2:#f1efea;--line:#d1cec6;--rail:#3b2d24;--shadow:rgba(0,0,0,.18);
   --felt:#11604f;--felt-hi:#1b7d67;--felt-lo:#0a4438;
   --card:#fbf8f0;--suit-red:#c3332b;--suit-black:#16181b;--accent:#cf3f2c;--accent-ink:#fff;
-  --good:#1d7f47;--ok:#a8691a;--bad:#c3332b;--focus:#2f7de1;--info:#2c6aa8;
+  --good:#1d7f47;--ok:#a8691a;--bad:#c3332b;--focus:#2f7de1;--info:#245a91;
   --fold:#8b939b;--call:#2f9a5d;--raise:#d0533d;--mixed:#c49a2c}
 @media (prefers-color-scheme:dark){:root:not([data-theme=light]){
   --room:#0e1113;--ink:#ebe9e4;--muted:#a0a7ae;--panel:#171b1e;--panel2:#1e2327;--line:#2d343a;--rail:#2b211b;--shadow:rgba(0,0,0,.5);--info:#6aa6e6}}
@@ -25,7 +25,9 @@ a{color:var(--info)}
 header.top{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;justify-content:space-between}
 .brand{display:flex;align-items:center;gap:10px}
 .brand h1{margin:0;font-size:21px;line-height:1.1;letter-spacing:-.01em}
-.brand .ver{font-size:13px;font-weight:700;color:var(--accent);vertical-align:super}
+.brand .ver{font-size:13px;font-weight:700;color:#a8321f;vertical-align:super}
+:root[data-theme=dark] .brand .ver{color:#ff8a76}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .brand .ver{color:#ff8a76}}
 .brand .sub{color:var(--muted);font-size:13px}
 .status{font-size:14px;font-variant-numeric:tabular-nums;display:flex;flex-wrap:wrap;gap:2px 14px}
 .status b{font-weight:650}
@@ -69,7 +71,7 @@ nav.tabs a:hover{color:var(--ink)}
 button.plate:hover{border-color:var(--muted)}
 .seat.me .plate{cursor:default;border-color:var(--muted)}
 .seat.act .plate{outline:3px solid #f1c94b;outline-offset:1px;box-shadow:0 0 0 6px rgba(241,201,75,.25),0 4px 14px var(--shadow)}
-.seat.folded .plate{opacity:.55}
+.seat.folded .plate{opacity:.72}
 .seat.win .plate{box-shadow:0 0 0 3px var(--good),0 4px 14px var(--shadow)}
 .r1{display:flex;justify-content:space-between;gap:6px;align-items:baseline}
 .nm{font-weight:700;font-size:15px;overflow-wrap:anywhere}
@@ -83,19 +85,21 @@ button.plate:hover{border-color:var(--muted)}
 .lastact{position:absolute;top:-12px;right:8px;background:#1d2226;color:#fff;border-radius:999px;padding:1px 9px;font-size:12px;font-weight:600;white-space:nowrap;z-index:3}
 .lastact:empty{display:none}
 .s0 .lastact{top:auto;bottom:-12px}
-.chipmark{position:absolute;top:-11px;left:-11px;width:24px;height:24px;border-radius:50%;font-weight:800;font-size:11px;display:grid;place-items:center;box-shadow:0 2px 6px rgba(0,0,0,.35);z-index:3}
+.chipmark{position:absolute;top:50%;left:-28px;margin-top:-12px;width:24px;height:24px;border-radius:50%;font-weight:800;font-size:11px;display:grid;place-items:center;box-shadow:0 2px 6px rgba(0,0,0,.35);z-index:3}
 .chipmark.d{background:#fff;color:#111;font-size:13px}
-.chipmark.sb{background:#3a73c2;color:#fff;left:16px}
-.chipmark.bb{background:#d6a92b;color:#111;left:16px}
+.chipmark.sb{background:#3a73c2;color:#fff}
+.chipmark.bb{background:#d6a92b;color:#111}
+/* Marker auf der Seite ohne Karten: rechte Plätze außen rechts */
+.s4 .chipmark,.s5 .chipmark{left:auto;right:-28px}
 .hole{position:absolute;display:flex;gap:4px;pointer-events:none;z-index:1}
 .s0 .hole{left:50%;bottom:calc(100% + 8px);transform:translateX(-50%)}
 .s1 .hole,.s2 .hole{left:calc(100% + 8px);top:50%;transform:translateY(-50%)}
 .s4 .hole,.s5 .hole{right:calc(100% + 8px);top:50%;transform:translateY(-50%)}
 .s3 .hole{left:50%;top:calc(100% + 8px);transform:translateX(-50%)}
-.bet{position:absolute;left:var(--bx);top:var(--by);transform:translate(-50%,-50%);background:rgba(0,0,0,.45);color:#fff;border-radius:999px;padding:2px 9px;font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap;z-index:1}
+.bet{position:absolute;left:var(--bx);top:var(--by);transform:translate(-50%,-50%);background:rgba(0,0,0,.45);color:#fff;border-radius:999px;padding:2px 9px;font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap;z-index:4}
 .bet::before{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 2px #fff inset;margin-right:6px;vertical-align:-1px}
 .s0{--x:50%;--y:89%}.s1{--x:12%;--y:69%}.s2{--x:12%;--y:31%}.s3{--x:50%;--y:12%}.s4{--x:88%;--y:31%}.s5{--x:88%;--y:69%}
-.b0{--bx:50%;--by:66%}.b1{--bx:31%;--by:63%}.b2{--bx:31%;--by:37%}.b3{--bx:50%;--by:30%}.b4{--bx:69%;--by:37%}.b5{--bx:69%;--by:63%}
+.b0{--bx:50%;--by:66%}.b1{--bx:33%;--by:58%}.b2{--bx:33%;--by:42%}.b3{--bx:50%;--by:30%}.b4{--bx:67%;--by:42%}.b5{--bx:67%;--by:58%}
 
 /* Karten */
 .card{display:inline-grid;grid-template-rows:auto 1fr;justify-items:center;align-items:center;width:36px;height:50px;border-radius:6px;background:var(--card);color:var(--suit-black);
@@ -190,6 +194,11 @@ table.grid tbody tr.click:hover,table.grid tbody tr.click:focus{background:var(-
 .toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
 .toolbar input[type=search]{flex:1 1 180px}
 .cards{display:inline-flex;gap:3px;align-items:center;flex-wrap:wrap}
+table.hlist .cards{flex-wrap:nowrap}
+.tipmini{display:none;background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:12px;padding:8px 12px;font-size:14px;line-height:1.35}
+.tipmini:empty{display:none!important}
+.tipmini b{font-weight:750}
+.tipmini a{margin-left:6px}
 .muted{color:var(--muted)}
 .good{color:var(--good)}.bad{color:var(--bad)}
 .btnrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
@@ -249,16 +258,24 @@ table.grid tbody tr.click:hover,table.grid tbody tr.click:focus{background:var(-
   .nm{font-size:13px}
   .hud{font-size:11px}
   .hud .lbl{display:none}
-  .hud2 .bel{display:none}
+  .hud2{line-height:1.2}
   .center .result{display:none}
   .result2{display:block}
   .hud2{font-size:11px}
   .s0{--x:50%;--y:90%}.s1{--x:17%;--y:67%}.s2{--x:17%;--y:31%}.s3{--x:50%;--y:10%}.s4{--x:83%;--y:31%}.s5{--x:83%;--y:67%}
-  .s1 .hole,.s2 .hole{left:calc(100% + 4px)}
-  .s4 .hole,.s5 .hole{right:calc(100% + 4px)}
+  /* Seitenplätze: Karten über bzw. unter dem Namensschild, damit sie sich in der Mitte nicht überlappen */
+  .s1 .hole,.s5 .hole{left:50%;right:auto;top:auto;bottom:calc(100% + 4px);transform:translateX(-50%)}
+  .s2 .hole,.s4 .hole{left:50%;right:auto;top:calc(100% + 4px);transform:translateX(-50%)}
+  .s1 .lastact,.s5 .lastact{top:auto;bottom:-12px}
+  /* Phone: Marker zur Tischmitte hin, damit sie nicht über den Bildschirmrand ragen */
+  .s1 .chipmark,.s2 .chipmark{left:auto;right:-27px}
+  .s4 .chipmark,.s5 .chipmark{right:auto;left:-27px}
   .s0 .hole{bottom:calc(100% + 6px)}
   .s3 .hole{top:calc(100% + 6px)}
-  .b0{--bx:50%;--by:74%}.b1{--bx:36%;--by:58%}.b2{--bx:36%;--by:42%}.b3{--bx:50%;--by:29%}.b4{--bx:64%;--by:42%}.b5{--bx:64%;--by:58%}
+  .b0{--bx:50%;--by:74%}.b1{--bx:42%;--by:60%}.b2{--bx:42%;--by:37%}.b3{--bx:50%;--by:27%}.b4{--bx:58%;--by:37%}.b5{--bx:58%;--by:60%}
+  table.hlist .cards{flex-wrap:nowrap}
+  table.hlist td{white-space:nowrap}
+  .tipmini{display:block}
   .card{width:25px;height:36px;padding-top:2px}.card b{font-size:12px}.card i{font-size:14px}
   .card.lg{width:38px;height:54px}.card.lg b{font-size:16px}.card.lg i{font-size:21px}
   .board{gap:3px;min-height:50px}

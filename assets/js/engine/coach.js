@@ -76,17 +76,23 @@ function composition(w, board) {
     for (var k = 0; k < NC; k++) if (w[k] > 0) { o.total += w[k]; var x = H.classTop(CLS[k]); if (x <= 0.05) o.strong += w[k]; else if (x <= 0.15) o.good += w[k]; else if (x <= 0.35) o.medium += w[k]; else o.air += w[k]; }
     return o;
   }
-  var arr = [0, 0].concat(board), bcat = board.length === 5 ? E.evaluate(board) >> 20 : -1;
+  // Kategorien relativ zum Board: nur was die eigenen Karten beitragen, zählt (Board-Paare sind keine eigene Hand)
+  var arr = [0, 0].concat(board), bcat = E.evaluate(board) >> 20;
   var br = board.map(function (c) { return c >> 2; }), top = Math.max.apply(null, br);
   for (var k2 = 0; k2 < NC; k2++) {
     var ww = w[k2]; if (!(ww > 0)) continue; o.total += ww;
-    arr[0] = C1[k2]; arr[1] = C2[k2];
-    var sc = E.evaluate(arr), cat = sc >> 20;
-    if (cat >= 2 && cat > bcat) o.strong += ww;
-    else if (cat === 1 && ((sc >> 16) & 15) >= top) o.good += ww;
-    else if (cat >= 1 && cat > bcat) o.medium += ww;
-    else if (board.length < 5 && R.drawInfo(C1[k2], C2[k2], board).strong) o.draw += ww;
-    else o.air += ww;
+    var a = C1[k2], b = C2[k2], ra = a >> 2, rb = b >> 2;
+    arr[0] = a; arr[1] = b;
+    var sc = E.evaluate(arr), cat = sc >> 20, cls;
+    if (cat > bcat) {
+      if (cat >= 3 || (cat === 2 && bcat === 0)) cls = 'strong';
+      else {
+        // genau ein eigenes Paar (ggf. zusätzlich zu einem Board-Paar)
+        var pr = ra === rb ? ra : (br.indexOf(ra) >= 0 ? ra : rb), pocket = ra === rb;
+        cls = (pocket && pr > top) || pr >= top ? 'good' : 'medium';
+      }
+    } else cls = board.length < 5 && R.drawInfo(a, b, board).strong ? 'draw' : 'air';
+    o[cls] += ww;
   }
   return o;
 }
@@ -101,13 +107,18 @@ function classMatrix(w) {
  * input: {view (publicView mit Heldenkarten), opps: {id: dbRecord}, settings: {mode, level, depth}, seed, extra: [Beträge], learner}
  */
 function analyze(input) {
-  var t0 = U.now(), v = input.view, set = input.settings || {}, level = set.level || 'standard', L0 = Q.LEVELS[level] || Q.LEVELS.standard;
+  var t0 = U.now(), v = input.view, set = input.settings || {}, level = set.level || 'standard';
+  // Automatischer Tipp: höchstens 5.000 Simulationen je Entscheidung (Projektvorgabe); Präzise/Tiefenanalyse nur auf Anforderung
+  if (input.live && level !== 'schnell') level = 'standard';
+  var L0 = Q.LEVELS[level] || Q.LEVELS.standard;
   var live = level === 'schnell' || level === 'standard';
   var maxSim = live ? Math.min(L0.maxIter, 5000) : L0.maxIter;
   var budget = { left: maxSim, used: 0, calls: [] };
   var rng = PT.makeRng(input.seed != null ? input.seed : 'coach');
   var deadline = t0 + (live ? Math.min(L0.ms, 1400) : L0.ms);
-  var res = {}, prep = prepare(input, v, L0, budget, rng);
+  var res = {}, scale = level === 'praezise' ? 4 : level === 'tief' ? 10 : 1;
+  budget.scale = scale;
+  var prep = prepare(input, v, L0, budget, rng);
   ['exploit', 'gto'].forEach(function (mode) { res[mode] = analyzeMode(input, v, mode, level, L0, budget, rng, deadline, set, prep); });
   var main = set.mode === 'gto' ? res.gto : res.exploit, other = set.mode === 'gto' ? res.exploit : res.gto;
   var out = main;
@@ -115,7 +126,7 @@ function analyze(input) {
   out.otherMode = { best: other.best, bestLabel: other.bestLabel, actions: other.actions.slice(0, 4) };
   out.modeDiff = modeDiffText(res.exploit, res.gto);
   out.iters = budget.used; out.simCalls = budget.calls; out.maxSim = maxSim; out.ms = Math.round(U.now() - t0); out.level = level; out.levelName = L0.name;
-  out.label = 'Modellschätzung, kein Solver-Ergebnis';
+  out.label = 'Faustregel, kein Solver-Ergebnis';
   out.learnerHint = learnerHint(out, input.learner);
   out.text = explain(out, set.depth || 'fortgeschritten');
   return out;
@@ -138,7 +149,7 @@ function prepare(input, v, L0, budget, rng) {
       out[k].defW = w;
     });
   }
-  var seats = Object.keys(out), share = Math.floor(Math.min(budget.left, 2000) / Math.max(1, seats.length));
+  var seats = Object.keys(out), share = Math.floor(Math.min(budget.left, 2000 * (budget.scale || 1)) / Math.max(1, seats.length));
   seats.forEach(function (k) {
     var o = out[k], u = new Float64Array(NC);
     for (var i = 0; i < NC; i++) { var a = o.ex.w[i], b = o.gto.w[i], c = o.defW ? o.defW[i] : 0; if (a > 0 || b > 0 || c > 0) u[i] = 1; }
@@ -166,9 +177,9 @@ function analyzeMode(input, v, mode, level, L0, budget, rng, deadline, set, prep
   var eff = Math.min(me.stack + me.bet, maxOpp);
   var ipFlag = opps.every(function (o) { return PT.POS_ORDER_POST[o.p.pos] < PT.POS_ORDER_POST[me.pos]; });
   if (street === 0) ipFlag = opps.filter(function (o) { return !o.pending; }).every(function (o) { return PT.POS_ORDER_POST[o.p.pos] < PT.POS_ORDER_POST[me.pos]; }) && me.pos !== 'SB' && me.pos !== 'BB';
-  var deadMoney = 0; v.players.forEach(function (q) { if (q.folded) deadMoney += q.total; });
+  var deadMoney = 0, deadList = []; v.players.forEach(function (q) { if (q.folded) { deadMoney += q.total; if (q.total > 0) deadList.push(q.total); } });
   var ctx = { v: v, me: me, L: L, board: board, street: street, bb: bb, pot: v.pot, cur: v.cur, mode: mode, level: level, rng: rng, budget: budget,
-    deadline: deadline, eff: eff, spr: eff > 0 ? (eff - me.bet) / Math.max(1, v.pot) : 0, ip: ipFlag, pre: pre, maxOppStack: maxOpp, deadMoney: deadMoney,
+    deadline: deadline, eff: eff, spr: eff > 0 ? (eff - me.bet) / Math.max(1, v.pot) : 0, ip: ipFlag, pre: pre, maxOppStack: maxOpp, deadMoney: deadMoney, deadList: deadList,
     cbetSpot: street > 0 && v.pfa === v.seat && v.raises === 0 && L.isBet, prevCur: prevCur(v) };
   ctx.feat = R.handFeatures(v.cards, board);
   ctx.tex = R.analyzeBoard(board);
@@ -184,13 +195,13 @@ function analyzeMode(input, v, mode, level, L0, budget, rng, deadline, set, prep
     var o0 = relevant[0];
     eqNow = o0 ? o0.eqHU : 1; eqSE = o0 ? (o0.eqInfo.se || 0) : 0; eqMethod = o0 ? o0.eqInfo.method : 'kein Gegner';
     if (street === 0 && o0 && budget.left > 300) {
-      var mc = Q.equity({ hero: v.cards, board: board, ranges: [o0.w], level: level, rng: rng, budget: { left: Math.min(gto ? 800 : 1000, budget.left), used: 0, calls: budget.calls }, deadline: deadline });
+      var mc = Q.equity({ hero: v.cards, board: board, ranges: [o0.w], level: level, rng: rng, budget: { left: Math.min((gto ? 800 : 1000) * (budget.scale || 1), budget.left), used: 0, calls: budget.calls }, deadline: deadline });
       budget.left -= mc.iters || 0; budget.used += mc.iters || 0;
       if (mc.eq != null) { eqNow = mc.eq; eqSE = mc.se || 0; eqMethod = mc.method; ctx.kappaPF = o0.eqHU > 0 ? mc.eq / o0.eqHU : 1; }
     }
     ctx.kappa = 1;
   } else {
-    var share = Math.min(budget.left, level === 'schnell' ? 600 : (gto ? 900 : 1200));
+    var share = Math.min(budget.left, level === 'schnell' ? 600 : (gto ? 900 : 1200) * (budget.scale || 1));
     var j = share >= 100 ? Q.equity({ hero: v.cards, board: board, ranges: relevant.map(function (o) { return o.w; }), level: level, rng: rng, budget: { left: share, used: 0, calls: budget.calls }, deadline: deadline, minIter: Math.min(300, share) }) : { eq: null, iters: 0, method: 'Näherung' };
     budget.left -= j.iters || 0; budget.used += j.iters || 0;
     var prodHU = relevant.reduce(function (p, o) { return p * (o.eqHU == null ? 0.5 : o.eqHU); }, 1);
@@ -226,6 +237,8 @@ function analyzeMode(input, v, mode, level, L0, budget, rng, deadline, set, prep
     return { type: c.type, amount: c.amount || 0, label: c.label, kind: c.kind, allin: !!c.allin, extra: !!c.extra, ev: r.ev, evBB: r.ev / bb, u: r.u, uSim: r.uSim, uModel: r.uModel, parts: slimParts(r.parts) };
   });
   acts.sort(function (a, b) { return b.ev - a.ev; });
+  // Preflop: Faustregel-Chart als Anker. Raises außerhalb des Charts und Open-Limps nur bei belegtem Exploit.
+  var chartInfo = street === 0 ? preflopAnchor(v, ctx, pre, acts, gto) : null;
   var best = acts[0];
   // Klassifikation
   var bestOther = null;
@@ -237,16 +250,17 @@ function analyzeMode(input, v, mode, level, L0, budget, rng, deadline, set, prep
   else if (gap >= 2 * u && gap >= 0.5 * bb) cls = 'klar';
   else if (gap >= 0.5 * u && gap >= 0.15 * bb) cls = 'knapp';
   else cls = 'mehrere';
-  var highU = u >= 0.25 * Math.max(v.pot, bb) || (mainOpp && mainOpp.hands < 100 && !gto && (cls === 'knapp' || cls === 'mehrere'));
+  var highU = u >= 0.4 * Math.max(v.pot, bb) && gap < u;
   if (highU && cls !== 'eindeutig') cls = cls === 'klar' ? 'klar' : 'unsicher';
+  if (chartInfo && chartInfo.applied) cls = chartInfo.w >= 0.85 ? 'klar' : 'knapp';
   var tol = Math.max(0.25 * bb, 0.5 * u), sizeNote = null;
   if (group(best) === 'aggr') {
     var ag = acts.filter(function (a2) { return group(a2) === 'aggr' && a2 !== best; });
     var close = ag.filter(function (a2) { return best.ev - a2.ev <= Math.max(0.25 * bb, 0.75 * Math.max(best.u, a2.u)); });
     if (close.length) sizeNote = 'Die Aktion ist ' + (cls === 'eindeutig' || cls === 'klar' ? 'klar' : 'knapp') + ', die Größe ist offen: ' + [best].concat(close).slice(0, 3).map(function (a2) { return a2.label; }).join(', ') + ' liegen im Rahmen der Unsicherheit nahe beieinander.';
   }
-  var alternatives = acts.filter(function (a) { return a !== best && best.ev - a.ev <= tol; }).slice(0, 3);
-  var po = X.potOdds(ctx);
+  var alternatives = acts.filter(function (a) { return a !== best && best.ev - a.ev <= tol && (!chartInfo || !chartInfo.applied || chartWeight(chartInfo, a, pre.rc === 0) >= CHART_MIN); }).slice(0, 3);
+  var po = street === 0 && pre.rc === 0 ? null : X.potOdds(ctx);  // im ungeöffneten Pot ist der Limp-Preis keine benötigte Equity
   // River-Modellspiel (Gleichgewicht des vereinfachten Spiels)
   var model = null;
   if (gto && street === 3 && relevant.length === 1 && level !== 'schnell') {
@@ -269,8 +283,55 @@ function analyzeMode(input, v, mode, level, L0, budget, rng, deadline, set, prep
         sm: { vpip: o.sm.vpip, pfr: o.sm.pfr, threeBet: o.sm.threeBet, foldTo3Bet: o.sm.foldTo3Bet, foldToCbet: o.sm.foldToCbet, wtsd: o.sm.wtsd, afq: o.sm.afq, foldToSteal: o.sm.foldToSteal },
         matrix: o === mainOpp ? classMatrix(o.w) : null };
     }),
-    mainOpp: mainOpp ? mainOpp.p.name : null, blockers: blockersText(v, mainOpp, board), model: model, mode: mode
+    mainOpp: mainOpp ? mainOpp.p.name : null, mainOppHands: mainOpp ? mainOpp.hands : 0, blockers: blockersText(v, mainOpp, board), model: model, mode: mode,
+    heroPos: me.pos, chart: chartInfo, unopened: street === 0 && pre.rc === 0
   };
+}
+/** Chart-Gewichte der eigenen Startklasse für die aktuelle Preflop-Situation */
+function heroChart(v, ctx, pre) {
+  var me = ctx.me, pos = me.pos, ci = H.classIdx(v.cards[0], v.cards[1]), effBB = ctx.eff / ctx.bb, ch, kind;
+  if (pre.rc === 0 && pre.limpers === 0) {
+    if (effBB <= 15) { ch = R.chart('push', { pos: pos, bb: effBB }); kind = 'Push-or-Fold-Chart (' + Math.round(effBB) + ' BB effektiv)'; }
+    else { ch = R.chart('rfi', { pos: pos }); kind = 'Open-Raise-Chart ' + pos; }
+  } else if (pre.rc === 0) { ch = R.chart('iso', { pos: pos }); kind = 'Chart gegen Limper (' + pos + ')'; }
+  else if (pre.rc === 1) { var op = v.players[pre.opener].pos; ch = R.chart('vsOpen', { pos: pos, opener: op, sizeBB: pre.lastTo / v.bb, squeeze: pre.callers > 0 }); kind = 'Chart ' + pos + ' gegen Open ' + op; }
+  else if (pre.rc === 2 && pre.opener === v.seat) { ch = R.chart('vs3bet', { openW: R.RFI_W[pos] || 0.2, ip: ctx.ip }); kind = 'Chart gegen 3-Bet (' + (ctx.ip ? 'in Position' : 'out of Position') + ')'; }
+  else { ch = R.chart('vs4bet', { deep: effBB > 150 }); kind = pre.rc === 2 ? 'Chart gegen 3-Bet ohne eigenes Open' : 'Chart gegen 4-Bet'; }
+  var row = ch[ci];
+  return { raise: row.raise, call: row.call, fold: row.fold, kind: kind };
+}
+var CHART_MIN = 0.12;
+function chartWeight(hc, a, unopened) {
+  var g = group(a);
+  if (g === 'aggr') return hc.raise;
+  if (g === 'call') return unopened ? hc.call : Math.max(hc.call, CHART_MIN);  // Calls gegen Raises rechnet das Modell über Equity; nur der Open-Limp ist an den Chart gebunden
+  return 1;
+}
+function preflopAnchor(v, ctx, pre, acts, gto) {
+  var L = ctx.L;
+  if (!acts.length) return null;
+  var raiser = pre.lastRaiser >= 0 ? v.players[pre.lastRaiser] : null;
+  // Reiner Call-oder-Fold gegen ein All-in ohne weitere Spieler: rein rechnerisch, kein Chart nötig
+  if (!L.canRaise && raiser && raiser.allIn) return null;
+  var hc = heroChart(v, ctx, pre), unopened = pre.rc === 0;
+  var top = acts[0], wTop = chartWeight(hc, top, unopened);
+  var info = { kind: hc.kind, raise: hc.raise, call: hc.call, fold: hc.fold, applied: false, w: wTop };
+  if (wTop >= CHART_MIN) return info;
+  // Exploit nur, wenn die nötige Fold-Annahme durch genug eigene Beobachtungen belegt ist
+  var ev = 0, obsN = 0;
+  if (!gto && group(top) === 'aggr') {
+    if (unopened) obsN = ctx.opps.filter(function (o) { return o.pending && (o.p.pos === 'SB' || o.p.pos === 'BB'); }).reduce(function (m, o) { var r = o.raw && o.raw.foldToSteal; return Math.min(m, r ? r[1] : 0); }, Infinity);
+    else if (raiser) { var ro = ctx.opps.filter(function (o) { return o.seat === pre.lastRaiser; })[0], key = pre.rc === 1 ? 'foldTo3Bet' : 'foldTo4Bet'; obsN = ro && ro.raw && ro.raw[key] ? ro.raw[key][1] : 0; }
+    if (!isFinite(obsN)) obsN = 0;
+  }
+  var alt = null;
+  for (var i = 1; i < acts.length; i++) if (chartWeight(hc, acts[i], unopened) >= CHART_MIN) { alt = acts[i]; break; }
+  if (!alt) return info;
+  var gapM = top.ev - alt.ev;
+  if (!gto && group(top) === 'aggr' && obsN >= 20 && gapM >= Math.max(0.5 * ctx.bb, 1.5 * top.u)) { info.exploit = { obs: obsN, gap: gapM }; return info; }
+  acts.splice(acts.indexOf(alt), 1); acts.unshift(alt);
+  info.applied = true; info.w = chartWeight(hc, alt, unopened); info.modelBest = top.label; info.modelGap = gapM; info.obs = obsN;
+  return info;
 }
 function prevCur(v) {
   var lastRaise = null, prev = 0;
@@ -330,7 +391,8 @@ function spotTagsOf(v, ctx, relevant, pre) {
   if (v.street === 0) {
     if (pre.rc === 0 && pre.limpers === 0) t.push('preflop-open');
     if ((me.pos === 'SB' || me.pos === 'BB') && pre.rc === 1) t.push('blind-defense');
-    if (pre.rc === 2) t.push('3bet-pot'); if (pre.rc >= 3) t.push('4bet-pot');
+    if (pre.rc === 2) { t.push('3bet-pot'); if (pre.opener === v.seat && ctx.L.canRaise) t.push('4bet-pot'); }  // Entscheidung über die 4-Bet
+    if (pre.rc >= 3) t.push('4bet-pot');
   } else {
     var rc = 0; v.actions.forEach(function (a) { if (a.st === 0 && (a.t === 'raise' || a.t === 'bet')) rc++; });
     if (rc === 2) t.push('3bet-pot'); if (rc >= 3) t.push('4bet-pot');
@@ -373,7 +435,9 @@ function modeDiffText(ex, gt) {
     if (Math.abs(o.sm.wtsd - R.PRIOR.wtsd) > 0.06 && o.hands >= 30) reasons.push(o.name + ' geht ' + (o.sm.wtsd > R.PRIOR.wtsd ? 'häufiger' : 'seltener') + ' zum Showdown (WTSD ' + pct(o.sm.wtsd) + ').');
   });
   return { exploit: ex.bestLabel, gto: gt.bestLabel, reasons: reasons.slice(0, 3),
-    text: 'Exploitativ: ' + ex.bestLabel + ' · Gleichgewichtsnah: ' + gt.bestLabel + '. Der Unterschied entsteht, weil der exploitative Modus beobachtete Gegnerwerte nutzt, der gleichgewichtsnahe ein ausgewogenes Gegnermodell (MDF, Faustregel-Charts).' };
+    text: 'Exploitativ: ' + ex.bestLabel + ' · Gleichgewichtsnah: ' + gt.bestLabel + '. ' + (ex.mainOppHands > 0
+      ? 'Der Unterschied entsteht, weil der exploitative Modus beobachtete Gegnerwerte nutzt (' + ex.mainOppHands + ' Hände), der gleichgewichtsnahe ein ausgewogenes Gegnermodell (MDF, Faustregel-Charts).'
+      : 'Für diesen Gegner liegen noch keine Hände vor. Der Unterschied entsteht nur durch die Modellannahmen: exploitativ mit typischen Reaktionen der Gegnerpopulation, gleichgewichtsnah mit MDF und Faustregel-Charts.') };
 }
 function learnerHint(out, learner) {
   if (!learner || !learner.cats) return null;
@@ -390,15 +454,24 @@ function explain(a, depth) {
   var actWord = best.label;
   // Kernsatz
   var core;
-  if (best.type === 'fold') core = po ? 'Fold: Du müsstest ' + fmt(po.call) + ' zahlen und bräuchtest dafür mindestens ' + pct(po.need) + ' Gewinnchance. Geschätzt hast du nur etwa ' + pct(eq.eq) + ' – nach dem Flop realisierst du davon zudem nur einen Teil.' : 'Fold.';
+  if (a.unopened) po = null;
+  if (best.type === 'fold') {
+    if (po && eq.eq < po.need) core = 'Fold: Du müsstest ' + fmt(po.call) + ' zahlen und bräuchtest dafür mindestens ' + pct(po.need) + ' Gewinnchance. Geschätzt hast du nur etwa ' + pct(eq.eq) + '.';
+    else if (po) core = 'Fold: Die rohe Equity (' + pct(eq.eq) + ') liegt zwar über den benötigten ' + pct(po.need) + ', ' + (a.street < 3 && !(a.actions[0].parts || {}).allin ? 'aber ' + (a.ip ? '' : 'außer Position ') + 'realisierst du davon auf den späteren Straßen nur einen Teil, und weitere Einsätze drohen.' : 'aber gegen die wahrscheinliche Range des Gegners verlierst du zu oft.');
+    else if (a.street === 0 && a.chart) core = 'Fold: ' + a.hand.cls + ' gehört laut ' + a.chart.kind + ' nicht zu den spielbaren Händen' + (a.chart.raise > 0 || a.chart.call > 0 ? ' (nur ' + pct(a.chart.raise + a.chart.call) + ' Spielanteil)' : '') + '.';
+    else core = 'Fold.';
+  }
+  else if (best.type === 'call' && !po) core = 'Call: Du zahlst ' + fmt(a.callAmt) + ' und siehst den Flop günstig (Equity etwa ' + pct(eq.eq) + ').';
   else if (best.type === 'call') core = 'Call: Du zahlst ' + fmt(po ? po.call : a.callAmt) + ' und brauchst mindestens ' + pct(po ? po.need : 0) + ' Gewinnchance. Geschätzt hast du etwa ' + pct(eq.eq) + (best.parts && best.parts.implied > 0 ? ', dazu kommen implizite Odds durch deinen Draw.' : '.');
   else if (best.type === 'check') core = 'Check: Eine Bet bringt hier geschätzt nicht mehr als ein Check (Equity etwa ' + pct(eq.eq) + ').';
   else {
     var p = best.parts || {}, value = eq.eq >= 0.55;
     core = actWord + ': ' + (value ? 'Mit etwa ' + pct(eq.eq) + ' Equity holst du Value von schwächeren Händen.' : 'Die Bet gewinnt den Pot geschätzt in etwa ' + pct(p.pAllFold || 0) + ' der Fälle sofort' + (a.hand.draw && a.hand.draw.strong ? ', und dein Draw hat Rückhalt.' : '.'));
   }
+  if (a.street === 0 && a.chart && a.chart.applied) core += ' Preflop folgt der Coach hier dem Faustregel-Chart (' + a.chart.kind + '); das vereinfachte EV-Modell sähe ' + a.chart.modelBest + ' um ' + bbTxt(a.chart.modelGap, bb) + ' vorn, aber nur wegen Fold-Annahmen, die nicht durch Gegnerwerte belegt sind.';
+  else if (a.street === 0 && a.chart && a.chart.exploit) core += ' Das weicht vom Faustregel-Chart ab und stützt sich auf ' + a.chart.exploit.obs + ' beobachtete Situationen dieses Gegners.';
   lines.einsteiger.push(core);
-  if (a.street === 0 && a.actions.length) lines.einsteiger.push(a.hand.top <= 0.4 ? a.hand.cls + ' gehört zu den besten ' + pct(a.hand.top) + ' aller Starthände.' : a.hand.cls + ' liegt auf Rang ' + (H.CLS_RANK[H.nameToIdx(a.hand.cls)] + 1) + ' von 169 Starthandklassen.');
+  if (a.street === 0 && a.actions.length) lines.einsteiger.push(a.hand.top <= 0.4 ? a.hand.cls + ' gehört zu den besten ' + (a.hand.top < 0.01 ? '1' : Math.round(a.hand.top * 100)) + ' % aller Starthände.' : a.hand.cls + ' liegt auf Rang ' + (H.CLS_RANK[H.nameToIdx(a.hand.cls)] + 1) + ' von 169 Starthandklassen.');
   // Fortgeschritten
   var f = lines.fortgeschritten;
   f.push(core);
@@ -460,21 +533,38 @@ function grade(a, chosen) {
   else if (loss <= Math.max(1.5 * bb, 0.15 * pot)) g = 'Ungenau';
   else if (loss <= Math.max(4 * bb, 0.4 * pot)) g = 'Fehler';
   else g = 'Schwerer Fehler';
+  var chartCap = null;
+  if (a.street === 0 && a.chart && group(pick) !== group(best)) {
+    var wp = chartWeight(a.chart, pick, a.unopened);
+    if (wp < CHART_MIN) { var capG = wp < 0.03 ? 'Ungenau' : 'Vertretbar'; if (GRADE_SCORE[g] > GRADE_SCORE[capG]) { g = capG; chartCap = { w: wp }; } }
+  }
   var cats = GRADE_SCORE[g] <= 45 ? mistakeCats(a, pick, best) : [];
-  var text = gradeText(g, a, pick, best, loss);
+  var text = chartCap ? chartCapText(a, pick, best, loss) : gradeText(g, a, pick, best, loss);
   return { grade: g, simple: GRADE_SIMPLE[g], score: GRADE_SCORE[g], loss: loss, lossBB: loss / bb, u: u, chosenLabel: pick.label, bestLabel: best.label, text: text, cats: cats, interpolated: !!pick.interpolated };
+}
+function chartCapText(a, pick, best, loss) {
+  var bb = a.bb, aggr = group(pick) === 'aggr';
+  var s = 'Empfohlen war ' + best.label + '. ' + (aggr ? 'Ein Raise' : 'Ein Limp') + ' mit ' + a.hand.cls + ' liegt außerhalb des Faustregel-Charts (' + a.chart.kind + ').';
+  if (pick.ev > best.ev) s += ' Das vereinfachte Modell rechnet zwar mit ' + bbTxt(pick.ev - best.ev, bb) + ' mehr, die dafür nötigen Folds sind aber nicht durch Gegnerwerte belegt.';
+  else if (loss > 0) s += ' Geschätzter Verlust ' + bbTxt(loss, bb) + '.';
+  return s;
 }
 function gradeText(g, a, pick, best, loss) {
   var bb = a.bb;
   if (g === 'Optimal') return 'Deine Aktion ist die beste nach dem Modell. ' + a.text.speech;
   var s = 'Empfohlen war ' + best.label + '. Deine Aktion (' + pick.label + ') kostet geschätzt ' + bbTxt(loss, bb) + ' gegenüber der besten Aktion';
-  if (GRADE_SCORE[g] >= 65) s += ', das liegt im Rahmen der Unsicherheit (± ' + bbTxt(Math.max(best.u, pick.u || 0), bb) + ').';
+  var uu = Math.max(best.u, pick.u || 0);
+  if (GRADE_SCORE[g] >= 65) s += loss <= uu && uu >= 0.05 * bb ? ', das liegt im Rahmen der Unsicherheit (± ' + bbTxt(uu, bb) + ').' : ', ein kleiner Unterschied.';
   else s += '. ' + whyWorse(a, pick, best);
   return s;
 }
 function whyWorse(a, pick, best) {
   var eq = a.equity.eq, po = a.potOdds;
-  if (pick.type === 'fold' && po) return 'Mit etwa ' + pct(eq) + ' Equity bei benötigten ' + pct(po.need) + ' war der Fold zu vorsichtig.';
+  if (pick.type === 'fold' && po) {
+    if (eq >= po.need) return 'Mit etwa ' + pct(eq) + ' Equity bei benötigten ' + pct(po.need) + ' war der Fold zu vorsichtig.';
+    if (best.type === 'bet' || best.type === 'raise') return 'Die Equity allein (' + pct(eq) + ' bei benötigten ' + pct(po.need) + ') reicht nicht für einen Call, aber ein Raise gewinnt laut Modell oft sofort den Pot.';
+    return 'Die Equity (' + pct(eq) + ') liegt knapp unter den benötigten ' + pct(po.need) + ', doch spätere Gewinne mit deinem Draw (implizite Odds) machen den Call laut Modell lohnend.';
+  }
   if (pick.type === 'call' && po && best.type === 'fold') return 'Der Call ist zu teuer: benötigt ' + pct(po.need) + ', geschätzt vorhanden ' + pct(eq) + '.';
   if ((pick.type === 'call' || pick.type === 'check') && (best.type === 'bet' || best.type === 'raise')) return eq >= 0.55 ? 'Mit dieser Equity verschenkst du Value; eine Bet oder ein Raise bringt mehr.' : 'Ein Bluff oder Semi-Bluff hätte hier oft den Pot gewonnen.';
   if ((pick.type === 'bet' || pick.type === 'raise') && (best.type === 'bet' || best.type === 'raise')) return 'Die Aktion stimmt, aber die Größe ist ungünstig; besser ' + best.label + '.';
@@ -484,7 +574,7 @@ function whyWorse(a, pick, best) {
 function mistakeCats(a, pick, best) {
   var c = [], pt = pick.type, bt = best.type, aggrP = pt === 'bet' || pt === 'raise', aggrB = bt === 'bet' || bt === 'raise';
   if (a.street === 0) {
-    if ((pt === 'call' || aggrP) && bt === 'fold') { c.push('zu-viele-starthaende'); if (/UTG|HJ/.test(a.situation) || !a.ip) c.push('position'); }
+    if ((pt === 'call' || aggrP) && bt === 'fold') { c.push('zu-viele-starthaende'); if (a.heroPos === 'UTG' || a.heroPos === 'HJ' || !a.ip) c.push('position'); }
     if (pt === 'fold' && bt !== 'fold') c.push('zu-viel-fold');
   } else {
     if (pt === 'call' && bt === 'fold') { c.push('zu-viel-call'); if (a.potOdds) c.push('pot-odds'); }
@@ -492,11 +582,12 @@ function mistakeCats(a, pick, best) {
     if ((pt === 'call' || pt === 'check') && aggrB && a.equity.eq >= 0.55) c.push('zu-passiv');
     if (aggrP && !aggrB && a.equity.eq < 0.45) c.push('zu-viel-bluff');
     if (aggrP && !aggrB && a.equity.eq >= 0.45 && a.hand.cat <= 1) c.push('mittelstark');
-    if (a.hand.draw && a.hand.draw.strong && a.street < 3) c.push('draw');
+    if (a.hand.draw && a.hand.draw.strong && a.street < 3 && (pt === 'fold' || (aggrB && !aggrP) || (aggrP && !aggrB))) c.push('draw');
   }
   if (aggrP && aggrB) c.push('betgroesse');
+  // Gegnertyp nur, wenn die Empfehlung gerade wegen der Gegnerwerte von der gleichgewichtsnahen abweicht
   var mo = a.opponents.filter(function (o) { return o.name === a.mainOpp; })[0];
-  if (mo && mo.typ && mo.typ !== 'unbekannt') c.push('gegnertyp');
+  if (a.mode === 'exploit' && mo && mo.typ && mo.typ !== 'unbekannt' && a.otherMode && group({ type: a.otherMode.best }) !== group(best) && group({ type: a.otherMode.best }) === group(pick)) c.push('gegnertyp');
   return c.filter(function (x, i) { return c.indexOf(x) === i; });
 }
 

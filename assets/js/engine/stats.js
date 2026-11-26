@@ -195,7 +195,7 @@ function validRecord(r, v1) {
   var keys = v1 ? V1_STATS : STATS;
   if (onlyKeys(r.stats, keys) || Object.keys(r.stats).length !== keys.length) return 'Werte unvollständig';
   for (var i = 0; i < keys.length; i++) {
-    var k = keys[i], lim = (k === 'afq') ? null : r.hands;
+    var k = keys[i], lim = (k === 'afq') ? null : (k === 'checkRaise' ? r.hands * 3 : r.hands);  // Check-Raise: bis zu einer Gelegenheit je Straße
     if (!validNd(r.stats[k], lim)) return 'Wert ' + (STAT_LABEL[k] || k) + ' ungültig';
   }
   if (!v1) {

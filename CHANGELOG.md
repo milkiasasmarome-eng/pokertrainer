@@ -2,6 +2,18 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [2.0.1] – 2026-11-26
+
+Korrekturen nach zwei unabhängigen Prüfungen (Details: `docs/AUDIT.md`).
+
+### Behoben
+- **Coach preflop:** keine 3-Bets, 4-Bets und Opens mehr mit beliebigen Händen, keine Open-Limps; Fold-Raten hängen von Raise-Größe und Position ab; Spielbarkeit der Starthand in der Equity Realization; Faustregel-Chart als Anker, Abweichung nur bei belegtem Exploit.
+- **Coach postflop:** konservative Fold-Schätzung, keine Bluffs in mehrere Gegner ohne Rückhalt, Overbets nur auf Turn/River heads-up, Call-Zweig der Bet-EV nur gegen die Callrange, Dead Money je Spieler im richtigen Pot, Jam-Raise-Zweig korrigiert.
+- **Sicherheit und Daten:** XSS über manipulierte Sicherung geschlossen; strenge Prüfung von Lerndaten, Handdatensätzen und Momentaufnahmen; „Sicherung vor Import“ enthält die bisherigen Daten; Check-Raise-Zähler werden beim Laden und Import nicht mehr verworfen; Replayer mit Rake.
+- **Bedienung:** Enter auf Links startet keine Hand; Karten mit Farbe für Screenreader; Kurz-Tipp über den Aktionen auf dem Smartphone; Einsatzchips und Marker verdecken nichts; Handliste scrollbar; Kontrast verbessert; Texte korrigiert.
+- **Offline:** Service-Worker-Cache je Inhaltsstand (Updates kommen auch ohne Versionssprung an), nur die App-Seite aus dem Cache.
+- **Projektvorgabe:** automatischer Tipp immer höchstens 5.000 Simulationen; Hinweis „Faustregel, kein Solver-Ergebnis“ im Tippfeld.
+
 ## [2.0.0] – 2026-11-26
 
 Erste öffentliche Version als Website (GitHub Pages), installierbare Web-App und portable Offline-Datei.

@@ -102,7 +102,7 @@ function monteCarlo(hero, board, R, deadMask, L, rng, budget, deadline, minIter)
   for (k = 0; k < need; k++) hArr.push(0);
   for (j = 0; j < R.length; j++) oArr.push([0, 0].concat(hArr.slice(2)));
   var mark = new Int32Array(52), stamp = 0, sum = 0, sum2 = 0, valid = 0, it = 0, rejected = 0, wins = 0, ties = 0;
-  var hu = R.length === 1, off = rng(), minN = minIter || 300, D = deck.length;
+  var hu = R.length === 1, off = rng(), minN = minIter || 300, D = deck.length, nTarget = 0;
   var tmp = new Array(D);
   while (it < maxIter) {
     it++;
@@ -133,14 +133,17 @@ function monteCarlo(hero, board, R, deadMask, L, rng, budget, deadline, minIter)
     var share = lose ? 0 : 1 / (1 + tc);
     if (!lose) { if (tc) ties++; else wins++; }
     sum += share; sum2 += share * share; valid++;
-    if (valid >= minN && (valid & 63) === 0) {
-      var m0 = sum / valid, var0 = Math.max(0, sum2 / valid - m0 * m0), se0 = Math.sqrt(var0 / valid);
-      if (se0 <= L.se) break;
+    // Zweistufige Stoppregel: Aus einer Pilotstichprobe (minN) wird die nötige Anzahl einmal festgelegt und dann ohne
+    // weitere Zwischenprüfung erreicht. Ein laufendes „Stoppen, sobald der Fehler klein genug ist“ verzerrt die Schätzung zu den Rändern.
+    if (nTarget === 0 && valid >= minN) {
+      var pS = (sum + 1) / (valid + 2), varS = Math.max(pS * (1 - pS) * 0.5, sum2 / valid - (sum / valid) * (sum / valid));
+      nTarget = Math.max(minN, Math.ceil(varS / (L.se * L.se)));
     }
+    if (nTarget > 0 && valid >= nTarget) break;
   }
   if (budget) { budget.left -= it; budget.used += it; if (budget.calls) budget.calls.push(it); }
   if (!valid) return { eq: null, se: null, iters: it, method: 'Monte Carlo', exact: false, rejected: rejected };
-  var m = sum / valid, vr = Math.max(0, sum2 / valid - m * m), se = Math.sqrt(vr / valid);
+  var m = sum / valid, vr = Math.max(0, sum2 / valid - m * m), pL = (sum + 1) / (valid + 2), se = Math.sqrt(Math.max(vr, pL * (1 - pL) * 0.25) / valid);  // Untergrenze für kleine Stichproben am Rand
   return { eq: m, se: se, lo: clamp(m - 1.96 * se, 0, 1), hi: clamp(m + 1.96 * se, 0, 1), win: wins / valid, tie: ties / valid,
     iters: it, valid: valid, rejected: rejected, method: 'Monte Carlo', exact: false };
 }
@@ -153,6 +156,8 @@ function monteCarlo(hero, board, R, deadMask, L, rng, budget, deadline, minIter)
 function potShare(o) {
   var entries = [{ seat: 0, total: o.heroTotal, folded: false }];
   o.opps.forEach(function (x, i) { entries.push({ seat: i + 1, total: x.total, folded: !!x.folded }); });
+  // Gefoldete Beiträge einzeln, damit jeder Betrag im richtigen Pot (Main/Side) landet
+  (o.dead_ || []).forEach(function (t) { if (t > 0) entries.push({ seat: entries.length, total: t, folded: true }); });
   if (o.deadMoney) entries.push({ seat: entries.length, total: o.deadMoney, folded: true });
   // Pots wie bei der Abrechnung (ohne Rake)
   var live = entries.filter(function (e) { return !e.folded; }), levels = [], pots = [], prev = 0;

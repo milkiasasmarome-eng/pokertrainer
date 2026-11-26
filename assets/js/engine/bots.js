@@ -16,7 +16,7 @@ var STYLE_PLAN = [['lp', 20], ['vl', 15], ['nit', 15], ['tag', 25], ['lag', 15],
 // Grundparameter je Stil (Skalen relativ zum Faustregel-Chart; Häufigkeiten 0..1)
 var BASE = {
   lp:  { rfi: 0.78, limp: 0.55, iso: 0.45, over: 0.65, call: 2.4, tb: 0.25, bl3: 0.1, fb: 0.55, osz: 3.5, cbet: 0.42, barrel: 0.28, river: 0.25, delayed: 0.18,
-    bluff: 0.05, semi: 0.15, thin: 0.2, cr: 0.03, float: 0.04, slow: 0.3, over_b: 0.01, stick: 0.26, size: 0.5, donk: 0.12, skill: 0.25, adapt: 0.15 },
+    bluff: 0.05, semi: 0.15, thin: 0.2, cr: 0.03, float: 0.04, slow: 0.3, over_b: 0.01, stick: 0.21, size: 0.5, donk: 0.12, skill: 0.25, adapt: 0.15 },
   vl:  { rfi: 1.75, limp: 0.3, iso: 1.4, over: 0.45, call: 2.4, tb: 1.9, bl3: 1.1, fb: 1.6, osz: 3, cbet: 0.76, barrel: 0.56, river: 0.42, delayed: 0.42,
     bluff: 0.3, semi: 0.55, thin: 0.45, cr: 0.12, float: 0.25, slow: 0.1, over_b: 0.1, stick: 0.12, size: 0.72, donk: 0.15, skill: 0.3, adapt: 0.2 },
   nit: { rfi: 0.52, limp: 0.04, iso: 0.5, over: 0.08, call: 0.45, tb: 0.45, bl3: 0.04, fb: 0.6, osz: 2.5, cbet: 0.55, barrel: 0.35, river: 0.25, delayed: 0.1,

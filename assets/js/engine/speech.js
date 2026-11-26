@@ -44,7 +44,9 @@ var SPEAK_RANK = { A: 'Ass', K: 'König', Q: 'Dame', J: 'Bube', T: 'Zehn', 9: 'N
 var SPEAK_POS = { UTG: 'Under the Gun', HJ: 'Hijack', CO: 'Cutoff', BTN: 'Button', SB: 'Small Blind', BB: 'Big Blind' };
 function toSpeech(text) {
   return String(text)
-    .replace(/\b([AKQJT2-9])([AKQJT2-9])([so])?\b/g, function (m, a, b, s) {
+    .replace(/\b([AKQJT2-9])([AKQJT2-9])([so])?\b(?!\s?(?:%|Prozent|BB|Hände|Kombinationen|Entscheidungen))(?![,.]\d)/g, function (m, a, b, s) {
+      // reine Zahlen (z. B. „25“) nicht als Hand lesen: nur mit Suffix, mit Bildkarte/Zehn oder als Paar
+      if (!s && /^\d\d$/.test(a + b) && a !== b) return m;
       if (a === b) return 'Paar ' + SPEAK_RANK[a];
       return SPEAK_RANK[a] + ' ' + SPEAK_RANK[b] + (s === 's' ? ' suited' : s === 'o' ? ' offsuit' : '');
     })

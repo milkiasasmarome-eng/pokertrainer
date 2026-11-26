@@ -151,19 +151,19 @@ function respond(opp, ctx, heroAdd, potBefore, nResp, kind) {
     // Preflop: Fold-Wahrscheinlichkeit aus Chart/Modell, im exploitativen Modus mit Gegnerwerten gemischt
     var chartF = clamp(1 - gtoDef * 0.85, 0.1, 0.95), statF = null, nObs = 0, lk = opp.line ? opp.line.kind : 'none', raw = opp.raw || {};
     function obs(k) { return raw[k] ? raw[k][1] : 0; }
+    var toBB = (ctx.me.bet + heroAdd) / ctx.bb, mult = (ctx.me.bet + heroAdd) / Math.max(1, ctx.cur || ctx.bb);
     if (opp.pending || lk === 'none') {
       if (kind === 'open' || kind === 'iso') {
-        var bl = opp.p.pos === 'SB' || opp.p.pos === 'BB';
-        chartF = bl ? (opp.p.pos === 'BB' ? 0.6 : 0.85) : 0.9;
-        if (kind === 'iso') chartF = Math.min(0.95, chartF + 0.03);
-        if (bl) { statF = sm.foldToSteal; nObs = obs('foldToSteal'); } else { statF = clamp(1 - sm.vpip * 0.4, 0.6, 0.97); nObs = opp.hands; }
+        // Verteidigungsanteil der noch ausstehenden Spieler aus dem Faustregel-Chart (Position gegen Opener), abhängig von der Raise-Größe
+        var bl = opp.p.pos === 'SB' || opp.p.pos === 'BB', hp = ctx.me.pos;
+        var dw = (R.DEF_W[opp.p.pos] && R.DEF_W[opp.p.pos][hp]) || (opp.p.pos === 'BB' ? 0.3 : opp.p.pos === 'SB' ? 0.1 : 0.08);
+        var defPF = clamp(dw * Math.sqrt(2.5 / clamp(toBB / (kind === 'iso' ? 1 + 0.4 * (ctx.pre ? ctx.pre.limpers : 1) : 1), 1.6, 8)), 0.03, 0.8);
+        chartF = 1 - defPF;
+        if (bl) { statF = clamp(sm.foldToSteal * Math.pow(2.5 / clamp(toBB, 1.6, 8), -0.25), 0.05, 0.97); nObs = obs('foldToSteal'); } else { statF = clamp(1 - sm.vpip * 0.4, 0.6, 0.97); nObs = opp.hands; }
       } else chartF = kind === 'jam' ? clamp(1 - gtoDef * 0.45, 0.7, 0.97) : 0.95;
-    } else if (lk === 'open' || lk === 'iso') { chartF = kind === 'jam' ? 0.62 : 0.58; statF = sm.foldTo3Bet; nObs = obs('foldTo3Bet'); }
-    else if (lk === '3bet') { chartF = kind === 'jam' ? 0.6 : 0.55; statF = sm.foldTo4Bet; nObs = obs('foldTo4Bet'); }
-    else if (lk === 'limp') { chartF = 0.55; statF = clamp(1 - sm.vpip * 0.8, 0.15, 0.9); nObs = opp.hands; }
-    else if (lk === 'call') chartF = kind === 'jam' ? 0.8 : 0.72;
-    else if (lk === 'check') chartF = 0.6;
-    else chartF = 0.5;
+    } else if (lk === 'open' || lk === 'iso') { chartF = kind === 'jam' ? 0.62 : clamp(0.5 + 0.07 * (mult - 3), 0.38, 0.68); statF = clamp(sm.foldTo3Bet + 0.07 * (mult - 3), 0.05, 0.97); nObs = obs('foldTo3Bet'); }
+    else if (lk === '3bet') { chartF = kind === 'jam' ? 0.6 : clamp(0.5 + 0.08 * (mult - 2.3), 0.38, 0.7); statF = clamp(sm.foldTo4Bet + 0.08 * (mult - 2.3), 0.05, 0.97); nObs = obs('foldTo4Bet'); }
+    else if (lk === 'limp') { chartF = clamp(0.5 + 0.05 * (toBB - 4), 0.3, 0.75); statF = clamp(1 - sm.vpip * 0.8 + 0.05 * (toBB - 4), 0.1, 0.9); nObs = opp.hands; }
     var f0 = chartF;
     if (ctx.mode !== 'gto' && statF != null) { var wObs = nObs / (nObs + 25); f0 = chartF * (1 - wObs) + statF * wObs; basis = 'Gegnerwerte (' + nObs + ' Gelegenheiten)'; }
     else basis = 'Faustregel-Chart';
@@ -188,6 +188,13 @@ function respond(opp, ctx, heroAdd, potBefore, nResp, kind) {
     if (kind === 'raise' || kind === 'jam' && ctx.L.toCall > 0) alpha *= 0.85;
     def = 1 - (1 - def) * alpha;
   }
+  if (ctx.street > 0) {
+    // Konservative Fold-Schätzung: Die MDF-Annahme überschätzt Folds gegen Gegner, die nicht ausgewogen verteidigen
+    // (Population der Computergegner: Fold gegen Turn-C-Bet beobachtet 34 % statt 43 % nach MDF). Im Multiway-Pot zusätzlich weniger Folds je Spieler.
+    var cbObs = opp.raw && opp.raw.foldToCbet ? opp.raw.foldToCbet[1] : 0;
+    var shrink = (ctx.mode !== 'gto' && kind === 'cbet' && cbObs >= 30 ? 0.04 : 0.12) + 0.07 * (nResp - 1) + (ctx.street === 3 && heroAdd > potBefore ? 0.05 : 0);
+    def = 1 - (1 - def) * (1 - clamp(shrink, 0, 0.35));
+  }
   var raiseFrac = def * (ctx.mode === 'gto' ? 0.16 : clamp(0.08 + 0.22 * prof.aggr, 0.05, 0.35));
   if (opp.p.stack <= heroAdd) raiseFrac = 0;
   var sp = splitRange(opp.w, strengthScores(opp, ctx), def, raiseFrac);
@@ -206,12 +213,24 @@ function realization(ctx, kind) {
     else if (f.cat === 1 && /schwach|unter dem Board|Board/.test(f.desc || '')) Rz *= 0.88;
   }
   if (ctx.street === 0 && ctx.nOpp > 1) Rz *= Math.pow(0.95, ctx.nOpp - 1);
+  if (ctx.street === 0) Rz *= playability(ctx.v.cards);
   if (kind === 'bet') Rz += 0.03;
   var spr = ctx.spr;
   if (spr < 1) Rz = Rz + (1 - Rz) * (1 - spr);
   return clamp(Rz, 0.6, 1.1);
 }
 
+/** Spielbarkeit einer Starthand nach dem Flop (Modellannahme): Paare und suited Hände realisieren mehr Equity, unverbundene schwache Offsuit-Hände weniger */
+function playability(cards) {
+  var r1 = cards[0] >> 2, r2 = cards[1] >> 2, hi = Math.max(r1, r2), lo = Math.min(r1, r2), suited = (cards[0] & 3) === (cards[1] & 3);
+  if (hi === lo) return 1;
+  var gap = hi - lo - 1, f = suited ? 1.0 : 0.9;
+  f -= 0.025 * Math.min(gap, 4);
+  if (hi < 8) f -= 0.04;            // höchste Karte unter T
+  if (lo >= 8) f += 0.03;           // beide Karten Broadway
+  if (hi === 12 && suited) f += 0.02; // Ax suited: Nut-Flush-Potenzial
+  return clamp(f, 0.7, 1.05);
+}
 // ---------- Hilfen ----------
 function prod(a) { var p = 1; for (var i = 0; i < a.length; i++) p *= a[i]; return p; }
 /** Equity gegen eine Teilmenge von Gegnern mit gegebenen Ranges (Produktnäherung, auf Gesamt-Equity kalibriert) */
@@ -247,7 +266,7 @@ function evCall(ctx) {
     if (ctx.budget.left < 200) return { ev: ctx.eqNow * (po ? po.winnable : ctx.pot + c) - c, dEdq: po ? po.winnable : ctx.pot, parts: { allin: true, approx: true, call: c, winnable: po ? po.winnable : null } };
     var share = Q.potShare({ hero: ctx.v.cards, heroTotal: heroFinal, board: ctx.board, rng: ctx.rng, budget: ctx.budget, iters: Math.min(1500, ctx.budget.left),
       opps: ctx.opps.map(function (o) { return { w: o.w, total: Math.min(o.p.total, heroFinal + 1e12), folded: false }; }),
-      deadMoney: ctx.deadMoney });
+      dead_: ctx.deadList || null, deadMoney: ctx.deadList ? 0 : ctx.deadMoney });
     return { ev: share.win - c, dEdq: po ? po.winnable : ctx.pot, se: share.se, parts: { allin: true, expectedWin: share.win, call: c, winnable: po ? po.winnable : null } };
   }
   var Rz = realization(ctx, 'call'), potAfter = ctx.pot + c;
@@ -276,7 +295,7 @@ function evBet(ctx, to, kind) {
     var potR = pot + (callTo - me.bet) + (Math.min(raiseTo, callTo) - ro.p.bet);
     var Rr = (callTo >= heroMax || raiseTo >= ro.p.bet + ro.p.stack) ? 1 : 0.92;
     evRaised = Math.max(-a, Rr * eqR * potR - (callTo - me.bet));
-    if (heroAllIn) evRaised = eqR * (pot + a + Math.min(a, ro.p.bet + ro.p.stack - ro.p.bet)) - a;
+    if (heroAllIn) evRaised = eqR * (pot + a + Math.min(to - ro.p.bet, ro.p.stack)) - a;
   }
   // Teilmengen der Caller (ohne Raise)
   var evNR = 0, sumP = 0, branches = [], RzBet = realization(ctx, 'bet');
@@ -297,7 +316,7 @@ function evBet(ctx, to, kind) {
       var heroEff = Math.min(to, Math.max(levelMax, me.bet)), addEff = heroEff - me.bet;
       S.forEach(function (i2) { var o = resp[i2]; calls += Math.max(0, Math.min(heroEff, o.p.bet + o.p.stack) - o.p.bet); });
       potS = pot + addEff + calls;
-      var parts = S.map(function (i2) { return { opp: resp[i2], w: R0[i2].contW }; }).concat(allins.map(function (o) { return { opp: o, w: o.w }; }));
+      var parts = S.map(function (i2) { return { opp: resp[i2], w: R0[i2].callW }; }).concat(allins.map(function (o) { return { opp: o, w: o.w }; }));
       eqS = subsetEq(ctx, parts);
       var allInNow = heroEff >= me.bet + me.stack || S.every(function (i2) { var o = resp[i2]; return o.p.bet + o.p.stack <= heroEff; });
       var Rz = allInNow ? 1 : RzBet;
@@ -343,7 +362,11 @@ function candidates(ctx) {
       }
       if (ctx.eff <= 35 * bb || pre.rc >= 3 || (pre.rc === 2 && ctx.eff <= 60 * bb)) add(L.maxTo, 'All-in', 'jam');
     } else if (L.isBet) {
-      [[0.33, '⅓ Pot'], [0.5, '½ Pot'], [0.75, '¾ Pot'], [1.0, 'Pot'], [1.5, 'Overbet 1,5×']].forEach(function (x) { add(me.bet + pot * x[0], 'Bet ' + x[1], ctx.cbetSpot ? 'cbet' : 'bet'); });
+      [[0.33, '⅓ Pot'], [0.5, '½ Pot'], [0.75, '¾ Pot'], [1.0, 'Pot'], [1.5, 'Overbet 1,5×']].forEach(function (x) {
+        // Overbets nur auf Turn und River im Heads-up (Modellannahme: auf dem Flop und multiway kaum sinnvoll, Reaktionen dort schlecht belegt)
+        if (x[0] > 1 && (ctx.street === 1 || ctx.nOpp > 1)) return;
+        add(me.bet + pot * x[0], 'Bet ' + x[1], ctx.cbetSpot ? 'cbet' : 'bet');
+      });
       if (L.maxTo - me.bet <= 2.5 * pot) add(L.maxTo, 'All-in', 'jam');
     } else {
       var facing = ctx.cur - (ctx.prevCur || 0);
@@ -365,11 +388,15 @@ function evaluateAction(ctx, act) {
   else r = evBet(ctx, act.amount, act.kind || (ctx.street === 0 ? (ctx.pre.rc === 0 ? 'open' : ctx.pre.rc === 1 ? '3bet' : '4bet') : (ctx.cbetSpot ? 'cbet' : 'bet')));
   var simU = (r.dEdq || 0) * (ctx.eqSE || 0) + (r.se || 0);
   var modelU = (r.dEdq || 0) * (ctx.eqRangeSpread || 0);
-  if (act.type === 'bet' || act.type === 'raise') modelU += Math.abs(ctx.pot - (r.ev || 0)) * ctx.foldUnc * 0.5 + 0.02 * ctx.pot;
+  if (act.type === 'bet' || act.type === 'raise') {
+    // Unsicherheit der Reaktionsannahmen wächst mit der Einsatzgröße und der Zahl der Gegner
+    var szU = Math.max(1, ((act.amount || 0) - ctx.me.bet) / Math.max(1, ctx.pot)), nU = Math.max(1, ctx.opps.filter(function (o) { return !o.p.allIn; }).length);
+    modelU += Math.abs(ctx.pot - (r.ev || 0)) * ctx.foldUnc * 0.5 * szU * Math.sqrt(nU) + 0.02 * ctx.pot;
+  }
   r.uSim = simU; r.uModel = modelU; r.u = Math.sqrt(simU * simU + modelU * modelU);
   return r;
 }
 
 PT.ev = { pfTable: pfTable, eqClass: eqClass, comboEquities: comboEquities, rangeEq: rangeEq, respond: respond, splitRange: splitRange,
-  realization: realization, potOdds: potOdds, evCheck: evCheck, evCall: evCall, evBet: evBet, candidates: candidates, evaluateAction: evaluateAction, subsetEq: subsetEq };
+  realization: realization, playability: playability, potOdds: potOdds, evCheck: evCheck, evCall: evCall, evBet: evBet, candidates: candidates, evaluateAction: evaluateAction, subsetEq: subsetEq };
 })(typeof globalThis !== 'undefined' ? globalThis : (typeof self !== 'undefined' ? self : this));

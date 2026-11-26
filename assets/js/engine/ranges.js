@@ -338,7 +338,7 @@ function handFeatures(hole, board) {
   if (cat === 1) {
     var p = (sc >> 16) & 15;
     if (pp && p > uniq[0]) desc = 'Overpair';
-    else if (pp) desc = 'Pocket Pair unter dem Board';
+    else if (pp) desc = p > uniq[uniq.length - 1] ? 'Pocket Pair unter einer Overcard' + (uniq.filter(function (r) { return r > p; }).length > 1 ? ' (mehrere Overcards)' : '') : 'Pocket Pair unter dem Board';
     else if (br.indexOf(p) >= 0 && (h0 === p || h1 === p)) {
       desc = p === uniq[0] ? 'Top Pair' : p === uniq[1] ? 'Second Pair' : 'schwaches Paar';
       if (p === uniq[0]) { var kick = h0 === p ? h1 : h0; desc += kick >= 11 ? ' (guter Kicker)' : kick <= 7 ? ' (schwacher Kicker)' : ''; }
@@ -355,9 +355,13 @@ function handFeatures(hole, board) {
       if (dead[c]) continue;
       arr[arr.length - 1] = c; barr[barr.length - 1] = c;
       var ns = E.evaluate(arr), nc = ns >> 20, nb = (b5 + 1 >= 5) ? E.evaluate(barr) >> 20 : -1;
-      var target = Math.max(2, cat + 1);
-      if (cat >= 4) target = cat + 1;
-      if (nc >= target && nc > nb) {
+      // Verbesserung muss von den eigenen Karten kommen; Two Pair mit einem Board-Paar zählt nicht als Out
+      var bc0 = E.evaluate(board) >> 20, ownCat = cat > bc0 ? cat : 0;
+      var target = Math.max(2, ownCat + 1);
+      if (ownCat >= 4) target = ownCat + 1;
+      var nbAll = E.evaluate(board.concat([c])) >> 20;
+      if (nc === 2 && (bc0 >= 1 || nbAll >= 1) && ownCat === 0) target = 3;
+      if (nc >= target && nc > nb && nc > nbAll) {
         outs++;
         var bd2 = analyzeBoard(board.concat([c]));
         if ((nc <= 4 && bd2.suitMax >= 3 && !(analyzeBoard(board).suitMax >= 3)) || (nc <= 5 && bd2.paired && !analyzeBoard(board).paired)) dirty++;
@@ -371,7 +375,7 @@ function handFeatures(hole, board) {
 
 PT.ranges = { empty: empty, full: full, band: band, bandClass: bandClass, fromClassWeights: fromClassWeights, removeDead: removeDead,
   total: total, combosCount: combosCount, classWeights: classWeights, widthOf: widthOf, hash: hashRange,
-  chart: chart, rangeFromChart: rangeFromChart, RFI_W: RFI_W, BLUFF3: BLUFF3, BLUFF4: BLUFF4,
+  chart: chart, rangeFromChart: rangeFromChart, RFI_W: RFI_W, DEF_W: DEF_W, V3_W: V3_W, BLUFF3: BLUFF3, BLUFF4: BLUFF4,
   PRIOR: PRIOR, PRIOR_K: PRIOR_K, smooth: smooth, preflopRange: preflopRange, profileOf: profileOf,
   drawInfo: drawInfo, rangeStrength: rangeStrength, likelihood: likelihood, narrowPostflop: narrowPostflop,
   analyzeBoard: analyzeBoard, handFeatures: handFeatures };

@@ -17,7 +17,7 @@
   --room:#e6e4df;--ink:#15181b;--muted:#565c63;--panel:#fbfaf7;--panel2:#f1efea;--line:#d1cec6;--rail:#3b2d24;--shadow:rgba(0,0,0,.18);
   --felt:#11604f;--felt-hi:#1b7d67;--felt-lo:#0a4438;
   --card:#fbf8f0;--suit-red:#c3332b;--suit-black:#16181b;--accent:#cf3f2c;--accent-ink:#fff;
-  --good:#1d7f47;--ok:#a8691a;--bad:#c3332b;--focus:#2f7de1;--info:#2c6aa8;
+  --good:#1d7f47;--ok:#a8691a;--bad:#c3332b;--focus:#2f7de1;--info:#245a91;
   --fold:#8b939b;--call:#2f9a5d;--raise:#d0533d;--mixed:#c49a2c}
 @media (prefers-color-scheme:dark){:root:not([data-theme=light]){
   --room:#0e1113;--ink:#ebe9e4;--muted:#a0a7ae;--panel:#171b1e;--panel2:#1e2327;--line:#2d343a;--rail:#2b211b;--shadow:rgba(0,0,0,.5);--info:#6aa6e6}}
@@ -38,7 +38,9 @@ a{color:var(--info)}
 header.top{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;justify-content:space-between}
 .brand{display:flex;align-items:center;gap:10px}
 .brand h1{margin:0;font-size:21px;line-height:1.1;letter-spacing:-.01em}
-.brand .ver{font-size:13px;font-weight:700;color:var(--accent);vertical-align:super}
+.brand .ver{font-size:13px;font-weight:700;color:#a8321f;vertical-align:super}
+:root[data-theme=dark] .brand .ver{color:#ff8a76}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .brand .ver{color:#ff8a76}}
 .brand .sub{color:var(--muted);font-size:13px}
 .status{font-size:14px;font-variant-numeric:tabular-nums;display:flex;flex-wrap:wrap;gap:2px 14px}
 .status b{font-weight:650}
@@ -82,7 +84,7 @@ nav.tabs a:hover{color:var(--ink)}
 button.plate:hover{border-color:var(--muted)}
 .seat.me .plate{cursor:default;border-color:var(--muted)}
 .seat.act .plate{outline:3px solid #f1c94b;outline-offset:1px;box-shadow:0 0 0 6px rgba(241,201,75,.25),0 4px 14px var(--shadow)}
-.seat.folded .plate{opacity:.55}
+.seat.folded .plate{opacity:.72}
 .seat.win .plate{box-shadow:0 0 0 3px var(--good),0 4px 14px var(--shadow)}
 .r1{display:flex;justify-content:space-between;gap:6px;align-items:baseline}
 .nm{font-weight:700;font-size:15px;overflow-wrap:anywhere}
@@ -96,19 +98,21 @@ button.plate:hover{border-color:var(--muted)}
 .lastact{position:absolute;top:-12px;right:8px;background:#1d2226;color:#fff;border-radius:999px;padding:1px 9px;font-size:12px;font-weight:600;white-space:nowrap;z-index:3}
 .lastact:empty{display:none}
 .s0 .lastact{top:auto;bottom:-12px}
-.chipmark{position:absolute;top:-11px;left:-11px;width:24px;height:24px;border-radius:50%;font-weight:800;font-size:11px;display:grid;place-items:center;box-shadow:0 2px 6px rgba(0,0,0,.35);z-index:3}
+.chipmark{position:absolute;top:50%;left:-28px;margin-top:-12px;width:24px;height:24px;border-radius:50%;font-weight:800;font-size:11px;display:grid;place-items:center;box-shadow:0 2px 6px rgba(0,0,0,.35);z-index:3}
 .chipmark.d{background:#fff;color:#111;font-size:13px}
-.chipmark.sb{background:#3a73c2;color:#fff;left:16px}
-.chipmark.bb{background:#d6a92b;color:#111;left:16px}
+.chipmark.sb{background:#3a73c2;color:#fff}
+.chipmark.bb{background:#d6a92b;color:#111}
+/* Marker auf der Seite ohne Karten: rechte Plätze außen rechts */
+.s4 .chipmark,.s5 .chipmark{left:auto;right:-28px}
 .hole{position:absolute;display:flex;gap:4px;pointer-events:none;z-index:1}
 .s0 .hole{left:50%;bottom:calc(100% + 8px);transform:translateX(-50%)}
 .s1 .hole,.s2 .hole{left:calc(100% + 8px);top:50%;transform:translateY(-50%)}
 .s4 .hole,.s5 .hole{right:calc(100% + 8px);top:50%;transform:translateY(-50%)}
 .s3 .hole{left:50%;top:calc(100% + 8px);transform:translateX(-50%)}
-.bet{position:absolute;left:var(--bx);top:var(--by);transform:translate(-50%,-50%);background:rgba(0,0,0,.45);color:#fff;border-radius:999px;padding:2px 9px;font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap;z-index:1}
+.bet{position:absolute;left:var(--bx);top:var(--by);transform:translate(-50%,-50%);background:rgba(0,0,0,.45);color:#fff;border-radius:999px;padding:2px 9px;font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap;z-index:4}
 .bet::before{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 2px #fff inset;margin-right:6px;vertical-align:-1px}
 .s0{--x:50%;--y:89%}.s1{--x:12%;--y:69%}.s2{--x:12%;--y:31%}.s3{--x:50%;--y:12%}.s4{--x:88%;--y:31%}.s5{--x:88%;--y:69%}
-.b0{--bx:50%;--by:66%}.b1{--bx:31%;--by:63%}.b2{--bx:31%;--by:37%}.b3{--bx:50%;--by:30%}.b4{--bx:69%;--by:37%}.b5{--bx:69%;--by:63%}
+.b0{--bx:50%;--by:66%}.b1{--bx:33%;--by:58%}.b2{--bx:33%;--by:42%}.b3{--bx:50%;--by:30%}.b4{--bx:67%;--by:42%}.b5{--bx:67%;--by:58%}
 
 /* Karten */
 .card{display:inline-grid;grid-template-rows:auto 1fr;justify-items:center;align-items:center;width:36px;height:50px;border-radius:6px;background:var(--card);color:var(--suit-black);
@@ -203,6 +207,11 @@ table.grid tbody tr.click:hover,table.grid tbody tr.click:focus{background:var(-
 .toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
 .toolbar input[type=search]{flex:1 1 180px}
 .cards{display:inline-flex;gap:3px;align-items:center;flex-wrap:wrap}
+table.hlist .cards{flex-wrap:nowrap}
+.tipmini{display:none;background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:12px;padding:8px 12px;font-size:14px;line-height:1.35}
+.tipmini:empty{display:none!important}
+.tipmini b{font-weight:750}
+.tipmini a{margin-left:6px}
 .muted{color:var(--muted)}
 .good{color:var(--good)}.bad{color:var(--bad)}
 .btnrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
@@ -262,16 +271,24 @@ table.grid tbody tr.click:hover,table.grid tbody tr.click:focus{background:var(-
   .nm{font-size:13px}
   .hud{font-size:11px}
   .hud .lbl{display:none}
-  .hud2 .bel{display:none}
+  .hud2{line-height:1.2}
   .center .result{display:none}
   .result2{display:block}
   .hud2{font-size:11px}
   .s0{--x:50%;--y:90%}.s1{--x:17%;--y:67%}.s2{--x:17%;--y:31%}.s3{--x:50%;--y:10%}.s4{--x:83%;--y:31%}.s5{--x:83%;--y:67%}
-  .s1 .hole,.s2 .hole{left:calc(100% + 4px)}
-  .s4 .hole,.s5 .hole{right:calc(100% + 4px)}
+  /* Seitenplätze: Karten über bzw. unter dem Namensschild, damit sie sich in der Mitte nicht überlappen */
+  .s1 .hole,.s5 .hole{left:50%;right:auto;top:auto;bottom:calc(100% + 4px);transform:translateX(-50%)}
+  .s2 .hole,.s4 .hole{left:50%;right:auto;top:calc(100% + 4px);transform:translateX(-50%)}
+  .s1 .lastact,.s5 .lastact{top:auto;bottom:-12px}
+  /* Phone: Marker zur Tischmitte hin, damit sie nicht über den Bildschirmrand ragen */
+  .s1 .chipmark,.s2 .chipmark{left:auto;right:-27px}
+  .s4 .chipmark,.s5 .chipmark{right:auto;left:-27px}
   .s0 .hole{bottom:calc(100% + 6px)}
   .s3 .hole{top:calc(100% + 6px)}
-  .b0{--bx:50%;--by:74%}.b1{--bx:36%;--by:58%}.b2{--bx:36%;--by:42%}.b3{--bx:50%;--by:29%}.b4{--bx:64%;--by:42%}.b5{--bx:64%;--by:58%}
+  .b0{--bx:50%;--by:74%}.b1{--bx:42%;--by:60%}.b2{--bx:42%;--by:37%}.b3{--bx:50%;--by:27%}.b4{--bx:58%;--by:37%}.b5{--bx:58%;--by:60%}
+  table.hlist .cards{flex-wrap:nowrap}
+  table.hlist td{white-space:nowrap}
+  .tipmini{display:block}
   .card{width:25px;height:36px;padding-top:2px}.card b{font-size:12px}.card i{font-size:14px}
   .card.lg{width:38px;height:54px}.card.lg b{font-size:16px}.card.lg i{font-size:21px}
   .board{gap:3px;min-height:50px}
@@ -297,7 +314,7 @@ table.grid tbody tr.click:hover,table.grid tbody tr.click:focus{background:var(-
     <div class="status" id="status" aria-live="polite"></div>
     <div class="tools">
       <button class="ghost icon" id="bView" type="button" title="Einfache oder erweiterte Ansicht" aria-pressed="false">Erweitert</button>
-      <button class="ghost icon" id="bTheme" type="button" title="Hell, dunkel oder automatisch" aria-label="Darstellung wechseln">◐</button>
+      <button class="ghost icon" id="bTheme" type="button" title="Hell, dunkel oder automatisch" aria-label="Darstellung wechseln"><svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10 2a8 8 0 0 1 0 16z" fill="currentColor"/></svg></button>
     </div>
   </header>
   <nav class="tabs" id="nav" aria-label="Bereiche">
@@ -326,6 +343,7 @@ table.grid tbody tr.click:hover,table.grid tbody tr.click:focus{background:var(-
           </div>
           <div class="result2" id="result2"></div>
           <div class="trainbar" id="trainbar" hidden></div>
+          <div class="tipmini" id="tipMini" aria-hidden="true"></div>
           <div class="actions" id="actions">
             <div class="mainacts">
               <button class="act fold" id="bFold" type="button">Fold<kbd>F</kbd></button>
@@ -369,7 +387,7 @@ table.grid tbody tr.click:hover,table.grid tbody tr.click:focus{background:var(-
               </label>
             </div>
             <div class="tipbox" id="tipBox" aria-live="polite"></div>
-            <p class="faust" id="faust">Modellschätzung, kein Solver-Ergebnis</p>
+            <p class="faust" id="faust">Faustregel, kein Solver-Ergebnis</p>
             <div class="tipfoot">
               <label class="switch"><input type="checkbox" id="speechOn" checked> Sprachausgabe</label>
               <button class="ghost" id="bSay" type="button">Vorlesen</button>
@@ -393,7 +411,7 @@ table.grid tbody tr.click:hover,table.grid tbody tr.click:focus{background:var(-
     <section class="view" id="view-hilfe" hidden></section>
   </main>
   <footer class="foot">
-    <span>PokerTrainer <span id="verText">2.0.0</span> · nur Spielgeld, kein Glücksspiel · Daten bleiben in deinem Browser</span>
+    <span>PokerTrainer <span id="verText">2.0.1</span> · nur Spielgeld, kein Glücksspiel · Daten bleiben in deinem Browser</span>
     <a href="#hilfe/datenschutz">Datenschutz &amp; Rechtliches</a>
   </footer>
 </div>
@@ -413,7 +431,7 @@ table.grid tbody tr.click:hover,table.grid tbody tr.click:focus{background:var(-
 (function (G) {
 'use strict';
 var PT = G.PT || (G.PT = {});
-PT.VERSION = '2.0.0';
+PT.VERSION = '2.0.1';
 PT.BUILD = '2026-11-26';
 
 // ---------- Hilfen ----------
@@ -433,7 +451,8 @@ function fmtSigned(u) { return (u > 0 ? '+' : u < 0 ? '−' : '±') + fmt(Math.a
 function fmtBB(u, bb, d) {
   if (u == null || !isFinite(u)) return '–';
   var x = u / (bb || 100), dd = d == null ? (Math.abs(x) >= 10 ? 0 : 1) : d;
-  return (x < 0 ? '−' : '') + Math.abs(x).toFixed(dd).replace('.', ',') + ' BB';
+  var t = Math.abs(x).toFixed(dd), zero = Number(t) === 0;
+  return (x < 0 && !zero ? '−' : '') + t.replace('.', ',') + ' BB';
 }
 function pct(x, d) { if (x == null || !isFinite(x)) return '–'; return (x * 100).toFixed(d || 0).replace('.', ',') + ' %'; }
 /** „4,50“ / „4.50“ / „4“ → Cent; sonst null */
@@ -847,7 +866,7 @@ function Hand(cfg) {
   this.sb = cfg.sb || 50; this.bb = cfg.bb || 100; this.rake = cfg.rake || null;
   var names = POS_BY_N[N];
   this.p = cfg.players.map(function (x, i) {
-    if (!U.isInt(x.stack, 0, 1e12)) throw new Error('Ungültiger Stack');
+    if (!U.isInt(x.stack, 1, 1e12)) throw new Error('Ungültiger Stack (mindestens 1 Cent je Spieler)');
     return { seat: i, id: x.id, name: x.name, isHero: !!x.isHero, start: x.stack, stack: x.stack, bet: 0, total: 0,
       folded: false, allIn: false, acted: false, actedAt: 0, cards: [], pos: names[(i - cfg.button + N) % N], sittingOut: x.stack === 0 };
   });
@@ -1072,6 +1091,7 @@ Hand.prototype.publicRecord = function () {
     won: this.result ? this.p.map(function (q) { return this.result.payout[q.seat] || 0; }, this) : [],
     returned: this.returned.slice(),
     rake: this.result ? this.result.rake : 0,
+    rakeCfg: this.rake ? { pct: this.rake.pct, cap: this.rake.cap, nfnd: !!this.rake.nfnd } : null,
     sawFlop: this.sawFlop ? this.sawFlop.slice() : [],
     ended: this.done
   };
@@ -1470,7 +1490,7 @@ function handFeatures(hole, board) {
   if (cat === 1) {
     var p = (sc >> 16) & 15;
     if (pp && p > uniq[0]) desc = 'Overpair';
-    else if (pp) desc = 'Pocket Pair unter dem Board';
+    else if (pp) desc = p > uniq[uniq.length - 1] ? 'Pocket Pair unter einer Overcard' + (uniq.filter(function (r) { return r > p; }).length > 1 ? ' (mehrere Overcards)' : '') : 'Pocket Pair unter dem Board';
     else if (br.indexOf(p) >= 0 && (h0 === p || h1 === p)) {
       desc = p === uniq[0] ? 'Top Pair' : p === uniq[1] ? 'Second Pair' : 'schwaches Paar';
       if (p === uniq[0]) { var kick = h0 === p ? h1 : h0; desc += kick >= 11 ? ' (guter Kicker)' : kick <= 7 ? ' (schwacher Kicker)' : ''; }
@@ -1487,9 +1507,13 @@ function handFeatures(hole, board) {
       if (dead[c]) continue;
       arr[arr.length - 1] = c; barr[barr.length - 1] = c;
       var ns = E.evaluate(arr), nc = ns >> 20, nb = (b5 + 1 >= 5) ? E.evaluate(barr) >> 20 : -1;
-      var target = Math.max(2, cat + 1);
-      if (cat >= 4) target = cat + 1;
-      if (nc >= target && nc > nb) {
+      // Verbesserung muss von den eigenen Karten kommen; Two Pair mit einem Board-Paar zählt nicht als Out
+      var bc0 = E.evaluate(board) >> 20, ownCat = cat > bc0 ? cat : 0;
+      var target = Math.max(2, ownCat + 1);
+      if (ownCat >= 4) target = ownCat + 1;
+      var nbAll = E.evaluate(board.concat([c])) >> 20;
+      if (nc === 2 && (bc0 >= 1 || nbAll >= 1) && ownCat === 0) target = 3;
+      if (nc >= target && nc > nb && nc > nbAll) {
         outs++;
         var bd2 = analyzeBoard(board.concat([c]));
         if ((nc <= 4 && bd2.suitMax >= 3 && !(analyzeBoard(board).suitMax >= 3)) || (nc <= 5 && bd2.paired && !analyzeBoard(board).paired)) dirty++;
@@ -1503,7 +1527,7 @@ function handFeatures(hole, board) {
 
 PT.ranges = { empty: empty, full: full, band: band, bandClass: bandClass, fromClassWeights: fromClassWeights, removeDead: removeDead,
   total: total, combosCount: combosCount, classWeights: classWeights, widthOf: widthOf, hash: hashRange,
-  chart: chart, rangeFromChart: rangeFromChart, RFI_W: RFI_W, BLUFF3: BLUFF3, BLUFF4: BLUFF4,
+  chart: chart, rangeFromChart: rangeFromChart, RFI_W: RFI_W, DEF_W: DEF_W, V3_W: V3_W, BLUFF3: BLUFF3, BLUFF4: BLUFF4,
   PRIOR: PRIOR, PRIOR_K: PRIOR_K, smooth: smooth, preflopRange: preflopRange, profileOf: profileOf,
   drawInfo: drawInfo, rangeStrength: rangeStrength, likelihood: likelihood, narrowPostflop: narrowPostflop,
   analyzeBoard: analyzeBoard, handFeatures: handFeatures };
@@ -1614,7 +1638,7 @@ function monteCarlo(hero, board, R, deadMask, L, rng, budget, deadline, minIter)
   for (k = 0; k < need; k++) hArr.push(0);
   for (j = 0; j < R.length; j++) oArr.push([0, 0].concat(hArr.slice(2)));
   var mark = new Int32Array(52), stamp = 0, sum = 0, sum2 = 0, valid = 0, it = 0, rejected = 0, wins = 0, ties = 0;
-  var hu = R.length === 1, off = rng(), minN = minIter || 300, D = deck.length;
+  var hu = R.length === 1, off = rng(), minN = minIter || 300, D = deck.length, nTarget = 0;
   var tmp = new Array(D);
   while (it < maxIter) {
     it++;
@@ -1645,14 +1669,17 @@ function monteCarlo(hero, board, R, deadMask, L, rng, budget, deadline, minIter)
     var share = lose ? 0 : 1 / (1 + tc);
     if (!lose) { if (tc) ties++; else wins++; }
     sum += share; sum2 += share * share; valid++;
-    if (valid >= minN && (valid & 63) === 0) {
-      var m0 = sum / valid, var0 = Math.max(0, sum2 / valid - m0 * m0), se0 = Math.sqrt(var0 / valid);
-      if (se0 <= L.se) break;
+    // Zweistufige Stoppregel: Aus einer Pilotstichprobe (minN) wird die nötige Anzahl einmal festgelegt und dann ohne
+    // weitere Zwischenprüfung erreicht. Ein laufendes „Stoppen, sobald der Fehler klein genug ist“ verzerrt die Schätzung zu den Rändern.
+    if (nTarget === 0 && valid >= minN) {
+      var pS = (sum + 1) / (valid + 2), varS = Math.max(pS * (1 - pS) * 0.5, sum2 / valid - (sum / valid) * (sum / valid));
+      nTarget = Math.max(minN, Math.ceil(varS / (L.se * L.se)));
     }
+    if (nTarget > 0 && valid >= nTarget) break;
   }
   if (budget) { budget.left -= it; budget.used += it; if (budget.calls) budget.calls.push(it); }
   if (!valid) return { eq: null, se: null, iters: it, method: 'Monte Carlo', exact: false, rejected: rejected };
-  var m = sum / valid, vr = Math.max(0, sum2 / valid - m * m), se = Math.sqrt(vr / valid);
+  var m = sum / valid, vr = Math.max(0, sum2 / valid - m * m), pL = (sum + 1) / (valid + 2), se = Math.sqrt(Math.max(vr, pL * (1 - pL) * 0.25) / valid);  // Untergrenze für kleine Stichproben am Rand
   return { eq: m, se: se, lo: clamp(m - 1.96 * se, 0, 1), hi: clamp(m + 1.96 * se, 0, 1), win: wins / valid, tie: ties / valid,
     iters: it, valid: valid, rejected: rejected, method: 'Monte Carlo', exact: false };
 }
@@ -1665,6 +1692,8 @@ function monteCarlo(hero, board, R, deadMask, L, rng, budget, deadline, minIter)
 function potShare(o) {
   var entries = [{ seat: 0, total: o.heroTotal, folded: false }];
   o.opps.forEach(function (x, i) { entries.push({ seat: i + 1, total: x.total, folded: !!x.folded }); });
+  // Gefoldete Beiträge einzeln, damit jeder Betrag im richtigen Pot (Main/Side) landet
+  (o.dead_ || []).forEach(function (t) { if (t > 0) entries.push({ seat: entries.length, total: t, folded: true }); });
   if (o.deadMoney) entries.push({ seat: entries.length, total: o.deadMoney, folded: true });
   // Pots wie bei der Abrechnung (ohne Rake)
   var live = entries.filter(function (e) { return !e.folded; }), levels = [], pots = [], prev = 0;
@@ -1931,7 +1960,7 @@ function validRecord(r, v1) {
   var keys = v1 ? V1_STATS : STATS;
   if (onlyKeys(r.stats, keys) || Object.keys(r.stats).length !== keys.length) return 'Werte unvollständig';
   for (var i = 0; i < keys.length; i++) {
-    var k = keys[i], lim = (k === 'afq') ? null : r.hands;
+    var k = keys[i], lim = (k === 'afq') ? null : (k === 'checkRaise' ? r.hands * 3 : r.hands);  // Check-Raise: bis zu einer Gelegenheit je Straße
     if (!validNd(r.stats[k], lim)) return 'Wert ' + (STAT_LABEL[k] || k) + ' ungültig';
   }
   if (!v1) {
@@ -2056,7 +2085,7 @@ var STYLE_PLAN = [['lp', 20], ['vl', 15], ['nit', 15], ['tag', 25], ['lag', 15],
 // Grundparameter je Stil (Skalen relativ zum Faustregel-Chart; Häufigkeiten 0..1)
 var BASE = {
   lp:  { rfi: 0.78, limp: 0.55, iso: 0.45, over: 0.65, call: 2.4, tb: 0.25, bl3: 0.1, fb: 0.55, osz: 3.5, cbet: 0.42, barrel: 0.28, river: 0.25, delayed: 0.18,
-    bluff: 0.05, semi: 0.15, thin: 0.2, cr: 0.03, float: 0.04, slow: 0.3, over_b: 0.01, stick: 0.26, size: 0.5, donk: 0.12, skill: 0.25, adapt: 0.15 },
+    bluff: 0.05, semi: 0.15, thin: 0.2, cr: 0.03, float: 0.04, slow: 0.3, over_b: 0.01, stick: 0.21, size: 0.5, donk: 0.12, skill: 0.25, adapt: 0.15 },
   vl:  { rfi: 1.75, limp: 0.3, iso: 1.4, over: 0.45, call: 2.4, tb: 1.9, bl3: 1.1, fb: 1.6, osz: 3, cbet: 0.76, barrel: 0.56, river: 0.42, delayed: 0.42,
     bluff: 0.3, semi: 0.55, thin: 0.45, cr: 0.12, float: 0.25, slow: 0.1, over_b: 0.1, stick: 0.12, size: 0.72, donk: 0.15, skill: 0.3, adapt: 0.2 },
   nit: { rfi: 0.52, limp: 0.04, iso: 0.5, over: 0.08, call: 0.45, tb: 0.45, bl3: 0.04, fb: 0.6, osz: 2.5, cbet: 0.55, barrel: 0.35, river: 0.25, delayed: 0.1,
@@ -2692,19 +2721,19 @@ function respond(opp, ctx, heroAdd, potBefore, nResp, kind) {
     // Preflop: Fold-Wahrscheinlichkeit aus Chart/Modell, im exploitativen Modus mit Gegnerwerten gemischt
     var chartF = clamp(1 - gtoDef * 0.85, 0.1, 0.95), statF = null, nObs = 0, lk = opp.line ? opp.line.kind : 'none', raw = opp.raw || {};
     function obs(k) { return raw[k] ? raw[k][1] : 0; }
+    var toBB = (ctx.me.bet + heroAdd) / ctx.bb, mult = (ctx.me.bet + heroAdd) / Math.max(1, ctx.cur || ctx.bb);
     if (opp.pending || lk === 'none') {
       if (kind === 'open' || kind === 'iso') {
-        var bl = opp.p.pos === 'SB' || opp.p.pos === 'BB';
-        chartF = bl ? (opp.p.pos === 'BB' ? 0.6 : 0.85) : 0.9;
-        if (kind === 'iso') chartF = Math.min(0.95, chartF + 0.03);
-        if (bl) { statF = sm.foldToSteal; nObs = obs('foldToSteal'); } else { statF = clamp(1 - sm.vpip * 0.4, 0.6, 0.97); nObs = opp.hands; }
+        // Verteidigungsanteil der noch ausstehenden Spieler aus dem Faustregel-Chart (Position gegen Opener), abhängig von der Raise-Größe
+        var bl = opp.p.pos === 'SB' || opp.p.pos === 'BB', hp = ctx.me.pos;
+        var dw = (R.DEF_W[opp.p.pos] && R.DEF_W[opp.p.pos][hp]) || (opp.p.pos === 'BB' ? 0.3 : opp.p.pos === 'SB' ? 0.1 : 0.08);
+        var defPF = clamp(dw * Math.sqrt(2.5 / clamp(toBB / (kind === 'iso' ? 1 + 0.4 * (ctx.pre ? ctx.pre.limpers : 1) : 1), 1.6, 8)), 0.03, 0.8);
+        chartF = 1 - defPF;
+        if (bl) { statF = clamp(sm.foldToSteal * Math.pow(2.5 / clamp(toBB, 1.6, 8), -0.25), 0.05, 0.97); nObs = obs('foldToSteal'); } else { statF = clamp(1 - sm.vpip * 0.4, 0.6, 0.97); nObs = opp.hands; }
       } else chartF = kind === 'jam' ? clamp(1 - gtoDef * 0.45, 0.7, 0.97) : 0.95;
-    } else if (lk === 'open' || lk === 'iso') { chartF = kind === 'jam' ? 0.62 : 0.58; statF = sm.foldTo3Bet; nObs = obs('foldTo3Bet'); }
-    else if (lk === '3bet') { chartF = kind === 'jam' ? 0.6 : 0.55; statF = sm.foldTo4Bet; nObs = obs('foldTo4Bet'); }
-    else if (lk === 'limp') { chartF = 0.55; statF = clamp(1 - sm.vpip * 0.8, 0.15, 0.9); nObs = opp.hands; }
-    else if (lk === 'call') chartF = kind === 'jam' ? 0.8 : 0.72;
-    else if (lk === 'check') chartF = 0.6;
-    else chartF = 0.5;
+    } else if (lk === 'open' || lk === 'iso') { chartF = kind === 'jam' ? 0.62 : clamp(0.5 + 0.07 * (mult - 3), 0.38, 0.68); statF = clamp(sm.foldTo3Bet + 0.07 * (mult - 3), 0.05, 0.97); nObs = obs('foldTo3Bet'); }
+    else if (lk === '3bet') { chartF = kind === 'jam' ? 0.6 : clamp(0.5 + 0.08 * (mult - 2.3), 0.38, 0.7); statF = clamp(sm.foldTo4Bet + 0.08 * (mult - 2.3), 0.05, 0.97); nObs = obs('foldTo4Bet'); }
+    else if (lk === 'limp') { chartF = clamp(0.5 + 0.05 * (toBB - 4), 0.3, 0.75); statF = clamp(1 - sm.vpip * 0.8 + 0.05 * (toBB - 4), 0.1, 0.9); nObs = opp.hands; }
     var f0 = chartF;
     if (ctx.mode !== 'gto' && statF != null) { var wObs = nObs / (nObs + 25); f0 = chartF * (1 - wObs) + statF * wObs; basis = 'Gegnerwerte (' + nObs + ' Gelegenheiten)'; }
     else basis = 'Faustregel-Chart';
@@ -2729,6 +2758,13 @@ function respond(opp, ctx, heroAdd, potBefore, nResp, kind) {
     if (kind === 'raise' || kind === 'jam' && ctx.L.toCall > 0) alpha *= 0.85;
     def = 1 - (1 - def) * alpha;
   }
+  if (ctx.street > 0) {
+    // Konservative Fold-Schätzung: Die MDF-Annahme überschätzt Folds gegen Gegner, die nicht ausgewogen verteidigen
+    // (Population der Computergegner: Fold gegen Turn-C-Bet beobachtet 34 % statt 43 % nach MDF). Im Multiway-Pot zusätzlich weniger Folds je Spieler.
+    var cbObs = opp.raw && opp.raw.foldToCbet ? opp.raw.foldToCbet[1] : 0;
+    var shrink = (ctx.mode !== 'gto' && kind === 'cbet' && cbObs >= 30 ? 0.04 : 0.12) + 0.07 * (nResp - 1) + (ctx.street === 3 && heroAdd > potBefore ? 0.05 : 0);
+    def = 1 - (1 - def) * (1 - clamp(shrink, 0, 0.35));
+  }
   var raiseFrac = def * (ctx.mode === 'gto' ? 0.16 : clamp(0.08 + 0.22 * prof.aggr, 0.05, 0.35));
   if (opp.p.stack <= heroAdd) raiseFrac = 0;
   var sp = splitRange(opp.w, strengthScores(opp, ctx), def, raiseFrac);
@@ -2747,12 +2783,24 @@ function realization(ctx, kind) {
     else if (f.cat === 1 && /schwach|unter dem Board|Board/.test(f.desc || '')) Rz *= 0.88;
   }
   if (ctx.street === 0 && ctx.nOpp > 1) Rz *= Math.pow(0.95, ctx.nOpp - 1);
+  if (ctx.street === 0) Rz *= playability(ctx.v.cards);
   if (kind === 'bet') Rz += 0.03;
   var spr = ctx.spr;
   if (spr < 1) Rz = Rz + (1 - Rz) * (1 - spr);
   return clamp(Rz, 0.6, 1.1);
 }
 
+/** Spielbarkeit einer Starthand nach dem Flop (Modellannahme): Paare und suited Hände realisieren mehr Equity, unverbundene schwache Offsuit-Hände weniger */
+function playability(cards) {
+  var r1 = cards[0] >> 2, r2 = cards[1] >> 2, hi = Math.max(r1, r2), lo = Math.min(r1, r2), suited = (cards[0] & 3) === (cards[1] & 3);
+  if (hi === lo) return 1;
+  var gap = hi - lo - 1, f = suited ? 1.0 : 0.9;
+  f -= 0.025 * Math.min(gap, 4);
+  if (hi < 8) f -= 0.04;            // höchste Karte unter T
+  if (lo >= 8) f += 0.03;           // beide Karten Broadway
+  if (hi === 12 && suited) f += 0.02; // Ax suited: Nut-Flush-Potenzial
+  return clamp(f, 0.7, 1.05);
+}
 // ---------- Hilfen ----------
 function prod(a) { var p = 1; for (var i = 0; i < a.length; i++) p *= a[i]; return p; }
 /** Equity gegen eine Teilmenge von Gegnern mit gegebenen Ranges (Produktnäherung, auf Gesamt-Equity kalibriert) */
@@ -2788,7 +2836,7 @@ function evCall(ctx) {
     if (ctx.budget.left < 200) return { ev: ctx.eqNow * (po ? po.winnable : ctx.pot + c) - c, dEdq: po ? po.winnable : ctx.pot, parts: { allin: true, approx: true, call: c, winnable: po ? po.winnable : null } };
     var share = Q.potShare({ hero: ctx.v.cards, heroTotal: heroFinal, board: ctx.board, rng: ctx.rng, budget: ctx.budget, iters: Math.min(1500, ctx.budget.left),
       opps: ctx.opps.map(function (o) { return { w: o.w, total: Math.min(o.p.total, heroFinal + 1e12), folded: false }; }),
-      deadMoney: ctx.deadMoney });
+      dead_: ctx.deadList || null, deadMoney: ctx.deadList ? 0 : ctx.deadMoney });
     return { ev: share.win - c, dEdq: po ? po.winnable : ctx.pot, se: share.se, parts: { allin: true, expectedWin: share.win, call: c, winnable: po ? po.winnable : null } };
   }
   var Rz = realization(ctx, 'call'), potAfter = ctx.pot + c;
@@ -2817,7 +2865,7 @@ function evBet(ctx, to, kind) {
     var potR = pot + (callTo - me.bet) + (Math.min(raiseTo, callTo) - ro.p.bet);
     var Rr = (callTo >= heroMax || raiseTo >= ro.p.bet + ro.p.stack) ? 1 : 0.92;
     evRaised = Math.max(-a, Rr * eqR * potR - (callTo - me.bet));
-    if (heroAllIn) evRaised = eqR * (pot + a + Math.min(a, ro.p.bet + ro.p.stack - ro.p.bet)) - a;
+    if (heroAllIn) evRaised = eqR * (pot + a + Math.min(to - ro.p.bet, ro.p.stack)) - a;
   }
   // Teilmengen der Caller (ohne Raise)
   var evNR = 0, sumP = 0, branches = [], RzBet = realization(ctx, 'bet');
@@ -2838,7 +2886,7 @@ function evBet(ctx, to, kind) {
       var heroEff = Math.min(to, Math.max(levelMax, me.bet)), addEff = heroEff - me.bet;
       S.forEach(function (i2) { var o = resp[i2]; calls += Math.max(0, Math.min(heroEff, o.p.bet + o.p.stack) - o.p.bet); });
       potS = pot + addEff + calls;
-      var parts = S.map(function (i2) { return { opp: resp[i2], w: R0[i2].contW }; }).concat(allins.map(function (o) { return { opp: o, w: o.w }; }));
+      var parts = S.map(function (i2) { return { opp: resp[i2], w: R0[i2].callW }; }).concat(allins.map(function (o) { return { opp: o, w: o.w }; }));
       eqS = subsetEq(ctx, parts);
       var allInNow = heroEff >= me.bet + me.stack || S.every(function (i2) { var o = resp[i2]; return o.p.bet + o.p.stack <= heroEff; });
       var Rz = allInNow ? 1 : RzBet;
@@ -2884,7 +2932,11 @@ function candidates(ctx) {
       }
       if (ctx.eff <= 35 * bb || pre.rc >= 3 || (pre.rc === 2 && ctx.eff <= 60 * bb)) add(L.maxTo, 'All-in', 'jam');
     } else if (L.isBet) {
-      [[0.33, '⅓ Pot'], [0.5, '½ Pot'], [0.75, '¾ Pot'], [1.0, 'Pot'], [1.5, 'Overbet 1,5×']].forEach(function (x) { add(me.bet + pot * x[0], 'Bet ' + x[1], ctx.cbetSpot ? 'cbet' : 'bet'); });
+      [[0.33, '⅓ Pot'], [0.5, '½ Pot'], [0.75, '¾ Pot'], [1.0, 'Pot'], [1.5, 'Overbet 1,5×']].forEach(function (x) {
+        // Overbets nur auf Turn und River im Heads-up (Modellannahme: auf dem Flop und multiway kaum sinnvoll, Reaktionen dort schlecht belegt)
+        if (x[0] > 1 && (ctx.street === 1 || ctx.nOpp > 1)) return;
+        add(me.bet + pot * x[0], 'Bet ' + x[1], ctx.cbetSpot ? 'cbet' : 'bet');
+      });
       if (L.maxTo - me.bet <= 2.5 * pot) add(L.maxTo, 'All-in', 'jam');
     } else {
       var facing = ctx.cur - (ctx.prevCur || 0);
@@ -2906,13 +2958,17 @@ function evaluateAction(ctx, act) {
   else r = evBet(ctx, act.amount, act.kind || (ctx.street === 0 ? (ctx.pre.rc === 0 ? 'open' : ctx.pre.rc === 1 ? '3bet' : '4bet') : (ctx.cbetSpot ? 'cbet' : 'bet')));
   var simU = (r.dEdq || 0) * (ctx.eqSE || 0) + (r.se || 0);
   var modelU = (r.dEdq || 0) * (ctx.eqRangeSpread || 0);
-  if (act.type === 'bet' || act.type === 'raise') modelU += Math.abs(ctx.pot - (r.ev || 0)) * ctx.foldUnc * 0.5 + 0.02 * ctx.pot;
+  if (act.type === 'bet' || act.type === 'raise') {
+    // Unsicherheit der Reaktionsannahmen wächst mit der Einsatzgröße und der Zahl der Gegner
+    var szU = Math.max(1, ((act.amount || 0) - ctx.me.bet) / Math.max(1, ctx.pot)), nU = Math.max(1, ctx.opps.filter(function (o) { return !o.p.allIn; }).length);
+    modelU += Math.abs(ctx.pot - (r.ev || 0)) * ctx.foldUnc * 0.5 * szU * Math.sqrt(nU) + 0.02 * ctx.pot;
+  }
   r.uSim = simU; r.uModel = modelU; r.u = Math.sqrt(simU * simU + modelU * modelU);
   return r;
 }
 
 PT.ev = { pfTable: pfTable, eqClass: eqClass, comboEquities: comboEquities, rangeEq: rangeEq, respond: respond, splitRange: splitRange,
-  realization: realization, potOdds: potOdds, evCheck: evCheck, evCall: evCall, evBet: evBet, candidates: candidates, evaluateAction: evaluateAction, subsetEq: subsetEq };
+  realization: realization, playability: playability, potOdds: potOdds, evCheck: evCheck, evCall: evCall, evBet: evBet, candidates: candidates, evaluateAction: evaluateAction, subsetEq: subsetEq };
 })(typeof globalThis !== 'undefined' ? globalThis : (typeof self !== 'undefined' ? self : this));
 
 /* assets/js/engine/cfr.js */
@@ -3154,17 +3210,23 @@ function composition(w, board) {
     for (var k = 0; k < NC; k++) if (w[k] > 0) { o.total += w[k]; var x = H.classTop(CLS[k]); if (x <= 0.05) o.strong += w[k]; else if (x <= 0.15) o.good += w[k]; else if (x <= 0.35) o.medium += w[k]; else o.air += w[k]; }
     return o;
   }
-  var arr = [0, 0].concat(board), bcat = board.length === 5 ? E.evaluate(board) >> 20 : -1;
+  // Kategorien relativ zum Board: nur was die eigenen Karten beitragen, zählt (Board-Paare sind keine eigene Hand)
+  var arr = [0, 0].concat(board), bcat = E.evaluate(board) >> 20;
   var br = board.map(function (c) { return c >> 2; }), top = Math.max.apply(null, br);
   for (var k2 = 0; k2 < NC; k2++) {
     var ww = w[k2]; if (!(ww > 0)) continue; o.total += ww;
-    arr[0] = C1[k2]; arr[1] = C2[k2];
-    var sc = E.evaluate(arr), cat = sc >> 20;
-    if (cat >= 2 && cat > bcat) o.strong += ww;
-    else if (cat === 1 && ((sc >> 16) & 15) >= top) o.good += ww;
-    else if (cat >= 1 && cat > bcat) o.medium += ww;
-    else if (board.length < 5 && R.drawInfo(C1[k2], C2[k2], board).strong) o.draw += ww;
-    else o.air += ww;
+    var a = C1[k2], b = C2[k2], ra = a >> 2, rb = b >> 2;
+    arr[0] = a; arr[1] = b;
+    var sc = E.evaluate(arr), cat = sc >> 20, cls;
+    if (cat > bcat) {
+      if (cat >= 3 || (cat === 2 && bcat === 0)) cls = 'strong';
+      else {
+        // genau ein eigenes Paar (ggf. zusätzlich zu einem Board-Paar)
+        var pr = ra === rb ? ra : (br.indexOf(ra) >= 0 ? ra : rb), pocket = ra === rb;
+        cls = (pocket && pr > top) || pr >= top ? 'good' : 'medium';
+      }
+    } else cls = board.length < 5 && R.drawInfo(a, b, board).strong ? 'draw' : 'air';
+    o[cls] += ww;
   }
   return o;
 }
@@ -3179,13 +3241,18 @@ function classMatrix(w) {
  * input: {view (publicView mit Heldenkarten), opps: {id: dbRecord}, settings: {mode, level, depth}, seed, extra: [Beträge], learner}
  */
 function analyze(input) {
-  var t0 = U.now(), v = input.view, set = input.settings || {}, level = set.level || 'standard', L0 = Q.LEVELS[level] || Q.LEVELS.standard;
+  var t0 = U.now(), v = input.view, set = input.settings || {}, level = set.level || 'standard';
+  // Automatischer Tipp: höchstens 5.000 Simulationen je Entscheidung (Projektvorgabe); Präzise/Tiefenanalyse nur auf Anforderung
+  if (input.live && level !== 'schnell') level = 'standard';
+  var L0 = Q.LEVELS[level] || Q.LEVELS.standard;
   var live = level === 'schnell' || level === 'standard';
   var maxSim = live ? Math.min(L0.maxIter, 5000) : L0.maxIter;
   var budget = { left: maxSim, used: 0, calls: [] };
   var rng = PT.makeRng(input.seed != null ? input.seed : 'coach');
   var deadline = t0 + (live ? Math.min(L0.ms, 1400) : L0.ms);
-  var res = {}, prep = prepare(input, v, L0, budget, rng);
+  var res = {}, scale = level === 'praezise' ? 4 : level === 'tief' ? 10 : 1;
+  budget.scale = scale;
+  var prep = prepare(input, v, L0, budget, rng);
   ['exploit', 'gto'].forEach(function (mode) { res[mode] = analyzeMode(input, v, mode, level, L0, budget, rng, deadline, set, prep); });
   var main = set.mode === 'gto' ? res.gto : res.exploit, other = set.mode === 'gto' ? res.exploit : res.gto;
   var out = main;
@@ -3193,7 +3260,7 @@ function analyze(input) {
   out.otherMode = { best: other.best, bestLabel: other.bestLabel, actions: other.actions.slice(0, 4) };
   out.modeDiff = modeDiffText(res.exploit, res.gto);
   out.iters = budget.used; out.simCalls = budget.calls; out.maxSim = maxSim; out.ms = Math.round(U.now() - t0); out.level = level; out.levelName = L0.name;
-  out.label = 'Modellschätzung, kein Solver-Ergebnis';
+  out.label = 'Faustregel, kein Solver-Ergebnis';
   out.learnerHint = learnerHint(out, input.learner);
   out.text = explain(out, set.depth || 'fortgeschritten');
   return out;
@@ -3216,7 +3283,7 @@ function prepare(input, v, L0, budget, rng) {
       out[k].defW = w;
     });
   }
-  var seats = Object.keys(out), share = Math.floor(Math.min(budget.left, 2000) / Math.max(1, seats.length));
+  var seats = Object.keys(out), share = Math.floor(Math.min(budget.left, 2000 * (budget.scale || 1)) / Math.max(1, seats.length));
   seats.forEach(function (k) {
     var o = out[k], u = new Float64Array(NC);
     for (var i = 0; i < NC; i++) { var a = o.ex.w[i], b = o.gto.w[i], c = o.defW ? o.defW[i] : 0; if (a > 0 || b > 0 || c > 0) u[i] = 1; }
@@ -3244,9 +3311,9 @@ function analyzeMode(input, v, mode, level, L0, budget, rng, deadline, set, prep
   var eff = Math.min(me.stack + me.bet, maxOpp);
   var ipFlag = opps.every(function (o) { return PT.POS_ORDER_POST[o.p.pos] < PT.POS_ORDER_POST[me.pos]; });
   if (street === 0) ipFlag = opps.filter(function (o) { return !o.pending; }).every(function (o) { return PT.POS_ORDER_POST[o.p.pos] < PT.POS_ORDER_POST[me.pos]; }) && me.pos !== 'SB' && me.pos !== 'BB';
-  var deadMoney = 0; v.players.forEach(function (q) { if (q.folded) deadMoney += q.total; });
+  var deadMoney = 0, deadList = []; v.players.forEach(function (q) { if (q.folded) { deadMoney += q.total; if (q.total > 0) deadList.push(q.total); } });
   var ctx = { v: v, me: me, L: L, board: board, street: street, bb: bb, pot: v.pot, cur: v.cur, mode: mode, level: level, rng: rng, budget: budget,
-    deadline: deadline, eff: eff, spr: eff > 0 ? (eff - me.bet) / Math.max(1, v.pot) : 0, ip: ipFlag, pre: pre, maxOppStack: maxOpp, deadMoney: deadMoney,
+    deadline: deadline, eff: eff, spr: eff > 0 ? (eff - me.bet) / Math.max(1, v.pot) : 0, ip: ipFlag, pre: pre, maxOppStack: maxOpp, deadMoney: deadMoney, deadList: deadList,
     cbetSpot: street > 0 && v.pfa === v.seat && v.raises === 0 && L.isBet, prevCur: prevCur(v) };
   ctx.feat = R.handFeatures(v.cards, board);
   ctx.tex = R.analyzeBoard(board);
@@ -3262,13 +3329,13 @@ function analyzeMode(input, v, mode, level, L0, budget, rng, deadline, set, prep
     var o0 = relevant[0];
     eqNow = o0 ? o0.eqHU : 1; eqSE = o0 ? (o0.eqInfo.se || 0) : 0; eqMethod = o0 ? o0.eqInfo.method : 'kein Gegner';
     if (street === 0 && o0 && budget.left > 300) {
-      var mc = Q.equity({ hero: v.cards, board: board, ranges: [o0.w], level: level, rng: rng, budget: { left: Math.min(gto ? 800 : 1000, budget.left), used: 0, calls: budget.calls }, deadline: deadline });
+      var mc = Q.equity({ hero: v.cards, board: board, ranges: [o0.w], level: level, rng: rng, budget: { left: Math.min((gto ? 800 : 1000) * (budget.scale || 1), budget.left), used: 0, calls: budget.calls }, deadline: deadline });
       budget.left -= mc.iters || 0; budget.used += mc.iters || 0;
       if (mc.eq != null) { eqNow = mc.eq; eqSE = mc.se || 0; eqMethod = mc.method; ctx.kappaPF = o0.eqHU > 0 ? mc.eq / o0.eqHU : 1; }
     }
     ctx.kappa = 1;
   } else {
-    var share = Math.min(budget.left, level === 'schnell' ? 600 : (gto ? 900 : 1200));
+    var share = Math.min(budget.left, level === 'schnell' ? 600 : (gto ? 900 : 1200) * (budget.scale || 1));
     var j = share >= 100 ? Q.equity({ hero: v.cards, board: board, ranges: relevant.map(function (o) { return o.w; }), level: level, rng: rng, budget: { left: share, used: 0, calls: budget.calls }, deadline: deadline, minIter: Math.min(300, share) }) : { eq: null, iters: 0, method: 'Näherung' };
     budget.left -= j.iters || 0; budget.used += j.iters || 0;
     var prodHU = relevant.reduce(function (p, o) { return p * (o.eqHU == null ? 0.5 : o.eqHU); }, 1);
@@ -3304,6 +3371,8 @@ function analyzeMode(input, v, mode, level, L0, budget, rng, deadline, set, prep
     return { type: c.type, amount: c.amount || 0, label: c.label, kind: c.kind, allin: !!c.allin, extra: !!c.extra, ev: r.ev, evBB: r.ev / bb, u: r.u, uSim: r.uSim, uModel: r.uModel, parts: slimParts(r.parts) };
   });
   acts.sort(function (a, b) { return b.ev - a.ev; });
+  // Preflop: Faustregel-Chart als Anker. Raises außerhalb des Charts und Open-Limps nur bei belegtem Exploit.
+  var chartInfo = street === 0 ? preflopAnchor(v, ctx, pre, acts, gto) : null;
   var best = acts[0];
   // Klassifikation
   var bestOther = null;
@@ -3315,16 +3384,17 @@ function analyzeMode(input, v, mode, level, L0, budget, rng, deadline, set, prep
   else if (gap >= 2 * u && gap >= 0.5 * bb) cls = 'klar';
   else if (gap >= 0.5 * u && gap >= 0.15 * bb) cls = 'knapp';
   else cls = 'mehrere';
-  var highU = u >= 0.25 * Math.max(v.pot, bb) || (mainOpp && mainOpp.hands < 100 && !gto && (cls === 'knapp' || cls === 'mehrere'));
+  var highU = u >= 0.4 * Math.max(v.pot, bb) && gap < u;
   if (highU && cls !== 'eindeutig') cls = cls === 'klar' ? 'klar' : 'unsicher';
+  if (chartInfo && chartInfo.applied) cls = chartInfo.w >= 0.85 ? 'klar' : 'knapp';
   var tol = Math.max(0.25 * bb, 0.5 * u), sizeNote = null;
   if (group(best) === 'aggr') {
     var ag = acts.filter(function (a2) { return group(a2) === 'aggr' && a2 !== best; });
     var close = ag.filter(function (a2) { return best.ev - a2.ev <= Math.max(0.25 * bb, 0.75 * Math.max(best.u, a2.u)); });
     if (close.length) sizeNote = 'Die Aktion ist ' + (cls === 'eindeutig' || cls === 'klar' ? 'klar' : 'knapp') + ', die Größe ist offen: ' + [best].concat(close).slice(0, 3).map(function (a2) { return a2.label; }).join(', ') + ' liegen im Rahmen der Unsicherheit nahe beieinander.';
   }
-  var alternatives = acts.filter(function (a) { return a !== best && best.ev - a.ev <= tol; }).slice(0, 3);
-  var po = X.potOdds(ctx);
+  var alternatives = acts.filter(function (a) { return a !== best && best.ev - a.ev <= tol && (!chartInfo || !chartInfo.applied || chartWeight(chartInfo, a, pre.rc === 0) >= CHART_MIN); }).slice(0, 3);
+  var po = street === 0 && pre.rc === 0 ? null : X.potOdds(ctx);  // im ungeöffneten Pot ist der Limp-Preis keine benötigte Equity
   // River-Modellspiel (Gleichgewicht des vereinfachten Spiels)
   var model = null;
   if (gto && street === 3 && relevant.length === 1 && level !== 'schnell') {
@@ -3347,8 +3417,55 @@ function analyzeMode(input, v, mode, level, L0, budget, rng, deadline, set, prep
         sm: { vpip: o.sm.vpip, pfr: o.sm.pfr, threeBet: o.sm.threeBet, foldTo3Bet: o.sm.foldTo3Bet, foldToCbet: o.sm.foldToCbet, wtsd: o.sm.wtsd, afq: o.sm.afq, foldToSteal: o.sm.foldToSteal },
         matrix: o === mainOpp ? classMatrix(o.w) : null };
     }),
-    mainOpp: mainOpp ? mainOpp.p.name : null, blockers: blockersText(v, mainOpp, board), model: model, mode: mode
+    mainOpp: mainOpp ? mainOpp.p.name : null, mainOppHands: mainOpp ? mainOpp.hands : 0, blockers: blockersText(v, mainOpp, board), model: model, mode: mode,
+    heroPos: me.pos, chart: chartInfo, unopened: street === 0 && pre.rc === 0
   };
+}
+/** Chart-Gewichte der eigenen Startklasse für die aktuelle Preflop-Situation */
+function heroChart(v, ctx, pre) {
+  var me = ctx.me, pos = me.pos, ci = H.classIdx(v.cards[0], v.cards[1]), effBB = ctx.eff / ctx.bb, ch, kind;
+  if (pre.rc === 0 && pre.limpers === 0) {
+    if (effBB <= 15) { ch = R.chart('push', { pos: pos, bb: effBB }); kind = 'Push-or-Fold-Chart (' + Math.round(effBB) + ' BB effektiv)'; }
+    else { ch = R.chart('rfi', { pos: pos }); kind = 'Open-Raise-Chart ' + pos; }
+  } else if (pre.rc === 0) { ch = R.chart('iso', { pos: pos }); kind = 'Chart gegen Limper (' + pos + ')'; }
+  else if (pre.rc === 1) { var op = v.players[pre.opener].pos; ch = R.chart('vsOpen', { pos: pos, opener: op, sizeBB: pre.lastTo / v.bb, squeeze: pre.callers > 0 }); kind = 'Chart ' + pos + ' gegen Open ' + op; }
+  else if (pre.rc === 2 && pre.opener === v.seat) { ch = R.chart('vs3bet', { openW: R.RFI_W[pos] || 0.2, ip: ctx.ip }); kind = 'Chart gegen 3-Bet (' + (ctx.ip ? 'in Position' : 'out of Position') + ')'; }
+  else { ch = R.chart('vs4bet', { deep: effBB > 150 }); kind = pre.rc === 2 ? 'Chart gegen 3-Bet ohne eigenes Open' : 'Chart gegen 4-Bet'; }
+  var row = ch[ci];
+  return { raise: row.raise, call: row.call, fold: row.fold, kind: kind };
+}
+var CHART_MIN = 0.12;
+function chartWeight(hc, a, unopened) {
+  var g = group(a);
+  if (g === 'aggr') return hc.raise;
+  if (g === 'call') return unopened ? hc.call : Math.max(hc.call, CHART_MIN);  // Calls gegen Raises rechnet das Modell über Equity; nur der Open-Limp ist an den Chart gebunden
+  return 1;
+}
+function preflopAnchor(v, ctx, pre, acts, gto) {
+  var L = ctx.L;
+  if (!acts.length) return null;
+  var raiser = pre.lastRaiser >= 0 ? v.players[pre.lastRaiser] : null;
+  // Reiner Call-oder-Fold gegen ein All-in ohne weitere Spieler: rein rechnerisch, kein Chart nötig
+  if (!L.canRaise && raiser && raiser.allIn) return null;
+  var hc = heroChart(v, ctx, pre), unopened = pre.rc === 0;
+  var top = acts[0], wTop = chartWeight(hc, top, unopened);
+  var info = { kind: hc.kind, raise: hc.raise, call: hc.call, fold: hc.fold, applied: false, w: wTop };
+  if (wTop >= CHART_MIN) return info;
+  // Exploit nur, wenn die nötige Fold-Annahme durch genug eigene Beobachtungen belegt ist
+  var ev = 0, obsN = 0;
+  if (!gto && group(top) === 'aggr') {
+    if (unopened) obsN = ctx.opps.filter(function (o) { return o.pending && (o.p.pos === 'SB' || o.p.pos === 'BB'); }).reduce(function (m, o) { var r = o.raw && o.raw.foldToSteal; return Math.min(m, r ? r[1] : 0); }, Infinity);
+    else if (raiser) { var ro = ctx.opps.filter(function (o) { return o.seat === pre.lastRaiser; })[0], key = pre.rc === 1 ? 'foldTo3Bet' : 'foldTo4Bet'; obsN = ro && ro.raw && ro.raw[key] ? ro.raw[key][1] : 0; }
+    if (!isFinite(obsN)) obsN = 0;
+  }
+  var alt = null;
+  for (var i = 1; i < acts.length; i++) if (chartWeight(hc, acts[i], unopened) >= CHART_MIN) { alt = acts[i]; break; }
+  if (!alt) return info;
+  var gapM = top.ev - alt.ev;
+  if (!gto && group(top) === 'aggr' && obsN >= 20 && gapM >= Math.max(0.5 * ctx.bb, 1.5 * top.u)) { info.exploit = { obs: obsN, gap: gapM }; return info; }
+  acts.splice(acts.indexOf(alt), 1); acts.unshift(alt);
+  info.applied = true; info.w = chartWeight(hc, alt, unopened); info.modelBest = top.label; info.modelGap = gapM; info.obs = obsN;
+  return info;
 }
 function prevCur(v) {
   var lastRaise = null, prev = 0;
@@ -3408,7 +3525,8 @@ function spotTagsOf(v, ctx, relevant, pre) {
   if (v.street === 0) {
     if (pre.rc === 0 && pre.limpers === 0) t.push('preflop-open');
     if ((me.pos === 'SB' || me.pos === 'BB') && pre.rc === 1) t.push('blind-defense');
-    if (pre.rc === 2) t.push('3bet-pot'); if (pre.rc >= 3) t.push('4bet-pot');
+    if (pre.rc === 2) { t.push('3bet-pot'); if (pre.opener === v.seat && ctx.L.canRaise) t.push('4bet-pot'); }  // Entscheidung über die 4-Bet
+    if (pre.rc >= 3) t.push('4bet-pot');
   } else {
     var rc = 0; v.actions.forEach(function (a) { if (a.st === 0 && (a.t === 'raise' || a.t === 'bet')) rc++; });
     if (rc === 2) t.push('3bet-pot'); if (rc >= 3) t.push('4bet-pot');
@@ -3451,7 +3569,9 @@ function modeDiffText(ex, gt) {
     if (Math.abs(o.sm.wtsd - R.PRIOR.wtsd) > 0.06 && o.hands >= 30) reasons.push(o.name + ' geht ' + (o.sm.wtsd > R.PRIOR.wtsd ? 'häufiger' : 'seltener') + ' zum Showdown (WTSD ' + pct(o.sm.wtsd) + ').');
   });
   return { exploit: ex.bestLabel, gto: gt.bestLabel, reasons: reasons.slice(0, 3),
-    text: 'Exploitativ: ' + ex.bestLabel + ' · Gleichgewichtsnah: ' + gt.bestLabel + '. Der Unterschied entsteht, weil der exploitative Modus beobachtete Gegnerwerte nutzt, der gleichgewichtsnahe ein ausgewogenes Gegnermodell (MDF, Faustregel-Charts).' };
+    text: 'Exploitativ: ' + ex.bestLabel + ' · Gleichgewichtsnah: ' + gt.bestLabel + '. ' + (ex.mainOppHands > 0
+      ? 'Der Unterschied entsteht, weil der exploitative Modus beobachtete Gegnerwerte nutzt (' + ex.mainOppHands + ' Hände), der gleichgewichtsnahe ein ausgewogenes Gegnermodell (MDF, Faustregel-Charts).'
+      : 'Für diesen Gegner liegen noch keine Hände vor. Der Unterschied entsteht nur durch die Modellannahmen: exploitativ mit typischen Reaktionen der Gegnerpopulation, gleichgewichtsnah mit MDF und Faustregel-Charts.') };
 }
 function learnerHint(out, learner) {
   if (!learner || !learner.cats) return null;
@@ -3468,15 +3588,24 @@ function explain(a, depth) {
   var actWord = best.label;
   // Kernsatz
   var core;
-  if (best.type === 'fold') core = po ? 'Fold: Du müsstest ' + fmt(po.call) + ' zahlen und bräuchtest dafür mindestens ' + pct(po.need) + ' Gewinnchance. Geschätzt hast du nur etwa ' + pct(eq.eq) + ' – nach dem Flop realisierst du davon zudem nur einen Teil.' : 'Fold.';
+  if (a.unopened) po = null;
+  if (best.type === 'fold') {
+    if (po && eq.eq < po.need) core = 'Fold: Du müsstest ' + fmt(po.call) + ' zahlen und bräuchtest dafür mindestens ' + pct(po.need) + ' Gewinnchance. Geschätzt hast du nur etwa ' + pct(eq.eq) + '.';
+    else if (po) core = 'Fold: Die rohe Equity (' + pct(eq.eq) + ') liegt zwar über den benötigten ' + pct(po.need) + ', ' + (a.street < 3 && !(a.actions[0].parts || {}).allin ? 'aber ' + (a.ip ? '' : 'außer Position ') + 'realisierst du davon auf den späteren Straßen nur einen Teil, und weitere Einsätze drohen.' : 'aber gegen die wahrscheinliche Range des Gegners verlierst du zu oft.');
+    else if (a.street === 0 && a.chart) core = 'Fold: ' + a.hand.cls + ' gehört laut ' + a.chart.kind + ' nicht zu den spielbaren Händen' + (a.chart.raise > 0 || a.chart.call > 0 ? ' (nur ' + pct(a.chart.raise + a.chart.call) + ' Spielanteil)' : '') + '.';
+    else core = 'Fold.';
+  }
+  else if (best.type === 'call' && !po) core = 'Call: Du zahlst ' + fmt(a.callAmt) + ' und siehst den Flop günstig (Equity etwa ' + pct(eq.eq) + ').';
   else if (best.type === 'call') core = 'Call: Du zahlst ' + fmt(po ? po.call : a.callAmt) + ' und brauchst mindestens ' + pct(po ? po.need : 0) + ' Gewinnchance. Geschätzt hast du etwa ' + pct(eq.eq) + (best.parts && best.parts.implied > 0 ? ', dazu kommen implizite Odds durch deinen Draw.' : '.');
   else if (best.type === 'check') core = 'Check: Eine Bet bringt hier geschätzt nicht mehr als ein Check (Equity etwa ' + pct(eq.eq) + ').';
   else {
     var p = best.parts || {}, value = eq.eq >= 0.55;
     core = actWord + ': ' + (value ? 'Mit etwa ' + pct(eq.eq) + ' Equity holst du Value von schwächeren Händen.' : 'Die Bet gewinnt den Pot geschätzt in etwa ' + pct(p.pAllFold || 0) + ' der Fälle sofort' + (a.hand.draw && a.hand.draw.strong ? ', und dein Draw hat Rückhalt.' : '.'));
   }
+  if (a.street === 0 && a.chart && a.chart.applied) core += ' Preflop folgt der Coach hier dem Faustregel-Chart (' + a.chart.kind + '); das vereinfachte EV-Modell sähe ' + a.chart.modelBest + ' um ' + bbTxt(a.chart.modelGap, bb) + ' vorn, aber nur wegen Fold-Annahmen, die nicht durch Gegnerwerte belegt sind.';
+  else if (a.street === 0 && a.chart && a.chart.exploit) core += ' Das weicht vom Faustregel-Chart ab und stützt sich auf ' + a.chart.exploit.obs + ' beobachtete Situationen dieses Gegners.';
   lines.einsteiger.push(core);
-  if (a.street === 0 && a.actions.length) lines.einsteiger.push(a.hand.top <= 0.4 ? a.hand.cls + ' gehört zu den besten ' + pct(a.hand.top) + ' aller Starthände.' : a.hand.cls + ' liegt auf Rang ' + (H.CLS_RANK[H.nameToIdx(a.hand.cls)] + 1) + ' von 169 Starthandklassen.');
+  if (a.street === 0 && a.actions.length) lines.einsteiger.push(a.hand.top <= 0.4 ? a.hand.cls + ' gehört zu den besten ' + (a.hand.top < 0.01 ? '1' : Math.round(a.hand.top * 100)) + ' % aller Starthände.' : a.hand.cls + ' liegt auf Rang ' + (H.CLS_RANK[H.nameToIdx(a.hand.cls)] + 1) + ' von 169 Starthandklassen.');
   // Fortgeschritten
   var f = lines.fortgeschritten;
   f.push(core);
@@ -3538,21 +3667,38 @@ function grade(a, chosen) {
   else if (loss <= Math.max(1.5 * bb, 0.15 * pot)) g = 'Ungenau';
   else if (loss <= Math.max(4 * bb, 0.4 * pot)) g = 'Fehler';
   else g = 'Schwerer Fehler';
+  var chartCap = null;
+  if (a.street === 0 && a.chart && group(pick) !== group(best)) {
+    var wp = chartWeight(a.chart, pick, a.unopened);
+    if (wp < CHART_MIN) { var capG = wp < 0.03 ? 'Ungenau' : 'Vertretbar'; if (GRADE_SCORE[g] > GRADE_SCORE[capG]) { g = capG; chartCap = { w: wp }; } }
+  }
   var cats = GRADE_SCORE[g] <= 45 ? mistakeCats(a, pick, best) : [];
-  var text = gradeText(g, a, pick, best, loss);
+  var text = chartCap ? chartCapText(a, pick, best, loss) : gradeText(g, a, pick, best, loss);
   return { grade: g, simple: GRADE_SIMPLE[g], score: GRADE_SCORE[g], loss: loss, lossBB: loss / bb, u: u, chosenLabel: pick.label, bestLabel: best.label, text: text, cats: cats, interpolated: !!pick.interpolated };
+}
+function chartCapText(a, pick, best, loss) {
+  var bb = a.bb, aggr = group(pick) === 'aggr';
+  var s = 'Empfohlen war ' + best.label + '. ' + (aggr ? 'Ein Raise' : 'Ein Limp') + ' mit ' + a.hand.cls + ' liegt außerhalb des Faustregel-Charts (' + a.chart.kind + ').';
+  if (pick.ev > best.ev) s += ' Das vereinfachte Modell rechnet zwar mit ' + bbTxt(pick.ev - best.ev, bb) + ' mehr, die dafür nötigen Folds sind aber nicht durch Gegnerwerte belegt.';
+  else if (loss > 0) s += ' Geschätzter Verlust ' + bbTxt(loss, bb) + '.';
+  return s;
 }
 function gradeText(g, a, pick, best, loss) {
   var bb = a.bb;
   if (g === 'Optimal') return 'Deine Aktion ist die beste nach dem Modell. ' + a.text.speech;
   var s = 'Empfohlen war ' + best.label + '. Deine Aktion (' + pick.label + ') kostet geschätzt ' + bbTxt(loss, bb) + ' gegenüber der besten Aktion';
-  if (GRADE_SCORE[g] >= 65) s += ', das liegt im Rahmen der Unsicherheit (± ' + bbTxt(Math.max(best.u, pick.u || 0), bb) + ').';
+  var uu = Math.max(best.u, pick.u || 0);
+  if (GRADE_SCORE[g] >= 65) s += loss <= uu && uu >= 0.05 * bb ? ', das liegt im Rahmen der Unsicherheit (± ' + bbTxt(uu, bb) + ').' : ', ein kleiner Unterschied.';
   else s += '. ' + whyWorse(a, pick, best);
   return s;
 }
 function whyWorse(a, pick, best) {
   var eq = a.equity.eq, po = a.potOdds;
-  if (pick.type === 'fold' && po) return 'Mit etwa ' + pct(eq) + ' Equity bei benötigten ' + pct(po.need) + ' war der Fold zu vorsichtig.';
+  if (pick.type === 'fold' && po) {
+    if (eq >= po.need) return 'Mit etwa ' + pct(eq) + ' Equity bei benötigten ' + pct(po.need) + ' war der Fold zu vorsichtig.';
+    if (best.type === 'bet' || best.type === 'raise') return 'Die Equity allein (' + pct(eq) + ' bei benötigten ' + pct(po.need) + ') reicht nicht für einen Call, aber ein Raise gewinnt laut Modell oft sofort den Pot.';
+    return 'Die Equity (' + pct(eq) + ') liegt knapp unter den benötigten ' + pct(po.need) + ', doch spätere Gewinne mit deinem Draw (implizite Odds) machen den Call laut Modell lohnend.';
+  }
   if (pick.type === 'call' && po && best.type === 'fold') return 'Der Call ist zu teuer: benötigt ' + pct(po.need) + ', geschätzt vorhanden ' + pct(eq) + '.';
   if ((pick.type === 'call' || pick.type === 'check') && (best.type === 'bet' || best.type === 'raise')) return eq >= 0.55 ? 'Mit dieser Equity verschenkst du Value; eine Bet oder ein Raise bringt mehr.' : 'Ein Bluff oder Semi-Bluff hätte hier oft den Pot gewonnen.';
   if ((pick.type === 'bet' || pick.type === 'raise') && (best.type === 'bet' || best.type === 'raise')) return 'Die Aktion stimmt, aber die Größe ist ungünstig; besser ' + best.label + '.';
@@ -3562,7 +3708,7 @@ function whyWorse(a, pick, best) {
 function mistakeCats(a, pick, best) {
   var c = [], pt = pick.type, bt = best.type, aggrP = pt === 'bet' || pt === 'raise', aggrB = bt === 'bet' || bt === 'raise';
   if (a.street === 0) {
-    if ((pt === 'call' || aggrP) && bt === 'fold') { c.push('zu-viele-starthaende'); if (/UTG|HJ/.test(a.situation) || !a.ip) c.push('position'); }
+    if ((pt === 'call' || aggrP) && bt === 'fold') { c.push('zu-viele-starthaende'); if (a.heroPos === 'UTG' || a.heroPos === 'HJ' || !a.ip) c.push('position'); }
     if (pt === 'fold' && bt !== 'fold') c.push('zu-viel-fold');
   } else {
     if (pt === 'call' && bt === 'fold') { c.push('zu-viel-call'); if (a.potOdds) c.push('pot-odds'); }
@@ -3570,11 +3716,12 @@ function mistakeCats(a, pick, best) {
     if ((pt === 'call' || pt === 'check') && aggrB && a.equity.eq >= 0.55) c.push('zu-passiv');
     if (aggrP && !aggrB && a.equity.eq < 0.45) c.push('zu-viel-bluff');
     if (aggrP && !aggrB && a.equity.eq >= 0.45 && a.hand.cat <= 1) c.push('mittelstark');
-    if (a.hand.draw && a.hand.draw.strong && a.street < 3) c.push('draw');
+    if (a.hand.draw && a.hand.draw.strong && a.street < 3 && (pt === 'fold' || (aggrB && !aggrP) || (aggrP && !aggrB))) c.push('draw');
   }
   if (aggrP && aggrB) c.push('betgroesse');
+  // Gegnertyp nur, wenn die Empfehlung gerade wegen der Gegnerwerte von der gleichgewichtsnahen abweicht
   var mo = a.opponents.filter(function (o) { return o.name === a.mainOpp; })[0];
-  if (mo && mo.typ && mo.typ !== 'unbekannt') c.push('gegnertyp');
+  if (a.mode === 'exploit' && mo && mo.typ && mo.typ !== 'unbekannt' && a.otherMode && group({ type: a.otherMode.best }) !== group(best) && group({ type: a.otherMode.best }) === group(pick)) c.push('gegnertyp');
   return c.filter(function (x, i) { return c.indexOf(x) === i; });
 }
 
@@ -3652,7 +3799,7 @@ function makeHandRecord(h, meta) {
     training: meta.training || null, button: rec.button, sb: rec.sb, bb: rec.bb, n: rec.n,
     seats: rec.seats.map(function (s) { return { seat: s.seat, id: s.id, name: s.name, pos: s.pos, start: s.start, hero: !!s.hero, typ: s.hero ? null : (meta.types ? meta.types[s.id] || null : null) }; }),
     hero: hero ? PT.cardsStr(hero.cards) : '', heroSeat: hero ? hero.seat : 0,
-    board: rec.board.slice(), actions: rec.actions, shown: rec.shown, net: rec.net, won: rec.won, returned: rec.returned, rake: rec.rake, showdown: rec.showdown, sawFlop: rec.sawFlop,
+    board: rec.board.slice(), actions: rec.actions, shown: rec.shown, net: rec.net, won: rec.won, returned: rec.returned, rake: rec.rake, rakeCfg: rec.rakeCfg || null, showdown: rec.showdown, sawFlop: rec.sawFlop,
     heroNet: hero ? rec.net[hero.seat] : 0,
     pots: h.result.pots.map(function (p) { return { amount: p.amount, winners: p.winners.slice(), eligible: p.eligible.slice() }; }),
     decisions: (meta.decisions || []).map(slimDecision),
@@ -3664,7 +3811,7 @@ function slimDecision(d) {
     cats: d.cats || [], tags: d.tags || [], evs: (d.evs || []).slice(0, 6), mode: d.mode, snap: d.snap || null, pos: d.pos };
 }
 function unionTags(ds) { var o = []; ds.forEach(function (d) { (d.tags || []).forEach(function (t) { if (o.indexOf(t) < 0) o.push(t); }); }); return o; }
-var HAND_KEYS = ['v', 'id', 'ts', 'no', 'session', 'seed', 'training', 'button', 'sb', 'bb', 'n', 'seats', 'hero', 'heroSeat', 'board', 'actions', 'shown', 'net', 'won', 'returned', 'rake', 'showdown', 'sawFlop', 'heroNet', 'pots', 'decisions', 'tags'];
+var HAND_KEYS = ['v', 'id', 'ts', 'no', 'session', 'seed', 'training', 'button', 'sb', 'bb', 'n', 'seats', 'hero', 'heroSeat', 'board', 'actions', 'shown', 'net', 'won', 'returned', 'rake', 'rakeCfg', 'showdown', 'sawFlop', 'heroNet', 'pots', 'decisions', 'tags'];
 function validHand(h) {
   if (!h || typeof h !== 'object' || Array.isArray(h)) return 'kein Datensatz';
   for (var k in h) if (HAND_KEYS.indexOf(k) < 0) return 'unbekanntes Feld';
@@ -3690,6 +3837,69 @@ function validHand(h) {
     if (x.chosen != null && (typeof x.chosen !== 'string' || x.chosen.length > 80)) return 'ungültige Aktion';
   }
   if (!Array.isArray(h.net) || h.net.length !== h.n) return 'ungültiges Ergebnis';
+  for (var q = 0; q < h.n; q++) if (typeof h.net[q] !== 'number' || !isFinite(h.net[q])) return 'ungültiges Ergebnis';
+  if (!isInt(h.heroSeat, 0, h.n - 1)) return 'ungültiger Heldenplatz';
+  if (h.shown != null) {
+    if (!Array.isArray(h.shown) || h.shown.length > h.n) return 'ungültige aufgedeckte Karten';
+    for (var w = 0; w < h.shown.length; w++) { var sw = h.shown[w], swc = sw && PT.parseCards(sw.cards || ''); if (!sw || !isInt(sw.seat, 0, h.n - 1) || !swc || swc.length !== 2) return 'ungültige aufgedeckte Karten'; }
+  }
+  if (h.pots != null) {
+    if (!Array.isArray(h.pots) || h.pots.length > 7) return 'ungültige Pots';
+    for (var pp = 0; pp < h.pots.length; pp++) { var po = h.pots[pp]; if (!po || !isInt(po.amount, 0, 1e13) || !seatList(po.winners, h.n) || !seatList(po.eligible, h.n)) return 'ungültige Pots'; }
+  }
+  if (h.rakeCfg != null && (typeof h.rakeCfg !== 'object' || typeof h.rakeCfg.pct !== 'number' || !(h.rakeCfg.pct >= 0 && h.rakeCfg.pct <= 0.2) || !isInt(h.rakeCfg.cap, 0, 1e9) || typeof h.rakeCfg.nfnd !== 'boolean')) return 'ungültige Rake-Angaben';
+  for (var d2 = 0; d2 < h.decisions.length; d2++) {
+    var x2 = h.decisions[d2];
+    if (!isInt(x2.st, 0, 3) || !strList(x2.cats, 12) || !strList(x2.tags, 20)) return 'ungültige Entscheidung';
+    if (x2.snap != null && validSnap(x2.snap, h)) return 'ungültige Momentaufnahme';
+  }
+  if (h.tags != null && !strList(h.tags, 40)) return 'ungültige Tags';
+  if (h.training != null && (typeof h.training !== 'string' || !TAG_RE.test(h.training))) return 'ungültige Trainingskategorie';
+  return null;
+}
+function seatList(a, n) { if (!Array.isArray(a) || a.length > n) return false; for (var i = 0; i < a.length; i++) if (!isInt(a[i], 0, n - 1)) return false; return true; }
+var TAG_RE = /^[a-z0-9-]{1,32}$/;
+function strList(a, max) { if (!Array.isArray(a) || a.length > max) return false; for (var i = 0; i < a.length; i++) if (typeof a[i] !== 'string' || !TAG_RE.test(a[i])) return false; return true; }
+/** Momentaufnahme einer Entscheidung (öffentliche Sicht des Helden + Gegnerwerte + Seed) streng prüfen */
+var NAME_RE2 = /^[A-Za-zÀ-ÖØ-öø-ÿ0-9 .'\-]{1,40}$/, ID_RE2 = /^[A-Za-z0-9_-]{1,40}$/, POS_OK = ['UTG', 'HJ', 'CO', 'BTN', 'SB', 'BB'];
+function cardList(a, n0, n1) {
+  if (!Array.isArray(a) || a.length < n0 || a.length > n1) return false;
+  for (var i = 0; i < a.length; i++) if (!isInt(a[i], 0, 51) || a.indexOf(a[i]) !== i) return false;
+  return true;
+}
+function validView(v, n) {
+  if (!v || typeof v !== 'object' || Array.isArray(v)) return false;
+  if (!isInt(v.n, 2, 6) || (n != null && v.n !== n) || !isInt(v.seat, 0, v.n - 1) || !isInt(v.street, 0, 3) || !isInt(v.button, 0, v.n - 1) || !isInt(v.bb, 2, 1e7) || !isInt(v.sb, 1, v.bb)) return false;
+  if (!cardList(v.cards, 2, 2) || !cardList(v.board, 0, 5) || v.cards.some(function (c) { return v.board.indexOf(c) >= 0; })) return false;
+  var ints = ['pot', 'cur', 'raises', 'limpers', 'callsSince', 'lastFull'];
+  for (var i = 0; i < ints.length; i++) if (v[ints[i]] != null && !isInt(v[ints[i]], 0, 1e13)) return false;
+  if ((v.pfa != null && !isInt(v.pfa, -1, v.n - 1)) || (v.opener != null && !isInt(v.opener, -1, v.n - 1))) return false;
+  var L = v.legal; if (!L || typeof L !== 'object') return false;
+  var ln = ['toCall', 'callAmt', 'minTo', 'maxTo', 'minFull', 'cur', 'bet', 'stack'], lb = ['canCheck', 'canCall', 'canFold', 'canRaise', 'isBet', 'reopened'];
+  for (var a = 0; a < ln.length; a++) if (!isInt(L[ln[a]], 0, 1e13)) return false;
+  for (var b = 0; b < lb.length; b++) if (typeof L[lb[b]] !== 'boolean') return false;
+  if (!Array.isArray(v.players) || v.players.length !== v.n) return false;
+  for (var p = 0; p < v.players.length; p++) {
+    var q = v.players[p];
+    if (!q || q.seat !== p || typeof q.id !== 'string' || !ID_RE2.test(q.id) || typeof q.name !== 'string' || !NAME_RE2.test(q.name) || POS_OK.indexOf(q.pos) < 0 ||
+      !isInt(q.stack, 0, 1e13) || !isInt(q.bet, 0, 1e13) || !isInt(q.total, 0, 1e13) || !isInt(q.start, 0, 1e13) || typeof q.folded !== 'boolean' || typeof q.allIn !== 'boolean') return false;
+  }
+  if (!Array.isArray(v.actions) || v.actions.length > 400) return false;
+  for (var j = 0; j < v.actions.length; j++) {
+    var x = v.actions[j];
+    if (!x || !isInt(x.st, 0, 3) || !isInt(x.s, 0, v.n - 1) || ['sb', 'bb', 'fold', 'check', 'call', 'bet', 'raise'].indexOf(x.t) < 0 || !isInt(x.a, 0, 1e13)) return false;
+  }
+  return true;
+}
+function validSnap(sn, h) {
+  if (typeof sn !== 'object' || Array.isArray(sn)) return 'Format';
+  for (var k in sn) if (['view', 'opps', 'seed'].indexOf(k) < 0) return 'Feld';
+  if (!isInt(sn.seed, 0, 4294967295)) return 'Seed';
+  if (!validView(sn.view, h ? h.n : null)) return 'Sicht';
+  if (!sn.opps || typeof sn.opps !== 'object' || Array.isArray(sn.opps)) return 'Gegner';
+  var ids = Object.keys(sn.opps);
+  if (ids.length > 5) return 'Gegner';
+  for (var i = 0; i < ids.length; i++) { if (!ID_RE2.test(ids[i]) || S.validRecord(sn.opps[ids[i]], false) || sn.opps[ids[i]].id !== ids[i]) return 'Gegner'; }
   return null;
 }
 
@@ -3708,14 +3918,51 @@ function addDecision(L, d) {
   L.decisions.push({ ts: d.ts, s: d.score, l: Math.round((d.lossBB || 0) * 100) / 100, st: d.st, p: d.pos, t: d.tags || [], c: d.cats || [], o: d.opptyp || null, tr: d.training || null, g: d.grade, se: d.session || 0 });
   if (L.decisions.length > DEC_MAX) L.decisions.splice(0, L.decisions.length - DEC_MAX);
 }
+var OPP_TYPES = ['unbekannt', 'sehr loose', 'loose-passiv', 'Nit', 'LAG', 'TAG'], DEC_KEYS = ['ts', 's', 'l', 'st', 'p', 't', 'c', 'o', 'tr', 'g', 'se'];
+var GOAL_KINDS = ['score', 'loss', 'minspot'];
+function validDecision(d) {
+  if (!d || typeof d !== 'object' || Array.isArray(d)) return false;
+  for (var k in d) if (DEC_KEYS.indexOf(k) < 0) return false;
+  return typeof d.s === 'number' && d.s >= 0 && d.s <= 100 && typeof d.l === 'number' && isFinite(d.l) && isInt(d.st, 0, 3) && strList(d.t, 20) && strList(d.c, 12) &&
+    (d.o == null || OPP_TYPES.indexOf(d.o) >= 0) && (d.p == null || S.POSITIONS.indexOf(d.p) >= 0) && (d.g == null || C.GRADES.indexOf(d.g) >= 0) &&
+    (d.tr == null || (typeof d.tr === 'string' && TAG_RE.test(d.tr))) && (d.se == null || isInt(d.se, 0, 1e15)) && (d.ts == null || typeof d.ts === 'number');
+}
+function validSrs(it) {
+  return !!it && typeof it.key === 'string' && it.key.length <= 80 && /^[A-Za-z0-9_:|.-]+$/.test(it.key) && typeof it.cat === 'string' && TAG_RE.test(it.cat) && isInt(it.box, 0, 10) &&
+    typeof it.due === 'number' && isInt(it.seed, 0, 4294967295) && typeof it.label === 'string' && it.label.length <= 400 && isInt(it.reviews, 0, 1e6) &&
+    (it.view == null || (typeof it.view === 'object' && !validSnap({ view: it.view.view, opps: it.view.opps, seed: it.seed }, null)));
+}
+function validGoal(go) {
+  return !!go && typeof go.id === 'string' && /^[A-Za-z0-9_-]{1,20}$/.test(go.id) && GOAL_KINDS.indexOf(go.kind) >= 0 && typeof go.target === 'number' && isFinite(go.target) &&
+    typeof go.text === 'string' && go.text.length <= 200 && (go.window == null || isInt(go.window, 1, 10000)) && (go.min == null || isInt(go.min, 1, 10000));
+}
+function validQuiz(Q) {
+  if (!Q || typeof Q !== 'object' || !isInt(Q.n, 0, 1e9) || !isInt(Q.correct, 0, Q.n) || !Q.byType || typeof Q.byType !== 'object' || Array.isArray(Q.byType)) return false;
+  for (var qt in Q.byType) { var bt = Q.byType[qt]; if (!TAG_RE.test(qt) || !bt || !isInt(bt.n, 0, 1e9) || !isInt(bt.c, 0, bt.n)) return false; }
+  return true;
+}
 function validLearning(L) {
-  if (!L || typeof L !== 'object' || L.v !== 1) return 'ungültiges Format';
+  if (!L || typeof L !== 'object' || Array.isArray(L) || L.v !== 1) return 'ungültiges Format';
   if (!Array.isArray(L.decisions) || L.decisions.length > DEC_MAX) return 'Entscheidungen ungültig';
-  for (var i = 0; i < L.decisions.length; i++) { var d = L.decisions[i]; if (!d || typeof d.s !== 'number' || d.s < 0 || d.s > 100 || typeof d.l !== 'number' || !isInt(d.st, 0, 3) || !Array.isArray(d.t) || !Array.isArray(d.c)) return 'Entscheidung ' + (i + 1) + ' ungültig'; }
+  for (var i = 0; i < L.decisions.length; i++) if (!validDecision(L.decisions[i])) return 'Entscheidung ' + (i + 1) + ' ungültig';
   if (!Array.isArray(L.srs) || L.srs.length > 1000) return 'Wiederholungen ungültig';
-  if (!L.quiz || typeof L.quiz.n !== 'number') return 'Quiz ungültig';
+  for (var j = 0; j < L.srs.length; j++) if (!validSrs(L.srs[j])) return 'Wiederholung ' + (j + 1) + ' ungültig';
+  if (!validQuiz(L.quiz)) return 'Quiz ungültig';
   if (!Array.isArray(L.sessions) || L.sessions.length > 5000) return 'Sessions ungültig';
+  if (!Array.isArray(L.goals) || L.goals.length > 20) return 'Ziele ungültig';
+  for (var g = 0; g < L.goals.length; g++) if (!validGoal(L.goals[g])) return 'Ziel ' + (g + 1) + ' ungültig';
   return null;
+}
+/** Gespeicherte Lerndaten reparieren statt verwerfen: ungültige Einträge werden entfernt, der Rest bleibt erhalten. */
+function repairLearning(L) {
+  if (!L || typeof L !== 'object' || Array.isArray(L) || L.v !== 1) return null;
+  var out = newLearning(), removed = 0;
+  if (Array.isArray(L.decisions)) L.decisions.slice(-DEC_MAX).forEach(function (d) { if (validDecision(d)) out.decisions.push(d); else removed++; });
+  if (Array.isArray(L.srs)) L.srs.slice(-300).forEach(function (it) { if (validSrs(it)) out.srs.push(it); else removed++; });
+  if (validQuiz(L.quiz)) out.quiz = L.quiz; else removed++;
+  if (Array.isArray(L.goals) && L.goals.length <= 20 && L.goals.every(validGoal)) out.goals = L.goals; else removed++;
+  if (typeof L.created === 'number') out.created = L.created;
+  return { learning: out, removed: removed };
 }
 function mean(a) { return a.length ? a.reduce(function (s, x) { return s + x; }, 0) / a.length : null; }
 function sd(a) { if (a.length < 2) return null; var m = mean(a); return Math.sqrt(a.reduce(function (s, x) { return s + (x - m) * (x - m); }, 0) / (a.length - 1)); }
@@ -3727,7 +3974,7 @@ function stat(list) {
 }
 /** Kompetenzprofil aus allen Entscheidungen */
 function profile(L) {
-  var D = L.decisions, out = { all: stat(D), spots: {}, streets: {}, positions: {}, cats: {}, opptyp: {}, trend: null, sessions: [] };
+  var D = L.decisions, out = { all: stat(D), spots: {}, streets: {}, positions: {}, cats: Object.create(null), opptyp: Object.create(null), trend: null, sessions: [] };
   Object.keys(C.SPOTS).forEach(function (t) { var l = D.filter(function (d) { return d.t.indexOf(t) >= 0; }); out.spots[t] = stat(l); });
   [0, 1, 2, 3].forEach(function (s) { out.streets[s] = stat(D.filter(function (d) { return d.st === s; })); });
   S.POSITIONS.forEach(function (p) { out.positions[p] = stat(D.filter(function (d) { return d.p === p; })); });
@@ -3776,7 +4023,7 @@ function goalStatus(L, prof) {
 var BOX_DAYS = [0, 1, 3, 7, 16, 35];
 function srsAdd(L, item, now) {
   if (L.srs.some(function (x) { return x.key === item.key; })) return;
-  L.srs.push({ key: item.key, cat: item.cat, seed: item.seed >>> 0, view: item.view || null, label: item.label || '', box: 0, due: now + 10 * 60000, created: now, reviews: 0, last: null });
+  L.srs.push({ key: item.key, cat: item.cat, seed: item.seed >>> 0, view: item.view || null, label: String(item.label || '').slice(0, 300), box: 0, due: now + 10 * 60000, created: now, reviews: 0, last: null });
   if (L.srs.length > 300) L.srs.splice(0, L.srs.length - 300);
 }
 function srsDue(L, now) { return L.srs.filter(function (x) { return x.due <= now; }).sort(function (a, b) { return a.due - b.due; }); }
@@ -3814,7 +4061,7 @@ function generate(cat, seed, opts) {
   opts = opts || {};
   var sc = SCEN[cat] || SCEN['preflop-open'], rng0 = PT.makeRng('szenario|' + cat + '|' + (seed >>> 0));
   var cfg = PT.session.defaultConfig(); cfg.difficulty = opts.difficulty || 'gemischt';
-  for (var attempt = 0; attempt < 80; attempt++) {
+  for (var attempt = 0, maxAtt = sc.any ? 240 : 80; attempt < maxAtt; attempt++) {
     var r = PT.makeRng('szenario|' + cat + '|' + (seed >>> 0) + '|' + attempt);
     var pos = sc.pos[Math.floor(r() * sc.pos.length)], posIdx = PT.POS6.indexOf(pos);
     var button = (0 - posIdx + 6) % 6;
@@ -3953,7 +4200,7 @@ function quiz(type, rng) {
       else { cnt = 3; txt = ' wenn ein Bube auf dem Board liegt'; }
     }
     var s4 = shuffleOpts(String(cnt), [String(cnt + 2), String(Math.max(1, cnt - 2)), String(cnt * 2)]);
-    q = 'Wie viele Kombinationen von ' + hh[0] + ' gibt es' + (txt || ' ohne bekannte Karten') + '?';
+    q = 'Wie viele Kombinationen von ' + hh[0] + ' gibt es' + (txt ? ',' + txt : ' ohne bekannte Karten') + '?';
     expl = 'Paare: 6 Kombinationen, suited: 4, offsuit: 12. Jede sichtbare Karte eines Rangs entfernt die Kombinationen mit genau dieser Karte' + (blk ? ' – hier bleiben ' + cnt + '.' : '.');
     opts = s4.opts; ok = s4.ok;
   } else if (type === 'spr') {
@@ -3996,7 +4243,7 @@ function handText(h) {
   return lines.join('\n');
 }
 
-PT.training = { makeHandRecord: makeHandRecord, validHand: validHand, newLearning: newLearning, addDecision: addDecision, validLearning: validLearning,
+PT.training = { makeHandRecord: makeHandRecord, validHand: validHand, newLearning: newLearning, addDecision: addDecision, validLearning: validLearning, repairLearning: repairLearning, validView: validView, validSnap: validSnap,
   profile: profile, goalStatus: goalStatus, srsAdd: srsAdd, srsDue: srsDue, srsReview: srsReview, BOX_DAYS: BOX_DAYS, SCEN: SCEN, generate: generate,
   quiz: quiz, QUIZ_TYPES: QUIZ_TYPES, handText: handText, levelOf: levelOf, defaultGoals: defaultGoals };
 })(typeof globalThis !== 'undefined' ? globalThis : (typeof self !== 'undefined' ? self : this));
@@ -4048,7 +4295,9 @@ var SPEAK_RANK = { A: 'Ass', K: 'König', Q: 'Dame', J: 'Bube', T: 'Zehn', 9: 'N
 var SPEAK_POS = { UTG: 'Under the Gun', HJ: 'Hijack', CO: 'Cutoff', BTN: 'Button', SB: 'Small Blind', BB: 'Big Blind' };
 function toSpeech(text) {
   return String(text)
-    .replace(/\b([AKQJT2-9])([AKQJT2-9])([so])?\b/g, function (m, a, b, s) {
+    .replace(/\b([AKQJT2-9])([AKQJT2-9])([so])?\b(?!\s?(?:%|Prozent|BB|Hände|Kombinationen|Entscheidungen))(?![,.]\d)/g, function (m, a, b, s) {
+      // reine Zahlen (z. B. „25“) nicht als Hand lesen: nur mit Suffix, mit Bildkarte/Zehn oder als Paar
+      if (!s && /^\d\d$/.test(a + b) && a !== b) return m;
       if (a === b) return 'Paar ' + SPEAK_RANK[a];
       return SPEAK_RANK[a] + ' ' + SPEAK_RANK[b] + (s === 's' ? ' suited' : s === 'o' ? ' offsuit' : '');
     })
@@ -4068,7 +4317,7 @@ PT.Speech = Speech; PT.toSpeech = toSpeech; PT.pickVoice = pickVoice;
 (function () {
 'use strict';
 if (typeof importScripts === 'function' && !self.PT) {
-  var v = '?v=2.0.0';
+  var v = '?v=2.0.1';
   importScripts('engine/core.js' + v, 'engine/evaluator.js' + v, 'engine/preflop-data.js' + v, 'engine/rules.js' + v, 'engine/ranges.js' + v, 'engine/equity.js' + v,
     'engine/stats.js' + v, 'engine/bots.js' + v, 'engine/session.js' + v, 'engine/ev.js' + v, 'engine/cfr.js' + v, 'engine/coach.js' + v, 'engine/training.js' + v);
 }
@@ -4233,12 +4482,15 @@ function plain(u) { return (u / 100).toFixed(2).replace('.', ','); }
 function bbTxt(u, d) { return U.fmtBB(u, S.table ? S.table.cfg.bb : 100, d); }
 function cardHtml(c, cls) {
   var s = c & 3, red = s === 1 || s === 2;
-  return '<span class="card' + (red ? ' red' : '') + ' s-' + 'cdhs'.charAt(s) + (cls ? ' ' + cls : '') + '" aria-label="' + PT.cards.RANK_NAME_DE[c >> 2] + ' ' + PT.cards.SUIT_NAME[s] + '"><b>' + PT.cards.RANK_LABEL[c >> 2] + '</b><i aria-hidden="true">' + PT.cards.SUIT_SYM[s] + '</i></span>';
+  // role="img" sorgt dafür, dass Screenreader die Bezeichnung mit Farbe vorlesen (z. B. „König Herz“)
+  return '<span class="card' + (red ? ' red' : '') + ' s-' + 'cdhs'.charAt(s) + (cls ? ' ' + cls : '') + '" role="img" aria-label="' + PT.cards.RANK_NAME_DE[c >> 2] + ' ' + PT.cards.SUIT_NAME[s] + '"><b aria-hidden="true">' + PT.cards.RANK_LABEL[c >> 2] + '</b><i aria-hidden="true">' + PT.cards.SUIT_SYM[s] + '</i></span>';
 }
-function backHtml(cls) { return '<span class="card back' + (cls ? ' ' + cls : '') + '" aria-label="verdeckte Karte"></span>'; }
+function backHtml(cls) { return '<span class="card back' + (cls ? ' ' + cls : '') + '" role="img" aria-label="verdeckte Karte"></span>'; }
 function cardsHtml(str, cls) { var a = PT.parseCards(str || '') || []; return a.map(function (c) { return cardHtml(c, cls); }).join(''); }
 function toast(t, ms) { var el = $('toast'); el.textContent = t; el.classList.add('on'); clearTimeout(toast._t); toast._t = setTimeout(function () { el.classList.remove('on'); }, ms || 3200); }
 function download(name, text, type) {
+  // In der Claude-Vorschau sind Downloads nur über die Fähigkeit „downloads“ möglich
+  if (S.claudeDl) { S.claudeDl.save({ filename: name, data: text }).catch(function () { toast('Speichern nicht möglich. Bitte die Website oder die Offline-Datei nutzen.'); }); return true; }
   try {
     var blob = new Blob([text], { type: type || 'application/json' }), url = URL.createObjectURL(blob), a = document.createElement('a');
     a.href = url; a.download = name; a.rel = 'noopener'; document.body.appendChild(a); a.click(); a.remove();
@@ -4527,7 +4779,10 @@ function analysisHtml(a, full) {
 }
 function gradeHtml(g) {
   var cls = 'g-' + g.grade.replace(/\s/g, '');
-  return '<span class="grade ' + cls + '">' + esc(g.grade) + '</span> <span class="small">(' + esc(g.simple) + (g.lossBB != null ? ', EV-Verlust ' + bbTxt(g.loss, 2) : '') + ')</span>';
+  var extra = [];
+  if (g.simple && g.simple !== g.grade) extra.push(esc(g.simple));
+  if (g.lossBB != null && g.lossBB >= 0.005) extra.push('EV-Verlust ' + bbTxt(g.loss, 2));
+  return '<span class="grade ' + cls + '">' + esc(g.grade) + '</span>' + (extra.length ? ' <span class="small">(' + extra.join(', ') + ')</span>' : '');
 }
 function renderTip() {
   var mode = S.settings.tipMode, box = $('tipBox'), my = myTurn(), html;
@@ -4548,11 +4803,16 @@ function renderTip() {
     if (my) html += '<p class="small">Du bist am Zug – das Urteil folgt nach deiner Aktion.</p>';
   }
   box.innerHTML = html;
+  // Kurzfassung direkt über den Aktionsknöpfen (nur auf schmalen Bildschirmen sichtbar)
+  var mini = '';
+  if (mode === 'vorher' && my && a) mini = '<b>' + esc(a.bestLabel) + '</b> · ' + esc(a.classText) + ' <a href="#coachH" data-goto="coachH">Begründung</a>';
+  else if (mode !== 'aus' && !my && S.verdict) mini = gradeHtml(S.verdict.g) + ' <a href="#coachH" data-goto="coachH">Details</a>';
+  $('tipMini').innerHTML = mini;
   $('speechOn').checked = !!S.settings.speech;
   $('speechOn').disabled = !(S.speech && S.speech.available);
   $('bSay').disabled = !(S.speech && S.speech.available && S.speech.voice && S.settings.speech && mode !== 'aus');
   $('bDeep').disabled = !(my && mode !== 'aus');
-  $('faust').textContent = 'Modellschätzung, kein Solver-Ergebnis – Faustregeln und vereinfachte Modelle';
+  $('faust').textContent = 'Faustregel, kein Solver-Ergebnis';
   renderSpeechStat();
 }
 function renderSpeechStat() {
@@ -4579,13 +4839,14 @@ function renderTrainbar() {
   if (!S.training) { tb.hidden = true; return; }
   tb.hidden = false;
   var tr = S.training, avg = tr.scores.length ? Math.round(tr.scores.reduce(function (a, b) { return a + b; }, 0) / tr.scores.length) : null;
-  tb.innerHTML = '<span><b>Training: ' + esc(tr.name) + '</b>' + (tr.review ? ' · Wiederholung' : '') + ' · Situation ' + tr.count + (avg != null ? ' · Ø Qualität ' + avg : '') + '</span>' +
+  tb.innerHTML = '<span><b>Training: ' + esc(tr.name) + '</b>' + (tr.review ? ' · Wiederholung' : '') + ' · Situation ' + tr.count + (avg != null ? ' · Ø Qualität ' + avg : '') + (tr.difficulty ? ' · Gegnerfeld: ' + esc(PT.session.DIFFICULTY[tr.difficulty].name) : '') + '</span>' +
     '<span><button class="btn" type="button" data-act="trainstop">Training beenden</button></span>';
 }
 function render() {
   document.body.classList.toggle('simple', !S.settings.advanced);
   $('bView').textContent = S.settings.advanced ? 'Erweitert' : 'Einfach';
   $('bView').setAttribute('aria-pressed', String(!!S.settings.advanced));
+  $('bView').setAttribute('aria-label', 'Erweiterte Ansicht');  // feste Bezeichnung, Zustand über aria-pressed
   document.body.classList.toggle('four', !!S.settings.fourColor);
   renderStatus(); renderSeats(); renderCenter(); renderControls(); renderTip(); renderLog(); renderNotice(); renderTrainbar();
 }
@@ -4602,7 +4863,11 @@ function nextHand() {
     var tr = S.training, item = null, seed;
     if (tr.queue && tr.queue.length) { item = tr.queue.shift(); seed = item.seed; tr.review = item.key; }
     else { tr.review = null; seed = (PT.rng.hashStr(tr.cat + '|' + Date.now() + '|' + tr.count) >>> 0); }
-    var g = PT.training.generate(item ? item.cat : tr.cat, seed, { difficulty: S.table.cfg.difficulty, ts: Date.now() });
+    // Adaptive Schwierigkeit: Gegnerfeld nach Kompetenz in dieser Kategorie
+    var catNow = item ? item.cat : tr.cat, sp = S.prof && S.prof.spots[catNow], diff = S.table.cfg.difficulty;
+    if (sp && sp.n >= 8) diff = sp.smooth >= 80 ? 'experte' : sp.smooth < 60 ? 'anfaenger' : 'fortgeschritten';
+    tr.difficulty = diff;
+    var g = PT.training.generate(catNow, seed, { difficulty: diff, ts: Date.now() });
     if (!g) { showMsg('Für diese Kategorie konnte gerade keine passende Situation erzeugt werden. Bitte erneut versuchen.'); return; }
     tr.count++; tr.seed = seed; tr.curCat = item ? item.cat : tr.cat; tr.target = true;
     S.hand = g.hand; S.hand.botRng = PT.rng.stream(seed, 'train-bots'); S.hand.isTraining = true;
@@ -4662,7 +4927,7 @@ function onHeroTurn() {
   $('amt').value = L.canRaise ? plain(L.minTo) : ''; $('slider').value = 0;
   render();
   var cur = S.cur;
-  cur.promise = Analyzer.run('analyze', { view: view, opps: opps, settings: coachSettings(), seed: seed, learner: learnerSummary() }).then(function (a) {
+  cur.promise = Analyzer.run('analyze', { view: view, opps: opps, settings: coachSettings(), seed: seed, learner: learnerSummary(), live: true }).then(function (a) {
     cur.analysis = a;
     if (S.cur === cur) {
       S.analysis = { decision: id, a: a };
@@ -4679,7 +4944,7 @@ function deepAnalysis() {
   $('tipBox').insertAdjacentHTML('beforeend', '<p class="small" id="deepInfo">Tiefenanalyse (' + esc(PT.equity.LEVELS[lv].name) + ') läuft …</p>');
   Analyzer.run('analyze', { view: cur.view, opps: cur.opps, settings: coachSettings(lv), seed: cur.seed, learner: learnerSummary() }, 20000).then(function (a) {
     if (S.cur !== cur) return;
-    cur.analysis = a; S.analysis = { decision: cur.id, a: a };
+    cur.analysis = a; S.analysis = { decision: cur.id, a: a }; PTUI.lastRange = a;
     renderTip();
   }, function () { var d = $('deepInfo'); if (d) d.textContent = 'Tiefenanalyse abgebrochen.'; });
 }
@@ -4708,7 +4973,7 @@ function gradeDecision(cur, chosen) {
     var isAggr = chosen.type === 'bet' || chosen.type === 'raise';
     var has = !isAggr || a.actions.some(function (x) { return (x.type === 'bet' || x.type === 'raise') && x.amount === chosen.amount; });
     if (has) return a;
-    return Analyzer.run('analyze', { view: cur.view, opps: cur.opps, settings: coachSettings(), seed: cur.seed, extra: [chosen.amount], learner: learnerSummary() }).catch(function () { return a; });
+    return Analyzer.run('analyze', { view: cur.view, opps: cur.opps, settings: coachSettings(), seed: cur.seed, extra: [chosen.amount], learner: learnerSummary(), live: true }).catch(function () { return a; });
   }).then(function (a) {
     if (!a) return null;
     var g = PT.coach.grade(a, chosen);
@@ -4718,11 +4983,13 @@ function gradeDecision(cur, chosen) {
       snap: { view: cur.view, opps: cur.opps, seed: cur.seed } };
     S.handDecisions.push(dec);
     var opp = a.opponents.filter(function (o) { return o.name === a.mainOpp; })[0];
-    PT.training.addDecision(S.learning, { ts: Date.now(), score: g.score, lossBB: g.lossBB, st: cur.street, pos: cur.pos, tags: a.spotTags, cats: g.cats,
+    var tagsD = a.spotTags.slice(); if (cur.training && cur.target && tagsD.indexOf(cur.training) < 0 && PT.coach.SPOTS[cur.training]) tagsD.push(cur.training);  // Zielentscheidung zählt für ihre Trainingskategorie
+    PT.training.addDecision(S.learning, { ts: Date.now(), score: g.score, lossBB: g.lossBB, st: cur.street, pos: cur.pos, tags: tagsD, cats: g.cats,
       opptyp: opp ? opp.typ : null, training: cur.training, grade: g.grade, session: S.sessionId });
     if (cur.training && S.training && cur.target) {
       S.training.scores.push(g.score);
       if (S.training.review) PT.training.srsReview(S.learning, S.training.review, g.score, Date.now());
+      renderTrainbar();
     }
     if (g.score <= 45) PT.training.srsAdd(S.learning, { key: 'd' + cur.seed, cat: cur.training || (a.spotTags[0] || 'preflop-open'), seed: cur.seed, view: { view: cur.view, opps: cur.opps }, label: a.situation }, Date.now());
     S.prof = PT.training.profile(S.learning);
@@ -4831,7 +5098,7 @@ function setSMode(m) {
   if (S.settings.smode === m) return;
   S.settings.smode = m; persist([]);
   if (myTurn() && S.cur) { var cur = S.cur; S.analysis = null; renderTip();
-    cur.promise = Analyzer.run('analyze', { view: cur.view, opps: cur.opps, settings: coachSettings(), seed: cur.seed, learner: learnerSummary() }).then(function (a) { cur.analysis = a; if (S.cur === cur) { S.analysis = { decision: cur.id, a: a }; renderTip(); } return a; }, function () { return null; }); }
+    cur.promise = Analyzer.run('analyze', { view: cur.view, opps: cur.opps, settings: coachSettings(), seed: cur.seed, learner: learnerSummary(), live: true }).then(function (a) { cur.analysis = a; if (S.cur === cur) { S.analysis = { decision: cur.id, a: a }; PTUI.lastRange = a; renderTip(); } return a; }, function () { return null; }); }
   else renderTip();
 }
 
@@ -4852,11 +5119,12 @@ PTUI.startTraining = function (cat, queue) {
   S.training = { cat: cat, name: queue ? 'Wiederholung' : sc.name, count: 0, scores: [], queue: queue || null };
   S.hand = null; location.hash = '#tisch'; render(); nextHand();
 };
-PTUI.stopTraining = function () { if (S.hand && !S.hand.done) { toast('Bitte erst die laufende Situation beenden.'); return; } S.training = null; S.hand = null; render(); };
+PTUI.stopTraining = function () { if (S.hand && !S.hand.done) { toast('Bitte erst die laufende Situation beenden.'); return; } S.training = null; S.hand = null; S.verdict = null; S.analysis = null; S.cur = null; render(); };
 
 // ---------- Bedienung ----------
 function bind() {
   $('bNext').addEventListener('click', nextHand);
+  document.addEventListener('submit', function (e) { e.preventDefault(); });  // Formulare werden nie abgeschickt (CSP verbietet Inline-Handler)
   $('bFold').addEventListener('click', function () { heroAct({ type: 'fold' }); });
   $('bCall').addEventListener('click', function () { if (!myTurn()) return; var L = S.hand.legal(0); heroAct(L.canCheck ? { type: 'check' } : { type: 'call' }); });
   $('bRaise').addEventListener('click', onRaise);
@@ -4884,17 +5152,25 @@ function bind() {
     if (act === 'trainstop') PTUI.stopTraining();
     else if (act === 'showrange' && S.analysis) { PTUI.lastRange = S.analysis.a; location.hash = '#ranges/aktuell'; }
     else if (act === 'legacydl' && S.legacyBackup) download(S.legacyBackup.name, S.legacyBackup.text);
-    else if (act === 'swupdate' && S.swWaiting) { if (S.hand && !S.hand.done) { toast('Das Update wird nach dieser Hand eingespielt.'); S.updateAfterHand = true; return; } S.swWaiting.postMessage({ type: 'SKIP_WAITING' }); }
+    else if (act === 'swupdate' && S.swWaiting) { if (S.hand && !S.hand.done) { toast('Bitte erst die laufende Hand beenden, dann aktualisieren.'); return; } S.swUpdating = true; S.swWaiting.postMessage({ type: 'SKIP_WAITING' }); }
     else if (act === 'dismiss') { S.notes[b.getAttribute('data-note')] = ''; renderNotice(); }
   });
   window.addEventListener('hashchange', route);
+  document.addEventListener('click', function (e) {
+    var g = e.target && e.target.closest && e.target.closest('[data-goto]');
+    if (!g) return;
+    e.preventDefault();
+    var t = $(g.getAttribute('data-goto')); if (t) { t.scrollIntoView({ behavior: 'smooth', block: 'start' }); t.setAttribute('tabindex', '-1'); t.focus({ preventScroll: true }); }
+  });
   document.addEventListener('keydown', function (e) {
     if (e.ctrlKey || e.metaKey || e.altKey) return;
     if (!$('modal').hidden) { if (e.key === 'Escape') closeModal(); return; }
     if (S.view !== 'tisch') return;
     var tg = e.target, tag = tg && tg.tagName;
     if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') { if (tg.id === 'amt' && e.key === 'Enter') { e.preventDefault(); onRaise(); } return; }
-    if (tag === 'BUTTON' && (e.key === 'Enter' || e.key === ' ')) return;
+    // Auf fokussierten Links, Schaltflächen und aufklappbaren Elementen gelten Enter und Leertaste dem Element selbst
+    if ((e.key === 'Enter' || e.key === ' ') && tg && tg.closest && tg.closest('a, button, summary, [role="button"], [role="tab"], [tabindex="0"]')) return;
+    if (tg && tg.closest && tg.closest('nav, header, footer, .modal') && e.key.length === 1) return;
     var k = e.key.toLowerCase();
     if (k === 'f') { if (!$('bFold').disabled) $('bFold').click(); }
     else if (k === 'c' || k === 'k') { if (!$('bCall').disabled) $('bCall').click(); }
@@ -4937,6 +5213,7 @@ function registerSW() {
   navigator.serviceWorker.register('sw.js', { scope: './' }).then(function (reg) {
     function waiting(w) { S.swWaiting = w; S.notes.update = { html: '<span>Eine neue Version des PokerTrainers ist bereit.</span><button class="btn" type="button" data-act="swupdate">Jetzt aktualisieren</button>' }; renderNotice(); }
     if (reg.waiting && navigator.serviceWorker.controller) waiting(reg.waiting);
+    S.hadController = !!navigator.serviceWorker.controller;
     reg.addEventListener('updatefound', function () {
       var nw = reg.installing; if (!nw) return;
       nw.addEventListener('statechange', function () { if (nw.state === 'installed' && navigator.serviceWorker.controller) waiting(nw); });
@@ -4944,7 +5221,8 @@ function registerSW() {
     setInterval(function () { reg.update().catch(function () {}); }, 60 * 60 * 1000);
   }).catch(function () { /* offline-fähig nur ohne SW */ });
   var reloading = false;
-  navigator.serviceWorker.addEventListener('controllerchange', function () { if (reloading) return; reloading = true; persist([]).then(function () { location.reload(); }); });
+  // Neu laden nur bei einem vom Nutzer bestätigten Update, nicht bei der ersten Installation
+  navigator.serviceWorker.addEventListener('controllerchange', function () { if (reloading || !S.swUpdating) return; reloading = true; persist([]).then(function () { location.reload(); }); });
 }
 
 // ---------- Start ----------
@@ -4953,6 +5231,12 @@ function legacyBackupText(list) {
   return '{"format":"PokerTrainer-DB","version":1,"exported":' + JSON.stringify(new Date().toISOString()) + ',"count":' + list.length + ',"checksum":"' + U.fnv1a(body) + '","opponents":' + body + '}\n';
 }
 function boot() {
+  S.dlReady = new Promise(function (res) {
+    try {
+      if (window.claude && typeof window.claude.use === 'function') { window.claude.use('downloads').then(function (d) { S.claudeDl = d || null; res(); }, function () { S.claudeDl = null; res(); }); setTimeout(res, 1500); }
+      else res();
+    } catch (e) { S.claudeDl = null; res(); }
+  });
   bind();
   $('verText').textContent = PT.VERSION;
   initSpeech();
@@ -4969,7 +5253,10 @@ function boot() {
     if (S.db.skipped) S.notes.storage = S.db.skipped + ' beschädigte Gegner-Einträge im Speicher wurden übersprungen.';
     if (meta && meta.settings) Object.keys(DEFAULTS).forEach(function (k) { if (meta.settings[k] !== undefined && typeof meta.settings[k] === typeof DEFAULTS[k] || (k === 'seed')) S.settings[k] = meta.settings[k]; });
     if (meta && meta.heroRec && !PT.stats.validRecord(meta.heroRec)) S.heroRec = PT.stats.cloneRecord(meta.heroRec);
-    if (learn && learn.v && !PT.training.validLearning(learn.v)) S.learning = learn.v;
+    if (learn && learn.v) {
+      if (!PT.training.validLearning(learn.v)) S.learning = learn.v;
+      else { var rep = PT.training.repairLearning(learn.v); if (rep) { S.learning = rep.learning; console.warn('Lerndaten repariert, entfernte Einträge: ' + rep.removed); } }
+    }
     S.prof = PT.training.profile(S.learning);
     if (meta && PT.session.validTable(meta.table)) S.table = meta.table;
     return Store.findLegacy().then(function (legacy) {
@@ -4978,7 +5265,7 @@ function boot() {
         var text = legacyBackupText(list), name = 'Sicherung_PokerTrainer_' + today() + '_Datenbank.json';
         S.legacyBackup = { name: name, text: text };
         Store.put('backup', { k: 'legacy-' + today(), name: name, text: text, ts: Date.now() });
-        download(name, text);
+        S.dlReady.then(function () { download(name, text); });
         var old = PT.stats.dbFromList(list), n = 0;
         Object.keys(old.opps).forEach(function (id) { if (!S.db.opps[id]) { S.db.opps[id] = old.opps[id]; n++; } });
         if (!S.table) S.table = PT.session.migrateTable(legacy.meta && legacy.meta.table, S.db);
@@ -5074,7 +5361,7 @@ function renderQuiz() {
     quizState = { q: PT.training.quiz(t, PT.makeRng()), answered: null };
   }
   var q = quizState.q, a = quizState.answered;
-  box.innerHTML = '<p class="small">' + esc(PT.training.QUIZ_TYPES[q.type]) + ' · bisher ' + Q.correct + ' von ' + Q.n + ' richtig</p><p><b>' + esc(q.q) + '</b></p><div class="btnrow">' +
+  box.innerHTML = '<p class="small">' + esc(PT.training.QUIZ_TYPES[q.type]) + ' · bisher ' + esc(String(Q.correct | 0)) + ' von ' + esc(String(Q.n | 0)) + ' richtig</p><p><b>' + esc(q.q) + '</b></p><div class="btnrow">' +
     q.opts.map(function (o, i) { var cls = a == null ? '' : i === q.ok ? ' primary2' : i === a ? ' danger' : ''; return '<button class="btn' + cls + '" type="button" data-qa="' + i + '"' + (a != null ? ' disabled' : '') + '>' + esc(o) + '</button>'; }).join('') + '</div>' +
     (a != null ? '<p class="' + (a === q.ok ? 'good' : 'bad') + '"><b>' + (a === q.ok ? 'Richtig.' : 'Nicht ganz.') + '</b> ' + esc(q.expl) + '</p><button class="btn" type="button" data-qnext="1">Nächste Frage</button>' : '');
 }
@@ -5123,11 +5410,11 @@ function filtered() {
 function renderList() {
   var l = filtered(), box = $('hlist'); if (!box) return;
   if (!l.length) { box.innerHTML = '<p class="muted">Keine Hände' + ((hist.list || []).length ? ' für diesen Filter.' : ' gespeichert. Spiele am Tisch oder im Training.') + '</p>'; return; }
-  box.innerHTML = '<p class="small">' + l.length + ' Hände</p><table class="grid"><thead><tr><th>Zeit</th><th>Hand</th><th>Pos.</th><th>Karten</th><th>Board</th><th class="n">Ergebnis</th><th>Bewertung</th></tr></thead><tbody>' +
+  box.innerHTML = '<p class="small">' + l.length + ' Hände</p><div class="scroll"><table class="grid hlist"><thead><tr><th>Zeit</th><th>Hand</th><th>Pos.</th><th>Karten</th><th>Board</th><th class="n">Ergebnis</th><th>Bewertung</th></tr></thead><tbody>' +
     l.slice(0, 300).map(function (h) {
       var worst = h.decisions.reduce(function (m, d) { return !m || d.score < m.score ? d : m; }, null);
       return '<tr class="click" tabindex="0" data-hid="' + esc(h.id) + '"><td>' + esc(H.dateTxt(h.ts)) + '</td><td>#' + h.no + (h.training ? ' <span class="pill">' + esc((PT.training.SCEN[h.training] || {}).name || 'Training') + '</span>' : '') + '</td><td>' + esc(h.seats[h.heroSeat].pos) + '</td><td><span class="cards">' + H.cardsHtml(h.hero, 'sm') + '</span></td><td><span class="cards">' + H.cardsHtml(h.board.join(''), 'sm') + '</span></td><td class="n ' + (h.heroNet > 0 ? 'good' : h.heroNet < 0 ? 'bad' : '') + '">' + U.fmtSigned(h.heroNet) + '</td><td>' + (worst ? H.gradeHtml({ grade: worst.grade, simple: PT.coach.GRADE_SIMPLE[worst.grade], lossBB: null }) : '–') + '</td></tr>';
-    }).join('') + '</tbody></table>' + (l.length > 300 ? '<p class="muted">Es werden die neuesten 300 angezeigt; nutze Filter oder Export.</p>' : '');
+    }).join('') + '</tbody></table></div>' + (l.length > 300 ? '<p class="muted">Es werden die neuesten 300 angezeigt; nutze Filter oder Export.</p>' : '');
 }
 function openReplay(h) {
   var holes = {}; holes[h.heroSeat] = PT.parseCards(h.hero);
@@ -5323,18 +5610,25 @@ function importText(text, fname, expect) {
   $('impNo').onclick = H.closeModal;
   $('impOk').onclick = function () {
     if (S.hand && !S.hand.done) { H.closeModal(); H.toast('Import ist nur zwischen zwei Händen möglich.'); return; }
-    backupNow('vor-Import');
+    var btn = $('impOk'); btn.disabled = true; btn.textContent = 'Sichere aktuelle Daten …';
+    var newProf = null;
+    try { if (r.kind === 'backup' && r.learning) newProf = PT.training.profile(r.learning); }
+    catch (e) { H.openModal('Import abgelehnt', '<p>Die Lerndaten der Datei lassen sich nicht auswerten.</p><p>Die bestehenden Daten bleiben unverändert.</p>'); return; }
+    // Erst wenn die Sicherung der bisherigen Daten fertig erzeugt ist, werden die Daten ersetzt.
+    backupNow('vor-Import').then(applyImport, function () { H.openModal('Import abgebrochen', '<p>Die Sicherung der aktuellen Daten ist fehlgeschlagen. Es wurde nichts geändert.</p>'); });
+  };
+  function applyImport() {
     S.db = r.db;
     var p = [];
     if (r.kind === 'backup') {
       if (r.hero) S.heroRec = r.hero;
-      if (r.learning) { S.learning = r.learning; S.prof = PT.training.profile(S.learning); p.push(PTUI.persistLearning()); }
+      if (r.learning) { S.learning = r.learning; S.prof = newProf; p.push(PTUI.persistLearning()); }
       if (r.hands && r.hands.length) p.push(Store.clear('hands').then(function () { return Store.put('hands', r.hands.slice(-3000)); }));
     }
     PT.session.syncStatuses(S.table, S.db);
     p.push(PTUI.persistAllOpps(), PTUI.persist([]));
     Promise.all(p).then(function () { H.closeModal(); H.toast('Import abgeschlossen: ' + r.count + ' Gegner übernommen.'); PTUI.route(); });
-  };
+  }
 }
 function backupNow(tag) {
   return Store.all('hands').then(function (hands) {
@@ -5368,7 +5662,7 @@ views.fortschritt = function (el) {
     html += '<div class="grid2"><div class="panel"><h3>Nach Situation</h3>' + table3(Object.keys(PT.coach.SPOTS).map(function (t) { return [PT.coach.SPOTS[t], prof.spots[t], t]; }), true) + '</div>' +
       '<div class="panel"><h3>Gegen Gegnertypen</h3>' + table3(Object.keys(prof.opptyp).map(function (t) { return [t, prof.opptyp[t]]; })) +
       '<h3>Lernziele</h3><ul>' + goals.map(function (g) { return '<li class="' + (g.ok ? 'good' : '') + '">' + (g.ok ? '✓ ' : '○ ') + esc(g.text) + ' – aktuell ' + (g.current == null ? '–' : num(g.current, 1)) + ' (' + g.n + ')</li>'; }).join('') + '</ul>' +
-      '<h3>Wissensquiz</h3><p>' + L.quiz.correct + ' von ' + L.quiz.n + ' richtig' + (L.quiz.n ? ' (' + pct(L.quiz.correct / L.quiz.n) + ')' : '') + '</p></div></div>';
+      '<h3>Wissensquiz</h3><p>' + esc(String(L.quiz.correct | 0)) + ' von ' + esc(String(L.quiz.n | 0)) + ' richtig' + (L.quiz.n ? ' (' + pct(L.quiz.correct / L.quiz.n) + ')' : '') + '</p></div></div>';
     html += '<div class="panel"><h3>Spielgeld-Ergebnis (getrennt von der Entscheidungsqualität)</h3><p>' + n + ' Hände am Tisch · Ergebnis ' + num(m * n, 1) + ' BB · ' + num(m * 100, 1) + ' BB/100' + (ci != null ? ' (95-%-Intervall ± ' + num(ci, 0) + ' BB/100)' : '') + '</p>' +
       '<p class="small">Bei No-Limit Hold\'em liegt die Standardabweichung typischerweise bei 80–120 BB je 100 Hände. Erst nach vielen tausend Händen sagt das Ergebnis etwas über die Spielstärke aus.</p></div>';
     el.innerHTML = html;
@@ -5399,7 +5693,7 @@ views.einstellungen = function (el) {
   var c = S.table.cfg, st = S.settings, D = PT.session.DIFFICULTY;
   function opt(v2, t, cur) { return '<option value="' + v2 + '"' + (String(cur) === String(v2) ? ' selected' : '') + '>' + t + '</option>'; }
   var blinds = [[25, 50], [50, 100], [100, 200], [200, 500]];
-  el.innerHTML = '<div class="grid2"><div class="panel"><h2>Tisch und Spielbedingungen</h2><form class="form" id="fTable" onsubmit="return false">' +
+  el.innerHTML = '<div class="grid2"><div class="panel"><h2>Tisch und Spielbedingungen</h2><form class="form" id="fTable">' +
     '<div class="row"><label for="sBl">Blinds</label><select id="sBl">' + blinds.map(function (b) { return opt(b[0] + '/' + b[1], fmt(b[0]) + ' / ' + fmt(b[1]), c.sb + '/' + c.bb); }).join('') + '</select></div>' +
     '<div class="row"><label for="sSt">Startstack (BB)</label><input id="sSt" type="number" min="10" max="1000" value="' + c.startBB + '"></div>' +
     '<div class="row"><label for="sRb">Automatischer Nachkauf unter (BB)</label><input id="sRb" type="number" min="0" max="1000" step="1" value="' + c.rebuyBelowBB + '"><div class="hint">Unter diesem Stack wird vor der nächsten Hand auf den Startstack aufgefüllt (0 = nur bei 0).</div></div>' +
@@ -5411,11 +5705,11 @@ views.einstellungen = function (el) {
     '<div class="row"><label for="sRc">Rake-Obergrenze (BB)</label><input id="sRc" type="number" min="0" max="20" step="0.5" value="' + c.rake.capBB + '"></div>' +
     '<div class="row"><label for="sSeed">Startwert (Seed, optional)</label><input id="sSeed" type="text" inputmode="numeric" value="' + (st.seed != null ? st.seed : '') + '" placeholder="zufällig"><div class="hint">Gleicher Seed + gleiche Aktionen = gleicher Spielverlauf (auch mit Coach an oder aus).</div></div>' +
     '<div class="btnrow"><button class="btn primary2" type="button" id="sApply">Neue Session mit diesen Bedingungen</button></div><p class="small">Eine neue Session setzt Stacks und Tisch zurück. Gegnerdatenbank, Handhistorie und Lernfortschritt bleiben erhalten.</p></form></div>' +
-    '<div class="panel"><h2>Coach, Ansicht und Sprache</h2><form class="form" onsubmit="return false">' +
+    '<div class="panel"><h2>Coach, Ansicht und Sprache</h2><form class="form" id="fCoach">' +
     '<div class="row"><label for="cTm">Tipp-Modus</label><select id="cTm">' + opt('vorher', 'vorher', st.tipMode) + opt('nachher', 'nachher', st.tipMode) + opt('aus', 'aus', st.tipMode) + '</select></div>' +
     '<div class="row"><label for="cSm">Strategiemodus</label><select id="cSm">' + opt('exploit', 'Exploitativ (nutzt Gegnerwerte)', st.smode) + opt('gto', 'Gleichgewichtsnah (ausgewogenes Modell)', st.smode) + '</select></div>' +
     '<div class="row"><label for="cDp">Erklärtiefe</label><select id="cDp">' + opt('auto', 'automatisch (nach Lernstand)', st.depth) + opt('einsteiger', 'Einsteiger', st.depth) + opt('fortgeschritten', 'Fortgeschritten', st.depth) + opt('experte', 'Experte', st.depth) + '</select></div>' +
-    '<div class="row"><label for="cLv">Analysegenauigkeit</label><select id="cLv">' + ['schnell', 'standard', 'praezise', 'tief'].map(function (k) { return opt(k, PT.equity.LEVELS[k].name, st.level); }).join('') + '</select><div class="hint">Schnell und Standard halten die Obergrenze von 5.000 Simulationen je Entscheidung ein. Präzise und Tiefenanalyse rechnen länger.</div></div>' +
+    '<div class="row"><label for="cLv">Analysegenauigkeit</label><select id="cLv">' + ['schnell', 'standard', 'praezise', 'tief'].map(function (k) { return opt(k, PT.equity.LEVELS[k].name, st.level); }).join('') + '</select><div class="hint">Der automatische Tipp am Tisch rechnet immer mit höchstens 5.000 Simulationen je Entscheidung (Schnell oder Standard). Präzise und Tiefenanalyse gelten für die Schaltfläche „Tiefenanalyse“ und die Nachanalyse im Replayer.</div></div>' +
     '<div class="row"><label for="cSp">Spielgeschwindigkeit</label><select id="cSp">' + opt('langsam', 'langsam', st.speed) + opt('normal', 'normal', st.speed) + opt('schnell', 'schnell', st.speed) + opt('sehrschnell', 'sehr schnell', st.speed) + '</select></div>' +
     '<div class="row"><label for="cAd">Erweiterte Analyseansicht</label><input id="cAd" type="checkbox"' + (st.advanced ? ' checked' : '') + '></div>' +
     '<div class="row"><label for="cTh">Darstellung</label><select id="cTh">' + opt('auto', 'automatisch', st.theme) + opt('light', 'hell', st.theme) + opt('dark', 'dunkel', st.theme) + '</select></div>' +

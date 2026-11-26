@@ -22,12 +22,15 @@ function plain(u) { return (u / 100).toFixed(2).replace('.', ','); }
 function bbTxt(u, d) { return U.fmtBB(u, S.table ? S.table.cfg.bb : 100, d); }
 function cardHtml(c, cls) {
   var s = c & 3, red = s === 1 || s === 2;
-  return '<span class="card' + (red ? ' red' : '') + ' s-' + 'cdhs'.charAt(s) + (cls ? ' ' + cls : '') + '" aria-label="' + PT.cards.RANK_NAME_DE[c >> 2] + ' ' + PT.cards.SUIT_NAME[s] + '"><b>' + PT.cards.RANK_LABEL[c >> 2] + '</b><i aria-hidden="true">' + PT.cards.SUIT_SYM[s] + '</i></span>';
+  // role="img" sorgt dafür, dass Screenreader die Bezeichnung mit Farbe vorlesen (z. B. „König Herz“)
+  return '<span class="card' + (red ? ' red' : '') + ' s-' + 'cdhs'.charAt(s) + (cls ? ' ' + cls : '') + '" role="img" aria-label="' + PT.cards.RANK_NAME_DE[c >> 2] + ' ' + PT.cards.SUIT_NAME[s] + '"><b aria-hidden="true">' + PT.cards.RANK_LABEL[c >> 2] + '</b><i aria-hidden="true">' + PT.cards.SUIT_SYM[s] + '</i></span>';
 }
-function backHtml(cls) { return '<span class="card back' + (cls ? ' ' + cls : '') + '" aria-label="verdeckte Karte"></span>'; }
+function backHtml(cls) { return '<span class="card back' + (cls ? ' ' + cls : '') + '" role="img" aria-label="verdeckte Karte"></span>'; }
 function cardsHtml(str, cls) { var a = PT.parseCards(str || '') || []; return a.map(function (c) { return cardHtml(c, cls); }).join(''); }
 function toast(t, ms) { var el = $('toast'); el.textContent = t; el.classList.add('on'); clearTimeout(toast._t); toast._t = setTimeout(function () { el.classList.remove('on'); }, ms || 3200); }
 function download(name, text, type) {
+  // In der Claude-Vorschau sind Downloads nur über die Fähigkeit „downloads“ möglich
+  if (S.claudeDl) { S.claudeDl.save({ filename: name, data: text }).catch(function () { toast('Speichern nicht möglich. Bitte die Website oder die Offline-Datei nutzen.'); }); return true; }
   try {
     var blob = new Blob([text], { type: type || 'application/json' }), url = URL.createObjectURL(blob), a = document.createElement('a');
     a.href = url; a.download = name; a.rel = 'noopener'; document.body.appendChild(a); a.click(); a.remove();
@@ -316,7 +319,10 @@ function analysisHtml(a, full) {
 }
 function gradeHtml(g) {
   var cls = 'g-' + g.grade.replace(/\s/g, '');
-  return '<span class="grade ' + cls + '">' + esc(g.grade) + '</span> <span class="small">(' + esc(g.simple) + (g.lossBB != null ? ', EV-Verlust ' + bbTxt(g.loss, 2) : '') + ')</span>';
+  var extra = [];
+  if (g.simple && g.simple !== g.grade) extra.push(esc(g.simple));
+  if (g.lossBB != null && g.lossBB >= 0.005) extra.push('EV-Verlust ' + bbTxt(g.loss, 2));
+  return '<span class="grade ' + cls + '">' + esc(g.grade) + '</span>' + (extra.length ? ' <span class="small">(' + extra.join(', ') + ')</span>' : '');
 }
 function renderTip() {
   var mode = S.settings.tipMode, box = $('tipBox'), my = myTurn(), html;
@@ -337,11 +343,16 @@ function renderTip() {
     if (my) html += '<p class="small">Du bist am Zug – das Urteil folgt nach deiner Aktion.</p>';
   }
   box.innerHTML = html;
+  // Kurzfassung direkt über den Aktionsknöpfen (nur auf schmalen Bildschirmen sichtbar)
+  var mini = '';
+  if (mode === 'vorher' && my && a) mini = '<b>' + esc(a.bestLabel) + '</b> · ' + esc(a.classText) + ' <a href="#coachH" data-goto="coachH">Begründung</a>';
+  else if (mode !== 'aus' && !my && S.verdict) mini = gradeHtml(S.verdict.g) + ' <a href="#coachH" data-goto="coachH">Details</a>';
+  $('tipMini').innerHTML = mini;
   $('speechOn').checked = !!S.settings.speech;
   $('speechOn').disabled = !(S.speech && S.speech.available);
   $('bSay').disabled = !(S.speech && S.speech.available && S.speech.voice && S.settings.speech && mode !== 'aus');
   $('bDeep').disabled = !(my && mode !== 'aus');
-  $('faust').textContent = 'Modellschätzung, kein Solver-Ergebnis – Faustregeln und vereinfachte Modelle';
+  $('faust').textContent = 'Faustregel, kein Solver-Ergebnis';
   renderSpeechStat();
 }
 function renderSpeechStat() {
@@ -368,13 +379,14 @@ function renderTrainbar() {
   if (!S.training) { tb.hidden = true; return; }
   tb.hidden = false;
   var tr = S.training, avg = tr.scores.length ? Math.round(tr.scores.reduce(function (a, b) { return a + b; }, 0) / tr.scores.length) : null;
-  tb.innerHTML = '<span><b>Training: ' + esc(tr.name) + '</b>' + (tr.review ? ' · Wiederholung' : '') + ' · Situation ' + tr.count + (avg != null ? ' · Ø Qualität ' + avg : '') + '</span>' +
+  tb.innerHTML = '<span><b>Training: ' + esc(tr.name) + '</b>' + (tr.review ? ' · Wiederholung' : '') + ' · Situation ' + tr.count + (avg != null ? ' · Ø Qualität ' + avg : '') + (tr.difficulty ? ' · Gegnerfeld: ' + esc(PT.session.DIFFICULTY[tr.difficulty].name) : '') + '</span>' +
     '<span><button class="btn" type="button" data-act="trainstop">Training beenden</button></span>';
 }
 function render() {
   document.body.classList.toggle('simple', !S.settings.advanced);
   $('bView').textContent = S.settings.advanced ? 'Erweitert' : 'Einfach';
   $('bView').setAttribute('aria-pressed', String(!!S.settings.advanced));
+  $('bView').setAttribute('aria-label', 'Erweiterte Ansicht');  // feste Bezeichnung, Zustand über aria-pressed
   document.body.classList.toggle('four', !!S.settings.fourColor);
   renderStatus(); renderSeats(); renderCenter(); renderControls(); renderTip(); renderLog(); renderNotice(); renderTrainbar();
 }
@@ -391,7 +403,11 @@ function nextHand() {
     var tr = S.training, item = null, seed;
     if (tr.queue && tr.queue.length) { item = tr.queue.shift(); seed = item.seed; tr.review = item.key; }
     else { tr.review = null; seed = (PT.rng.hashStr(tr.cat + '|' + Date.now() + '|' + tr.count) >>> 0); }
-    var g = PT.training.generate(item ? item.cat : tr.cat, seed, { difficulty: S.table.cfg.difficulty, ts: Date.now() });
+    // Adaptive Schwierigkeit: Gegnerfeld nach Kompetenz in dieser Kategorie
+    var catNow = item ? item.cat : tr.cat, sp = S.prof && S.prof.spots[catNow], diff = S.table.cfg.difficulty;
+    if (sp && sp.n >= 8) diff = sp.smooth >= 80 ? 'experte' : sp.smooth < 60 ? 'anfaenger' : 'fortgeschritten';
+    tr.difficulty = diff;
+    var g = PT.training.generate(catNow, seed, { difficulty: diff, ts: Date.now() });
     if (!g) { showMsg('Für diese Kategorie konnte gerade keine passende Situation erzeugt werden. Bitte erneut versuchen.'); return; }
     tr.count++; tr.seed = seed; tr.curCat = item ? item.cat : tr.cat; tr.target = true;
     S.hand = g.hand; S.hand.botRng = PT.rng.stream(seed, 'train-bots'); S.hand.isTraining = true;
@@ -451,7 +467,7 @@ function onHeroTurn() {
   $('amt').value = L.canRaise ? plain(L.minTo) : ''; $('slider').value = 0;
   render();
   var cur = S.cur;
-  cur.promise = Analyzer.run('analyze', { view: view, opps: opps, settings: coachSettings(), seed: seed, learner: learnerSummary() }).then(function (a) {
+  cur.promise = Analyzer.run('analyze', { view: view, opps: opps, settings: coachSettings(), seed: seed, learner: learnerSummary(), live: true }).then(function (a) {
     cur.analysis = a;
     if (S.cur === cur) {
       S.analysis = { decision: id, a: a };
@@ -468,7 +484,7 @@ function deepAnalysis() {
   $('tipBox').insertAdjacentHTML('beforeend', '<p class="small" id="deepInfo">Tiefenanalyse (' + esc(PT.equity.LEVELS[lv].name) + ') läuft …</p>');
   Analyzer.run('analyze', { view: cur.view, opps: cur.opps, settings: coachSettings(lv), seed: cur.seed, learner: learnerSummary() }, 20000).then(function (a) {
     if (S.cur !== cur) return;
-    cur.analysis = a; S.analysis = { decision: cur.id, a: a };
+    cur.analysis = a; S.analysis = { decision: cur.id, a: a }; PTUI.lastRange = a;
     renderTip();
   }, function () { var d = $('deepInfo'); if (d) d.textContent = 'Tiefenanalyse abgebrochen.'; });
 }
@@ -497,7 +513,7 @@ function gradeDecision(cur, chosen) {
     var isAggr = chosen.type === 'bet' || chosen.type === 'raise';
     var has = !isAggr || a.actions.some(function (x) { return (x.type === 'bet' || x.type === 'raise') && x.amount === chosen.amount; });
     if (has) return a;
-    return Analyzer.run('analyze', { view: cur.view, opps: cur.opps, settings: coachSettings(), seed: cur.seed, extra: [chosen.amount], learner: learnerSummary() }).catch(function () { return a; });
+    return Analyzer.run('analyze', { view: cur.view, opps: cur.opps, settings: coachSettings(), seed: cur.seed, extra: [chosen.amount], learner: learnerSummary(), live: true }).catch(function () { return a; });
   }).then(function (a) {
     if (!a) return null;
     var g = PT.coach.grade(a, chosen);
@@ -507,11 +523,13 @@ function gradeDecision(cur, chosen) {
       snap: { view: cur.view, opps: cur.opps, seed: cur.seed } };
     S.handDecisions.push(dec);
     var opp = a.opponents.filter(function (o) { return o.name === a.mainOpp; })[0];
-    PT.training.addDecision(S.learning, { ts: Date.now(), score: g.score, lossBB: g.lossBB, st: cur.street, pos: cur.pos, tags: a.spotTags, cats: g.cats,
+    var tagsD = a.spotTags.slice(); if (cur.training && cur.target && tagsD.indexOf(cur.training) < 0 && PT.coach.SPOTS[cur.training]) tagsD.push(cur.training);  // Zielentscheidung zählt für ihre Trainingskategorie
+    PT.training.addDecision(S.learning, { ts: Date.now(), score: g.score, lossBB: g.lossBB, st: cur.street, pos: cur.pos, tags: tagsD, cats: g.cats,
       opptyp: opp ? opp.typ : null, training: cur.training, grade: g.grade, session: S.sessionId });
     if (cur.training && S.training && cur.target) {
       S.training.scores.push(g.score);
       if (S.training.review) PT.training.srsReview(S.learning, S.training.review, g.score, Date.now());
+      renderTrainbar();
     }
     if (g.score <= 45) PT.training.srsAdd(S.learning, { key: 'd' + cur.seed, cat: cur.training || (a.spotTags[0] || 'preflop-open'), seed: cur.seed, view: { view: cur.view, opps: cur.opps }, label: a.situation }, Date.now());
     S.prof = PT.training.profile(S.learning);
@@ -620,7 +638,7 @@ function setSMode(m) {
   if (S.settings.smode === m) return;
   S.settings.smode = m; persist([]);
   if (myTurn() && S.cur) { var cur = S.cur; S.analysis = null; renderTip();
-    cur.promise = Analyzer.run('analyze', { view: cur.view, opps: cur.opps, settings: coachSettings(), seed: cur.seed, learner: learnerSummary() }).then(function (a) { cur.analysis = a; if (S.cur === cur) { S.analysis = { decision: cur.id, a: a }; renderTip(); } return a; }, function () { return null; }); }
+    cur.promise = Analyzer.run('analyze', { view: cur.view, opps: cur.opps, settings: coachSettings(), seed: cur.seed, learner: learnerSummary(), live: true }).then(function (a) { cur.analysis = a; if (S.cur === cur) { S.analysis = { decision: cur.id, a: a }; PTUI.lastRange = a; renderTip(); } return a; }, function () { return null; }); }
   else renderTip();
 }
 
@@ -641,11 +659,12 @@ PTUI.startTraining = function (cat, queue) {
   S.training = { cat: cat, name: queue ? 'Wiederholung' : sc.name, count: 0, scores: [], queue: queue || null };
   S.hand = null; location.hash = '#tisch'; render(); nextHand();
 };
-PTUI.stopTraining = function () { if (S.hand && !S.hand.done) { toast('Bitte erst die laufende Situation beenden.'); return; } S.training = null; S.hand = null; render(); };
+PTUI.stopTraining = function () { if (S.hand && !S.hand.done) { toast('Bitte erst die laufende Situation beenden.'); return; } S.training = null; S.hand = null; S.verdict = null; S.analysis = null; S.cur = null; render(); };
 
 // ---------- Bedienung ----------
 function bind() {
   $('bNext').addEventListener('click', nextHand);
+  document.addEventListener('submit', function (e) { e.preventDefault(); });  // Formulare werden nie abgeschickt (CSP verbietet Inline-Handler)
   $('bFold').addEventListener('click', function () { heroAct({ type: 'fold' }); });
   $('bCall').addEventListener('click', function () { if (!myTurn()) return; var L = S.hand.legal(0); heroAct(L.canCheck ? { type: 'check' } : { type: 'call' }); });
   $('bRaise').addEventListener('click', onRaise);
@@ -673,17 +692,25 @@ function bind() {
     if (act === 'trainstop') PTUI.stopTraining();
     else if (act === 'showrange' && S.analysis) { PTUI.lastRange = S.analysis.a; location.hash = '#ranges/aktuell'; }
     else if (act === 'legacydl' && S.legacyBackup) download(S.legacyBackup.name, S.legacyBackup.text);
-    else if (act === 'swupdate' && S.swWaiting) { if (S.hand && !S.hand.done) { toast('Das Update wird nach dieser Hand eingespielt.'); S.updateAfterHand = true; return; } S.swWaiting.postMessage({ type: 'SKIP_WAITING' }); }
+    else if (act === 'swupdate' && S.swWaiting) { if (S.hand && !S.hand.done) { toast('Bitte erst die laufende Hand beenden, dann aktualisieren.'); return; } S.swUpdating = true; S.swWaiting.postMessage({ type: 'SKIP_WAITING' }); }
     else if (act === 'dismiss') { S.notes[b.getAttribute('data-note')] = ''; renderNotice(); }
   });
   window.addEventListener('hashchange', route);
+  document.addEventListener('click', function (e) {
+    var g = e.target && e.target.closest && e.target.closest('[data-goto]');
+    if (!g) return;
+    e.preventDefault();
+    var t = $(g.getAttribute('data-goto')); if (t) { t.scrollIntoView({ behavior: 'smooth', block: 'start' }); t.setAttribute('tabindex', '-1'); t.focus({ preventScroll: true }); }
+  });
   document.addEventListener('keydown', function (e) {
     if (e.ctrlKey || e.metaKey || e.altKey) return;
     if (!$('modal').hidden) { if (e.key === 'Escape') closeModal(); return; }
     if (S.view !== 'tisch') return;
     var tg = e.target, tag = tg && tg.tagName;
     if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') { if (tg.id === 'amt' && e.key === 'Enter') { e.preventDefault(); onRaise(); } return; }
-    if (tag === 'BUTTON' && (e.key === 'Enter' || e.key === ' ')) return;
+    // Auf fokussierten Links, Schaltflächen und aufklappbaren Elementen gelten Enter und Leertaste dem Element selbst
+    if ((e.key === 'Enter' || e.key === ' ') && tg && tg.closest && tg.closest('a, button, summary, [role="button"], [role="tab"], [tabindex="0"]')) return;
+    if (tg && tg.closest && tg.closest('nav, header, footer, .modal') && e.key.length === 1) return;
     var k = e.key.toLowerCase();
     if (k === 'f') { if (!$('bFold').disabled) $('bFold').click(); }
     else if (k === 'c' || k === 'k') { if (!$('bCall').disabled) $('bCall').click(); }
@@ -726,6 +753,7 @@ function registerSW() {
   navigator.serviceWorker.register('sw.js', { scope: './' }).then(function (reg) {
     function waiting(w) { S.swWaiting = w; S.notes.update = { html: '<span>Eine neue Version des PokerTrainers ist bereit.</span><button class="btn" type="button" data-act="swupdate">Jetzt aktualisieren</button>' }; renderNotice(); }
     if (reg.waiting && navigator.serviceWorker.controller) waiting(reg.waiting);
+    S.hadController = !!navigator.serviceWorker.controller;
     reg.addEventListener('updatefound', function () {
       var nw = reg.installing; if (!nw) return;
       nw.addEventListener('statechange', function () { if (nw.state === 'installed' && navigator.serviceWorker.controller) waiting(nw); });
@@ -733,7 +761,8 @@ function registerSW() {
     setInterval(function () { reg.update().catch(function () {}); }, 60 * 60 * 1000);
   }).catch(function () { /* offline-fähig nur ohne SW */ });
   var reloading = false;
-  navigator.serviceWorker.addEventListener('controllerchange', function () { if (reloading) return; reloading = true; persist([]).then(function () { location.reload(); }); });
+  // Neu laden nur bei einem vom Nutzer bestätigten Update, nicht bei der ersten Installation
+  navigator.serviceWorker.addEventListener('controllerchange', function () { if (reloading || !S.swUpdating) return; reloading = true; persist([]).then(function () { location.reload(); }); });
 }
 
 // ---------- Start ----------
@@ -742,6 +771,12 @@ function legacyBackupText(list) {
   return '{"format":"PokerTrainer-DB","version":1,"exported":' + JSON.stringify(new Date().toISOString()) + ',"count":' + list.length + ',"checksum":"' + U.fnv1a(body) + '","opponents":' + body + '}\n';
 }
 function boot() {
+  S.dlReady = new Promise(function (res) {
+    try {
+      if (window.claude && typeof window.claude.use === 'function') { window.claude.use('downloads').then(function (d) { S.claudeDl = d || null; res(); }, function () { S.claudeDl = null; res(); }); setTimeout(res, 1500); }
+      else res();
+    } catch (e) { S.claudeDl = null; res(); }
+  });
   bind();
   $('verText').textContent = PT.VERSION;
   initSpeech();
@@ -758,7 +793,10 @@ function boot() {
     if (S.db.skipped) S.notes.storage = S.db.skipped + ' beschädigte Gegner-Einträge im Speicher wurden übersprungen.';
     if (meta && meta.settings) Object.keys(DEFAULTS).forEach(function (k) { if (meta.settings[k] !== undefined && typeof meta.settings[k] === typeof DEFAULTS[k] || (k === 'seed')) S.settings[k] = meta.settings[k]; });
     if (meta && meta.heroRec && !PT.stats.validRecord(meta.heroRec)) S.heroRec = PT.stats.cloneRecord(meta.heroRec);
-    if (learn && learn.v && !PT.training.validLearning(learn.v)) S.learning = learn.v;
+    if (learn && learn.v) {
+      if (!PT.training.validLearning(learn.v)) S.learning = learn.v;
+      else { var rep = PT.training.repairLearning(learn.v); if (rep) { S.learning = rep.learning; console.warn('Lerndaten repariert, entfernte Einträge: ' + rep.removed); } }
+    }
     S.prof = PT.training.profile(S.learning);
     if (meta && PT.session.validTable(meta.table)) S.table = meta.table;
     return Store.findLegacy().then(function (legacy) {
@@ -767,7 +805,7 @@ function boot() {
         var text = legacyBackupText(list), name = 'Sicherung_PokerTrainer_' + today() + '_Datenbank.json';
         S.legacyBackup = { name: name, text: text };
         Store.put('backup', { k: 'legacy-' + today(), name: name, text: text, ts: Date.now() });
-        download(name, text);
+        S.dlReady.then(function () { download(name, text); });
         var old = PT.stats.dbFromList(list), n = 0;
         Object.keys(old.opps).forEach(function (id) { if (!S.db.opps[id]) { S.db.opps[id] = old.opps[id]; n++; } });
         if (!S.table) S.table = PT.session.migrateTable(legacy.meta && legacy.meta.table, S.db);
