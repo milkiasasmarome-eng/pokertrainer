@@ -7,7 +7,7 @@ var $ = function (id) { return document.getElementById(id); }, esc = U.esc, fmt 
 var N = 6, MAX_HANDS = 3000;
 var SPEED = { langsam: 1100, normal: 650, schnell: 220, sehrschnell: 70 };
 var DEFAULTS = { tipMode: 'vorher', smode: 'exploit', depth: 'auto', level: 'standard', speech: true, speechRate: 1.05, speed: 'normal', theme: 'auto',
-  advanced: false, fourColor: false, recordHands: true, seed: null };
+  advanced: false, fourColor: false, recordHands: true, seed: null, shortcuts: true };
 var S = PTUI.S = {
   settings: U.deepClone(DEFAULTS), db: PT.stats.newDb(), heroRec: PT.stats.newRecord('hero', 'Du'), table: null, hand: null, finished: null,
   learning: PT.training.newLearning(), prof: null, decisionNo: 0, cur: null, analysis: null, verdict: null, handDecisions: [], pendingGrades: [],
@@ -259,14 +259,18 @@ function renderSeats() {
     var d = seatData(i), me = i === 0, act = h && !h.done && !S.reveal && h.toAct === i;
     var win = h && h.done && !S.reveal && h.result && h.result.net[i] > 0;
     var cls = 'seat s' + i + (me ? ' me' : '') + (d.folded ? ' folded' : '') + (act ? ' act' : '') + (win ? ' win' : '');
-    var inner = '<span class="r1"><span class="nm">' + esc(d.name) + '</span><span class="pos">' + esc(d.pos || '') + '</span></span>' +
-      '<span class="stk">' + fmt(d.stack) + ' <small>' + U.fmtBB(d.stack, bb) + '</small>' + (d.allIn && h && !h.done ? ' · All-in' : '') + '</span>';
+    // Sichtbare Kurzform; für Screenreader ausgeschriebene Fassung mit Kommas (Name, Position, Stack, Werte)
+    var inner = '<span class="r1"><span class="nm">' + esc(d.name) + '</span><span class="sr">, </span><span class="pos">' + esc(d.pos || '') + '</span></span>' +
+      '<span class="stk"><span class="sr">, Stack </span>' + fmt(d.stack) + ' <small>' + U.fmtBB(d.stack, bb) + '</small>' + (d.allIn && h && !h.done ? ' · All-in' : '') + '</span>';
     if (me) {
       inner += '<span class="hud2">' + (S.training ? 'Training: ' + esc(S.training.name) : 'Session ' + U.fmtSigned(S.table ? PT.session.heroNet(S.table) : 0)) + '</span>';
     } else {
       var pr = PT.stats.profile(S.db.opps[d.id]);
-      inner += '<span class="hud" title="VPIP / PFR / 3-Bet in Prozent">' + '<span class="lbl">VPIP/PFR/3B </span><b>' + v(pr.vpip) + '/' + v(pr.pfr) + '/' + v(pr.threeBet) + '</b></span>' +
-        '<span class="hud2">' + pr.hands + ' H<span class="bel"> · ' + esc(pr.bel) + '</span> · <span class="typ">' + esc(pr.typ) + '</span></span>';
+      var pv = function (x) { return x == null ? 'unbekannt' : x + ' %'; };
+      inner += '<span class="hud" title="VPIP / PFR / 3-Bet in Prozent"><span aria-hidden="true"><span class="lbl">VPIP/PFR/3B </span><b>' + v(pr.vpip) + '/' + v(pr.pfr) + '/' + v(pr.threeBet) + '</b></span>' +
+        '<span class="sr">, VPIP ' + pv(pr.vpip) + ', PFR ' + pv(pr.pfr) + ', 3-Bet ' + pv(pr.threeBet) + '</span></span>' +
+        '<span class="hud2"><span aria-hidden="true">' + pr.hands + ' H<span class="bel"> · ' + esc(pr.bel) + '</span> · <span class="typ">' + esc(pr.typ) + '</span></span>' +
+        '<span class="sr">, ' + pr.hands + (pr.hands === 1 ? ' Hand' : ' Hände') + ', Belastbarkeit ' + esc(pr.bel) + ', Spielertyp ' + esc(pr.typ) + '</span></span>';
     }
     var hole = '';
     if (h && d.cards.length && !d.folded) {
@@ -276,11 +280,13 @@ function renderSeats() {
     }
     var marks = '';
     if (h) {
-      if (h.button === i) marks += '<span class="chipmark d" title="Dealer-Button">D</span>';
-      else if (h.sbSeat() === i) marks += '<span class="chipmark sb" title="Small Blind">SB</span>';
-      else if (h.bbSeat() === i) marks += '<span class="chipmark bb" title="Big Blind">BB</span>';
+      // Marker nur visuell: Position steht bereits im Namen des Platzes; Dealer-Button für Screenreader ausgeschrieben
+      if (h.button === i) marks += '<span class="chipmark d" title="Dealer-Button" aria-hidden="true">D</span><span class="sr">, Dealer-Button</span>';
+      else if (h.sbSeat() === i) marks += '<span class="chipmark sb" title="Small Blind" aria-hidden="true">SB</span>';
+      else if (h.bbSeat() === i) marks += '<span class="chipmark bb" title="Big Blind" aria-hidden="true">BB</span>';
     }
-    var extra = '<span class="hole">' + hole + '</span>' + marks + '<span class="lastact">' + esc(lastActLabel(h, i)) + '</span>';
+    var la = lastActLabel(h, i);
+    var extra = '<span class="hole">' + (hole ? '<span class="sr">, </span>' + hole : '') + '</span>' + marks + (la ? '<span class="sr">, letzte Aktion </span>' : '') + '<span class="lastact">' + esc(la) + '</span>';
     // Zugänglicher Name = sichtbarer Inhalt (Name, Position, Stack, Werte, Karten); der Zusatz nennt die Funktion
     var plate = me ? '<div class="plate" role="group" aria-label="Dein Platz">' + inner + extra + '</div>'
       : '<button class="plate" type="button" data-opp="' + esc(d.id) + '">' + inner + extra + '<span class="sr">' + (act ? ', ist am Zug' : '') + ', alle Werte anzeigen</span></button>';
@@ -795,7 +801,7 @@ function bind() {
     else if (act === 'legacydl' && S.legacyBackup) download(S.legacyBackup.name, S.legacyBackup.text);
     else if (act === 'swupdate') swUpdate();
     else if (act === 'reload' || act === 'takeover') { if (S.hand && !S.hand.done && !S.readonly) toast('Die laufende Hand wird nach dem Neuladen exakt fortgesetzt.'); persist([]); flushWrites(3000).then(function () { location.reload(); }); }
-    else if (act === 'normalstart') location.href = window.PTRecovery ? window.PTRecovery.normalUrl() : location.pathname + '#tisch';
+    else if (act === 'normalstart') { if (window.PTRecovery) window.PTRecovery.go(window.PTRecovery.normalUrl()); else location.href = location.pathname + '#tisch'; }
     else if (act === 'rawbackup' && window.PTRecovery) window.PTRecovery.backup().then(function (n) { toast('Rohsicherung „' + n + '“ heruntergeladen.'); }, function (e2) { toast('Rohsicherung fehlgeschlagen: ' + ((e2 && e2.message) || e2)); });
     else if (act === 'dismiss') { S.notes[b.getAttribute('data-note')] = ''; renderNotice(); }
   });
@@ -812,6 +818,8 @@ function bind() {
     if (!$('modal').hidden) { if (e.key === 'Escape') { e.preventDefault(); closeModal(); } else if (e.key === 'Tab') trapFocus(e, $('modal')); return; }
     if (S.view !== 'tisch') return;
     var tg = e.target, tag = tg && tg.tagName;
+    // WCAG 2.1.4: Kürzel aus einem Zeichen lassen sich abschalten (Einstellungen → Tastenkürzel); Enter im Betragsfeld bleibt
+    if (!S.settings.shortcuts && !(tg && tg.id === 'amt' && e.key === 'Enter')) return;
     if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') { if (tg.id === 'amt' && e.key === 'Enter') { e.preventDefault(); onRaise(); } return; }
     // Auf fokussierten Links, Schaltflächen und aufklappbaren Elementen gelten Enter und Leertaste dem Element selbst
     if ((e.key === 'Enter' || e.key === ' ') && tg && tg.closest && tg.closest('a, button, summary, [role="button"], [role="tab"], [tabindex="0"]')) return;

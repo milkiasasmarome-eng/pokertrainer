@@ -31,7 +31,8 @@ sw.js (Service Worker): versionierter Cache aller Dateien, Offline-Betrieb, Upda
 | ev | Equity je Kombination, Reaktionsmodelle, EV je Aktion und Größe, Pot Odds | `comboEquities`, `respond`, `evaluateAction` |
 | cfr | River-Modellspiel, CFR+, Exploitability | `solveMatrix`, `solveRiver` |
 | coach | Analyse beider Strategiemodi, Klassifikation, Erklärungen, Bewertung, Fehlerkategorien, Glossar | `analyze`, `grade` |
-| training | Handdatensätze, Lernprofil, Ziele, Spaced Repetition, Szenarien, Quiz, Textexport | `generate`, `profile`, `quiz` |
+| training | Handdatensätze, Entscheidungsdatensätze, strenge Prüfung, Lernprofil, Ziele, Spaced Repetition, Szenarien, Quiz, Textexport | `makeDecision`, `validHand`, `generate`, `profile`, `quiz` |
+| export | Benchmark-Export je Entscheidung (Schema 1), Nachrechnung, Import einschließlich Rohsicherung | `PT.benchmark.build`, `validate`, `coachInput`, `PT.dataport.parseImport` |
 | speech | Steuerung der Browser-Sprachausgabe | `Speech`, `toSpeech` |
 
 Abhängigkeiten laufen nur in Ladereihenfolge (oben nach unten). Kein Modul greift auf DOM oder Netzwerk zu.
@@ -42,7 +43,7 @@ Abhängigkeiten laufen nur in Ladereihenfolge (oben nach unten). Kein Modul grei
 2. Ist der Held am Zug, baut `app.onHeroTurn` die öffentliche Sicht (`bots.publicView(hand, 0)`, enthält nur die eigenen Karten) und eine Momentaufnahme der Gegnerwerte. Der Coach erhält einen eigenen Seed aus Tisch-Seed, Handnummer und Aktionsindex.
 3. Der Worker führt `coach.analyze` aus: Ranges beider Modi → gemeinsame Equity je Kombination → Equity, Unsicherheit → Kandidaten → EV je Aktion → Klassifikation → Texte. Obergrenze: 5.000 Simulationen (Schnell/Standard).
 4. Nach der Aktion bewertet `coach.grade` die gewählte Aktion; ist die gewählte Größe nicht unter den Kandidaten, wird mit derselben Momentaufnahme und demselben Seed nachgerechnet.
-5. Entscheidung → Lernprofil (`training.addDecision`), ggf. Wiederholungsstapel; Handende → Datenbank (`stats.dbApplyHand`, nur öffentliche Informationen), Handhistorie (`training.makeHandRecord`).
+5. Entscheidung → Entscheidungsdatensatz (`training.makeDecision`, inkl. Benchmark-Zusatzfeldern `x`), Lernprofil (`training.addDecision`), ggf. Wiederholungsstapel; Handende → Datenbank (`stats.dbApplyHand`, nur öffentliche Informationen), Handhistorie (`training.makeHandRecord`).
 
 ## Persistenz
 
@@ -60,3 +61,70 @@ Migration: Daten aus Entwurf 2 (`pokertrainer-v2` in IndexedDB oder `pokertraine
 ## Veröffentlichung
 
 Push auf `main` → GitHub Actions (`.github/workflows/pages.yml`): Build-Prüfung, Schnelltests → bei Erfolg Kopie der Website auf den Branch `gh-pages` → GitHub Pages veröffentlicht. Frühere Versionen: Historie von `main` (Wiederherstellung über `git revert`) und `gh-pages`.
+
+## Start und Wiederherstellung (seit 2.1)
+
+Eine Aufnahme zeigte den Trainer dauerhaft bei „Lade …“. Ursache waren Startschritte ohne Zeitlimit: `indexedDB.open` für die
+eigene Datenbank und für die Suche nach Daten aus Entwurf 2 (`onblocked` fehlte), Web Locks und das Lesen der Daten. Bekannt ist
+z. B. ein WebKit-Fehler, bei dem `indexedDB.open` beim ersten Laden nie antwortet. Seit 2.1 gilt:
+
+```
+assets/js/recovery.js (erstes Skript, ohne Engine)        assets/js/ui/app.js boot()
+  Skript-Ladefehler (Capture) ──▶ Fehleranzeige            Tab-Sperre          3 s  → Rückfall BroadcastChannel
+  nach 4 s: „dauert länger als üblich“                     Store.init          6 s  → nur Arbeitsspeicher + Hinweis
+  nach 20 s nicht bereit ──▶ Fehleranzeige                 Daten lesen         8 s  → Fehleranzeige (weiterspielen ohne Speicherung)
+  PTRecovery.ready() ◀──────────────────────────────────── Migrationssuche     3–5 s → übersprungen
+                                                           Prüfen, Wiederaufnahme (try/catch, Tisch-Kopie) → bereit
+```
+
+- **Fehleranzeige** (`role="alertdialog"`, Fokusfalle): „Neu laden“, „Weiter warten“ (bei Zeitüberschreitung), „Ohne gespeicherte
+  Daten starten“ (`?start=sicher`) bzw. „Ohne Speicherung weiterspielen“, und zweistufig „1. Sicherung herunterladen“ →
+  Bestätigung „Ich habe die Sicherungsdatei gespeichert“ → „2. Lokale Daten zurücksetzen“. Ohne erfolgreiche Sicherung ist
+  Zurücksetzen nicht möglich.
+- **Rohsicherung** (`PokerTrainer-Rohsicherung`, Version 1): alle Einträge aller Speicherbereiche und `pokertrainer*`-Schlüssel des
+  localStorage unverändert (nicht endliche Zahlen als Text). Einlesen über „Sicherung importieren“: `PT.dataport.parseImport`
+  übernimmt gültige Einträge (dieselben Prüfungen wie beim Laden), zählt und überspringt beschädigte.
+- **Abgesicherter Start** `?start=sicher`: Speicher nur im Arbeitsspeicher, gespeicherte Daten werden weder gelesen noch verändert.
+- **Speicherwahl:** IndexedDB; fehlt sie oder ist sie gesperrt (`InvalidStateError`, `SecurityError`, privater Modus) → localStorage
+  mit Hinweis; antwortet sie nicht, ist sie blockiert oder fehlerhaft (`VersionError`, fehlende Speicherbereiche) → nur
+  Arbeitsspeicher, damit keine zweite, abweichende Datenhaltung im localStorage entsteht.
+- **Beschädigte lokale Daten** werden beim Start einzeln geprüft (Einstellungen mit Wertebereichen, Tisch, laufende Hand, eigene
+  Werte, Gegner, Lerndaten mit Reparatur, Hände beim Anzeigen); Ungültiges wird übersprungen und im Hinweis genannt.
+- **Mehrere Fenster** (Browser-Tab und installierte PWA teilen denselben Speicher): Der zweite ist schreibgeschützt (auch Import,
+  Löschen, neue Session) und bietet „Hier weiterspielen“ an, sobald der schreibende geschlossen wurde (wartende Web-Lock-Anfrage).
+- **Updates:** „Jetzt aktualisieren“ ist während einer Hand gesperrt; vor dem Neuladen werden alle offenen Schreibvorgänge
+  abgeschlossen (`flushWrites`, auch die Speicherung der zuletzt beendeten Hand). Andere Tabs erhalten den Hinweis, neu zu laden.
+
+## Datenprüfung und Sicherheit (seit 2.1)
+
+- Alle Daten aus Dateien *und* aus dem lokalen Speicher gelten als nicht vertrauenswürdig. Handdatensätze werden vor jeder Anzeige,
+  Sicherung und jedem Export mit `PT.training.validHand` geprüft (`PTUI.loadHands`); jedes Feld ist auf Typ und Wertebereich
+  geprüft (endliche Zahlen, ganzzahlige Beträge, begrenzte Texte, bekannte Schlüssel). Textausgaben laufen über `esc()`.
+- Importdateien werden im Web Worker geprüft (`PTUI.offThread('import', …)`); Dateien über 60 MB werden vor dem Lesen abgelehnt.
+  Gemessen: 23 MB Sicherung in 1,3 s, längste Blockade der Oberfläche 0,3 s.
+- Vor jedem Import und vor „Alle Daten löschen“ wird eine Sicherung heruntergeladen; enthält der Speicher beschädigte Einträge,
+  zusätzlich die Rohsicherung. Behoben: Der Import einer vollständigen Sicherung mit Lerndaten brach in 2.0.1 mit einem
+  `ReferenceError` ab; die Markierung „Migration erledigt“ ging beim ersten Speichern verloren.
+- Keine externen Verbindungen: CSP (`default-src 'self'`, keine Inline-Skripte; Einzeldatei `connect-src 'none'`), statische Prüfung
+  des App-Codes auf Netzwerk-APIs (`tests/unit/daten-sicherheit.js`) und Netzwerkprotokoll aller Seiten in den Browsertests.
+
+## Benchmark-Export (seit 2.1)
+
+Je Entscheidung ein Datensatz mit getrennten Abschnitten `knownAtDecision` (Spielzustand zum Entscheidungszeitpunkt, `publicView`)
+und `revealedLater` (spätere Informationen). Format, Felder, Datenschutz und Nachrechnung: [BENCHMARK_EXPORT.md](BENCHMARK_EXPORT.md).
+
+## Tests und Veröffentlichung (seit 2.1)
+
+| Prüfung | Werkzeug | im Workflow |
+|---|---|---|
+| Build zweimal, gleiche Ausgabe, eingecheckter Stand aktuell | `tools/check-build.js` | Pflicht |
+| Website, Worker, sw.js, Offline-Datei, Manifest, CHANGELOG, README/Doku: gleiche Version | `tools/check-version.js` (auch in `tests/run.js`) | Pflicht |
+| Schnelle Regressionstests | `node tests/run.js --quick` | Pflicht |
+| Vollständige Suite mit mathematischen Referenztests | `node tests/run.js` | Pflicht |
+| Browsertests (Grundfunktionen, Start/Wiederherstellung, Sicherheit/Daten, Barrierefreiheit, Netzwerk) | `node tests/e2e.js` mit Playwright/Chromium, axe-core aus `tests/package.json` | Pflicht |
+| Live-Smoke-Test nach der Veröffentlichung (Version im HTML, sw.js, Offline-Datei, Start im Browser; Wiederholung bis 10 min) | `node tests/smoke-live.js --browser` | nach dem Deployment |
+| Langläufer | `node tests/long.js` | getrennt, `langlauf.yml` (manuell) |
+
+Die Veröffentlichung (`deploy`) hängt von allen Pflichtjobs ab. Ergebnisdateien, Screenshots und Accessibility-Bäume werden als
+Artefakte hochgeladen. Testwerkzeuge liegen nur in `tests/` (`npm ci --prefix tests`) und werden nicht veröffentlicht.
+

@@ -111,7 +111,13 @@ R.reset = function () {
 };
 function safeUrl() { return location.pathname + '?start=sicher' + (location.hash || '#tisch'); }
 function normalUrl() { return location.pathname + (location.hash || '#tisch'); }
-R.safeUrl = safeUrl; R.normalUrl = normalUrl;
+/** Navigiert neu; unterscheidet sich die Adresse nur im #-Teil, wird ausdrücklich neu geladen (sonst kein Neustart). */
+function go(url) {
+  var a = document.createElement('a'); a.href = url;
+  if (a.pathname === location.pathname && a.search === location.search) { if (a.hash !== location.hash) location.hash = a.hash; location.reload(); }
+  else location.href = url;
+}
+R.safeUrl = safeUrl; R.normalUrl = normalUrl; R.go = go;
 
 // ---------- Anzeige ----------
 function setInert(on) { var app = document.getElementById('app'); if (app) { if (on) app.setAttribute('inert', ''); else app.removeAttribute('inert'); } }
@@ -145,7 +151,7 @@ R.fail = function (reason, detail, opts) {
   btn('recReload', 'Neu laden', 'primary2', function () { location.reload(); });
   if (reason === 'timeout') btn('recWait', 'Weiter warten', '', function () { R.hide(); arm(SLOW_MS, FAIL_MS); });
   if (opts.canContinue) btn('recContinue', 'Ohne Speicherung weiterspielen', '', function () { R.hide(); });
-  else btn('recSafe', 'Ohne gespeicherte Daten starten', '', function () { location.href = safeUrl(); });
+  else btn('recSafe', 'Ohne gespeicherte Daten starten', '', function () { go(safeUrl()); });
   sheet.appendChild(row);
   // Zweistufig: erst Sicherung, dann (nach Bestätigung) zurücksetzen
   var fs = el('div', { class: 'box recreset' });
@@ -170,7 +176,7 @@ R.fail = function (reason, detail, opts) {
   bR.addEventListener('click', function () {
     if (!(chk.checked && R.backupDone)) return;
     bR.disabled = true; status.textContent = 'Lokale Daten werden zurückgesetzt …';
-    R.reset().then(function () { status.textContent = 'Zurückgesetzt. Der Trainer startet neu.'; setTimeout(function () { location.href = normalUrl(); }, 300); },
+    R.reset().then(function () { status.textContent = 'Zurückgesetzt. Der Trainer startet neu.'; setTimeout(function () { go(normalUrl()); }, 300); },
       function (e) { bR.disabled = false; status.textContent = String(e && e.message || e); });
   });
   r2.appendChild(bB); r2.appendChild(lab); r2.appendChild(bR);

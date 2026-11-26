@@ -197,7 +197,8 @@ async function playHand(page, policy) {
     const before = await page.evaluate(() => JSON.stringify(window.PT.stats.dbList(window.PTUI.S.db)));
     const bad = path.join(OUT, 'kaputt.json'); fs.writeFileSync(bad, txt.slice(0, Math.floor(txt.length / 2)));
     await page.click('[data-g="import"]'); await page.setInputFiles('#fileIn', bad);
-    await page.waitForSelector('#modal:not([hidden])');
+    // Seit 2.1 wird die Datei im Web Worker geprüft („Datei wird geprüft …“), danach erscheint das Ergebnis
+    await page.waitForFunction(() => /abgelehnt|bestätigen/.test(document.getElementById('modalH').textContent), null, { timeout: 15000 });
     ok(/abgelehnt/.test(await page.textContent('#modalH')), 'beschädigte Datei abgelehnt');
     await page.keyboard.press('Escape');
     ok(before === await page.evaluate(() => JSON.stringify(window.PT.stats.dbList(window.PTUI.S.db))), 'Datenbank unverändert');
@@ -236,7 +237,7 @@ async function playHand(page, policy) {
     const malPath = path.join(OUT, 'xss-sicherung.json'); fs.writeFileSync(malPath, mal);
     await page.evaluate(() => { location.hash = '#gegner'; }); await page.waitForTimeout(200);
     await page.click('[data-g="import"]'); await page.setInputFiles('#fileIn', malPath);
-    await page.waitForSelector('#modal:not([hidden])');
+    await page.waitForFunction(() => /abgelehnt|bestätigen/.test(document.getElementById('modalH').textContent), null, { timeout: 15000 });
     ok(/abgelehnt/.test(await page.textContent('#modalH')), 'Sicherung abgelehnt');
     await page.keyboard.press('Escape');
     ok(!/XSS/.test(await page.title()), 'kein Skript ausgeführt');
@@ -343,7 +344,7 @@ async function playHand(page, policy) {
   });
 
   await test('Darstellung auf Smartphone, Tablet und Desktop (kein horizontales Scrollen)', async () => {
-    for (const [name, vp, mob] of [['smartphone', { width: 390, height: 844 }, true], ['smartphone-klein', { width: 360, height: 740 }, true], ['tablet', { width: 820, height: 1180 }, true], ['desktop', { width: 1440, height: 900 }, false]]) {
+    for (const [name, vp, mob] of [['smartphone', { width: 390, height: 844 }, true], ['smartphone-klein', { width: 360, height: 740 }, true], ['smartphone-320', { width: 320, height: 640 }, true], ['tablet', { width: 820, height: 1180 }, true], ['desktop', { width: 1440, height: 900 }, false]]) {
       const c = await browser.newContext({ viewport: vp, isMobile: mob, hasTouch: mob }), p = await c.newPage(); watch(p, name);
       await p.goto(BASE + 'index.html#tisch'); await p.waitForFunction(() => window.PTUI && window.PTUI.S.ready);
       await p.click('#bNext'); await waitTurnOrNext(p); await p.waitForTimeout(700);

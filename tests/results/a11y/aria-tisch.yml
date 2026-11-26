@@ -1,0 +1,109 @@
+- link "Zum Inhalt springen":
+  - /url: "#main"
+- banner:
+  - heading "PokerTrainer 2.0" [level=1]
+  - text: No-Limit Hold'em · 6-max · Spielgeld Hand 2 Gegnerwechsel in 29 Händen Ergebnis −1,00 0,50/1,00
+  - button "Erweitert"
+  - button "Darstellung wechseln"
+- navigation "Bereiche":
+  - link "Tisch":
+    - /url: "#tisch"
+  - link "Training":
+    - /url: "#training"
+  - link "Handhistorie":
+    - /url: "#analyse"
+  - link "Ranges":
+    - /url: "#ranges"
+  - link "Gegner":
+    - /url: "#gegner"
+  - link "Fortschritt":
+    - /url: "#fortschritt"
+  - link "Einstellungen":
+    - /url: "#einstellungen"
+  - link "Hilfe":
+    - /url: "#hilfe"
+- main:
+  - region "Pokertisch":
+    - text: PokerTrainer Pot 1,50
+    - group "Board"
+    - group "Dein Platz":
+      - text: Du , UTG , Stack 99,00 99 BB Session −1,00 ,
+      - img "Sieben Karo"
+      - img "Neun Kreuz"
+    - button "Carlo , HJ , Stack 100,00 100 BB , VPIP 0 %, PFR 0 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt , verdeckte Karte verdeckte Karte , alle Werte anzeigen":
+      - text: Carlo , HJ , Stack 100,00 100 BB , VPIP 0 %, PFR 0 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt ,
+      - img "verdeckte Karte"
+      - img "verdeckte Karte"
+      - text: ", alle Werte anzeigen"
+    - button "Tara , CO , Stack 100,00 100 BB , VPIP 0 %, PFR 0 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt , verdeckte Karte verdeckte Karte , alle Werte anzeigen":
+      - text: Tara , CO , Stack 100,00 100 BB , VPIP 0 %, PFR 0 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt ,
+      - img "verdeckte Karte"
+      - img "verdeckte Karte"
+      - text: ", alle Werte anzeigen"
+    - button "Oskar , BTN , Stack 99,50 100 BB , VPIP 0 %, PFR 0 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt , verdeckte Karte verdeckte Karte , Dealer-Button , alle Werte anzeigen":
+      - text: Oskar , BTN , Stack 99,50 100 BB , VPIP 0 %, PFR 0 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt ,
+      - img "verdeckte Karte"
+      - img "verdeckte Karte"
+      - text: ", Dealer-Button , alle Werte anzeigen"
+    - button "Enno , SB , Stack 101,00 101 BB , VPIP 0 %, PFR 0 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt , verdeckte Karte verdeckte Karte , letzte Aktion SB , alle Werte anzeigen":
+      - text: Enno , SB , Stack 101,00 101 BB , VPIP 0 %, PFR 0 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt ,
+      - img "verdeckte Karte"
+      - img "verdeckte Karte"
+      - text: ", letzte Aktion SB , alle Werte anzeigen"
+    - button "Kalle , BB , Stack 99,00 99 BB , VPIP 0 %, PFR 0 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt , verdeckte Karte verdeckte Karte , letzte Aktion BB , alle Werte anzeigen":
+      - text: Kalle , BB , Stack 99,00 99 BB , VPIP 0 %, PFR 0 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt ,
+      - img "verdeckte Karte"
+      - img "verdeckte Karte"
+      - text: ", letzte Aktion BB , alle Werte anzeigen"
+    - text: 0,50 1,00
+    - button "Fold"
+    - button "Call 1,00"
+    - button "Raise auf"
+    - button "Min (2,00)"
+    - button "2 BB (2,00)"
+    - button "2,5 BB (2,50)"
+    - button "3 BB (3,00)"
+    - button "All-in (99,00)"
+    - slider "Betrag wählen": "0"
+    - text: Betrag
+    - textbox "Betrag (Raise auf)": 2,00
+    - button "Nächste Hand" [disabled]
+    - alert
+    - complementary:
+      - region "Coach":
+        - heading "Coach" [level=2]
+        - group "Tipp-Modus":
+          - button "vorher" [pressed]
+          - button "nachher"
+          - button "aus"
+        - group "Strategiemodus":
+          - button "Exploitativ" [pressed]
+          - button "Gleichgewichtsnah"
+        - text: Tiefe
+        - combobox "Tiefe":
+          - option "automatisch" [selected]
+          - option "Einsteiger"
+          - option "Fortgeschritten"
+          - option "Experte"
+        - text: "Empfehlung: Fold Klar bevorzugt"
+        - paragraph: "Fold: 97o gehört laut Open-Raise-Chart UTG nicht zu den spielbaren Händen. Preflop folgt der Coach hier dem Faustregel-Chart (Open-Raise-Chart UTG); das vereinfachte EV-Modell sähe Open 2 BB um 0,0 BB vorn, aber nur wegen Fold-Annahmen, die nicht durch Gegnerwerte belegt sind. 97o liegt auf Rang 109 von 169 Starthandklassen."
+        - text: Equity 36 % ± 3,0 % Pot 1,50 Eff. Stack 99 BB
+        - group: EV-Vergleich und Annahmen
+        - paragraph: Faustregel, kein Solver-Ergebnis
+        - checkbox "Sprachausgabe" [checked]
+        - text: Sprachausgabe
+        - button "Vorlesen" [disabled]
+        - button "Tiefenanalyse"
+        - text: "Sprache: Stimme wird gesucht …"
+      - region "Handverlauf":
+        - heading "Handverlauf" [level=2]
+        - list:
+          - listitem: "Hand #2 · Button: Oskar"
+          - listitem: Enno postet Small Blind 0,50
+          - listitem: Kalle postet Big Blind 1,00
+- contentinfo:
+  - text: PokerTrainer 2.0.1 · nur Spielgeld, kein Glücksspiel · Daten bleiben in deinem Browser
+  - link "Datenschutz & Rechtliches":
+    - /url: "#hilfe/datenschutz"
+- status
+- status

@@ -1,0 +1,175 @@
+- dialog "Carlo":
+  - heading "Carlo" [level=2]
+  - button "Schließen": ×
+  - text: am Tisch (aktiv) Hände 2 Belastbarkeit unsicher Spielertyp unbekannt AF unbekannt zuletzt gesehen 26.11.26, 22:00
+  - table:
+    - rowgroup:
+      - row "Wert Rohwert Zähler / Nenner 95-%-Intervall geglättet":
+        - columnheader "Wert"
+        - columnheader "Rohwert"
+        - columnheader "Zähler / Nenner"
+        - columnheader "95-%-Intervall"
+        - columnheader "geglättet"
+    - rowgroup:
+      - row "VPIP 0 % 0 / 2 0–66 % 25 %":
+        - cell "VPIP":
+          - button "VPIP"
+        - cell "0 %"
+        - cell "0 / 2"
+        - cell "0–66 %"
+        - cell "25 %"
+      - row "PFR 0 % 0 / 2 0–66 % 18 %":
+        - cell "PFR":
+          - button "PFR"
+        - cell "0 %"
+        - cell "0 / 2"
+        - cell "0–66 %"
+        - cell "18 %"
+      - row "3-Bet unbekannt 0 / 0 – 8 %":
+        - cell "3-Bet":
+          - button "3-Bet"
+        - cell "unbekannt"
+        - cell "0 / 0"
+        - cell "–"
+        - cell "8 %"
+      - row "4-Bet unbekannt 0 / 0 – 6 %":
+        - cell "4-Bet":
+          - button "4-Bet"
+        - cell "unbekannt"
+        - cell "0 / 0"
+        - cell "–"
+        - cell "6 %"
+      - row "Fold gegen 3-Bet unbekannt 0 / 0 – 55 %":
+        - cell "Fold gegen 3-Bet":
+          - button "Fold gegen 3-Bet"
+        - cell "unbekannt"
+        - cell "0 / 0"
+        - cell "–"
+        - cell "55 %"
+      - row "Fold gegen 4-Bet unbekannt 0 / 0 – 50 %":
+        - cell "Fold gegen 4-Bet":
+          - button "Fold gegen 4-Bet"
+        - cell "unbekannt"
+        - cell "0 / 0"
+        - cell "–"
+        - cell "50 %"
+      - row "Attempt to Steal unbekannt 0 / 0 – 36 %":
+        - cell "Attempt to Steal":
+          - button "Attempt to Steal"
+        - cell "unbekannt"
+        - cell "0 / 0"
+        - cell "–"
+        - cell "36 %"
+      - row "Fold gegen Steal unbekannt 0 / 0 – 60 %":
+        - cell "Fold gegen Steal":
+          - button "Fold gegen Steal"
+        - cell "unbekannt"
+        - cell "0 / 0"
+        - cell "–"
+        - cell "60 %"
+      - row "C-Bet Flop unbekannt 0 / 0 – 62 %":
+        - cell "C-Bet Flop":
+          - button "C-Bet Flop"
+        - cell "unbekannt"
+        - cell "0 / 0"
+        - cell "–"
+        - cell "62 %"
+      - row "C-Bet Turn unbekannt 0 / 0 – 50 %":
+        - cell "C-Bet Turn":
+          - button "C-Bet Turn"
+        - cell "unbekannt"
+        - cell "0 / 0"
+        - cell "–"
+        - cell "50 %"
+      - row "C-Bet River unbekannt 0 / 0 – 45 %":
+        - cell "C-Bet River":
+          - button "C-Bet River"
+        - cell "unbekannt"
+        - cell "0 / 0"
+        - cell "–"
+        - cell "45 %"
+      - row "Fold gegen C-Bet (Flop) unbekannt 0 / 0 – 44 %":
+        - cell "Fold gegen C-Bet (Flop)":
+          - button "Fold gegen C-Bet (Flop)"
+        - cell "unbekannt"
+        - cell "0 / 0"
+        - cell "–"
+        - cell "44 %"
+      - row "Fold gegen C-Bet (Turn) unbekannt 0 / 0 – 45 %":
+        - cell "Fold gegen C-Bet (Turn)":
+          - button "Fold gegen C-Bet (Turn)"
+        - cell "unbekannt"
+        - cell "0 / 0"
+        - cell "–"
+        - cell "45 %"
+      - row "Check-Raise unbekannt 0 / 0 – 8 %":
+        - cell "Check-Raise":
+          - button "Check-Raise"
+        - cell "unbekannt"
+        - cell "0 / 0"
+        - cell "–"
+        - cell "8 %"
+      - row "Aggression Frequency unbekannt 0 / 0 – 42 %":
+        - cell "Aggression Frequency":
+          - button "Aggression Frequency"
+        - cell "unbekannt"
+        - cell "0 / 0"
+        - cell "–"
+        - cell "42 %"
+      - row "WTSD unbekannt 0 / 0 – 28 %":
+        - cell "WTSD":
+          - button "WTSD"
+        - cell "unbekannt"
+        - cell "0 / 0"
+        - cell "–"
+        - cell "28 %"
+      - row "W$SD unbekannt 0 / 0 – 50 %":
+        - cell "W$SD":
+          - button "W$SD"
+        - cell "unbekannt"
+        - cell "0 / 0"
+        - cell "–"
+        - cell "50 %"
+  - paragraph: „Geglättet“ mischt die eigenen Beobachtungen mit dem Durchschnitt der Population (Beta-Prior); so nutzt der Coach die Werte. Bei kleinen Stichproben ist das Intervall breit.
+  - heading "Nach Position" [level=3]
+  - table:
+    - rowgroup:
+      - row "Position Hände VPIP PFR":
+        - columnheader "Position"
+        - columnheader "Hände"
+        - columnheader "VPIP"
+        - columnheader "PFR"
+    - rowgroup:
+      - row "UTG 0 unbekannt unbekannt":
+        - cell "UTG"
+        - cell "0"
+        - cell "unbekannt"
+        - cell "unbekannt"
+      - row "HJ 1 0 % 0 %":
+        - cell "HJ"
+        - cell "1"
+        - cell "0 %"
+        - cell "0 %"
+      - row "CO 1 0 % 0 %":
+        - cell "CO"
+        - cell "1"
+        - cell "0 %"
+        - cell "0 %"
+      - row "BTN 0 unbekannt unbekannt":
+        - cell "BTN"
+        - cell "0"
+        - cell "unbekannt"
+        - cell "unbekannt"
+      - row "SB 0 unbekannt unbekannt":
+        - cell "SB"
+        - cell "0"
+        - cell "unbekannt"
+        - cell "unbekannt"
+      - row "BB 0 unbekannt unbekannt":
+        - cell "BB"
+        - cell "0"
+        - cell "unbekannt"
+        - cell "unbekannt"
+  - heading "Aufgedeckte Blätter (bis 10, neueste zuerst)" [level=3]
+  - paragraph: Noch keine aufgedeckten Blätter.
+  - paragraph: "Alle Werte stammen nur aus dem, was am Tisch sichtbar war: Aktionen und aufgedeckte Blätter."

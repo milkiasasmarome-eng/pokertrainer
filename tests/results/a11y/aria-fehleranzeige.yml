@@ -1,0 +1,14 @@
+- alertdialog "Gespeicherte Daten konnten nicht geladen werden":
+  - heading "Gespeicherte Daten konnten nicht geladen werden" [level=2]
+  - paragraph: Beim Lesen der lokalen Daten ist ein Fehler aufgetreten. Der Trainer läuft vorerst ohne Speicherung; die gespeicherten Daten wurden nicht verändert.
+  - paragraph: "Technische Angabe: Test"
+  - paragraph: Deine Daten werden nie ohne vorherige Sicherung gelöscht.
+  - button "Neu laden"
+  - button "Ohne Speicherung weiterspielen"
+  - heading "Sicherung herunterladen und lokale Daten zurücksetzen" [level=3]
+  - paragraph: Schritt 1 lädt alle lokalen Daten unverändert als Datei herunter (auch beschädigte Einträge). Diese Datei kannst du später unter Einstellungen → Daten → „Sicherung importieren“ einlesen; gültige Einträge werden übernommen. Schritt 2 löscht danach die lokalen Daten dieses Trainers in diesem Browser.
+  - button "1. Sicherung herunterladen"
+  - checkbox "Ich habe die Sicherungsdatei gespeichert." [disabled]
+  - text: Ich habe die Sicherungsdatei gespeichert.
+  - button "2. Lokale Daten zurücksetzen" [disabled]
+  - status

@@ -1,153 +1,376 @@
 {
- "base": "http://127.0.0.1:8765/",
- "date": "2026-11-26T19:03:14.850Z",
- "passed": 19,
- "failed": 0,
+ "base": "http://127.0.0.1:8767/",
+ "date": "2026-11-26T21:00:07.990Z",
+ "passed": 42,
+ "failed": 1,
  "perf": {
-  "loadMs": 190,
-  "readyMs": 293,
-  "lcp": 112,
-  "cls": 0.0038970465333111343,
-  "dcl": 180.40000000037253,
-  "transfer": 437721,
-  "tipMaxMs": 95,
-  "tipAvgMs": 21
+  "loadMs": 253,
+  "readyMs": 372,
+  "lcp": 140,
+  "cls": 0.003672884554738816,
+  "dcl": 245.19999999995343,
+  "transfer": 508113,
+  "tipMaxMs": 407,
+  "tipAvgMs": 39
  },
  "tests": [
   {
    "name": "Laden: keine Fehler, Leistungswerte (LCP, CLS, Ladezeit)",
+   "part": "basis",
    "ok": true,
    "checks": 3,
    "notes": [
-    "Ladezeit 190 ms, bereit nach 293 ms, LCP 112 ms, CLS 0.004"
+    "Ladezeit 253 ms, bereit nach 372 ms, LCP 140 ms, CLS 0.004"
    ],
-   "ms": 1107
+   "ms": 1184
   },
   {
    "name": "Hand spielen: Tipp „vorher“ erscheint binnen 2 Sekunden, keine neue Hand ohne „Nächste Hand“",
+   "part": "basis",
    "ok": true,
    "checks": 15,
    "notes": [
-    "60 Tipps, Ø 21 ms, max. 95 ms"
+    "60 Tipps, Ø 39 ms, max. 407 ms"
    ],
-   "ms": 23627
+   "ms": 24245
   },
   {
    "name": "Ungültiger Betrag, Tastatursteuerung, Tipp-Modi „nachher“ und „aus“",
+   "part": "basis",
    "ok": true,
-   "checks": 13,
+   "checks": 11,
    "notes": [],
-   "ms": 6011
+   "ms": 6428
   },
   {
    "name": "Live-Anzeige und Gegnerdetails, Dialog mit Esc schließen",
+   "part": "basis",
    "ok": true,
    "checks": 3,
    "notes": [],
-   "ms": 62
+   "ms": 100
   },
   {
    "name": "Alle Bereiche öffnen; Range-Matrix, Gegnerliste, Fortschritt, Hilfe",
+   "part": "basis",
    "ok": true,
    "checks": 13,
    "notes": [],
-   "ms": 4809
+   "ms": 4929
   },
   {
    "name": "Export und Import der Datenbank, beschädigte Datei wird abgelehnt",
+   "part": "basis",
    "ok": true,
    "checks": 8,
    "notes": [],
-   "ms": 2364
+   "ms": 2726
   },
   {
    "name": "Sicherheit: manipulierte Sicherung mit Skript in Lerndaten wird abgelehnt (keine Ausführung)",
+   "part": "basis",
    "ok": true,
    "checks": 2,
    "notes": [],
-   "ms": 276
+   "ms": 390
   },
   {
    "name": "Handhistorie und Replayer: vor, zurück, damals/später bekannt, Entscheidung erneut treffen",
+   "part": "basis",
    "ok": true,
    "checks": 5,
    "notes": [],
-   "ms": 6123
+   "ms": 5149
   },
   {
    "name": "Training: Kategorie starten, Situation bewerten, Quiz",
+   "part": "basis",
    "ok": true,
    "checks": 5,
    "notes": [],
-   "ms": 1469
+   "ms": 1561
   },
   {
    "name": "Einstellungen: Darstellung, neue Session mit Seed",
+   "part": "basis",
    "ok": true,
    "checks": 3,
    "notes": [],
-   "ms": 945
+   "ms": 971
   },
   {
    "name": "Neuladen während einer laufenden Hand: exakte Wiederaufnahme",
+   "part": "basis",
    "ok": true,
    "checks": 3,
    "notes": [],
-   "ms": 3150
+   "ms": 3435
   },
   {
    "name": "Mehrere Tabs: zweiter Tab ist schreibgeschützt",
+   "part": "basis",
    "ok": true,
    "checks": 3,
    "notes": [],
-   "ms": 397
+   "ms": 463
   },
   {
    "name": "Daten bleiben nach Neustart erhalten",
+   "part": "basis",
    "ok": true,
    "checks": 1,
    "notes": [],
-   "ms": 476
+   "ms": 499
   },
   {
    "name": "Offline: Service Worker installiert, Seite lädt und spielt ohne Netz",
+   "part": "basis",
    "ok": true,
    "checks": 3,
    "notes": [],
-   "ms": 3888
+   "ms": 4036
   },
   {
    "name": "Browser ohne Sprachfunktion: Meldung, Trainer läuft weiter",
+   "part": "basis",
    "ok": true,
    "checks": 2,
    "notes": [],
-   "ms": 9746
+   "ms": 8050
   },
   {
    "name": "Darstellung auf Smartphone, Tablet und Desktop (kein horizontales Scrollen)",
-   "ok": true,
-   "checks": 32,
-   "notes": [],
-   "ms": 22004
+   "part": "basis",
+   "ok": false,
+   "checks": 40,
+   "notes": [
+    "smartphone-320 tisch: Breite 323"
+   ],
+   "ms": 27428
   },
   {
    "name": "Barrierefreiheit: Namen für Bedienelemente, Bilder mit Alt, Fokusreihenfolge, Kontrast",
+   "part": "basis",
    "ok": true,
    "checks": 7,
    "notes": [
     "Kontrast Nebentext 6.48:1, Text 17.07:1"
    ],
-   "ms": 490
+   "ms": 708
   },
   {
    "name": "Portable Einzeldatei (file://): lädt, spielt, Coach per Blob-Worker",
+   "part": "basis",
    "ok": true,
    "checks": 2,
    "notes": [],
-   "ms": 9664
+   "ms": 6933
+  },
+  {
+   "name": "Start: erster Aufruf ohne Datenbank legt den Speicher an; vorhandene Datenbank wird geladen",
+   "part": "robust",
+   "ok": true,
+   "checks": 7,
+   "notes": [
+    "erster Start bereit nach 324 ms"
+   ],
+   "ms": 3455
+  },
+  {
+   "name": "Start: beschädigte lokale Daten (manipulierte IndexedDB-Einträge) → Start, Hinweis, kein eingeschleustes HTML",
+   "part": "robust",
+   "ok": true,
+   "checks": 6,
+   "notes": [],
+   "ms": 8825
+  },
+  {
+   "name": "Start: beschädigte laufende Hand wird verworfen, Tischstand bleibt erhalten",
+   "part": "robust",
+   "ok": true,
+   "checks": 3,
+   "notes": [],
+   "ms": 4774
+  },
+  {
+   "name": "Start: Lesefehler beim Laden → Fehleranzeige mit Wiederherstellung, Trainer läuft ohne Speicherung weiter",
+   "part": "robust",
+   "ok": true,
+   "checks": 8,
+   "notes": [],
+   "ms": 3887
+  },
+  {
+   "name": "Start: langsame Initialisierung (IndexedDB antwortet nach 2,5 s) → normaler Start, Ladeanzeige nur vorübergehend",
+   "part": "robust",
+   "ok": true,
+   "checks": 4,
+   "notes": [
+    "bereit nach 2824 ms"
+   ],
+   "ms": 5132
+  },
+  {
+   "name": "Start: IndexedDB antwortet nie → nach Zeitlimit spielbar ohne Speicherung, Hinweis mit „Neu laden“, kein Dauer-„Lade …“",
+   "part": "robust",
+   "ok": true,
+   "checks": 4,
+   "notes": [],
+   "ms": 8364
+  },
+  {
+   "name": "Start: Programmdatei fehlt / App startet nie → Fehleranzeige; Rohsicherung, Zurücksetzen nur nach Sicherung, Import der Rohsicherung",
+   "part": "robust",
+   "ok": true,
+   "checks": 11,
+   "notes": [
+    "Fehleranzeige nach 20127 ms"
+   ],
+   "ms": 27726
+  },
+  {
+   "name": "Start: abgesicherter Start (?start=sicher) lädt und verändert keine gespeicherten Daten",
+   "part": "robust",
+   "ok": true,
+   "checks": 5,
+   "notes": [],
+   "ms": 4973
+  },
+  {
+   "name": "Start: Web Worker nicht verfügbar oder Worker-Datei fehlt → Coach rechnet im Hauptthread",
+   "part": "robust",
+   "ok": true,
+   "checks": 4,
+   "notes": [],
+   "ms": 4811
+  },
+  {
+   "name": "Start: keine Sprachfunktion (fehlend oder gesperrt) → Hinweis, Trainer läuft ohne Ton",
+   "part": "robust",
+   "ok": true,
+   "checks": 6,
+   "notes": [],
+   "ms": 4919
+  },
+  {
+   "name": "Start: privater Modus ohne IndexedDB → localStorage mit Hinweis; ohne jeden Speicher → nur Sitzung",
+   "part": "robust",
+   "ok": true,
+   "checks": 10,
+   "notes": [],
+   "ms": 8467
+  },
+  {
+   "name": "Start: installierte PWA (start_url) und Browser-Tab – offline, gleiche Daten, Übernahme nach Schließen",
+   "part": "robust",
+   "ok": true,
+   "checks": 5,
+   "notes": [],
+   "ms": 4997
+  },
+  {
+   "name": "Sicherheit: Sicherung mit HTML in allen Textfeldern und extremen Zahlen → nur als Text angezeigt (alle Ansichten, Replayer, Dialog)",
+   "part": "robust",
+   "ok": true,
+   "checks": 6,
+   "notes": [],
+   "ms": 12016
+  },
+  {
+   "name": "Daten: zu große Datei (über 60 MB) sofort abgelehnt; große gültige Sicherung wird im Worker geprüft, Oberfläche bleibt bedienbar",
+   "part": "robust",
+   "ok": true,
+   "checks": 2,
+   "notes": [
+    "Importprüfung 13 MB: 932 ms, längste Blockade 99 ms"
+   ],
+   "ms": 5852
+  },
+  {
+   "name": "Daten: Migration aus Entwurf 2 (alte IndexedDB) mit automatischer Sicherung",
+   "part": "robust",
+   "ok": true,
+   "checks": 4,
+   "notes": [],
+   "ms": 3107
+  },
+  {
+   "name": "Daten: vollständige Sicherung, Löschen (mit Sicherung) und Wiederherstellung ergeben denselben Stand",
+   "part": "robust",
+   "ok": true,
+   "checks": 4,
+   "notes": [],
+   "ms": 7580
+  },
+  {
+   "name": "Daten: schreibgeschützter zweiter Tab kann weder importieren, löschen noch eine Session starten; schreibt nichts",
+   "part": "robust",
+   "ok": true,
+   "checks": 5,
+   "notes": [],
+   "ms": 3044
+  },
+  {
+   "name": "Daten: PWA-Update während einer laufenden Hand wird zurückgestellt; danach ohne Datenverlust aktualisiert",
+   "part": "robust",
+   "ok": true,
+   "checks": 6,
+   "notes": [],
+   "ms": 9226
+  },
+  {
+   "name": "Barrierefreiheit: axe-core (WCAG 2.2 AA) – Tisch, Coach, alle Bereiche, Dialoge, Replayer, hell und dunkel",
+   "part": "a11y",
+   "ok": true,
+   "checks": 28,
+   "notes": [],
+   "ms": 35750
+  },
+  {
+   "name": "Barrierefreiheit: vollständige Tastaturbedienung, Fokusreihenfolge, sichtbarer und nicht verdeckter Fokus",
+   "part": "a11y",
+   "ok": true,
+   "checks": 10,
+   "notes": [
+    "6 Hände nur mit Tastatur gespielt"
+   ],
+   "ms": 12933
+  },
+  {
+   "name": "Barrierefreiheit: Dialog mit Fokusfalle, Esc, Hintergrund gesperrt (inert), Fokus-Rückgabe; Range-Matrix mit Pfeiltasten",
+   "part": "a11y",
+   "ok": true,
+   "checks": 9,
+   "notes": [],
+   "ms": 1982
+  },
+  {
+   "name": "Barrierefreiheit: Live-Regionen sparsam, Ansagen beim eigenen Zug, Karten, verständliche Coach-Texte, reduzierte Bewegung, Zielgrößen",
+   "part": "a11y",
+   "ok": true,
+   "checks": 10,
+   "notes": [],
+   "ms": 2860
+  },
+  {
+   "name": "Barrierefreiheit: Accessibility-Baum der zentralen Abläufe (Playwright ariaSnapshot, Ersatz für Screenreader-Test)",
+   "part": "a11y",
+   "ok": true,
+   "checks": 10,
+   "notes": [],
+   "ms": 5610
+  },
+  {
+   "name": "Netzwerk: keine Verbindung zu fremden Adressen (alle Seiten, alle Tests)",
+   "part": "basis",
+   "ok": true,
+   "checks": 2,
+   "notes": [],
+   "ms": 0
   },
   {
    "name": "Konsole: keine JavaScript-Fehler, keine 404",
+   "part": "basis",
    "ok": true,
    "checks": 1,
    "notes": [],

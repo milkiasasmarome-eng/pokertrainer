@@ -161,12 +161,12 @@ function renderReplay() {
     '<button class="btn" type="button" data-step="next" aria-label="Schritt vor">▶</button><button class="btn" type="button" data-step="last" aria-label="Zum Ende">⏭</button>' +
     '<span class="small" role="status">Schritt ' + (hist.step + 1) + ' von ' + hist.sel.states.length + ': ' + esc(st.label) + '</span>' +
     '<button class="btn" type="button" data-later="1" aria-pressed="' + hist.later + '">' + (hist.later ? 'Später bekannte Infos ausblenden' : 'Später bekannte Infos einblenden') + '</button></div>';
-  html += '<div class="split"><div class="box"><h4>Damals bekannt</h4><p class="small">Deine Karten, Board bis hier, alle Aktionen bis hier' + (dec && dec.snap ? ', Gegnerwerte zum Entscheidungszeitpunkt' : '') + '.</p>' +
+  html += '<div class="split"><div class="box"><h3 class="sub">Damals bekannt</h3><p class="small">Deine Karten, Board bis hier, alle Aktionen bis hier' + (dec && dec.snap ? ', Gegnerwerte zum Entscheidungszeitpunkt' : '') + '.</p>' +
     (dec ? '<p>Nächste Aktion: <b>deine Entscheidung</b> – gespielt: ' + esc(dec.chosen) + ', empfohlen: ' + esc(dec.rec) + '</p><p>' + H.gradeHtml({ grade: dec.grade, simple: PT.coach.GRADE_SIMPLE[dec.grade], loss: dec.loss, lossBB: dec.loss / h.bb }) + '</p>' +
       '<table class="evtable"><tbody>' + (dec.evs || []).map(function (x) { return '<tr><td>' + esc(x.l) + '</td><td>' + H.bbTxt(x.ev, 2) + '</td><td>± ' + H.bbTxt(x.u, 1) + '</td></tr>'; }).join('') + '</tbody></table>' +
       (dec.snap ? '<div class="btnrow"><button class="btn primary2" type="button" data-redo="' + hist.sel.h.decisions.indexOf(dec) + '">Entscheidung erneut treffen</button></div>' : '<p class="muted">Für diese Entscheidung liegt keine Momentaufnahme mehr vor.</p>')
       : (nextA ? '<p>Nächste Aktion: ' + esc(h.seats[nextA.s].name) + '</p>' : '<p>Hand beendet.</p>')) + '<div id="redoBox"></div></div>' +
-    '<div class="box"><h4>Später bekannt</h4>' + (showLater ? ((h.shown || []).length ? '<p>' + h.shown.map(function (x) { return esc(h.seats[x.seat].name) + ': <span class="cards">' + H.cardsHtml(x.cards, 'sm') + '</span>'; }).join(' · ') + '</p>' : '<p class="muted">Keine Karten gezeigt.</p>') +
+    '<div class="box"><h3 class="sub">Später bekannt</h3>' + (showLater ? ((h.shown || []).length ? '<p>' + h.shown.map(function (x) { return esc(h.seats[x.seat].name) + ': <span class="cards">' + H.cardsHtml(x.cards, 'sm') + '</span>'; }).join(' · ') + '</p>' : '<p class="muted">Keine Karten gezeigt.</p>') +
       '<p>Ergebnis: <b class="' + (h.heroNet > 0 ? 'good' : h.heroNet < 0 ? 'bad' : '') + '">' + U.fmtSigned(h.heroNet) + '</b> · ' + (h.pots || []).map(function (p3, k) { return (k ? 'Side Pot ' + k : 'Main Pot') + ' ' + fmt(p3.amount) + ' an ' + p3.winners.map(function (w) { return esc(h.seats[w].name); }).join(', '); }).join(' · ') + '</p>' +
       '<p class="small">Das Ergebnis beeinflusst die Bewertung der Entscheidungen nicht.</p>' : '<p class="muted">Ausgeblendet, damit du die Entscheidung ohne Kenntnis des Ausgangs prüfen kannst.</p>') + '</div></div>';
   html += '<details class="more"><summary>Handverlauf als Text</summary><pre class="small" style="white-space:pre-wrap">' + esc(PT.training.handText(h)) + '</pre></details></div>';
@@ -228,7 +228,7 @@ views.ranges = function (el, arg) {
     reason.push(name + ' gehört zu den besten ' + pct(top) + ' aller Starthände (Rangfolge ' + (PT.hands.CLS_RANK[i] + 1) + ' von 169).');
     if (PT.ranges.BLUFF3.indexOf(name) >= 0) reason.push('Typischer 3-Bet-Bluff-Kandidat: Blocker (Ass oder hohe Karte) und gute Spielbarkeit.');
     if (d.raise > 0.05 && d.raise < 0.95) reason.push('Grenzhand: gemischte Strategie – mehrere Aktionen sind ähnlich gut.');
-    $('mxinfo').innerHTML = '<h4>' + esc(name) + '</h4><p>Kombinationen: <b>' + live2 + '</b> von ' + PT.hands.classCombos(i) + (dead.length ? ' (bekannte Karten berücksichtigt)' : '') + '</p>' +
+    $('mxinfo').innerHTML = '<h3 class="sub">' + esc(name) + '</h3><p>Kombinationen: <b>' + live2 + '</b> von ' + PT.hands.classCombos(i) + (dead.length ? ' (bekannte Karten berücksichtigt)' : '') + '</p>' +
       '<p>Raise ' + pct(d.raise) + ' · Call ' + pct(d.call) + ' · Fold ' + pct(d.fold) + '</p><p class="small">' + esc(reason.join(' ')) + '</p><p class="small">' + esc(data.note) + '</p>';
   }
   ['rt', 'rp', 'ro', 'rb', 'rip'].forEach(function (id) { $(id).addEventListener('change', draw); });
@@ -451,7 +451,8 @@ views.einstellungen = function (el) {
     '<div class="row"><label for="cFc">Vierfarbiges Deck</label><input id="cFc" type="checkbox"' + (st.fourColor ? ' checked' : '') + '></div>' +
     '<div class="row"><label for="cSo">Sprachausgabe</label><input id="cSo" type="checkbox"' + (st.speech ? ' checked' : '') + '></div>' +
     '<div class="row"><label for="cSr">Sprechtempo</label><input id="cSr" type="range" min="0.7" max="1.5" step="0.05" value="' + st.speechRate + '"></div>' +
-    '<div class="row"><label for="cRh">Hände speichern</label><input id="cRh" type="checkbox"' + (st.recordHands ? ' checked' : '') + '></div></form></div></div>' +
+    '<div class="row"><label for="cRh">Hände speichern</label><input id="cRh" type="checkbox"' + (st.recordHands ? ' checked' : '') + '></div>' +
+    '<div class="row"><label for="cKs">Tastenkürzel aus einem Zeichen (F, C, R, N, T, 1–9)</label><input id="cKs" type="checkbox"' + (st.shortcuts !== false ? ' checked' : '') + '><div class="hint">Abschalten, wenn ein Screenreader oder eine Spracheingabe die Tasten selbst nutzt. Enter im Betragsfeld bleibt aktiv.</div></div></form></div></div>' +
     '<div class="panel"><h2>Daten</h2><p class="small">Alle Daten liegen nur in diesem Browser (' + (Store.mode() === 'idb' ? 'IndexedDB' : Store.mode() === 'ls' ? 'localStorage' : 'nur im Arbeitsspeicher') + '). Andere Browser oder Geräte haben eigene, getrennte Daten.</p>' +
     '<div class="btnrow"><button class="btn" type="button" id="dBk">Vollständige Sicherung exportieren</button><button class="btn" type="button" id="dIm">Sicherung importieren</button><button class="btn" type="button" id="dRaw" title="Alle lokalen Daten unverändert, auch beschädigte Einträge">Rohsicherung exportieren</button><button class="btn danger" type="button" id="dDel">Alle Daten löschen</button></div></div>';
   function onT(id, fn) { $(id).addEventListener('change', fn); }
@@ -466,6 +467,7 @@ views.einstellungen = function (el) {
   onT('cSo', function () { PTUI.setSetting('speech', $('cSo').checked); });
   onT('cSr', function () { PTUI.setSetting('speechRate', +$('cSr').value); });
   onT('cRh', function () { PTUI.setSetting('recordHands', $('cRh').checked); });
+  onT('cKs', function () { PTUI.setSetting('shortcuts', $('cKs').checked); });
   $('sApply').addEventListener('click', function () {
     if (!PTUI.canWrite()) return;
     if (S.hand && !S.hand.done) { H.toast('Bitte erst die laufende Hand beenden.'); return; }
@@ -503,7 +505,7 @@ views.hilfe = function (el, arg) {
   el.innerHTML = '<div class="grid2"><div class="panel" id="h-start"><h2>Kurzanleitung</h2><ol><li>Am Tisch „Nächste Hand“ wählen. Du sitzt unten, fünf Computergegner um dich herum.</li><li>Bist du am Zug, zeigt der Coach im Modus „vorher“ seine Empfehlung mit Begründung, Equity, benötigter Equity (Pot Odds) und EV-Vergleich.</li>' +
     '<li>Im Modus „nachher“ siehst du erst nach deiner Aktion eine Bewertung von „Optimal“ bis „Schwerer Fehler“.</li><li>Ein Klick auf einen Gegner zeigt alle Werte aus der Datenbank. Nach jeweils 30 Händen wechselt ein Gegner; sein Datensatz bleibt im Archiv.</li>' +
     '<li>Unter „Training“ übst du gezielt Situationen, unter „Handhistorie“ spielst du Hände nach und triffst Entscheidungen erneut.</li></ol></div>' +
-    '<div class="panel" id="h-tasten"><h2>Tastatur</h2><table class="grid"><tbody>' + [['F', 'Fold'], ['C oder K', 'Check / Call'], ['R oder B', 'Betrag eingeben (Enter bestätigt)'], ['1 – 9', 'Einsatz-Presets'], ['A', 'All-in-Preset'], ['N, Enter, Leertaste', 'Nächste Hand'], ['T', 'Tipp-Modus wechseln'], ['Esc', 'Dialog schließen'], ['?', 'Diese Hilfe']].map(function (r) { return '<tr><td><kbd>' + r[0] + '</kbd></td><td>' + r[1] + '</td></tr>'; }).join('') + '</tbody></table></div></div>' +
+    '<div class="panel" id="h-tasten"><h2>Tastatur</h2><table class="grid"><tbody>' + [['F', 'Fold'], ['C oder K', 'Check / Call'], ['R oder B', 'Betrag eingeben (Enter bestätigt)'], ['1 – 9', 'Einsatz-Presets'], ['A', 'All-in-Preset'], ['N, Enter, Leertaste', 'Nächste Hand'], ['T', 'Tipp-Modus wechseln'], ['Esc', 'Dialog schließen'], ['?', 'Diese Hilfe']].map(function (r) { return '<tr><td><kbd>' + r[0] + '</kbd></td><td>' + r[1] + '</td></tr>'; }).join('') + '</tbody></table><p class="small">Die Kürzel aus einem Zeichen gelten am Tisch und lassen sich unter Einstellungen → „Tastenkürzel“ abschalten. Alle Funktionen sind auch mit Tab, Enter und Leertaste bedienbar; Esc schließt Dialoge.</p></div></div>' +
     '<div class="panel" id="h-regeln"><h2>Regeln (No-Limit Hold\'em, Cash Game)</h2><ul>' +
     '<li><b>Mindest-Bet</b> ist ein Big Blind. Ein <b>Raise</b> muss mindestens um den größten vollen Bet oder Raise der laufenden Setzrunde erhöhen. Beträge sind immer „Raise auf“ (Gesamteinsatz der Straße).</li>' +
     '<li><b>Unvollständiger All-in-Raise:</b> Ein All-in unter einem vollen Raise eröffnet die Setzrunde für Spieler, die schon gehandelt haben, nicht wieder – sie dürfen nur callen oder folden. Ergeben mehrere kurze All-ins zusammen mindestens einen vollen Raise gegenüber dem eigenen letzten Einsatz, ist die Runde wieder eröffnet (Cash-Game-Regel nach Robert\'s Rules of Poker). Der nächste Mindest-Raise bleibt der letzte volle Raise.</li>' +

@@ -36,3 +36,10 @@ node tests/e2e.js                                  # Browser-Tests (Playwright +
 - Preflop folgt der Coach dem Faustregel-Chart; Abweichungen nur bei belegtem Exploit (`coach.preflopAnchor`). Wer die EV-Annahmen ändert, muss `tests/run.js` „Regression Prüfer C“ grün halten.
 - Importierte Daten sind nicht vertrauenswürdig: jede neue Ausgabe von Daten aus Sicherungen über `esc()`, jedes neue Feld in `validHand`/`validLearning` prüfen.
 - Der automatische Tipp darf 5.000 Simulationen je Entscheidung nicht überschreiten (`input.live`).
+
+## Hinweise ab 2.1 (Zweig ui-2.1)
+- Start: Jeder neue asynchrone Startschritt braucht ein Zeitlimit (`withTimeout`) und einen Rückfall; `PTRecovery.ready()` erst, wenn der Trainer bedienbar ist. Lokale Daten nie ohne vorherige (Roh-)Sicherung löschen.
+- Gespeicherte Hände nur über `PTUI.loadHands()` lesen (prüft mit `validHand`); neue Felder in Hand- oder Entscheidungsdatensätzen in `validHand` bzw. `validDecisionFields` (training.js) und in `docs/BENCHMARK_EXPORT.md` ergänzen.
+- Barrierefreiheit: `node tests/e2e.js <URL> --nur=a11y` muss grün bleiben (axe-core aus `tests/package.json`, `npm ci --prefix tests`). Live-Ansagen nur über `announce()`.
+- Vor dem Commit zusätzlich `node tools/check-version.js`; CI prüft außerdem `node tools/check-build.js`.
+

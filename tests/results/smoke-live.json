@@ -1,0 +1,54 @@
+{
+ "base": "http://127.0.0.1:8767/",
+ "version": "2.0.1",
+ "date": "2026-11-26T20:27:30.654Z",
+ "attempts": 1,
+ "ok": true,
+ "checks": [
+  {
+   "name": "index.html erreichbar",
+   "ok": true,
+   "detail": "HTTP 200"
+  },
+  {
+   "name": "Version im HTML = 2.0.1",
+   "ok": true,
+   "detail": "?v=2.0.1, Fußzeile 2.0.1"
+  },
+  {
+   "name": "sw.js identisch mit lokalem Build",
+   "ok": true,
+   "detail": "HTTP 200, live -8f1245c1478e, lokal -8f1245c1478e"
+  },
+  {
+   "name": "Offline-Datei mit Version 2.0.1",
+   "ok": true,
+   "detail": "HTTP 200"
+  },
+  {
+   "name": "Manifest erreichbar",
+   "ok": true,
+   "detail": "HTTP 200"
+  },
+  {
+   "name": "core.js mit Version 2.0.1",
+   "ok": true,
+   "detail": "HTTP 200"
+  },
+  {
+   "name": "Browser: App startet, PT.VERSION = 2.0.1",
+   "ok": true,
+   "detail": "2.0.1"
+  },
+  {
+   "name": "Browser: keine Skriptfehler",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Browser: keine Verbindungen zu fremden Adressen",
+   "ok": true,
+   "detail": ""
+  }
+ ]
+}

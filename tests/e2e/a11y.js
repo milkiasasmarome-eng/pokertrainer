@@ -96,11 +96,21 @@ module.exports = async function (H) {
           }
         }
         ok(raised, 'Raise per Tastatur'); note(hands + ' Hände nur mit Tastatur gespielt');
+        // 2.1.4: Kürzel aus einem Zeichen abschaltbar
+        for (let i = 0; i < 40; i++) { const st = await waitTurnOrNext(p); if (st.next) break; await p.keyboard.press('c'); }
+        await p.waitForFunction(() => !window.PTUI.S.reveal, null, { timeout: 10000 });
+        await p.evaluate(() => { window.PTUI.setSetting('shortcuts', false); document.activeElement && document.activeElement.blur(); });
+        const n0 = await p.evaluate(() => window.PTUI.S.table.handNo);
+        await p.keyboard.press('n'); await p.waitForTimeout(500);
+        ok(await p.evaluate(() => !window.PTUI.S.hand || window.PTUI.S.hand.done) && await p.locator('#bNext').isEnabled(), 'Kürzel abgeschaltet: N startet keine Hand');
+        await p.evaluate(() => window.PTUI.setSetting('shortcuts', true));
+        await p.keyboard.press('n'); await p.waitForTimeout(300);
+        ok(await p.evaluate(n => window.PTUI.S.hand && window.PTUI.S.hand.no === n + 1, n0), 'Kürzel wieder an: N startet die Hand');
+        for (let i = 0; i < 40; i++) { const st = await waitTurnOrNext(p); if (st.next) break; await p.keyboard.press('c'); }
       }
       await p.waitForTimeout(500);
       // Fokusreihenfolge und Sichtbarkeit beim Durchtabben
-      await p.evaluate(() => { document.activeElement && document.activeElement.blur(); window.scrollTo(0, 0); });
-      await p.focus('a.skip'); await p.evaluate(() => document.activeElement.blur());
+      await p.reload(); await ready(p); await p.waitForTimeout(300);   // Fokus-Startpunkt: Seitenanfang
       const seq = [], bad = [];
       await p.keyboard.press('Tab');
       for (let i = 0; i < 70; i++) {
@@ -111,11 +121,11 @@ module.exports = async function (H) {
           const visible = (cs.outlineStyle !== 'none' && parseFloat(cs.outlineWidth) >= 2) || (cs.boxShadow && cs.boxShadow !== 'none');
           const pts = [[0.5, 0.5], [0.2, 0.2], [0.8, 0.2], [0.2, 0.8], [0.8, 0.8]].map(([fx, fy]) => document.elementFromPoint(rc.left + rc.width * fx, rc.top + rc.height * fy));
           const notHidden = rc.width > 0 && rc.height > 0 && rc.bottom > 0 && rc.top < innerHeight && pts.some(x => x && (x === el || el.contains(x) || x.contains(el)));
-          return { id: el.id || el.getAttribute('data-opp') || el.getAttribute('data-mode') || el.className || el.tagName, zone, visible, notHidden, w: Math.round(rc.width), h: Math.round(rc.height) };
+          return { id: (el.id || el.getAttribute('data-opp') || el.getAttribute('data-mode') || el.className || el.tagName) + (el.tagName === 'A' ? ' ' + el.getAttribute('href') : ''), zone, visible, notHidden, w: Math.round(rc.width), h: Math.round(rc.height), top: Math.round(rc.top), ih: innerHeight, hit: (pts[0] && (pts[0].id || pts[0].className || pts[0].tagName)) };
         });
         if (!r) break;
         seq.push(r.zone);
-        if (!r.visible || !r.notHidden) bad.push(r.id + (r.visible ? '' : ' (kein sichtbarer Fokus)') + (r.notHidden ? '' : ' (verdeckt)'));
+        if (!r.visible || !r.notHidden) bad.push(r.id + (r.visible ? '' : ' (kein sichtbarer Fokus)') + (r.notHidden ? '' : ' (verdeckt: oben ' + r.top + '/' + r.ih + ', getroffen ' + r.hit + ')'));
         await p.keyboard.press('Tab');
       }
       ok(bad.length === 0, scheme + ': Fokus nicht sichtbar/verdeckt: ' + bad.slice(0, 6).join(', '));
