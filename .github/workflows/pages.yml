@@ -1,0 +1,58 @@
+name: Tests und Veröffentlichung
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  test:
+    name: Regressionstests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Build prüfen (Service Worker und Offline-Datei aktuell)
+        run: |
+          node tools/build.js
+          git diff --exit-code -- sw.js || (echo "sw.js ist nicht aktuell: node tools/build.js ausführen und committen" && exit 1)
+      - name: Schnelle Testsuite
+        run: node tests/run.js --quick
+
+  deploy:
+    name: GitHub Pages
+    needs: test
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Seite zusammenstellen
+        run: |
+          node tools/build.js
+          mkdir -p _site
+          cp -r index.html manifest.webmanifest sw.js .nojekyll assets dist _site/
+          cp PRIVACY.md CHANGELOG.md _site/
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4
