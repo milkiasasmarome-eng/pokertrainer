@@ -3084,6 +3084,6450 @@
     "1.5": 319,
     "0.75": 129
    }
+  },
+  "v21b-bots": {
+   "label": "v21b",
+   "comp": "bots",
+   "files": [
+    {
+     "file": "v21b-bots-505.json",
+     "seed": 505,
+     "hands": 2000,
+     "spots": 578
+    }
+   ],
+   "spots": 578,
+   "betSpots": 466,
+   "facingSpots": 112,
+   "calibration": {
+    "bySize": [
+     {
+      "key": "0.33",
+      "n": 576,
+      "obsFold": 0.28,
+      "obsRaise": 0.04,
+      "predFold": 0.305,
+      "predFoldGto": 0.29,
+      "predRaise": 0.058,
+      "seFold": 0.019
+     },
+     {
+      "key": "0.5",
+      "n": 571,
+      "obsFold": 0.385,
+      "obsRaise": 0.04,
+      "predFold": 0.398,
+      "predFoldGto": 0.359,
+      "predRaise": 0.058,
+      "seFold": 0.02
+     },
+     {
+      "key": "0.75",
+      "n": 576,
+      "obsFold": 0.488,
+      "obsRaise": 0.043,
+      "predFold": 0.494,
+      "predFoldGto": 0.43,
+      "predRaise": 0.058,
+      "seFold": 0.021
+     },
+     {
+      "key": "1",
+      "n": 574,
+      "obsFold": 0.563,
+      "obsRaise": 0.047,
+      "predFold": 0.544,
+      "predFoldGto": 0.448,
+      "predRaise": 0.058,
+      "seFold": 0.021
+     },
+     {
+      "key": "1.5",
+      "n": 572,
+      "obsFold": 0.689,
+      "obsRaise": 0.059,
+      "predFold": 0.589,
+      "predFoldGto": 0.43,
+      "predRaise": 0.057,
+      "seFold": 0.019
+     }
+    ],
+    "byStreetSizeN": [
+     {
+      "key": "St1 n1 0.33",
+      "n": 225,
+      "obsFold": 0.293,
+      "obsRaise": 0.04,
+      "predFold": 0.267,
+      "predFoldGto": 0.222,
+      "predRaise": 0.065,
+      "seFold": 0.03
+     },
+     {
+      "key": "St1 n1 0.5",
+      "n": 220,
+      "obsFold": 0.432,
+      "obsRaise": 0.041,
+      "predFold": 0.359,
+      "predFoldGto": 0.296,
+      "predRaise": 0.065,
+      "seFold": 0.033
+     },
+     {
+      "key": "St1 n1 0.75",
+      "n": 225,
+      "obsFold": 0.507,
+      "obsRaise": 0.044,
+      "predFold": 0.459,
+      "predFoldGto": 0.377,
+      "predRaise": 0.065,
+      "seFold": 0.033
+     },
+     {
+      "key": "St1 n1 1",
+      "n": 225,
+      "obsFold": 0.551,
+      "obsRaise": 0.049,
+      "predFold": 0.514,
+      "predFoldGto": 0.407,
+      "predRaise": 0.065,
+      "seFold": 0.033
+     },
+     {
+      "key": "St1 n1 1.5",
+      "n": 225,
+      "obsFold": 0.64,
+      "obsRaise": 0.062,
+      "predFold": 0.564,
+      "predFoldGto": 0.409,
+      "predRaise": 0.065,
+      "seFold": 0.032
+     },
+     {
+      "key": "St1 n2 0.33",
+      "n": 96,
+      "obsFold": 0.271,
+      "obsRaise": 0.021,
+      "predFold": 0.355,
+      "predFoldGto": 0.404,
+      "predRaise": 0.058,
+      "seFold": 0.045
+     },
+     {
+      "key": "St1 n2 0.5",
+      "n": 96,
+      "obsFold": 0.344,
+      "obsRaise": 0.021,
+      "predFold": 0.446,
+      "predFoldGto": 0.469,
+      "predRaise": 0.058,
+      "seFold": 0.048
+     },
+     {
+      "key": "St1 n2 0.75",
+      "n": 96,
+      "obsFold": 0.531,
+      "obsRaise": 0.021,
+      "predFold": 0.535,
+      "predFoldGto": 0.529,
+      "predRaise": 0.058,
+      "seFold": 0.051
+     },
+     {
+      "key": "St1 n2 1",
+      "n": 96,
+      "obsFold": 0.625,
+      "obsRaise": 0.021,
+      "predFold": 0.574,
+      "predFoldGto": 0.529,
+      "predRaise": 0.058,
+      "seFold": 0.049
+     },
+     {
+      "key": "St1 n2 1.5",
+      "n": 96,
+      "obsFold": 0.688,
+      "obsRaise": 0.021,
+      "predFold": 0.598,
+      "predFoldGto": 0.485,
+      "predRaise": 0.058,
+      "seFold": 0.047
+     },
+     {
+      "key": "St1 n3+ 0.33",
+      "n": 25,
+      "obsFold": 0.4,
+      "obsRaise": 0,
+      "predFold": 0.433,
+      "predFoldGto": 0.465,
+      "predRaise": 0.045,
+      "seFold": 0.098
+     },
+     {
+      "key": "St1 n3+ 0.5",
+      "n": 25,
+      "obsFold": 0.48,
+      "obsRaise": 0,
+      "predFold": 0.514,
+      "predFoldGto": 0.513,
+      "predRaise": 0.045,
+      "seFold": 0.1
+     },
+     {
+      "key": "St1 n3+ 0.75",
+      "n": 25,
+      "obsFold": 0.56,
+      "obsRaise": 0,
+      "predFold": 0.589,
+      "predFoldGto": 0.555,
+      "predRaise": 0.045,
+      "seFold": 0.099
+     },
+     {
+      "key": "St1 n3+ 1",
+      "n": 25,
+      "obsFold": 0.64,
+      "obsRaise": 0,
+      "predFold": 0.614,
+      "predFoldGto": 0.539,
+      "predRaise": 0.045,
+      "seFold": 0.096
+     },
+     {
+      "key": "St1 n3+ 1.5",
+      "n": 25,
+      "obsFold": 0.8,
+      "obsRaise": 0,
+      "predFold": 0.618,
+      "predFoldGto": 0.479,
+      "predRaise": 0.045,
+      "seFold": 0.08
+     },
+     {
+      "key": "St2 n1 0.33",
+      "n": 101,
+      "obsFold": 0.139,
+      "obsRaise": 0.089,
+      "predFold": 0.212,
+      "predFoldGto": 0.22,
+      "predRaise": 0.07,
+      "seFold": 0.034
+     },
+     {
+      "key": "St2 n1 0.5",
+      "n": 101,
+      "obsFold": 0.198,
+      "obsRaise": 0.089,
+      "predFold": 0.308,
+      "predFoldGto": 0.295,
+      "predRaise": 0.07,
+      "seFold": 0.04
+     },
+     {
+      "key": "St2 n1 0.75",
+      "n": 101,
+      "obsFold": 0.297,
+      "obsRaise": 0.089,
+      "predFold": 0.415,
+      "predFoldGto": 0.377,
+      "predRaise": 0.069,
+      "seFold": 0.045
+     },
+     {
+      "key": "St2 n1 1",
+      "n": 100,
+      "obsFold": 0.42,
+      "obsRaise": 0.1,
+      "predFold": 0.481,
+      "predFoldGto": 0.406,
+      "predRaise": 0.07,
+      "seFold": 0.049
+     },
+     {
+      "key": "St2 n1 1.5",
+      "n": 99,
+      "obsFold": 0.626,
+      "obsRaise": 0.131,
+      "predFold": 0.567,
+      "predFoldGto": 0.408,
+      "predRaise": 0.069,
+      "seFold": 0.049
+     },
+     {
+      "key": "St2 n2 0.33",
+      "n": 40,
+      "obsFold": 0.2,
+      "obsRaise": 0,
+      "predFold": 0.324,
+      "predFoldGto": 0.401,
+      "predRaise": 0.058,
+      "seFold": 0.063
+     },
+     {
+      "key": "St2 n2 0.5",
+      "n": 40,
+      "obsFold": 0.3,
+      "obsRaise": 0,
+      "predFold": 0.414,
+      "predFoldGto": 0.459,
+      "predRaise": 0.058,
+      "seFold": 0.072
+     },
+     {
+      "key": "St2 n2 0.75",
+      "n": 40,
+      "obsFold": 0.45,
+      "obsRaise": 0,
+      "predFold": 0.505,
+      "predFoldGto": 0.514,
+      "predRaise": 0.058,
+      "seFold": 0.079
+     },
+     {
+      "key": "St2 n2 1",
+      "n": 40,
+      "obsFold": 0.5,
+      "obsRaise": 0,
+      "predFold": 0.55,
+      "predFoldGto": 0.514,
+      "predRaise": 0.058,
+      "seFold": 0.079
+     },
+     {
+      "key": "St2 n2 1.5",
+      "n": 40,
+      "obsFold": 0.65,
+      "obsRaise": 0.025,
+      "predFold": 0.601,
+      "predFoldGto": 0.474,
+      "predRaise": 0.055,
+      "seFold": 0.075
+     },
+     {
+      "key": "St2 n3+ 0.33",
+      "n": 13,
+      "obsFold": 0.308,
+      "obsRaise": 0,
+      "predFold": 0.412,
+      "predFoldGto": 0.466,
+      "predRaise": 0.041,
+      "seFold": 0.128
+     },
+     {
+      "key": "St2 n3+ 0.5",
+      "n": 13,
+      "obsFold": 0.462,
+      "obsRaise": 0,
+      "predFold": 0.506,
+      "predFoldGto": 0.511,
+      "predRaise": 0.041,
+      "seFold": 0.138
+     },
+     {
+      "key": "St2 n3+ 0.75",
+      "n": 13,
+      "obsFold": 0.462,
+      "obsRaise": 0,
+      "predFold": 0.583,
+      "predFoldGto": 0.546,
+      "predRaise": 0.041,
+      "seFold": 0.138
+     },
+     {
+      "key": "St2 n3+ 1",
+      "n": 13,
+      "obsFold": 0.538,
+      "obsRaise": 0,
+      "predFold": 0.609,
+      "predFoldGto": 0.529,
+      "predRaise": 0.041,
+      "seFold": 0.138
+     },
+     {
+      "key": "St2 n3+ 1.5",
+      "n": 13,
+      "obsFold": 0.769,
+      "obsRaise": 0,
+      "predFold": 0.635,
+      "predFoldGto": 0.47,
+      "predRaise": 0.041,
+      "seFold": 0.117
+     },
+     {
+      "key": "St3 n1 0.33",
+      "n": 49,
+      "obsFold": 0.347,
+      "obsRaise": 0.061,
+      "predFold": 0.35,
+      "predFoldGto": 0.22,
+      "predRaise": 0.032,
+      "seFold": 0.068
+     },
+     {
+      "key": "St3 n1 0.5",
+      "n": 49,
+      "obsFold": 0.449,
+      "obsRaise": 0.061,
+      "predFold": 0.455,
+      "predFoldGto": 0.294,
+      "predRaise": 0.032,
+      "seFold": 0.071
+     },
+     {
+      "key": "St3 n1 0.75",
+      "n": 49,
+      "obsFold": 0.51,
+      "obsRaise": 0.082,
+      "predFold": 0.56,
+      "predFoldGto": 0.372,
+      "predRaise": 0.031,
+      "seFold": 0.071
+     },
+     {
+      "key": "St3 n1 1",
+      "n": 48,
+      "obsFold": 0.646,
+      "obsRaise": 0.083,
+      "predFold": 0.612,
+      "predFoldGto": 0.398,
+      "predRaise": 0.032,
+      "seFold": 0.069
+     },
+     {
+      "key": "St3 n1 1.5",
+      "n": 47,
+      "obsFold": 0.83,
+      "obsRaise": 0.085,
+      "predFold": 0.641,
+      "predFoldGto": 0.378,
+      "predRaise": 0.03,
+      "seFold": 0.055
+     },
+     {
+      "key": "St3 n2 0.33",
+      "n": 14,
+      "obsFold": 0.429,
+      "obsRaise": 0,
+      "predFold": 0.445,
+      "predFoldGto": 0.398,
+      "predRaise": 0.029,
+      "seFold": 0.132
+     },
+     {
+      "key": "St3 n2 0.5",
+      "n": 14,
+      "obsFold": 0.571,
+      "obsRaise": 0,
+      "predFold": 0.54,
+      "predFoldGto": 0.458,
+      "predRaise": 0.029,
+      "seFold": 0.132
+     },
+     {
+      "key": "St3 n2 0.75",
+      "n": 14,
+      "obsFold": 0.714,
+      "obsRaise": 0,
+      "predFold": 0.631,
+      "predFoldGto": 0.514,
+      "predRaise": 0.029,
+      "seFold": 0.121
+     },
+     {
+      "key": "St3 n2 1",
+      "n": 14,
+      "obsFold": 0.714,
+      "obsRaise": 0,
+      "predFold": 0.666,
+      "predFoldGto": 0.512,
+      "predRaise": 0.029,
+      "seFold": 0.121
+     },
+     {
+      "key": "St3 n2 1.5",
+      "n": 14,
+      "obsFold": 1,
+      "obsRaise": 0,
+      "predFold": 0.67,
+      "predFoldGto": 0.445,
+      "predRaise": 0.029,
+      "seFold": 0
+     },
+     {
+      "key": "St3 n3+ 0.33",
+      "n": 13,
+      "obsFold": 0.769,
+      "obsRaise": 0,
+      "predFold": 0.585,
+      "predFoldGto": 0.466,
+      "predRaise": 0.013,
+      "seFold": 0.117
+     },
+     {
+      "key": "St3 n3+ 0.5",
+      "n": 13,
+      "obsFold": 0.923,
+      "obsRaise": 0,
+      "predFold": 0.658,
+      "predFoldGto": 0.512,
+      "predRaise": 0.013,
+      "seFold": 0.074
+     },
+     {
+      "key": "St3 n3+ 0.75",
+      "n": 13,
+      "obsFold": 1,
+      "obsRaise": 0,
+      "predFold": 0.718,
+      "predFoldGto": 0.553,
+      "predRaise": 0.013,
+      "seFold": 0
+     },
+     {
+      "key": "St3 n3+ 1",
+      "n": 13,
+      "obsFold": 1,
+      "obsRaise": 0,
+      "predFold": 0.732,
+      "predFoldGto": 0.536,
+      "predRaise": 0.013,
+      "seFold": 0
+     },
+     {
+      "key": "St3 n3+ 1.5",
+      "n": 13,
+      "obsFold": 1,
+      "obsRaise": 0,
+      "predFold": 0.705,
+      "predFoldGto": 0.449,
+      "predRaise": 0.013,
+      "seFold": 0
+     }
+    ],
+    "headsUp": [
+     {
+      "key": "Bet St1 0.33",
+      "n": 75,
+      "obsFold": 0.293,
+      "obsRaise": 0.04,
+      "predFold": 0.257,
+      "predFoldGto": 0.23,
+      "predRaise": 0.079,
+      "seFold": 0.053
+     },
+     {
+      "key": "Bet St1 0.5",
+      "n": 70,
+      "obsFold": 0.386,
+      "obsRaise": 0.043,
+      "predFold": 0.332,
+      "predFoldGto": 0.297,
+      "predRaise": 0.082,
+      "seFold": 0.058
+     },
+     {
+      "key": "Bet St1 0.75",
+      "n": 75,
+      "obsFold": 0.467,
+      "obsRaise": 0.04,
+      "predFold": 0.432,
+      "predFoldGto": 0.377,
+      "predRaise": 0.079,
+      "seFold": 0.058
+     },
+     {
+      "key": "Bet St1 1",
+      "n": 75,
+      "obsFold": 0.533,
+      "obsRaise": 0.04,
+      "predFold": 0.487,
+      "predFoldGto": 0.407,
+      "predRaise": 0.079,
+      "seFold": 0.058
+     },
+     {
+      "key": "Bet St1 1.5",
+      "n": 75,
+      "obsFold": 0.6,
+      "obsRaise": 0.04,
+      "predFold": 0.539,
+      "predFoldGto": 0.409,
+      "predRaise": 0.079,
+      "seFold": 0.057
+     },
+     {
+      "key": "Bet St2 0.33",
+      "n": 40,
+      "obsFold": 0.25,
+      "obsRaise": 0.075,
+      "predFold": 0.209,
+      "predFoldGto": 0.223,
+      "predRaise": 0.075,
+      "seFold": 0.068
+     },
+     {
+      "key": "Bet St2 0.5",
+      "n": 40,
+      "obsFold": 0.3,
+      "obsRaise": 0.075,
+      "predFold": 0.3,
+      "predFoldGto": 0.295,
+      "predRaise": 0.075,
+      "seFold": 0.072
+     },
+     {
+      "key": "Bet St2 0.75",
+      "n": 40,
+      "obsFold": 0.375,
+      "obsRaise": 0.075,
+      "predFold": 0.406,
+      "predFoldGto": 0.377,
+      "predRaise": 0.075,
+      "seFold": 0.077
+     },
+     {
+      "key": "Bet St2 1",
+      "n": 40,
+      "obsFold": 0.55,
+      "obsRaise": 0.075,
+      "predFold": 0.473,
+      "predFoldGto": 0.405,
+      "predRaise": 0.075,
+      "seFold": 0.079
+     },
+     {
+      "key": "Bet St2 1.5",
+      "n": 40,
+      "obsFold": 0.75,
+      "obsRaise": 0.125,
+      "predFold": 0.565,
+      "predFoldGto": 0.406,
+      "predRaise": 0.075,
+      "seFold": 0.068
+     },
+     {
+      "key": "Bet St3 0.33",
+      "n": 22,
+      "obsFold": 0.409,
+      "obsRaise": 0.045,
+      "predFold": 0.355,
+      "predFoldGto": 0.223,
+      "predRaise": 0.03,
+      "seFold": 0.105
+     },
+     {
+      "key": "Bet St3 0.5",
+      "n": 22,
+      "obsFold": 0.545,
+      "obsRaise": 0.045,
+      "predFold": 0.458,
+      "predFoldGto": 0.293,
+      "predRaise": 0.03,
+      "seFold": 0.106
+     },
+     {
+      "key": "Bet St3 0.75",
+      "n": 22,
+      "obsFold": 0.545,
+      "obsRaise": 0.045,
+      "predFold": 0.561,
+      "predFoldGto": 0.368,
+      "predRaise": 0.03,
+      "seFold": 0.106
+     },
+     {
+      "key": "Bet St3 1",
+      "n": 22,
+      "obsFold": 0.727,
+      "obsRaise": 0.045,
+      "predFold": 0.613,
+      "predFoldGto": 0.395,
+      "predRaise": 0.03,
+      "seFold": 0.095
+     },
+     {
+      "key": "Bet St3 1.5",
+      "n": 22,
+      "obsFold": 0.864,
+      "obsRaise": 0.091,
+      "predFold": 0.643,
+      "predFoldGto": 0.376,
+      "predRaise": 0.029,
+      "seFold": 0.073
+     },
+     {
+      "key": "C-Bet St1 0.33",
+      "n": 150,
+      "obsFold": 0.293,
+      "obsRaise": 0.04,
+      "predFold": 0.272,
+      "predFoldGto": 0.218,
+      "predRaise": 0.058,
+      "seFold": 0.037
+     },
+     {
+      "key": "C-Bet St1 0.5",
+      "n": 150,
+      "obsFold": 0.453,
+      "obsRaise": 0.04,
+      "predFold": 0.371,
+      "predFoldGto": 0.295,
+      "predRaise": 0.058,
+      "seFold": 0.041
+     },
+     {
+      "key": "C-Bet St1 0.75",
+      "n": 150,
+      "obsFold": 0.527,
+      "obsRaise": 0.047,
+      "predFold": 0.472,
+      "predFoldGto": 0.377,
+      "predRaise": 0.058,
+      "seFold": 0.041
+     },
+     {
+      "key": "C-Bet St1 1",
+      "n": 150,
+      "obsFold": 0.56,
+      "obsRaise": 0.053,
+      "predFold": 0.527,
+      "predFoldGto": 0.407,
+      "predRaise": 0.058,
+      "seFold": 0.041
+     },
+     {
+      "key": "C-Bet St1 1.5",
+      "n": 150,
+      "obsFold": 0.66,
+      "obsRaise": 0.073,
+      "predFold": 0.577,
+      "predFoldGto": 0.409,
+      "predRaise": 0.058,
+      "seFold": 0.039
+     },
+     {
+      "key": "C-Bet St2 0.33",
+      "n": 61,
+      "obsFold": 0.066,
+      "obsRaise": 0.098,
+      "predFold": 0.215,
+      "predFoldGto": 0.219,
+      "predRaise": 0.067,
+      "seFold": 0.032
+     },
+     {
+      "key": "C-Bet St2 0.5",
+      "n": 61,
+      "obsFold": 0.131,
+      "obsRaise": 0.098,
+      "predFold": 0.313,
+      "predFoldGto": 0.294,
+      "predRaise": 0.067,
+      "seFold": 0.043
+     },
+     {
+      "key": "C-Bet St2 0.75",
+      "n": 61,
+      "obsFold": 0.246,
+      "obsRaise": 0.098,
+      "predFold": 0.421,
+      "predFoldGto": 0.377,
+      "predRaise": 0.066,
+      "seFold": 0.055
+     },
+     {
+      "key": "C-Bet St2 1",
+      "n": 60,
+      "obsFold": 0.333,
+      "obsRaise": 0.117,
+      "predFold": 0.486,
+      "predFoldGto": 0.407,
+      "predRaise": 0.067,
+      "seFold": 0.061
+     },
+     {
+      "key": "C-Bet St2 1.5",
+      "n": 59,
+      "obsFold": 0.542,
+      "obsRaise": 0.136,
+      "predFold": 0.569,
+      "predFoldGto": 0.409,
+      "predRaise": 0.066,
+      "seFold": 0.065
+     },
+     {
+      "key": "C-Bet St3 0.33",
+      "n": 27,
+      "obsFold": 0.296,
+      "obsRaise": 0.074,
+      "predFold": 0.345,
+      "predFoldGto": 0.218,
+      "predRaise": 0.033,
+      "seFold": 0.088
+     },
+     {
+      "key": "C-Bet St3 0.5",
+      "n": 27,
+      "obsFold": 0.37,
+      "obsRaise": 0.074,
+      "predFold": 0.453,
+      "predFoldGto": 0.294,
+      "predRaise": 0.033,
+      "seFold": 0.093
+     },
+     {
+      "key": "C-Bet St3 0.75",
+      "n": 27,
+      "obsFold": 0.481,
+      "obsRaise": 0.111,
+      "predFold": 0.558,
+      "predFoldGto": 0.374,
+      "predRaise": 0.032,
+      "seFold": 0.096
+     },
+     {
+      "key": "C-Bet St3 1",
+      "n": 26,
+      "obsFold": 0.577,
+      "obsRaise": 0.115,
+      "predFold": 0.61,
+      "predFoldGto": 0.4,
+      "predRaise": 0.033,
+      "seFold": 0.097
+     },
+     {
+      "key": "C-Bet St3 1.5",
+      "n": 25,
+      "obsFold": 0.8,
+      "obsRaise": 0.08,
+      "predFold": 0.64,
+      "predFoldGto": 0.38,
+      "predRaise": 0.03,
+      "seFold": 0.08
+     }
+    ],
+    "byHudType": [
+     {
+      "key": "LAG 0.33",
+      "n": 20,
+      "obsFold": 0.1,
+      "obsRaise": 0.1,
+      "predFold": 0.281,
+      "predFoldGto": 0.218,
+      "predRaise": 0.073,
+      "seFold": 0.067
+     },
+     {
+      "key": "LAG 0.5",
+      "n": 20,
+      "obsFold": 0.25,
+      "obsRaise": 0.1,
+      "predFold": 0.38,
+      "predFoldGto": 0.295,
+      "predRaise": 0.073,
+      "seFold": 0.097
+     },
+     {
+      "key": "LAG 0.75",
+      "n": 20,
+      "obsFold": 0.25,
+      "obsRaise": 0.1,
+      "predFold": 0.48,
+      "predFoldGto": 0.377,
+      "predRaise": 0.073,
+      "seFold": 0.097
+     },
+     {
+      "key": "LAG 1",
+      "n": 20,
+      "obsFold": 0.3,
+      "obsRaise": 0.15,
+      "predFold": 0.537,
+      "predFoldGto": 0.407,
+      "predRaise": 0.073,
+      "seFold": 0.102
+     },
+     {
+      "key": "LAG 1.5",
+      "n": 20,
+      "obsFold": 0.45,
+      "obsRaise": 0.25,
+      "predFold": 0.597,
+      "predFoldGto": 0.407,
+      "predRaise": 0.073,
+      "seFold": 0.111
+     },
+     {
+      "key": "TAG 0.33",
+      "n": 64,
+      "obsFold": 0.422,
+      "obsRaise": 0.063,
+      "predFold": 0.305,
+      "predFoldGto": 0.218,
+      "predRaise": 0.068,
+      "seFold": 0.062
+     },
+     {
+      "key": "TAG 0.5",
+      "n": 64,
+      "obsFold": 0.516,
+      "obsRaise": 0.063,
+      "predFold": 0.408,
+      "predFoldGto": 0.296,
+      "predRaise": 0.068,
+      "seFold": 0.062
+     },
+     {
+      "key": "TAG 0.75",
+      "n": 64,
+      "obsFold": 0.594,
+      "obsRaise": 0.063,
+      "predFold": 0.512,
+      "predFoldGto": 0.377,
+      "predRaise": 0.068,
+      "seFold": 0.061
+     },
+     {
+      "key": "TAG 1",
+      "n": 64,
+      "obsFold": 0.719,
+      "obsRaise": 0.063,
+      "predFold": 0.568,
+      "predFoldGto": 0.406,
+      "predRaise": 0.068,
+      "seFold": 0.056
+     },
+     {
+      "key": "TAG 1.5",
+      "n": 64,
+      "obsFold": 0.844,
+      "obsRaise": 0.047,
+      "predFold": 0.62,
+      "predFoldGto": 0.405,
+      "predRaise": 0.067,
+      "seFold": 0.045
+     },
+     {
+      "key": "loose-passiv 0.33",
+      "n": 66,
+      "obsFold": 0.197,
+      "obsRaise": 0.045,
+      "predFold": 0.216,
+      "predFoldGto": 0.224,
+      "predRaise": 0.056,
+      "seFold": 0.049
+     },
+     {
+      "key": "loose-passiv 0.5",
+      "n": 66,
+      "obsFold": 0.333,
+      "obsRaise": 0.045,
+      "predFold": 0.307,
+      "predFoldGto": 0.296,
+      "predRaise": 0.056,
+      "seFold": 0.058
+     },
+     {
+      "key": "loose-passiv 0.75",
+      "n": 66,
+      "obsFold": 0.439,
+      "obsRaise": 0.061,
+      "predFold": 0.409,
+      "predFoldGto": 0.376,
+      "predRaise": 0.056,
+      "seFold": 0.061
+     },
+     {
+      "key": "loose-passiv 1",
+      "n": 66,
+      "obsFold": 0.47,
+      "obsRaise": 0.076,
+      "predFold": 0.468,
+      "predFoldGto": 0.405,
+      "predRaise": 0.056,
+      "seFold": 0.061
+     },
+     {
+      "key": "loose-passiv 1.5",
+      "n": 65,
+      "obsFold": 0.646,
+      "obsRaise": 0.092,
+      "predFold": 0.53,
+      "predFoldGto": 0.402,
+      "predRaise": 0.054,
+      "seFold": 0.059
+     },
+     {
+      "key": "sehr loose 0.33",
+      "n": 61,
+      "obsFold": 0.361,
+      "obsRaise": 0.033,
+      "predFold": 0.269,
+      "predFoldGto": 0.223,
+      "predRaise": 0.053,
+      "seFold": 0.061
+     },
+     {
+      "key": "sehr loose 0.5",
+      "n": 60,
+      "obsFold": 0.417,
+      "obsRaise": 0.033,
+      "predFold": 0.36,
+      "predFoldGto": 0.295,
+      "predRaise": 0.053,
+      "seFold": 0.064
+     },
+     {
+      "key": "sehr loose 0.75",
+      "n": 61,
+      "obsFold": 0.508,
+      "obsRaise": 0.033,
+      "predFold": 0.464,
+      "predFoldGto": 0.376,
+      "predRaise": 0.052,
+      "seFold": 0.064
+     },
+     {
+      "key": "sehr loose 1",
+      "n": 60,
+      "obsFold": 0.583,
+      "obsRaise": 0.033,
+      "predFold": 0.518,
+      "predFoldGto": 0.404,
+      "predRaise": 0.053,
+      "seFold": 0.064
+     },
+     {
+      "key": "sehr loose 1.5",
+      "n": 60,
+      "obsFold": 0.7,
+      "obsRaise": 0.05,
+      "predFold": 0.574,
+      "predFoldGto": 0.404,
+      "predRaise": 0.053,
+      "seFold": 0.059
+     },
+     {
+      "key": "unbekannt 0.33",
+      "n": 164,
+      "obsFold": 0.201,
+      "obsRaise": 0.061,
+      "predFold": 0.262,
+      "predFoldGto": 0.221,
+      "predRaise": 0.064,
+      "seFold": 0.031
+     },
+     {
+      "key": "unbekannt 0.5",
+      "n": 160,
+      "obsFold": 0.325,
+      "obsRaise": 0.063,
+      "predFold": 0.355,
+      "predFoldGto": 0.294,
+      "predRaise": 0.065,
+      "seFold": 0.037
+     },
+     {
+      "key": "unbekannt 0.75",
+      "n": 164,
+      "obsFold": 0.402,
+      "obsRaise": 0.067,
+      "predFold": 0.457,
+      "predFoldGto": 0.376,
+      "predRaise": 0.063,
+      "seFold": 0.038
+     },
+     {
+      "key": "unbekannt 1",
+      "n": 163,
+      "obsFold": 0.485,
+      "obsRaise": 0.067,
+      "predFold": 0.515,
+      "predFoldGto": 0.406,
+      "predRaise": 0.064,
+      "seFold": 0.039
+     },
+     {
+      "key": "unbekannt 1.5",
+      "n": 162,
+      "obsFold": 0.605,
+      "obsRaise": 0.086,
+      "predFold": 0.573,
+      "predFoldGto": 0.405,
+      "predRaise": 0.064,
+      "seFold": 0.038
+     }
+    ]
+   },
+   "value": {
+    "all": [
+     {
+      "key": "alle | 0.33",
+      "n": 466,
+      "realVsCheck": 0.294,
+      "se": 0.899,
+      "modelVsCheck": 0.873
+     },
+     {
+      "key": "alle | 0.5",
+      "n": 461,
+      "realVsCheck": 0.154,
+      "se": 0.927,
+      "modelVsCheck": 1.116
+     },
+     {
+      "key": "alle | 0.75",
+      "n": 466,
+      "realVsCheck": -0.974,
+      "se": 1.021,
+      "modelVsCheck": 1.331
+     },
+     {
+      "key": "alle | 1",
+      "n": 464,
+      "realVsCheck": -2.545,
+      "se": 1.245,
+      "modelVsCheck": 1.317
+     },
+     {
+      "key": "alle | 1.5",
+      "n": 462,
+      "realVsCheck": -2.971,
+      "se": 1.422,
+      "modelVsCheck": 0.93
+     }
+    ],
+    "byEq": [
+     {
+      "key": "Equity 35–60 % | 0.33",
+      "n": 134,
+      "realVsCheck": -0.248,
+      "se": 1.888,
+      "modelVsCheck": 0.229
+     },
+     {
+      "key": "Equity 35–60 % | 0.5",
+      "n": 133,
+      "realVsCheck": -0.738,
+      "se": 2.005,
+      "modelVsCheck": 0.209
+     },
+     {
+      "key": "Equity 35–60 % | 0.75",
+      "n": 134,
+      "realVsCheck": -1.949,
+      "se": 2.068,
+      "modelVsCheck": 0.2
+     },
+     {
+      "key": "Equity 35–60 % | 1",
+      "n": 133,
+      "realVsCheck": -4.019,
+      "se": 2.58,
+      "modelVsCheck": -0.001
+     },
+     {
+      "key": "Equity 35–60 % | 1.5",
+      "n": 133,
+      "realVsCheck": -1.179,
+      "se": 2.869,
+      "modelVsCheck": -0.695
+     },
+     {
+      "key": "Equity < 35 % | 0.33",
+      "n": 168,
+      "realVsCheck": 1.502,
+      "se": 0.832,
+      "modelVsCheck": -0.145
+     },
+     {
+      "key": "Equity < 35 % | 0.5",
+      "n": 165,
+      "realVsCheck": 0.636,
+      "se": 1.082,
+      "modelVsCheck": -0.049
+     },
+     {
+      "key": "Equity < 35 % | 0.75",
+      "n": 168,
+      "realVsCheck": -0.505,
+      "se": 1.341,
+      "modelVsCheck": 0.074
+     },
+     {
+      "key": "Equity < 35 % | 1",
+      "n": 168,
+      "realVsCheck": -0.682,
+      "se": 1.479,
+      "modelVsCheck": -0.165
+     },
+     {
+      "key": "Equity < 35 % | 1.5",
+      "n": 168,
+      "realVsCheck": -1.857,
+      "se": 1.941,
+      "modelVsCheck": -1.198
+     },
+     {
+      "key": "Equity ≥ 60 % | 0.33",
+      "n": 164,
+      "realVsCheck": -0.5,
+      "se": 1.852,
+      "modelVsCheck": 2.443
+     },
+     {
+      "key": "Equity ≥ 60 % | 0.5",
+      "n": 163,
+      "realVsCheck": 0.393,
+      "se": 1.737,
+      "modelVsCheck": 3.036
+     },
+     {
+      "key": "Equity ≥ 60 % | 0.75",
+      "n": 164,
+      "realVsCheck": -0.657,
+      "se": 1.924,
+      "modelVsCheck": 3.543
+     },
+     {
+      "key": "Equity ≥ 60 % | 1",
+      "n": 163,
+      "realVsCheck": -3.264,
+      "se": 2.414,
+      "modelVsCheck": 3.92
+     },
+     {
+      "key": "Equity ≥ 60 % | 1.5",
+      "n": 161,
+      "realVsCheck": -5.615,
+      "se": 2.634,
+      "modelVsCheck": 4.493
+     }
+    ],
+    "byStreetEqN": [
+     {
+      "key": "St1 Equity 35–60 % n1 | 0.33",
+      "n": 73,
+      "realVsCheck": -1.393,
+      "se": 2.497,
+      "modelVsCheck": 0.304
+     },
+     {
+      "key": "St1 Equity 35–60 % n1 | 0.5",
+      "n": 72,
+      "realVsCheck": -0.469,
+      "se": 2.384,
+      "modelVsCheck": 0.331
+     },
+     {
+      "key": "St1 Equity 35–60 % n1 | 0.75",
+      "n": 73,
+      "realVsCheck": -1.247,
+      "se": 2.366,
+      "modelVsCheck": 0.319
+     },
+     {
+      "key": "St1 Equity 35–60 % n1 | 1",
+      "n": 73,
+      "realVsCheck": -2.103,
+      "se": 3.079,
+      "modelVsCheck": 0.181
+     },
+     {
+      "key": "St1 Equity 35–60 % n1 | 1.5",
+      "n": 73,
+      "realVsCheck": -1.525,
+      "se": 3.243,
+      "modelVsCheck": -0.277
+     },
+     {
+      "key": "St1 Equity 35–60 % n2 | 0.33",
+      "n": 17,
+      "realVsCheck": 7.654,
+      "se": 5.815,
+      "modelVsCheck": 0.509
+     },
+     {
+      "key": "St1 Equity 35–60 % n2 | 0.5",
+      "n": 17,
+      "realVsCheck": 7.254,
+      "se": 5.623,
+      "modelVsCheck": 0.552
+     },
+     {
+      "key": "St1 Equity 35–60 % n2 | 0.75",
+      "n": 17,
+      "realVsCheck": 3.742,
+      "se": 6.599,
+      "modelVsCheck": 0.532
+     },
+     {
+      "key": "St1 Equity 35–60 % n2 | 1",
+      "n": 17,
+      "realVsCheck": -9.457,
+      "se": 10.525,
+      "modelVsCheck": 0.346
+     },
+     {
+      "key": "St1 Equity 35–60 % n2 | 1.5",
+      "n": 17,
+      "realVsCheck": -9.2,
+      "se": 11.815,
+      "modelVsCheck": -0.236
+     },
+     {
+      "key": "St1 Equity 35–60 % n3+ | 0.33",
+      "n": 2,
+      "realVsCheck": -3.2,
+      "se": 9.2,
+      "modelVsCheck": 1.124
+     },
+     {
+      "key": "St1 Equity 35–60 % n3+ | 0.5",
+      "n": 2,
+      "realVsCheck": -10.8,
+      "se": 19.1,
+      "modelVsCheck": 0.229
+     },
+     {
+      "key": "St1 Equity 35–60 % n3+ | 0.75",
+      "n": 2,
+      "realVsCheck": 12.231,
+      "se": 0.63,
+      "modelVsCheck": 0.362
+     },
+     {
+      "key": "St1 Equity 35–60 % n3+ | 1",
+      "n": 2,
+      "realVsCheck": 5.422,
+      "se": 9.478,
+      "modelVsCheck": 0.07
+     },
+     {
+      "key": "St1 Equity 35–60 % n3+ | 1.5",
+      "n": 2,
+      "realVsCheck": 44,
+      "se": 47,
+      "modelVsCheck": -0.815
+     },
+     {
+      "key": "St1 Equity < 35 % n1 | 0.33",
+      "n": 59,
+      "realVsCheck": 2.902,
+      "se": 1.116,
+      "modelVsCheck": -0.018
+     },
+     {
+      "key": "St1 Equity < 35 % n1 | 0.5",
+      "n": 56,
+      "realVsCheck": 2.97,
+      "se": 1.352,
+      "modelVsCheck": 0.013
+     },
+     {
+      "key": "St1 Equity < 35 % n1 | 0.75",
+      "n": 59,
+      "realVsCheck": 2.683,
+      "se": 1.552,
+      "modelVsCheck": 0.08
+     },
+     {
+      "key": "St1 Equity < 35 % n1 | 1",
+      "n": 59,
+      "realVsCheck": 1.622,
+      "se": 1.764,
+      "modelVsCheck": -0.059
+     },
+     {
+      "key": "St1 Equity < 35 % n1 | 1.5",
+      "n": 59,
+      "realVsCheck": -3.188,
+      "se": 3.209,
+      "modelVsCheck": -0.682
+     },
+     {
+      "key": "St1 Equity < 35 % n2 | 0.33",
+      "n": 23,
+      "realVsCheck": 0.522,
+      "se": 1.718,
+      "modelVsCheck": -0.311
+     },
+     {
+      "key": "St1 Equity < 35 % n2 | 0.5",
+      "n": 23,
+      "realVsCheck": -2.622,
+      "se": 2.863,
+      "modelVsCheck": -0.443
+     },
+     {
+      "key": "St1 Equity < 35 % n2 | 0.75",
+      "n": 23,
+      "realVsCheck": -3.004,
+      "se": 4.006,
+      "modelVsCheck": -0.616
+     },
+     {
+      "key": "St1 Equity < 35 % n2 | 1",
+      "n": 23,
+      "realVsCheck": -0.513,
+      "se": 3.528,
+      "modelVsCheck": -0.964
+     },
+     {
+      "key": "St1 Equity < 35 % n2 | 1.5",
+      "n": 23,
+      "realVsCheck": -5.93,
+      "se": 4.085,
+      "modelVsCheck": -1.989
+     },
+     {
+      "key": "St1 Equity < 35 % n3+ | 0.33",
+      "n": 6,
+      "realVsCheck": 6.933,
+      "se": 4.218,
+      "modelVsCheck": -0.749
+     },
+     {
+      "key": "St1 Equity < 35 % n3+ | 0.5",
+      "n": 6,
+      "realVsCheck": 7.683,
+      "se": 5.518,
+      "modelVsCheck": -1.007
+     },
+     {
+      "key": "St1 Equity < 35 % n3+ | 0.75",
+      "n": 6,
+      "realVsCheck": 11.233,
+      "se": 7.139,
+      "modelVsCheck": -1.34
+     },
+     {
+      "key": "St1 Equity < 35 % n3+ | 1",
+      "n": 6,
+      "realVsCheck": 11.117,
+      "se": 9.07,
+      "modelVsCheck": -1.915
+     },
+     {
+      "key": "St1 Equity < 35 % n3+ | 1.5",
+      "n": 6,
+      "realVsCheck": 9.267,
+      "se": 11.98,
+      "modelVsCheck": -3.436
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n1 | 0.33",
+      "n": 93,
+      "realVsCheck": 1.206,
+      "se": 2.183,
+      "modelVsCheck": 1.443
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n1 | 0.5",
+      "n": 92,
+      "realVsCheck": 0.809,
+      "se": 2.066,
+      "modelVsCheck": 1.837
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n1 | 0.75",
+      "n": 93,
+      "realVsCheck": -2.527,
+      "se": 2.525,
+      "modelVsCheck": 2.165
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n1 | 1",
+      "n": 93,
+      "realVsCheck": -3.562,
+      "se": 2.996,
+      "modelVsCheck": 2.421
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n1 | 1.5",
+      "n": 93,
+      "realVsCheck": -4.759,
+      "se": 3.303,
+      "modelVsCheck": 2.84
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n2 | 0.33",
+      "n": 8,
+      "realVsCheck": -8.46,
+      "se": 13.7,
+      "modelVsCheck": 1.639
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n2 | 0.5",
+      "n": 8,
+      "realVsCheck": -5.573,
+      "se": 13.956,
+      "modelVsCheck": 2.028
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n2 | 0.75",
+      "n": 8,
+      "realVsCheck": -9.298,
+      "se": 5.47,
+      "modelVsCheck": 2.367
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n2 | 1",
+      "n": 8,
+      "realVsCheck": -8.182,
+      "se": 3.845,
+      "modelVsCheck": 2.695
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n2 | 1.5",
+      "n": 8,
+      "realVsCheck": -6.06,
+      "se": 12.838,
+      "modelVsCheck": 3.489
+     },
+     {
+      "key": "St2 Equity 35–60 % n1 | 0.33",
+      "n": 26,
+      "realVsCheck": -2.12,
+      "se": 4.661,
+      "modelVsCheck": -0.228
+     },
+     {
+      "key": "St2 Equity 35–60 % n1 | 0.5",
+      "n": 26,
+      "realVsCheck": -4.684,
+      "se": 5.921,
+      "modelVsCheck": -0.234
+     },
+     {
+      "key": "St2 Equity 35–60 % n1 | 0.75",
+      "n": 26,
+      "realVsCheck": -5.81,
+      "se": 5.857,
+      "modelVsCheck": -0.048
+     },
+     {
+      "key": "St2 Equity 35–60 % n1 | 1",
+      "n": 25,
+      "realVsCheck": -5.547,
+      "se": 5.643,
+      "modelVsCheck": -0.214
+     },
+     {
+      "key": "St2 Equity 35–60 % n1 | 1.5",
+      "n": 25,
+      "realVsCheck": -6.923,
+      "se": 6.315,
+      "modelVsCheck": -0.605
+     },
+     {
+      "key": "St2 Equity 35–60 % n2 | 0.33",
+      "n": 2,
+      "realVsCheck": -9.6,
+      "se": 13.1,
+      "modelVsCheck": 6.462
+     },
+     {
+      "key": "St2 Equity 35–60 % n2 | 0.5",
+      "n": 2,
+      "realVsCheck": -17.25,
+      "se": 17.25,
+      "modelVsCheck": 7.983
+     },
+     {
+      "key": "St2 Equity 35–60 % n2 | 0.75",
+      "n": 2,
+      "realVsCheck": -25.85,
+      "se": 25.85,
+      "modelVsCheck": 8.761
+     },
+     {
+      "key": "St2 Equity 35–60 % n2 | 1",
+      "n": 2,
+      "realVsCheck": -34.45,
+      "se": 34.45,
+      "modelVsCheck": 9.563
+     },
+     {
+      "key": "St2 Equity 35–60 % n2 | 1.5",
+      "n": 2,
+      "realVsCheck": -30.253,
+      "se": 30.253,
+      "modelVsCheck": 8.098
+     },
+     {
+      "key": "St2 Equity < 35 % n1 | 0.33",
+      "n": 38,
+      "realVsCheck": 3.5,
+      "se": 2.549,
+      "modelVsCheck": -0.594
+     },
+     {
+      "key": "St2 Equity < 35 % n1 | 0.5",
+      "n": 38,
+      "realVsCheck": 3.58,
+      "se": 3.081,
+      "modelVsCheck": -0.414
+     },
+     {
+      "key": "St2 Equity < 35 % n1 | 0.75",
+      "n": 38,
+      "realVsCheck": 1.111,
+      "se": 3.651,
+      "modelVsCheck": -0.079
+     },
+     {
+      "key": "St2 Equity < 35 % n1 | 1",
+      "n": 38,
+      "realVsCheck": 0.647,
+      "se": 3.29,
+      "modelVsCheck": -0.165
+     },
+     {
+      "key": "St2 Equity < 35 % n1 | 1.5",
+      "n": 38,
+      "realVsCheck": 1.421,
+      "se": 4.12,
+      "modelVsCheck": -0.816
+     },
+     {
+      "key": "St2 Equity < 35 % n2 | 0.33",
+      "n": 12,
+      "realVsCheck": -5.267,
+      "se": 3.205,
+      "modelVsCheck": -0.544
+     },
+     {
+      "key": "St2 Equity < 35 % n2 | 0.5",
+      "n": 12,
+      "realVsCheck": -9.458,
+      "se": 4.299,
+      "modelVsCheck": -0.699
+     },
+     {
+      "key": "St2 Equity < 35 % n2 | 0.75",
+      "n": 12,
+      "realVsCheck": -13.4,
+      "se": 5.972,
+      "modelVsCheck": -0.875
+     },
+     {
+      "key": "St2 Equity < 35 % n2 | 1",
+      "n": 12,
+      "realVsCheck": -21.95,
+      "se": 8.969,
+      "modelVsCheck": -1.281
+     },
+     {
+      "key": "St2 Equity < 35 % n2 | 1.5",
+      "n": 12,
+      "realVsCheck": -17.8,
+      "se": 10.236,
+      "modelVsCheck": -2.333
+     },
+     {
+      "key": "St2 Equity < 35 % n3+ | 0.33",
+      "n": 4,
+      "realVsCheck": 4.05,
+      "se": 2.9,
+      "modelVsCheck": -1.139
+     },
+     {
+      "key": "St2 Equity < 35 % n3+ | 0.5",
+      "n": 4,
+      "realVsCheck": 4.15,
+      "se": 3.08,
+      "modelVsCheck": -1.445
+     },
+     {
+      "key": "St2 Equity < 35 % n3+ | 0.75",
+      "n": 4,
+      "realVsCheck": 6.2,
+      "se": 4.598,
+      "modelVsCheck": -1.831
+     },
+     {
+      "key": "St2 Equity < 35 % n3+ | 1",
+      "n": 4,
+      "realVsCheck": 6.25,
+      "se": 6.46,
+      "modelVsCheck": -2.588
+     },
+     {
+      "key": "St2 Equity < 35 % n3+ | 1.5",
+      "n": 4,
+      "realVsCheck": 11.9,
+      "se": 8.885,
+      "modelVsCheck": -4.598
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n1 | 0.33",
+      "n": 37,
+      "realVsCheck": -0.742,
+      "se": 4.281,
+      "modelVsCheck": 3.644
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n1 | 0.5",
+      "n": 37,
+      "realVsCheck": 2.894,
+      "se": 3.638,
+      "modelVsCheck": 4.48
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n1 | 0.75",
+      "n": 37,
+      "realVsCheck": 3.807,
+      "se": 3.841,
+      "modelVsCheck": 5.235
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n1 | 1",
+      "n": 37,
+      "realVsCheck": -4.152,
+      "se": 6.386,
+      "modelVsCheck": 5.641
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n1 | 1.5",
+      "n": 36,
+      "realVsCheck": -7.319,
+      "se": 6.616,
+      "modelVsCheck": 6.099
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n2 | 0.33",
+      "n": 6,
+      "realVsCheck": -14.9,
+      "se": 19.503,
+      "modelVsCheck": 5.926
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n2 | 0.5",
+      "n": 6,
+      "realVsCheck": -10.483,
+      "se": 19.961,
+      "modelVsCheck": 7.565
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n2 | 0.75",
+      "n": 6,
+      "realVsCheck": -1.5,
+      "se": 24.082,
+      "modelVsCheck": 9.546
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n2 | 1",
+      "n": 6,
+      "realVsCheck": -3.2,
+      "se": 22.93,
+      "modelVsCheck": 11.67
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n2 | 1.5",
+      "n": 6,
+      "realVsCheck": -15.2,
+      "se": 19.833,
+      "modelVsCheck": 15.407
+     },
+     {
+      "key": "St3 Equity 35–60 % n1 | 0.33",
+      "n": 12,
+      "realVsCheck": 3.058,
+      "se": 6.264,
+      "modelVsCheck": -0.738
+     },
+     {
+      "key": "St3 Equity 35–60 % n1 | 0.5",
+      "n": 12,
+      "realVsCheck": 1.129,
+      "se": 6.904,
+      "modelVsCheck": -1.233
+     },
+     {
+      "key": "St3 Equity 35–60 % n1 | 0.75",
+      "n": 12,
+      "realVsCheck": -2.496,
+      "se": 7.962,
+      "modelVsCheck": -1.738
+     },
+     {
+      "key": "St3 Equity 35–60 % n1 | 1",
+      "n": 12,
+      "realVsCheck": 0.788,
+      "se": 9.301,
+      "modelVsCheck": -2.51
+     },
+     {
+      "key": "St3 Equity 35–60 % n1 | 1.5",
+      "n": 12,
+      "realVsCheck": 19.129,
+      "se": 7.52,
+      "modelVsCheck": -5.052
+     },
+     {
+      "key": "St3 Equity 35–60 % n2 | 0.33",
+      "n": 2,
+      "realVsCheck": -8.8,
+      "se": 1.1,
+      "modelVsCheck": -0.251
+     },
+     {
+      "key": "St3 Equity 35–60 % n2 | 0.5",
+      "n": 2,
+      "realVsCheck": -11.65,
+      "se": 3.35,
+      "modelVsCheck": -0.447
+     },
+     {
+      "key": "St3 Equity 35–60 % n2 | 0.75",
+      "n": 2,
+      "realVsCheck": -12.75,
+      "se": 9.75,
+      "modelVsCheck": -0.834
+     },
+     {
+      "key": "St3 Equity 35–60 % n2 | 1",
+      "n": 2,
+      "realVsCheck": -16.5,
+      "se": 13.5,
+      "modelVsCheck": -1.545
+     },
+     {
+      "key": "St3 Equity 35–60 % n2 | 1.5",
+      "n": 2,
+      "realVsCheck": 13.5,
+      "se": 16.5,
+      "modelVsCheck": -3.508
+     },
+     {
+      "key": "St3 Equity < 35 % n1 | 0.33",
+      "n": 20,
+      "realVsCheck": -3.005,
+      "se": 1.527,
+      "modelVsCheck": 1.158
+     },
+     {
+      "key": "St3 Equity < 35 % n1 | 0.5",
+      "n": 20,
+      "realVsCheck": -4.6,
+      "se": 2.183,
+      "modelVsCheck": 1.948
+     },
+     {
+      "key": "St3 Equity < 35 % n1 | 0.75",
+      "n": 20,
+      "realVsCheck": -7.69,
+      "se": 3.05,
+      "modelVsCheck": 2.663
+     },
+     {
+      "key": "St3 Equity < 35 % n1 | 1",
+      "n": 20,
+      "realVsCheck": -2.59,
+      "se": 4.61,
+      "modelVsCheck": 2.337
+     },
+     {
+      "key": "St3 Equity < 35 % n1 | 1.5",
+      "n": 20,
+      "realVsCheck": 1.175,
+      "se": 5.776,
+      "modelVsCheck": -0.068
+     },
+     {
+      "key": "St3 Equity < 35 % n2 | 0.33",
+      "n": 4,
+      "realVsCheck": -2.4,
+      "se": 1.334,
+      "modelVsCheck": -0.303
+     },
+     {
+      "key": "St3 Equity < 35 % n2 | 0.5",
+      "n": 4,
+      "realVsCheck": -1.2,
+      "se": 3.079,
+      "modelVsCheck": -0.376
+     },
+     {
+      "key": "St3 Equity < 35 % n2 | 0.75",
+      "n": 4,
+      "realVsCheck": -2.6,
+      "se": 4.21,
+      "modelVsCheck": -0.372
+     },
+     {
+      "key": "St3 Equity < 35 % n2 | 1",
+      "n": 4,
+      "realVsCheck": -4,
+      "se": 5.374,
+      "modelVsCheck": -0.607
+     },
+     {
+      "key": "St3 Equity < 35 % n2 | 1.5",
+      "n": 4,
+      "realVsCheck": 7.25,
+      "se": 4.085,
+      "modelVsCheck": -1.664
+     },
+     {
+      "key": "St3 Equity < 35 % n3+ | 0.33",
+      "n": 2,
+      "realVsCheck": 5.6,
+      "se": 6.9,
+      "modelVsCheck": 0.052
+     },
+     {
+      "key": "St3 Equity < 35 % n3+ | 0.5",
+      "n": 2,
+      "realVsCheck": 5.25,
+      "se": 7.25,
+      "modelVsCheck": -0.112
+     },
+     {
+      "key": "St3 Equity < 35 % n3+ | 0.75",
+      "n": 2,
+      "realVsCheck": 8.25,
+      "se": 4.25,
+      "modelVsCheck": -0.483
+     },
+     {
+      "key": "St3 Equity < 35 % n3+ | 1",
+      "n": 2,
+      "realVsCheck": 8.25,
+      "se": 4.25,
+      "modelVsCheck": -1.444
+     },
+     {
+      "key": "St3 Equity < 35 % n3+ | 1.5",
+      "n": 2,
+      "realVsCheck": 8.25,
+      "se": 4.25,
+      "modelVsCheck": -4.631
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n1 | 0.33",
+      "n": 17,
+      "realVsCheck": 0.188,
+      "se": 2.894,
+      "modelVsCheck": 4.122
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n1 | 0.5",
+      "n": 17,
+      "realVsCheck": 0.029,
+      "se": 2.784,
+      "modelVsCheck": 4.871
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n1 | 0.75",
+      "n": 17,
+      "realVsCheck": 4.2,
+      "se": 3.658,
+      "modelVsCheck": 5.378
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n1 | 1",
+      "n": 16,
+      "realVsCheck": 1.887,
+      "se": 4.753,
+      "modelVsCheck": 5.658
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n1 | 1.5",
+      "n": 15,
+      "realVsCheck": -1.987,
+      "se": 6.021,
+      "modelVsCheck": 5.506
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n2 | 0.33",
+      "n": 1,
+      "realVsCheck": -16.7,
+      "se": null,
+      "modelVsCheck": 10.36
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n2 | 0.5",
+      "n": 1,
+      "realVsCheck": -10.5,
+      "se": null,
+      "modelVsCheck": 12.936
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n2 | 0.75",
+      "n": 1,
+      "realVsCheck": -1.6,
+      "se": null,
+      "modelVsCheck": 15.329
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n2 | 1",
+      "n": 1,
+      "realVsCheck": 7.4,
+      "se": null,
+      "modelVsCheck": 19.337
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n2 | 1.5",
+      "n": 1,
+      "realVsCheck": -28.5,
+      "se": null,
+      "modelVsCheck": 30.937
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n3+ | 0.33",
+      "n": 2,
+      "realVsCheck": 1.95,
+      "se": 0.65,
+      "modelVsCheck": 1.234
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n3+ | 0.5",
+      "n": 2,
+      "realVsCheck": 0,
+      "se": 0,
+      "modelVsCheck": 1.397
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n3+ | 0.75",
+      "n": 2,
+      "realVsCheck": 0,
+      "se": 0,
+      "modelVsCheck": 1.506
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n3+ | 1",
+      "n": 2,
+      "realVsCheck": 0,
+      "se": 0,
+      "modelVsCheck": 1.765
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n3+ | 1.5",
+      "n": 2,
+      "realVsCheck": 0,
+      "se": 0,
+      "modelVsCheck": 2.891
+     }
+    ]
+   },
+   "policies": {
+    "all": {
+     "spots": 466,
+     "rows": [
+      {
+       "policy": "Modell (beste EV)",
+       "vsCheck": -1.386,
+       "se": 1.063
+      },
+      {
+       "policy": "Modell, Größe frei nach Ausspielung (Orakel)",
+       "vsCheck": 5.967,
+       "se": 0.959
+      },
+      {
+       "policy": "immer Check",
+       "vsCheck": 0,
+       "se": 0
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 0.33",
+       "vsCheck": 0.163,
+       "se": 0.828
+      },
+      {
+       "policy": "immer Bet 0.33",
+       "vsCheck": 0.294,
+       "se": 0.899
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 0.5",
+       "vsCheck": 0.34,
+       "se": 0.815
+      },
+      {
+       "policy": "immer Bet 0.5",
+       "vsCheck": 0.177,
+       "se": 0.917
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 0.75",
+       "vsCheck": -0.584,
+       "se": 0.902
+      },
+      {
+       "policy": "immer Bet 0.75",
+       "vsCheck": -0.974,
+       "se": 1.021
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 1",
+       "vsCheck": -1.902,
+       "se": 1.115
+      },
+      {
+       "policy": "immer Bet 1",
+       "vsCheck": -2.534,
+       "se": 1.24
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 1.5",
+       "vsCheck": -2.782,
+       "se": 1.27
+      },
+      {
+       "policy": "immer Bet 1.5",
+       "vsCheck": -2.97,
+       "se": 1.41
+      }
+     ]
+    },
+    "headsUp": {
+     "spots": 375,
+     "rows": [
+      {
+       "policy": "Modell (beste EV)",
+       "vsCheck": -0.498,
+       "se": 1.2
+      },
+      {
+       "policy": "Modell, Größe frei nach Ausspielung (Orakel)",
+       "vsCheck": 6.418,
+       "se": 1.039
+      },
+      {
+       "policy": "immer Check",
+       "vsCheck": 0,
+       "se": 0
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 0.33",
+       "vsCheck": 0.63,
+       "se": 0.906
+      },
+      {
+       "policy": "immer Bet 0.33",
+       "vsCheck": 0.565,
+       "se": 0.982
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 0.5",
+       "vsCheck": 0.909,
+       "se": 0.875
+      },
+      {
+       "policy": "immer Bet 0.5",
+       "vsCheck": 0.698,
+       "se": 0.988
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 0.75",
+       "vsCheck": -0.171,
+       "se": 0.989
+      },
+      {
+       "policy": "immer Bet 0.75",
+       "vsCheck": -0.662,
+       "se": 1.109
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 1",
+       "vsCheck": -1.268,
+       "se": 1.227
+      },
+      {
+       "policy": "immer Bet 1",
+       "vsCheck": -1.784,
+       "se": 1.343
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 1.5",
+       "vsCheck": -2.224,
+       "se": 1.379
+      },
+      {
+       "policy": "immer Bet 1.5",
+       "vsCheck": -2.433,
+       "se": 1.518
+      }
+     ]
+    },
+    "multiway": {
+     "spots": 91,
+     "rows": [
+      {
+       "policy": "Modell (beste EV)",
+       "vsCheck": -5.042,
+       "se": 2.247
+      },
+      {
+       "policy": "Modell, Größe frei nach Ausspielung (Orakel)",
+       "vsCheck": 4.108,
+       "se": 2.409
+      },
+      {
+       "policy": "immer Check",
+       "vsCheck": 0,
+       "se": 0
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 0.33",
+       "vsCheck": -1.76,
+       "se": 2.006
+      },
+      {
+       "policy": "immer Bet 0.33",
+       "vsCheck": -0.822,
+       "se": 2.196
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 0.5",
+       "vsCheck": -2.006,
+       "se": 2.091
+      },
+      {
+       "policy": "immer Bet 0.5",
+       "vsCheck": -1.972,
+       "se": 2.345
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 0.75",
+       "vsCheck": -2.288,
+       "se": 2.17
+      },
+      {
+       "policy": "immer Bet 0.75",
+       "vsCheck": -2.26,
+       "se": 2.548
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 1",
+       "vsCheck": -4.514,
+       "se": 2.644
+      },
+      {
+       "policy": "immer Bet 1",
+       "vsCheck": -5.627,
+       "se": 3.107
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 1.5",
+       "vsCheck": -5.081,
+       "se": 3.169
+      },
+      {
+       "policy": "immer Bet 1.5",
+       "vsCheck": -5.18,
+       "se": 3.617
+      }
+     ]
+    }
+   },
+   "eqWhenCalled": [
+    {
+     "key": "St1 0.33",
+     "n": 150,
+     "predEqWhenCalled": 0.507,
+     "obsEqWhenCalled": 0.52,
+     "se": 0.026
+    },
+    {
+     "key": "St1 0.5",
+     "n": 116,
+     "predEqWhenCalled": 0.486,
+     "obsEqWhenCalled": 0.469,
+     "se": 0.029
+    },
+    {
+     "key": "St1 0.75",
+     "n": 101,
+     "predEqWhenCalled": 0.444,
+     "obsEqWhenCalled": 0.424,
+     "se": 0.031
+    },
+    {
+     "key": "St1 1",
+     "n": 90,
+     "predEqWhenCalled": 0.42,
+     "obsEqWhenCalled": 0.392,
+     "se": 0.031
+    },
+    {
+     "key": "St1 1.5",
+     "n": 67,
+     "predEqWhenCalled": 0.417,
+     "obsEqWhenCalled": 0.362,
+     "se": 0.035
+    },
+    {
+     "key": "St2 0.33",
+     "n": 78,
+     "predEqWhenCalled": 0.479,
+     "obsEqWhenCalled": 0.407,
+     "se": 0.042
+    },
+    {
+     "key": "St2 0.5",
+     "n": 72,
+     "predEqWhenCalled": 0.478,
+     "obsEqWhenCalled": 0.402,
+     "se": 0.044
+    },
+    {
+     "key": "St2 0.75",
+     "n": 62,
+     "predEqWhenCalled": 0.478,
+     "obsEqWhenCalled": 0.398,
+     "se": 0.048
+    },
+    {
+     "key": "St2 1",
+     "n": 48,
+     "predEqWhenCalled": 0.493,
+     "obsEqWhenCalled": 0.391,
+     "se": 0.053
+    },
+    {
+     "key": "St2 1.5",
+     "n": 24,
+     "predEqWhenCalled": 0.391,
+     "obsEqWhenCalled": 0.291,
+     "se": 0.066
+    },
+    {
+     "key": "St3 0.33",
+     "n": 29,
+     "predEqWhenCalled": 0.362,
+     "obsEqWhenCalled": 0.259,
+     "se": 0.081
+    },
+    {
+     "key": "St3 0.5",
+     "n": 24,
+     "predEqWhenCalled": 0.321,
+     "obsEqWhenCalled": 0.208,
+     "se": 0.085
+    },
+    {
+     "key": "St3 0.75",
+     "n": 20,
+     "predEqWhenCalled": 0.257,
+     "obsEqWhenCalled": 0.15,
+     "se": 0.082
+    },
+    {
+     "key": "St3 1",
+     "n": 13,
+     "predEqWhenCalled": 0.23,
+     "obsEqWhenCalled": 0.077,
+     "se": 0.077
+    },
+    {
+     "key": "St3 1.5",
+     "n": 4,
+     "predEqWhenCalled": 0.172,
+     "obsEqWhenCalled": 0,
+     "se": 0
+    }
+   ],
+   "facing": [
+    {
+     "key": "St1 call",
+     "n": 74,
+     "realVsFold": -4.356,
+     "se": 2.931,
+     "modelVsFold": 0.135
+    },
+    {
+     "key": "St1 fold",
+     "n": 74,
+     "realVsFold": 0,
+     "se": 0,
+     "modelVsFold": 0
+    },
+    {
+     "key": "St1 r2.5",
+     "n": 74,
+     "realVsFold": -7.305,
+     "se": 3.519,
+     "modelVsFold": -1.48
+    },
+    {
+     "key": "St1 r3.5",
+     "n": 74,
+     "realVsFold": -10.832,
+     "se": 3.963,
+     "modelVsFold": -3.099
+    },
+    {
+     "key": "St2 call",
+     "n": 30,
+     "realVsFold": 7.652,
+     "se": 5.17,
+     "modelVsFold": -2.558
+    },
+    {
+     "key": "St2 fold",
+     "n": 30,
+     "realVsFold": 0,
+     "se": 0,
+     "modelVsFold": 0
+    },
+    {
+     "key": "St2 r2.5",
+     "n": 30,
+     "realVsFold": 1.976,
+     "se": 7.608,
+     "modelVsFold": -5.8
+    },
+    {
+     "key": "St2 r3.5",
+     "n": 30,
+     "realVsFold": 1.331,
+     "se": 7.069,
+     "modelVsFold": -8.043
+    },
+    {
+     "key": "St3 call",
+     "n": 8,
+     "realVsFold": -4.5,
+     "se": 7.952,
+     "modelVsFold": -7.014
+    },
+    {
+     "key": "St3 fold",
+     "n": 8,
+     "realVsFold": 0,
+     "se": 0,
+     "modelVsFold": 0
+    },
+    {
+     "key": "St3 r2.5",
+     "n": 8,
+     "realVsFold": 5.425,
+     "se": 15.622,
+     "modelVsFold": -15.46
+    },
+    {
+     "key": "St3 r3.5",
+     "n": 8,
+     "realVsFold": 1.587,
+     "se": 17.59,
+     "modelVsFold": -17.582
+    }
+   ],
+   "modelChoice": {
+    "1": 39,
+    "0.33": 48,
+    "check": 133,
+    "1.5": 126,
+    "0.75": 96,
+    "0.5": 24
+   }
+  },
+  "v21b-synth": {
+   "label": "v21b",
+   "comp": "synth",
+   "files": [
+    {
+     "file": "v21b-synth-601.json",
+     "seed": 601,
+     "hands": 2000,
+     "spots": 605
+    }
+   ],
+   "spots": 605,
+   "betSpots": 409,
+   "facingSpots": 196,
+   "calibration": {
+    "bySize": [
+     {
+      "key": "0.33",
+      "n": 759,
+      "obsFold": 0.216,
+      "obsRaise": 0.08,
+      "predFold": 0.204,
+      "predFoldGto": 0.384,
+      "predRaise": 0.047,
+      "seFold": 0.015
+     },
+     {
+      "key": "0.5",
+      "n": 751,
+      "obsFold": 0.233,
+      "obsRaise": 0.081,
+      "predFold": 0.27,
+      "predFoldGto": 0.44,
+      "predRaise": 0.047,
+      "seFold": 0.015
+     },
+     {
+      "key": "0.75",
+      "n": 751,
+      "obsFold": 0.25,
+      "obsRaise": 0.08,
+      "predFold": 0.344,
+      "predFoldGto": 0.494,
+      "predRaise": 0.046,
+      "seFold": 0.016
+     },
+     {
+      "key": "1",
+      "n": 738,
+      "obsFold": 0.262,
+      "obsRaise": 0.079,
+      "predFold": 0.386,
+      "predFoldGto": 0.496,
+      "predRaise": 0.046,
+      "seFold": 0.016
+     },
+     {
+      "key": "1.5",
+      "n": 720,
+      "obsFold": 0.29,
+      "obsRaise": 0.075,
+      "predFold": 0.427,
+      "predFoldGto": 0.455,
+      "predRaise": 0.046,
+      "seFold": 0.017
+     }
+    ],
+    "byStreetSizeN": [
+     {
+      "key": "St1 n1 0.33",
+      "n": 66,
+      "obsFold": 0.212,
+      "obsRaise": 0.076,
+      "predFold": 0.105,
+      "predFoldGto": 0.226,
+      "predRaise": 0.054,
+      "seFold": 0.05
+     },
+     {
+      "key": "St1 n1 0.5",
+      "n": 64,
+      "obsFold": 0.234,
+      "obsRaise": 0.078,
+      "predFold": 0.156,
+      "predFoldGto": 0.296,
+      "predRaise": 0.055,
+      "seFold": 0.053
+     },
+     {
+      "key": "St1 n1 0.75",
+      "n": 65,
+      "obsFold": 0.246,
+      "obsRaise": 0.077,
+      "predFold": 0.231,
+      "predFoldGto": 0.377,
+      "predRaise": 0.053,
+      "seFold": 0.053
+     },
+     {
+      "key": "St1 n1 1",
+      "n": 64,
+      "obsFold": 0.25,
+      "obsRaise": 0.078,
+      "predFold": 0.282,
+      "predFoldGto": 0.407,
+      "predRaise": 0.054,
+      "seFold": 0.054
+     },
+     {
+      "key": "St1 n1 1.5",
+      "n": 64,
+      "obsFold": 0.281,
+      "obsRaise": 0.078,
+      "predFold": 0.34,
+      "predFoldGto": 0.409,
+      "predRaise": 0.053,
+      "seFold": 0.056
+     },
+     {
+      "key": "St1 n2 0.33",
+      "n": 154,
+      "obsFold": 0.169,
+      "obsRaise": 0.084,
+      "predFold": 0.205,
+      "predFoldGto": 0.405,
+      "predRaise": 0.051,
+      "seFold": 0.03
+     },
+     {
+      "key": "St1 n2 0.5",
+      "n": 154,
+      "obsFold": 0.188,
+      "obsRaise": 0.084,
+      "predFold": 0.274,
+      "predFoldGto": 0.468,
+      "predRaise": 0.051,
+      "seFold": 0.032
+     },
+     {
+      "key": "St1 n2 0.75",
+      "n": 154,
+      "obsFold": 0.208,
+      "obsRaise": 0.078,
+      "predFold": 0.348,
+      "predFoldGto": 0.527,
+      "predRaise": 0.048,
+      "seFold": 0.033
+     },
+     {
+      "key": "St1 n2 1",
+      "n": 152,
+      "obsFold": 0.224,
+      "obsRaise": 0.079,
+      "predFold": 0.388,
+      "predFoldGto": 0.528,
+      "predRaise": 0.049,
+      "seFold": 0.034
+     },
+     {
+      "key": "St1 n2 1.5",
+      "n": 152,
+      "obsFold": 0.25,
+      "obsRaise": 0.079,
+      "predFold": 0.421,
+      "predFoldGto": 0.484,
+      "predRaise": 0.049,
+      "seFold": 0.035
+     },
+     {
+      "key": "St1 n3+ 0.33",
+      "n": 182,
+      "obsFold": 0.209,
+      "obsRaise": 0.093,
+      "predFold": 0.257,
+      "predFoldGto": 0.465,
+      "predRaise": 0.049,
+      "seFold": 0.03
+     },
+     {
+      "key": "St1 n3+ 0.5",
+      "n": 182,
+      "obsFold": 0.214,
+      "obsRaise": 0.093,
+      "predFold": 0.314,
+      "predFoldGto": 0.503,
+      "predRaise": 0.049,
+      "seFold": 0.03
+     },
+     {
+      "key": "St1 n3+ 0.75",
+      "n": 182,
+      "obsFold": 0.22,
+      "obsRaise": 0.093,
+      "predFold": 0.376,
+      "predFoldGto": 0.538,
+      "predRaise": 0.049,
+      "seFold": 0.031
+     },
+     {
+      "key": "St1 n3+ 1",
+      "n": 182,
+      "obsFold": 0.231,
+      "obsRaise": 0.093,
+      "predFold": 0.402,
+      "predFoldGto": 0.523,
+      "predRaise": 0.049,
+      "seFold": 0.031
+     },
+     {
+      "key": "St1 n3+ 1.5",
+      "n": 182,
+      "obsFold": 0.253,
+      "obsRaise": 0.088,
+      "predFold": 0.422,
+      "predFoldGto": 0.468,
+      "predRaise": 0.049,
+      "seFold": 0.032
+     },
+     {
+      "key": "St2 n1 0.33",
+      "n": 56,
+      "obsFold": 0.071,
+      "obsRaise": 0.232,
+      "predFold": 0.089,
+      "predFoldGto": 0.224,
+      "predRaise": 0.06,
+      "seFold": 0.034
+     },
+     {
+      "key": "St2 n1 0.5",
+      "n": 55,
+      "obsFold": 0.073,
+      "obsRaise": 0.236,
+      "predFold": 0.145,
+      "predFoldGto": 0.294,
+      "predRaise": 0.061,
+      "seFold": 0.035
+     },
+     {
+      "key": "St2 n1 0.75",
+      "n": 55,
+      "obsFold": 0.109,
+      "obsRaise": 0.236,
+      "predFold": 0.227,
+      "predFoldGto": 0.374,
+      "predRaise": 0.061,
+      "seFold": 0.042
+     },
+     {
+      "key": "St2 n1 1",
+      "n": 55,
+      "obsFold": 0.109,
+      "obsRaise": 0.2,
+      "predFold": 0.284,
+      "predFoldGto": 0.403,
+      "predRaise": 0.057,
+      "seFold": 0.042
+     },
+     {
+      "key": "St2 n1 1.5",
+      "n": 52,
+      "obsFold": 0.135,
+      "obsRaise": 0.173,
+      "predFold": 0.364,
+      "predFoldGto": 0.406,
+      "predRaise": 0.057,
+      "seFold": 0.047
+     },
+     {
+      "key": "St2 n2 0.33",
+      "n": 92,
+      "obsFold": 0.174,
+      "obsRaise": 0,
+      "predFold": 0.182,
+      "predFoldGto": 0.402,
+      "predRaise": 0.053,
+      "seFold": 0.04
+     },
+     {
+      "key": "St2 n2 0.5",
+      "n": 92,
+      "obsFold": 0.185,
+      "obsRaise": 0,
+      "predFold": 0.249,
+      "predFoldGto": 0.463,
+      "predRaise": 0.053,
+      "seFold": 0.04
+     },
+     {
+      "key": "St2 n2 0.75",
+      "n": 92,
+      "obsFold": 0.228,
+      "obsRaise": 0,
+      "predFold": 0.326,
+      "predFoldGto": 0.522,
+      "predRaise": 0.053,
+      "seFold": 0.044
+     },
+     {
+      "key": "St2 n2 1",
+      "n": 92,
+      "obsFold": 0.25,
+      "obsRaise": 0,
+      "predFold": 0.37,
+      "predFoldGto": 0.521,
+      "predRaise": 0.051,
+      "seFold": 0.045
+     },
+     {
+      "key": "St2 n2 1.5",
+      "n": 88,
+      "obsFold": 0.284,
+      "obsRaise": 0,
+      "predFold": 0.429,
+      "predFoldGto": 0.481,
+      "predRaise": 0.048,
+      "seFold": 0.048
+     },
+     {
+      "key": "St2 n3+ 0.33",
+      "n": 75,
+      "obsFold": 0.2,
+      "obsRaise": 0.08,
+      "predFold": 0.232,
+      "predFoldGto": 0.442,
+      "predRaise": 0.05,
+      "seFold": 0.046
+     },
+     {
+      "key": "St2 n3+ 0.5",
+      "n": 75,
+      "obsFold": 0.227,
+      "obsRaise": 0.08,
+      "predFold": 0.288,
+      "predFoldGto": 0.476,
+      "predRaise": 0.05,
+      "seFold": 0.048
+     },
+     {
+      "key": "St2 n3+ 0.75",
+      "n": 75,
+      "obsFold": 0.227,
+      "obsRaise": 0.08,
+      "predFold": 0.352,
+      "predFoldGto": 0.508,
+      "predRaise": 0.046,
+      "seFold": 0.048
+     },
+     {
+      "key": "St2 n3+ 1",
+      "n": 69,
+      "obsFold": 0.232,
+      "obsRaise": 0.087,
+      "predFold": 0.398,
+      "predFoldGto": 0.496,
+      "predRaise": 0.045,
+      "seFold": 0.051
+     },
+     {
+      "key": "St2 n3+ 1.5",
+      "n": 63,
+      "obsFold": 0.286,
+      "obsRaise": 0.095,
+      "predFold": 0.453,
+      "predFoldGto": 0.449,
+      "predRaise": 0.049,
+      "seFold": 0.057
+     },
+     {
+      "key": "St3 n1 0.33",
+      "n": 41,
+      "obsFold": 0.244,
+      "obsRaise": 0.024,
+      "predFold": 0.14,
+      "predFoldGto": 0.217,
+      "predRaise": 0.027,
+      "seFold": 0.067
+     },
+     {
+      "key": "St3 n1 0.5",
+      "n": 40,
+      "obsFold": 0.3,
+      "obsRaise": 0.025,
+      "predFold": 0.214,
+      "predFoldGto": 0.286,
+      "predRaise": 0.027,
+      "seFold": 0.072
+     },
+     {
+      "key": "St3 n1 0.75",
+      "n": 39,
+      "obsFold": 0.308,
+      "obsRaise": 0.026,
+      "predFold": 0.311,
+      "predFoldGto": 0.36,
+      "predRaise": 0.025,
+      "seFold": 0.074
+     },
+     {
+      "key": "St3 n1 1",
+      "n": 35,
+      "obsFold": 0.286,
+      "obsRaise": 0.029,
+      "predFold": 0.38,
+      "predFoldGto": 0.398,
+      "predRaise": 0.027,
+      "seFold": 0.076
+     },
+     {
+      "key": "St3 n1 1.5",
+      "n": 32,
+      "obsFold": 0.313,
+      "obsRaise": 0.031,
+      "predFold": 0.441,
+      "predFoldGto": 0.379,
+      "predRaise": 0.027,
+      "seFold": 0.082
+     },
+     {
+      "key": "St3 n2 0.33",
+      "n": 66,
+      "obsFold": 0.439,
+      "obsRaise": 0.076,
+      "predFold": 0.243,
+      "predFoldGto": 0.384,
+      "predRaise": 0.021,
+      "seFold": 0.061
+     },
+     {
+      "key": "St3 n2 0.5",
+      "n": 62,
+      "obsFold": 0.484,
+      "obsRaise": 0.081,
+      "predFold": 0.343,
+      "predFoldGto": 0.46,
+      "predRaise": 0.023,
+      "seFold": 0.063
+     },
+     {
+      "key": "St3 n2 0.75",
+      "n": 62,
+      "obsFold": 0.5,
+      "obsRaise": 0.081,
+      "predFold": 0.436,
+      "predFoldGto": 0.52,
+      "predRaise": 0.023,
+      "seFold": 0.064
+     },
+     {
+      "key": "St3 n2 1",
+      "n": 62,
+      "obsFold": 0.516,
+      "obsRaise": 0.081,
+      "predFold": 0.483,
+      "predFoldGto": 0.518,
+      "predRaise": 0.022,
+      "seFold": 0.063
+     },
+     {
+      "key": "St3 n2 1.5",
+      "n": 60,
+      "obsFold": 0.533,
+      "obsRaise": 0.067,
+      "predFold": 0.516,
+      "predFoldGto": 0.449,
+      "predRaise": 0.022,
+      "seFold": 0.064
+     },
+     {
+      "key": "St3 n3+ 0.33",
+      "n": 27,
+      "obsFold": 0.444,
+      "obsRaise": 0.037,
+      "predFold": 0.325,
+      "predFoldGto": 0.457,
+      "predRaise": 0.02,
+      "seFold": 0.096
+     },
+     {
+      "key": "St3 n3+ 0.5",
+      "n": 27,
+      "obsFold": 0.444,
+      "obsRaise": 0.037,
+      "predFold": 0.41,
+      "predFoldGto": 0.501,
+      "predRaise": 0.02,
+      "seFold": 0.096
+     },
+     {
+      "key": "St3 n3+ 0.75",
+      "n": 27,
+      "obsFold": 0.481,
+      "obsRaise": 0.037,
+      "predFold": 0.494,
+      "predFoldGto": 0.54,
+      "predRaise": 0.02,
+      "seFold": 0.096
+     },
+     {
+      "key": "St3 n3+ 1",
+      "n": 27,
+      "obsFold": 0.519,
+      "obsRaise": 0.037,
+      "predFold": 0.53,
+      "predFoldGto": 0.523,
+      "predRaise": 0.02,
+      "seFold": 0.096
+     },
+     {
+      "key": "St3 n3+ 1.5",
+      "n": 27,
+      "obsFold": 0.556,
+      "obsRaise": 0.037,
+      "predFold": 0.543,
+      "predFoldGto": 0.435,
+      "predRaise": 0.02,
+      "seFold": 0.096
+     }
+    ],
+    "headsUp": [
+     {
+      "key": "Bet St1 0.33",
+      "n": 28,
+      "obsFold": 0.143,
+      "obsRaise": 0.143,
+      "predFold": 0.14,
+      "predFoldGto": 0.239,
+      "predRaise": 0.056,
+      "seFold": 0.066
+     },
+     {
+      "key": "Bet St1 0.5",
+      "n": 27,
+      "obsFold": 0.148,
+      "obsRaise": 0.148,
+      "predFold": 0.198,
+      "predFoldGto": 0.298,
+      "predRaise": 0.057,
+      "seFold": 0.068
+     },
+     {
+      "key": "Bet St1 0.75",
+      "n": 28,
+      "obsFold": 0.179,
+      "obsRaise": 0.143,
+      "predFold": 0.274,
+      "predFoldGto": 0.377,
+      "predRaise": 0.052,
+      "seFold": 0.072
+     },
+     {
+      "key": "Bet St1 1",
+      "n": 27,
+      "obsFold": 0.185,
+      "obsRaise": 0.148,
+      "predFold": 0.321,
+      "predFoldGto": 0.407,
+      "predRaise": 0.054,
+      "seFold": 0.075
+     },
+     {
+      "key": "Bet St1 1.5",
+      "n": 27,
+      "obsFold": 0.185,
+      "obsRaise": 0.148,
+      "predFold": 0.373,
+      "predFoldGto": 0.408,
+      "predRaise": 0.054,
+      "seFold": 0.075
+     },
+     {
+      "key": "Bet St2 0.33",
+      "n": 29,
+      "obsFold": 0.103,
+      "obsRaise": 0.31,
+      "predFold": 0.104,
+      "predFoldGto": 0.23,
+      "predRaise": 0.06,
+      "seFold": 0.057
+     },
+     {
+      "key": "Bet St2 0.5",
+      "n": 29,
+      "obsFold": 0.103,
+      "obsRaise": 0.31,
+      "predFold": 0.164,
+      "predFoldGto": 0.295,
+      "predRaise": 0.06,
+      "seFold": 0.057
+     },
+     {
+      "key": "Bet St2 0.75",
+      "n": 29,
+      "obsFold": 0.103,
+      "obsRaise": 0.31,
+      "predFold": 0.244,
+      "predFoldGto": 0.375,
+      "predRaise": 0.06,
+      "seFold": 0.057
+     },
+     {
+      "key": "Bet St2 1",
+      "n": 29,
+      "obsFold": 0.103,
+      "obsRaise": 0.241,
+      "predFold": 0.297,
+      "predFoldGto": 0.403,
+      "predRaise": 0.055,
+      "seFold": 0.057
+     },
+     {
+      "key": "Bet St2 1.5",
+      "n": 27,
+      "obsFold": 0.111,
+      "obsRaise": 0.222,
+      "predFold": 0.375,
+      "predFoldGto": 0.407,
+      "predRaise": 0.054,
+      "seFold": 0.06
+     },
+     {
+      "key": "Bet St3 0.33",
+      "n": 20,
+      "obsFold": 0.15,
+      "obsRaise": 0.05,
+      "predFold": 0.159,
+      "predFoldGto": 0.231,
+      "predRaise": 0.03,
+      "seFold": 0.08
+     },
+     {
+      "key": "Bet St3 0.5",
+      "n": 20,
+      "obsFold": 0.2,
+      "obsRaise": 0.05,
+      "predFold": 0.231,
+      "predFoldGto": 0.291,
+      "predRaise": 0.028,
+      "seFold": 0.089
+     },
+     {
+      "key": "Bet St3 0.75",
+      "n": 19,
+      "obsFold": 0.211,
+      "obsRaise": 0.053,
+      "predFold": 0.334,
+      "predFoldGto": 0.371,
+      "predRaise": 0.03,
+      "seFold": 0.094
+     },
+     {
+      "key": "Bet St3 1",
+      "n": 19,
+      "obsFold": 0.263,
+      "obsRaise": 0.053,
+      "predFold": 0.389,
+      "predFoldGto": 0.395,
+      "predRaise": 0.028,
+      "seFold": 0.101
+     },
+     {
+      "key": "Bet St3 1.5",
+      "n": 18,
+      "obsFold": 0.333,
+      "obsRaise": 0.056,
+      "predFold": 0.44,
+      "predFoldGto": 0.378,
+      "predRaise": 0.026,
+      "seFold": 0.111
+     },
+     {
+      "key": "C-Bet St1 0.33",
+      "n": 38,
+      "obsFold": 0.263,
+      "obsRaise": 0.026,
+      "predFold": 0.079,
+      "predFoldGto": 0.217,
+      "predRaise": 0.053,
+      "seFold": 0.071
+     },
+     {
+      "key": "C-Bet St1 0.5",
+      "n": 37,
+      "obsFold": 0.297,
+      "obsRaise": 0.027,
+      "predFold": 0.125,
+      "predFoldGto": 0.295,
+      "predRaise": 0.054,
+      "seFold": 0.075
+     },
+     {
+      "key": "C-Bet St1 0.75",
+      "n": 37,
+      "obsFold": 0.297,
+      "obsRaise": 0.027,
+      "predFold": 0.199,
+      "predFoldGto": 0.377,
+      "predRaise": 0.054,
+      "seFold": 0.075
+     },
+     {
+      "key": "C-Bet St1 1",
+      "n": 37,
+      "obsFold": 0.297,
+      "obsRaise": 0.027,
+      "predFold": 0.253,
+      "predFoldGto": 0.407,
+      "predRaise": 0.054,
+      "seFold": 0.075
+     },
+     {
+      "key": "C-Bet St1 1.5",
+      "n": 37,
+      "obsFold": 0.351,
+      "obsRaise": 0.027,
+      "predFold": 0.316,
+      "predFoldGto": 0.409,
+      "predRaise": 0.052,
+      "seFold": 0.078
+     },
+     {
+      "key": "C-Bet St2 0.33",
+      "n": 27,
+      "obsFold": 0.037,
+      "obsRaise": 0.148,
+      "predFold": 0.074,
+      "predFoldGto": 0.218,
+      "predRaise": 0.061,
+      "seFold": 0.036
+     },
+     {
+      "key": "C-Bet St2 0.5",
+      "n": 26,
+      "obsFold": 0.038,
+      "obsRaise": 0.154,
+      "predFold": 0.125,
+      "predFoldGto": 0.293,
+      "predRaise": 0.063,
+      "seFold": 0.038
+     },
+     {
+      "key": "C-Bet St2 0.75",
+      "n": 26,
+      "obsFold": 0.115,
+      "obsRaise": 0.154,
+      "predFold": 0.209,
+      "predFoldGto": 0.373,
+      "predRaise": 0.063,
+      "seFold": 0.063
+     },
+     {
+      "key": "C-Bet St2 1",
+      "n": 26,
+      "obsFold": 0.115,
+      "obsRaise": 0.154,
+      "predFold": 0.27,
+      "predFoldGto": 0.402,
+      "predRaise": 0.059,
+      "seFold": 0.063
+     },
+     {
+      "key": "C-Bet St2 1.5",
+      "n": 25,
+      "obsFold": 0.16,
+      "obsRaise": 0.12,
+      "predFold": 0.351,
+      "predFoldGto": 0.405,
+      "predRaise": 0.06,
+      "seFold": 0.073
+     },
+     {
+      "key": "C-Bet St3 0.33",
+      "n": 21,
+      "obsFold": 0.333,
+      "obsRaise": 0,
+      "predFold": 0.122,
+      "predFoldGto": 0.203,
+      "predRaise": 0.024,
+      "seFold": 0.103
+     },
+     {
+      "key": "C-Bet St3 0.5",
+      "n": 20,
+      "obsFold": 0.4,
+      "obsRaise": 0,
+      "predFold": 0.196,
+      "predFoldGto": 0.281,
+      "predRaise": 0.025,
+      "seFold": 0.11
+     },
+     {
+      "key": "C-Bet St3 0.75",
+      "n": 20,
+      "obsFold": 0.4,
+      "obsRaise": 0,
+      "predFold": 0.289,
+      "predFoldGto": 0.349,
+      "predRaise": 0.021,
+      "seFold": 0.11
+     },
+     {
+      "key": "C-Bet St3 1",
+      "n": 16,
+      "obsFold": 0.313,
+      "obsRaise": 0,
+      "predFold": 0.369,
+      "predFoldGto": 0.401,
+      "predRaise": 0.025,
+      "seFold": 0.116
+     },
+     {
+      "key": "C-Bet St3 1.5",
+      "n": 14,
+      "obsFold": 0.286,
+      "obsRaise": 0,
+      "predFold": 0.443,
+      "predFoldGto": 0.381,
+      "predRaise": 0.029,
+      "seFold": 0.121
+     }
+    ],
+    "byHudType": [
+     {
+      "key": "Nit 0.33",
+      "n": 3,
+      "obsFold": 0,
+      "obsRaise": 0,
+      "predFold": 0.253,
+      "predFoldGto": 0.229,
+      "predRaise": 0.092,
+      "seFold": 0
+     },
+     {
+      "key": "Nit 0.5",
+      "n": 3,
+      "obsFold": 0,
+      "obsRaise": 0,
+      "predFold": 0.35,
+      "predFoldGto": 0.297,
+      "predRaise": 0.092,
+      "seFold": 0
+     },
+     {
+      "key": "Nit 0.75",
+      "n": 3,
+      "obsFold": 0,
+      "obsRaise": 0,
+      "predFold": 0.462,
+      "predFoldGto": 0.377,
+      "predRaise": 0.092,
+      "seFold": 0
+     },
+     {
+      "key": "Nit 1",
+      "n": 3,
+      "obsFold": 0,
+      "obsRaise": 0,
+      "predFold": 0.526,
+      "predFoldGto": 0.407,
+      "predRaise": 0.092,
+      "seFold": 0
+     },
+     {
+      "key": "Nit 1.5",
+      "n": 3,
+      "obsFold": 0,
+      "obsRaise": 0,
+      "predFold": 0.587,
+      "predFoldGto": 0.401,
+      "predRaise": 0.092,
+      "seFold": 0
+     },
+     {
+      "key": "TAG 0.33",
+      "n": 2,
+      "obsFold": 0,
+      "obsRaise": 0,
+      "predFold": 0.214,
+      "predFoldGto": 0.218,
+      "predRaise": 0.082,
+      "seFold": 0
+     },
+     {
+      "key": "TAG 0.5",
+      "n": 2,
+      "obsFold": 0,
+      "obsRaise": 0,
+      "predFold": 0.309,
+      "predFoldGto": 0.294,
+      "predRaise": 0.082,
+      "seFold": 0
+     },
+     {
+      "key": "TAG 0.75",
+      "n": 2,
+      "obsFold": 0,
+      "obsRaise": 0,
+      "predFold": 0.405,
+      "predFoldGto": 0.377,
+      "predRaise": 0.082,
+      "seFold": 0
+     },
+     {
+      "key": "TAG 1",
+      "n": 2,
+      "obsFold": 0,
+      "obsRaise": 0,
+      "predFold": 0.452,
+      "predFoldGto": 0.403,
+      "predRaise": 0.031,
+      "seFold": 0
+     },
+     {
+      "key": "TAG 1.5",
+      "n": 1,
+      "obsFold": 1,
+      "obsRaise": 0,
+      "predFold": 0.559,
+      "predFoldGto": 0.409,
+      "predRaise": 0.062,
+      "seFold": 0
+     },
+     {
+      "key": "sehr loose 0.33",
+      "n": 111,
+      "obsFold": 0.18,
+      "obsRaise": 0.09,
+      "predFold": 0.077,
+      "predFoldGto": 0.224,
+      "predRaise": 0.044,
+      "seFold": 0.036
+     },
+     {
+      "key": "sehr loose 0.5",
+      "n": 109,
+      "obsFold": 0.202,
+      "obsRaise": 0.092,
+      "predFold": 0.123,
+      "predFoldGto": 0.293,
+      "predRaise": 0.044,
+      "seFold": 0.038
+     },
+     {
+      "key": "sehr loose 0.75",
+      "n": 109,
+      "obsFold": 0.22,
+      "obsRaise": 0.092,
+      "predFold": 0.201,
+      "predFoldGto": 0.371,
+      "predRaise": 0.044,
+      "seFold": 0.04
+     },
+     {
+      "key": "sehr loose 1",
+      "n": 106,
+      "obsFold": 0.217,
+      "obsRaise": 0.075,
+      "predFold": 0.257,
+      "predFoldGto": 0.404,
+      "predRaise": 0.044,
+      "seFold": 0.04
+     },
+     {
+      "key": "sehr loose 1.5",
+      "n": 102,
+      "obsFold": 0.235,
+      "obsRaise": 0.069,
+      "predFold": 0.321,
+      "predFoldGto": 0.401,
+      "predRaise": 0.044,
+      "seFold": 0.042
+     },
+     {
+      "key": "unbekannt 0.33",
+      "n": 47,
+      "obsFold": 0.17,
+      "obsRaise": 0.191,
+      "predFold": 0.169,
+      "predFoldGto": 0.222,
+      "predRaise": 0.057,
+      "seFold": 0.055
+     },
+     {
+      "key": "unbekannt 0.5",
+      "n": 45,
+      "obsFold": 0.2,
+      "obsRaise": 0.2,
+      "predFold": 0.253,
+      "predFoldGto": 0.294,
+      "predRaise": 0.06,
+      "seFold": 0.06
+     },
+     {
+      "key": "unbekannt 0.75",
+      "n": 45,
+      "obsFold": 0.222,
+      "obsRaise": 0.2,
+      "predFold": 0.345,
+      "predFoldGto": 0.373,
+      "predRaise": 0.057,
+      "seFold": 0.062
+     },
+     {
+      "key": "unbekannt 1",
+      "n": 43,
+      "obsFold": 0.209,
+      "obsRaise": 0.209,
+      "predFold": 0.401,
+      "predFoldGto": 0.402,
+      "predRaise": 0.059,
+      "seFold": 0.062
+     },
+     {
+      "key": "unbekannt 1.5",
+      "n": 42,
+      "obsFold": 0.238,
+      "obsRaise": 0.19,
+      "predFold": 0.47,
+      "predFoldGto": 0.402,
+      "predRaise": 0.057,
+      "seFold": 0.066
+     }
+    ]
+   },
+   "value": {
+    "all": [
+     {
+      "key": "alle | 0.33",
+      "n": 409,
+      "realVsCheck": -4.495,
+      "se": 1.881,
+      "modelVsCheck": 1.317
+     },
+     {
+      "key": "alle | 0.5",
+      "n": 403,
+      "realVsCheck": -4.071,
+      "se": 2.001,
+      "modelVsCheck": 1.463
+     },
+     {
+      "key": "alle | 0.75",
+      "n": 403,
+      "realVsCheck": -2.222,
+      "se": 2.197,
+      "modelVsCheck": 1.485
+     },
+     {
+      "key": "alle | 1",
+      "n": 395,
+      "realVsCheck": -1.772,
+      "se": 2.246,
+      "modelVsCheck": 0.857
+     },
+     {
+      "key": "alle | 1.5",
+      "n": 384,
+      "realVsCheck": -2.248,
+      "se": 2.338,
+      "modelVsCheck": -0.394
+     }
+    ],
+    "byEq": [
+     {
+      "key": "Equity 35–60 % | 0.33",
+      "n": 118,
+      "realVsCheck": -3.178,
+      "se": 2.911,
+      "modelVsCheck": 0.647
+     },
+     {
+      "key": "Equity 35–60 % | 0.5",
+      "n": 117,
+      "realVsCheck": -3.03,
+      "se": 3.009,
+      "modelVsCheck": 0.649
+     },
+     {
+      "key": "Equity 35–60 % | 0.75",
+      "n": 118,
+      "realVsCheck": -1.139,
+      "se": 3.231,
+      "modelVsCheck": 0.492
+     },
+     {
+      "key": "Equity 35–60 % | 1",
+      "n": 115,
+      "realVsCheck": -3.608,
+      "se": 3.365,
+      "modelVsCheck": -0.057
+     },
+     {
+      "key": "Equity 35–60 % | 1.5",
+      "n": 115,
+      "realVsCheck": -2.643,
+      "se": 3.712,
+      "modelVsCheck": -0.628
+     },
+     {
+      "key": "Equity < 35 % | 0.33",
+      "n": 191,
+      "realVsCheck": -4.588,
+      "se": 2.155,
+      "modelVsCheck": -1.397
+     },
+     {
+      "key": "Equity < 35 % | 0.5",
+      "n": 190,
+      "realVsCheck": -6.446,
+      "se": 2.319,
+      "modelVsCheck": -1.972
+     },
+     {
+      "key": "Equity < 35 % | 0.75",
+      "n": 190,
+      "realVsCheck": -5.604,
+      "se": 2.838,
+      "modelVsCheck": -2.893
+     },
+     {
+      "key": "Equity < 35 % | 1",
+      "n": 188,
+      "realVsCheck": -5.086,
+      "se": 2.461,
+      "modelVsCheck": -3.726
+     },
+     {
+      "key": "Equity < 35 % | 1.5",
+      "n": 185,
+      "realVsCheck": -6.777,
+      "se": 2.464,
+      "modelVsCheck": -5.68
+     },
+     {
+      "key": "Equity ≥ 60 % | 0.33",
+      "n": 100,
+      "realVsCheck": -5.871,
+      "se": 5.544,
+      "modelVsCheck": 7.292
+     },
+     {
+      "key": "Equity ≥ 60 % | 0.5",
+      "n": 96,
+      "realVsCheck": -0.638,
+      "se": 6.02,
+      "modelVsCheck": 9.253
+     },
+     {
+      "key": "Equity ≥ 60 % | 0.75",
+      "n": 95,
+      "realVsCheck": 3.197,
+      "se": 6.204,
+      "modelVsCheck": 11.475
+     },
+     {
+      "key": "Equity ≥ 60 % | 1",
+      "n": 92,
+      "realVsCheck": 7.295,
+      "se": 7.027,
+      "modelVsCheck": 11.364
+     },
+     {
+      "key": "Equity ≥ 60 % | 1.5",
+      "n": 84,
+      "realVsCheck": 8.268,
+      "se": 7.61,
+      "modelVsCheck": 11.565
+     }
+    ],
+    "byStreetEqN": [
+     {
+      "key": "St1 Equity 35–60 % n1 | 0.33",
+      "n": 29,
+      "realVsCheck": -4.001,
+      "se": 4.915,
+      "modelVsCheck": -0.171
+     },
+     {
+      "key": "St1 Equity 35–60 % n1 | 0.5",
+      "n": 28,
+      "realVsCheck": -5.182,
+      "se": 5.147,
+      "modelVsCheck": -0.315
+     },
+     {
+      "key": "St1 Equity 35–60 % n1 | 0.75",
+      "n": 29,
+      "realVsCheck": -5.912,
+      "se": 5.06,
+      "modelVsCheck": -0.507
+     },
+     {
+      "key": "St1 Equity 35–60 % n1 | 1",
+      "n": 29,
+      "realVsCheck": -5.634,
+      "se": 5.017,
+      "modelVsCheck": -0.773
+     },
+     {
+      "key": "St1 Equity 35–60 % n1 | 1.5",
+      "n": 29,
+      "realVsCheck": -6.162,
+      "se": 5.211,
+      "modelVsCheck": -1.457
+     },
+     {
+      "key": "St1 Equity 35–60 % n2 | 0.33",
+      "n": 22,
+      "realVsCheck": -8.452,
+      "se": 8.364,
+      "modelVsCheck": 0.611
+     },
+     {
+      "key": "St1 Equity 35–60 % n2 | 0.5",
+      "n": 22,
+      "realVsCheck": -4.452,
+      "se": 8.46,
+      "modelVsCheck": 0.676
+     },
+     {
+      "key": "St1 Equity 35–60 % n2 | 0.75",
+      "n": 22,
+      "realVsCheck": 0.671,
+      "se": 9.481,
+      "modelVsCheck": 0.654
+     },
+     {
+      "key": "St1 Equity 35–60 % n2 | 1",
+      "n": 22,
+      "realVsCheck": -5.242,
+      "se": 10.33,
+      "modelVsCheck": 0.56
+     },
+     {
+      "key": "St1 Equity 35–60 % n2 | 1.5",
+      "n": 22,
+      "realVsCheck": 5.903,
+      "se": 11.014,
+      "modelVsCheck": 0.287
+     },
+     {
+      "key": "St1 Equity 35–60 % n3+ | 0.33",
+      "n": 10,
+      "realVsCheck": 3.18,
+      "se": 19.627,
+      "modelVsCheck": 3.092
+     },
+     {
+      "key": "St1 Equity 35–60 % n3+ | 0.5",
+      "n": 10,
+      "realVsCheck": 2.987,
+      "se": 19.648,
+      "modelVsCheck": 4.123
+     },
+     {
+      "key": "St1 Equity 35–60 % n3+ | 0.75",
+      "n": 10,
+      "realVsCheck": 2.667,
+      "se": 19.69,
+      "modelVsCheck": 5.392
+     },
+     {
+      "key": "St1 Equity 35–60 % n3+ | 1",
+      "n": 10,
+      "realVsCheck": -7.895,
+      "se": 13.552,
+      "modelVsCheck": 6.588
+     },
+     {
+      "key": "St1 Equity 35–60 % n3+ | 1.5",
+      "n": 10,
+      "realVsCheck": -9.621,
+      "se": 13.319,
+      "modelVsCheck": 8.952
+     },
+     {
+      "key": "St1 Equity < 35 % n1 | 0.33",
+      "n": 15,
+      "realVsCheck": -3.597,
+      "se": 3.129,
+      "modelVsCheck": -2.598
+     },
+     {
+      "key": "St1 Equity < 35 % n1 | 0.5",
+      "n": 14,
+      "realVsCheck": -6.891,
+      "se": 3.5,
+      "modelVsCheck": -2.26
+     },
+     {
+      "key": "St1 Equity < 35 % n1 | 0.75",
+      "n": 14,
+      "realVsCheck": 4.569,
+      "se": 8.95,
+      "modelVsCheck": -2.604
+     },
+     {
+      "key": "St1 Equity < 35 % n1 | 1",
+      "n": 13,
+      "realVsCheck": 7.505,
+      "se": 10.664,
+      "modelVsCheck": -2.997
+     },
+     {
+      "key": "St1 Equity < 35 % n1 | 1.5",
+      "n": 13,
+      "realVsCheck": 13.62,
+      "se": 11.583,
+      "modelVsCheck": -3.936
+     },
+     {
+      "key": "St1 Equity < 35 % n2 | 0.33",
+      "n": 42,
+      "realVsCheck": -3.321,
+      "se": 4.616,
+      "modelVsCheck": -0.683
+     },
+     {
+      "key": "St1 Equity < 35 % n2 | 0.5",
+      "n": 42,
+      "realVsCheck": -4.246,
+      "se": 4.719,
+      "modelVsCheck": -1.068
+     },
+     {
+      "key": "St1 Equity < 35 % n2 | 0.75",
+      "n": 42,
+      "realVsCheck": -4.258,
+      "se": 5.154,
+      "modelVsCheck": -1.815
+     },
+     {
+      "key": "St1 Equity < 35 % n2 | 1",
+      "n": 41,
+      "realVsCheck": -8.496,
+      "se": 4.661,
+      "modelVsCheck": -2.372
+     },
+     {
+      "key": "St1 Equity < 35 % n2 | 1.5",
+      "n": 41,
+      "realVsCheck": -9.595,
+      "se": 5.1,
+      "modelVsCheck": -3.803
+     },
+     {
+      "key": "St1 Equity < 35 % n3+ | 0.33",
+      "n": 46,
+      "realVsCheck": -3.321,
+      "se": 5.325,
+      "modelVsCheck": -1.203
+     },
+     {
+      "key": "St1 Equity < 35 % n3+ | 0.5",
+      "n": 46,
+      "realVsCheck": -4.076,
+      "se": 5.396,
+      "modelVsCheck": -1.897
+     },
+     {
+      "key": "St1 Equity < 35 % n3+ | 0.75",
+      "n": 46,
+      "realVsCheck": -4.696,
+      "se": 5.528,
+      "modelVsCheck": -2.892
+     },
+     {
+      "key": "St1 Equity < 35 % n3+ | 1",
+      "n": 46,
+      "realVsCheck": -7.058,
+      "se": 5.763,
+      "modelVsCheck": -3.913
+     },
+     {
+      "key": "St1 Equity < 35 % n3+ | 1.5",
+      "n": 46,
+      "realVsCheck": -9.829,
+      "se": 6.249,
+      "modelVsCheck": -6.075
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n1 | 0.33",
+      "n": 22,
+      "realVsCheck": -3.009,
+      "se": 8.449,
+      "modelVsCheck": 1.881
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n1 | 0.5",
+      "n": 22,
+      "realVsCheck": -3.398,
+      "se": 8.426,
+      "modelVsCheck": 2.606
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n1 | 0.75",
+      "n": 22,
+      "realVsCheck": -2.717,
+      "se": 8.435,
+      "modelVsCheck": 3.445
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n1 | 1",
+      "n": 22,
+      "realVsCheck": -1.99,
+      "se": 8.472,
+      "modelVsCheck": 4.204
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n1 | 1.5",
+      "n": 22,
+      "realVsCheck": -0.188,
+      "se": 8.675,
+      "modelVsCheck": 5.443
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n2 | 0.33",
+      "n": 13,
+      "realVsCheck": -12.879,
+      "se": 19.655,
+      "modelVsCheck": 3.004
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n2 | 0.5",
+      "n": 13,
+      "realVsCheck": 2.552,
+      "se": 22.265,
+      "modelVsCheck": 4.032
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n2 | 0.75",
+      "n": 13,
+      "realVsCheck": 12.058,
+      "se": 22.268,
+      "modelVsCheck": 5.235
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n2 | 1",
+      "n": 13,
+      "realVsCheck": 31.775,
+      "se": 28.961,
+      "modelVsCheck": 6.375
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n2 | 1.5",
+      "n": 13,
+      "realVsCheck": 33.766,
+      "se": 28.663,
+      "modelVsCheck": 8.662
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n3+ | 0.33",
+      "n": 1,
+      "realVsCheck": -4.1,
+      "se": null,
+      "modelVsCheck": 4.086
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n3+ | 0.5",
+      "n": 1,
+      "realVsCheck": -6.3,
+      "se": null,
+      "modelVsCheck": 5.501
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n3+ | 0.75",
+      "n": 1,
+      "realVsCheck": -9.4,
+      "se": null,
+      "modelVsCheck": 7.014
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n3+ | 1",
+      "n": 1,
+      "realVsCheck": -12.5,
+      "se": null,
+      "modelVsCheck": 8.513
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n3+ | 1.5",
+      "n": 1,
+      "realVsCheck": -18.8,
+      "se": null,
+      "modelVsCheck": 11.651
+     },
+     {
+      "key": "St2 Equity 35–60 % n1 | 0.33",
+      "n": 22,
+      "realVsCheck": -7.479,
+      "se": 5.014,
+      "modelVsCheck": -0.651
+     },
+     {
+      "key": "St2 Equity 35–60 % n1 | 0.5",
+      "n": 22,
+      "realVsCheck": -7.938,
+      "se": 5.156,
+      "modelVsCheck": -1.085
+     },
+     {
+      "key": "St2 Equity 35–60 % n1 | 0.75",
+      "n": 22,
+      "realVsCheck": -3.079,
+      "se": 5.282,
+      "modelVsCheck": -1.709
+     },
+     {
+      "key": "St2 Equity 35–60 % n1 | 1",
+      "n": 22,
+      "realVsCheck": -3.816,
+      "se": 5.451,
+      "modelVsCheck": -2.271
+     },
+     {
+      "key": "St2 Equity 35–60 % n1 | 1.5",
+      "n": 22,
+      "realVsCheck": -5.297,
+      "se": 5.906,
+      "modelVsCheck": -3.48
+     },
+     {
+      "key": "St2 Equity 35–60 % n2 | 0.33",
+      "n": 12,
+      "realVsCheck": 3.496,
+      "se": 10.353,
+      "modelVsCheck": 0.391
+     },
+     {
+      "key": "St2 Equity 35–60 % n2 | 0.5",
+      "n": 12,
+      "realVsCheck": 5.062,
+      "se": 11.768,
+      "modelVsCheck": 0.141
+     },
+     {
+      "key": "St2 Equity 35–60 % n2 | 0.75",
+      "n": 12,
+      "realVsCheck": 8.496,
+      "se": 14.068,
+      "modelVsCheck": -0.41
+     },
+     {
+      "key": "St2 Equity 35–60 % n2 | 1",
+      "n": 12,
+      "realVsCheck": 8.446,
+      "se": 16.735,
+      "modelVsCheck": -0.987
+     },
+     {
+      "key": "St2 Equity 35–60 % n2 | 1.5",
+      "n": 12,
+      "realVsCheck": 6.987,
+      "se": 18.592,
+      "modelVsCheck": -2.196
+     },
+     {
+      "key": "St2 Equity 35–60 % n3+ | 0.33",
+      "n": 2,
+      "realVsCheck": 6.3,
+      "se": 6.3,
+      "modelVsCheck": 13.265
+     },
+     {
+      "key": "St2 Equity 35–60 % n3+ | 0.5",
+      "n": 2,
+      "realVsCheck": 5.3,
+      "se": 5.3,
+      "modelVsCheck": 17.941
+     },
+     {
+      "key": "St2 Equity 35–60 % n3+ | 0.75",
+      "n": 2,
+      "realVsCheck": 12.216,
+      "se": 6.216,
+      "modelVsCheck": 22.313
+     },
+     {
+      "key": "St2 Equity 35–60 % n3+ | 1",
+      "n": 1,
+      "realVsCheck": 1.6,
+      "se": null,
+      "modelVsCheck": 0.477
+     },
+     {
+      "key": "St2 Equity 35–60 % n3+ | 1.5",
+      "n": 1,
+      "realVsCheck": -2.9,
+      "se": null,
+      "modelVsCheck": 0.013
+     },
+     {
+      "key": "St2 Equity < 35 % n1 | 0.33",
+      "n": 9,
+      "realVsCheck": -6.472,
+      "se": 3.037,
+      "modelVsCheck": -2.402
+     },
+     {
+      "key": "St2 Equity < 35 % n1 | 0.5",
+      "n": 9,
+      "realVsCheck": -12.234,
+      "se": 6.033,
+      "modelVsCheck": -3.042
+     },
+     {
+      "key": "St2 Equity < 35 % n1 | 0.75",
+      "n": 9,
+      "realVsCheck": -17.111,
+      "se": 8.297,
+      "modelVsCheck": -4.031
+     },
+     {
+      "key": "St2 Equity < 35 % n1 | 1",
+      "n": 9,
+      "realVsCheck": -16.803,
+      "se": 7.41,
+      "modelVsCheck": -4.85
+     },
+     {
+      "key": "St2 Equity < 35 % n1 | 1.5",
+      "n": 8,
+      "realVsCheck": -16.388,
+      "se": 8.831,
+      "modelVsCheck": -5.154
+     },
+     {
+      "key": "St2 Equity < 35 % n2 | 0.33",
+      "n": 24,
+      "realVsCheck": -2.567,
+      "se": 2.392,
+      "modelVsCheck": -1.565
+     },
+     {
+      "key": "St2 Equity < 35 % n2 | 0.5",
+      "n": 24,
+      "realVsCheck": -6.309,
+      "se": 4.484,
+      "modelVsCheck": -2.386
+     },
+     {
+      "key": "St2 Equity < 35 % n2 | 0.75",
+      "n": 24,
+      "realVsCheck": 2.055,
+      "se": 10.339,
+      "modelVsCheck": -3.442
+     },
+     {
+      "key": "St2 Equity < 35 % n2 | 1",
+      "n": 24,
+      "realVsCheck": 2.548,
+      "se": 11.309,
+      "modelVsCheck": -4.53
+     },
+     {
+      "key": "St2 Equity < 35 % n2 | 1.5",
+      "n": 24,
+      "realVsCheck": -3.808,
+      "se": 7.387,
+      "modelVsCheck": -6.016
+     },
+     {
+      "key": "St2 Equity < 35 % n3+ | 0.33",
+      "n": 20,
+      "realVsCheck": -18.635,
+      "se": 12.73,
+      "modelVsCheck": -1.633
+     },
+     {
+      "key": "St2 Equity < 35 % n3+ | 0.5",
+      "n": 20,
+      "realVsCheck": -21.672,
+      "se": 13.604,
+      "modelVsCheck": -2.515
+     },
+     {
+      "key": "St2 Equity < 35 % n3+ | 0.75",
+      "n": 20,
+      "realVsCheck": -26.145,
+      "se": 14.953,
+      "modelVsCheck": -3.874
+     },
+     {
+      "key": "St2 Equity < 35 % n3+ | 1",
+      "n": 20,
+      "realVsCheck": -7.425,
+      "se": 3.324,
+      "modelVsCheck": -4.356
+     },
+     {
+      "key": "St2 Equity < 35 % n3+ | 1.5",
+      "n": 18,
+      "realVsCheck": -6.019,
+      "se": 3.604,
+      "modelVsCheck": -8.207
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n1 | 0.33",
+      "n": 25,
+      "realVsCheck": 11.476,
+      "se": 8.8,
+      "modelVsCheck": 5.943
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n1 | 0.5",
+      "n": 24,
+      "realVsCheck": 19.051,
+      "se": 10.342,
+      "modelVsCheck": 6.614
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n1 | 0.75",
+      "n": 24,
+      "realVsCheck": 24.714,
+      "se": 10.171,
+      "modelVsCheck": 8.43
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n1 | 1",
+      "n": 24,
+      "realVsCheck": 26.235,
+      "se": 10.261,
+      "modelVsCheck": 9.988
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n1 | 1.5",
+      "n": 22,
+      "realVsCheck": 26.6,
+      "se": 11.717,
+      "modelVsCheck": 12.688
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n2 | 0.33",
+      "n": 10,
+      "realVsCheck": -24.134,
+      "se": 32.301,
+      "modelVsCheck": 13.305
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n2 | 0.5",
+      "n": 10,
+      "realVsCheck": -13.154,
+      "se": 31.334,
+      "modelVsCheck": 18.208
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n2 | 0.75",
+      "n": 10,
+      "realVsCheck": -7.634,
+      "se": 31.922,
+      "modelVsCheck": 24.317
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n2 | 1",
+      "n": 10,
+      "realVsCheck": -11.569,
+      "se": 33.76,
+      "modelVsCheck": 28.741
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n2 | 1.5",
+      "n": 8,
+      "realVsCheck": -9.309,
+      "se": 40.73,
+      "modelVsCheck": 29.698
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n3+ | 0.33",
+      "n": 2,
+      "realVsCheck": -91.8,
+      "se": 91.8,
+      "modelVsCheck": 30.916
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n3+ | 0.5",
+      "n": 2,
+      "realVsCheck": -89,
+      "se": 89,
+      "modelVsCheck": 43.025
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n3+ | 0.75",
+      "n": 2,
+      "realVsCheck": -112.882,
+      "se": 57.118,
+      "modelVsCheck": 53.13
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n3+ | 1",
+      "n": 1,
+      "realVsCheck": -162,
+      "se": null,
+      "modelVsCheck": 6.001
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n3+ | 1.5",
+      "n": 1,
+      "realVsCheck": -146,
+      "se": null,
+      "modelVsCheck": 8.457
+     },
+     {
+      "key": "St3 Equity 35–60 % n1 | 0.33",
+      "n": 11,
+      "realVsCheck": -0.841,
+      "se": 3.426,
+      "modelVsCheck": -0.355
+     },
+     {
+      "key": "St3 Equity 35–60 % n1 | 0.5",
+      "n": 11,
+      "realVsCheck": -5.514,
+      "se": 2.331,
+      "modelVsCheck": -1.124
+     },
+     {
+      "key": "St3 Equity 35–60 % n1 | 0.75",
+      "n": 11,
+      "realVsCheck": -8.377,
+      "se": 3.457,
+      "modelVsCheck": -2.204
+     },
+     {
+      "key": "St3 Equity 35–60 % n1 | 1",
+      "n": 9,
+      "realVsCheck": -12.439,
+      "se": 5.661,
+      "modelVsCheck": -2.829
+     },
+     {
+      "key": "St3 Equity 35–60 % n1 | 1.5",
+      "n": 9,
+      "realVsCheck": -19.15,
+      "se": 8.313,
+      "modelVsCheck": -4.875
+     },
+     {
+      "key": "St3 Equity 35–60 % n2 | 0.33",
+      "n": 10,
+      "realVsCheck": 1.445,
+      "se": 3.03,
+      "modelVsCheck": 2.392
+     },
+     {
+      "key": "St3 Equity 35–60 % n2 | 0.5",
+      "n": 10,
+      "realVsCheck": 2.255,
+      "se": 4.056,
+      "modelVsCheck": 2.732
+     },
+     {
+      "key": "St3 Equity 35–60 % n2 | 0.75",
+      "n": 10,
+      "realVsCheck": 2.91,
+      "se": 6.053,
+      "modelVsCheck": 2.659
+     },
+     {
+      "key": "St3 Equity 35–60 % n2 | 1",
+      "n": 10,
+      "realVsCheck": 3.57,
+      "se": 8.055,
+      "modelVsCheck": 2.443
+     },
+     {
+      "key": "St3 Equity 35–60 % n2 | 1.5",
+      "n": 10,
+      "realVsCheck": 4.9,
+      "se": 12.089,
+      "modelVsCheck": 2.093
+     },
+     {
+      "key": "St3 Equity < 35 % n1 | 0.33",
+      "n": 10,
+      "realVsCheck": -1.13,
+      "se": 2.066,
+      "modelVsCheck": -1.708
+     },
+     {
+      "key": "St3 Equity < 35 % n1 | 0.5",
+      "n": 10,
+      "realVsCheck": -1.88,
+      "se": 3.081,
+      "modelVsCheck": -2.275
+     },
+     {
+      "key": "St3 Equity < 35 % n1 | 0.75",
+      "n": 10,
+      "realVsCheck": -3.06,
+      "se": 4.591,
+      "modelVsCheck": -2.849
+     },
+     {
+      "key": "St3 Equity < 35 % n1 | 1",
+      "n": 10,
+      "realVsCheck": -4.23,
+      "se": 6.096,
+      "modelVsCheck": -3.704
+     },
+     {
+      "key": "St3 Equity < 35 % n1 | 1.5",
+      "n": 10,
+      "realVsCheck": -6.636,
+      "se": 9.135,
+      "modelVsCheck": -5.477
+     },
+     {
+      "key": "St3 Equity < 35 % n2 | 0.33",
+      "n": 17,
+      "realVsCheck": -0.571,
+      "se": 1.382,
+      "modelVsCheck": -1.203
+     },
+     {
+      "key": "St3 Equity < 35 % n2 | 0.5",
+      "n": 17,
+      "realVsCheck": -1.253,
+      "se": 1.957,
+      "modelVsCheck": -1.877
+     },
+     {
+      "key": "St3 Equity < 35 % n2 | 0.75",
+      "n": 17,
+      "realVsCheck": -3.671,
+      "se": 2.32,
+      "modelVsCheck": -2.844
+     },
+     {
+      "key": "St3 Equity < 35 % n2 | 1",
+      "n": 17,
+      "realVsCheck": -4.429,
+      "se": 3.089,
+      "modelVsCheck": -3.928
+     },
+     {
+      "key": "St3 Equity < 35 % n2 | 1.5",
+      "n": 17,
+      "realVsCheck": -8.276,
+      "se": 5.426,
+      "modelVsCheck": -6.524
+     },
+     {
+      "key": "St3 Equity < 35 % n3+ | 0.33",
+      "n": 8,
+      "realVsCheck": -2.075,
+      "se": 1.05,
+      "modelVsCheck": -1.803
+     },
+     {
+      "key": "St3 Equity < 35 % n3+ | 0.5",
+      "n": 8,
+      "realVsCheck": -3.425,
+      "se": 1.385,
+      "modelVsCheck": -2.663
+     },
+     {
+      "key": "St3 Equity < 35 % n3+ | 0.75",
+      "n": 8,
+      "realVsCheck": -1.65,
+      "se": 3.095,
+      "modelVsCheck": -3.836
+     },
+     {
+      "key": "St3 Equity < 35 % n3+ | 1",
+      "n": 8,
+      "realVsCheck": -3.063,
+      "se": 3.481,
+      "modelVsCheck": -5.121
+     },
+     {
+      "key": "St3 Equity < 35 % n3+ | 1.5",
+      "n": 8,
+      "realVsCheck": -5.925,
+      "se": 4.302,
+      "modelVsCheck": -8.142
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n1 | 0.33",
+      "n": 20,
+      "realVsCheck": -7.221,
+      "se": 7.453,
+      "modelVsCheck": 8.489
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n1 | 0.5",
+      "n": 19,
+      "realVsCheck": -5.554,
+      "se": 8.588,
+      "modelVsCheck": 11.536
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n1 | 0.75",
+      "n": 18,
+      "realVsCheck": -3.779,
+      "se": 10.286,
+      "modelVsCheck": 12.678
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n1 | 1",
+      "n": 16,
+      "realVsCheck": -3.651,
+      "se": 11.597,
+      "modelVsCheck": 9.544
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n1 | 1.5",
+      "n": 13,
+      "realVsCheck": -12.263,
+      "se": 13.824,
+      "modelVsCheck": 6.067
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n2 | 0.33",
+      "n": 6,
+      "realVsCheck": -11.15,
+      "se": 14.189,
+      "modelVsCheck": 19.731
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n2 | 0.5",
+      "n": 4,
+      "realVsCheck": -13.9,
+      "se": 18.123,
+      "modelVsCheck": 27.596
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n2 | 0.75",
+      "n": 4,
+      "realVsCheck": -1.725,
+      "se": 17.311,
+      "modelVsCheck": 34.746
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n2 | 1",
+      "n": 4,
+      "realVsCheck": 5.2,
+      "se": 17.278,
+      "modelVsCheck": 37.737
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n2 | 1.5",
+      "n": 3,
+      "realVsCheck": 24.4,
+      "se": 25.552,
+      "modelVsCheck": 28.943
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n3+ | 0.33",
+      "n": 1,
+      "realVsCheck": 0,
+      "se": null,
+      "modelVsCheck": 13.078
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n3+ | 0.5",
+      "n": 1,
+      "realVsCheck": 0,
+      "se": null,
+      "modelVsCheck": 16.65
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n3+ | 0.75",
+      "n": 1,
+      "realVsCheck": 0,
+      "se": null,
+      "modelVsCheck": 20.306
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n3+ | 1",
+      "n": 1,
+      "realVsCheck": 0,
+      "se": null,
+      "modelVsCheck": 24.836
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n3+ | 1.5",
+      "n": 1,
+      "realVsCheck": 0,
+      "se": null,
+      "modelVsCheck": 36.603
+     }
+    ]
+   },
+   "policies": {
+    "all": {
+     "spots": 409,
+     "rows": [
+      {
+       "policy": "Modell (beste EV)",
+       "vsCheck": 1.273,
+       "se": 1.798
+      },
+      {
+       "policy": "Modell, Größe frei nach Ausspielung (Orakel)",
+       "vsCheck": 5.641,
+       "se": 1.895
+      },
+      {
+       "policy": "immer Check",
+       "vsCheck": 0,
+       "se": 0
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 0.33",
+       "vsCheck": -3.112,
+       "se": 1.72
+      },
+      {
+       "policy": "immer Bet 0.33",
+       "vsCheck": -4.495,
+       "se": 1.881
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 0.5",
+       "vsCheck": -1.654,
+       "se": 1.792
+      },
+      {
+       "policy": "immer Bet 0.5",
+       "vsCheck": -3.894,
+       "se": 1.974
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 0.75",
+       "vsCheck": -0.426,
+       "se": 1.877
+      },
+      {
+       "policy": "immer Bet 0.75",
+       "vsCheck": -2.065,
+       "se": 2.167
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 1",
+       "vsCheck": 0.728,
+       "se": 1.873
+      },
+      {
+       "policy": "immer Bet 1",
+       "vsCheck": -1.435,
+       "se": 2.202
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 1.5",
+       "vsCheck": 1.965,
+       "se": 1.933
+      },
+      {
+       "policy": "immer Bet 1.5",
+       "vsCheck": -1.631,
+       "se": 2.258
+      }
+     ]
+    },
+    "headsUp": {
+     "spots": 163,
+     "rows": [
+      {
+       "policy": "Modell (beste EV)",
+       "vsCheck": 2.572,
+       "se": 2.297
+      },
+      {
+       "policy": "Modell, Größe frei nach Ausspielung (Orakel)",
+       "vsCheck": 6.727,
+       "se": 2.443
+      },
+      {
+       "policy": "immer Check",
+       "vsCheck": 0,
+       "se": 0
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 0.33",
+       "vsCheck": 0.033,
+       "se": 2.014
+      },
+      {
+       "policy": "immer Bet 0.33",
+       "vsCheck": -2.068,
+       "se": 2.321
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 0.5",
+       "vsCheck": 1.21,
+       "se": 2.21
+      },
+      {
+       "policy": "immer Bet 0.5",
+       "vsCheck": -1.858,
+       "se": 2.535
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 0.75",
+       "vsCheck": 2.257,
+       "se": 2.308
+      },
+      {
+       "policy": "immer Bet 0.75",
+       "vsCheck": 0.259,
+       "se": 2.748
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 1",
+       "vsCheck": 2.69,
+       "se": 2.414
+      },
+      {
+       "policy": "immer Bet 1",
+       "vsCheck": 0.532,
+       "se": 2.851
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 1.5",
+       "vsCheck": 3.899,
+       "se": 2.659
+      },
+      {
+       "policy": "immer Bet 1.5",
+       "vsCheck": 0.712,
+       "se": 3.117
+      }
+     ]
+    },
+    "multiway": {
+     "spots": 246,
+     "rows": [
+      {
+       "policy": "Modell (beste EV)",
+       "vsCheck": 0.412,
+       "se": 2.575
+      },
+      {
+       "policy": "Modell, Größe frei nach Ausspielung (Orakel)",
+       "vsCheck": 4.921,
+       "se": 2.705
+      },
+      {
+       "policy": "immer Check",
+       "vsCheck": 0,
+       "se": 0
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 0.33",
+       "vsCheck": -5.196,
+       "se": 2.523
+      },
+      {
+       "policy": "immer Bet 0.33",
+       "vsCheck": -6.103,
+       "se": 2.721
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 0.5",
+       "vsCheck": -3.551,
+       "se": 2.591
+      },
+      {
+       "policy": "immer Bet 0.5",
+       "vsCheck": -5.243,
+       "se": 2.82
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 0.75",
+       "vsCheck": -2.203,
+       "se": 2.717
+      },
+      {
+       "policy": "immer Bet 0.75",
+       "vsCheck": -3.604,
+       "se": 3.109
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 1",
+       "vsCheck": -0.571,
+       "se": 2.673
+      },
+      {
+       "policy": "immer Bet 1",
+       "vsCheck": -2.737,
+       "se": 3.137
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 1.5",
+       "vsCheck": 0.684,
+       "se": 2.689
+      },
+      {
+       "policy": "immer Bet 1.5",
+       "vsCheck": -3.184,
+       "se": 3.135
+      }
+     ]
+    }
+   },
+   "eqWhenCalled": [
+    {
+     "key": "St1 0.33",
+     "n": 47,
+     "predEqWhenCalled": 0.48,
+     "obsEqWhenCalled": 0.541,
+     "se": 0.044
+    },
+    {
+     "key": "St1 0.5",
+     "n": 44,
+     "predEqWhenCalled": 0.479,
+     "obsEqWhenCalled": 0.549,
+     "se": 0.045
+    },
+    {
+     "key": "St1 0.75",
+     "n": 44,
+     "predEqWhenCalled": 0.467,
+     "obsEqWhenCalled": 0.549,
+     "se": 0.045
+    },
+    {
+     "key": "St1 1",
+     "n": 43,
+     "predEqWhenCalled": 0.463,
+     "obsEqWhenCalled": 0.555,
+     "se": 0.046
+    },
+    {
+     "key": "St1 1.5",
+     "n": 41,
+     "predEqWhenCalled": 0.459,
+     "obsEqWhenCalled": 0.559,
+     "se": 0.047
+    },
+    {
+     "key": "St2 0.33",
+     "n": 39,
+     "predEqWhenCalled": 0.548,
+     "obsEqWhenCalled": 0.534,
+     "se": 0.061
+    },
+    {
+     "key": "St2 0.5",
+     "n": 38,
+     "predEqWhenCalled": 0.528,
+     "obsEqWhenCalled": 0.522,
+     "se": 0.061
+    },
+    {
+     "key": "St2 0.75",
+     "n": 36,
+     "predEqWhenCalled": 0.504,
+     "obsEqWhenCalled": 0.499,
+     "se": 0.063
+    },
+    {
+     "key": "St2 1",
+     "n": 38,
+     "predEqWhenCalled": 0.496,
+     "obsEqWhenCalled": 0.516,
+     "se": 0.06
+    },
+    {
+     "key": "St2 1.5",
+     "n": 36,
+     "predEqWhenCalled": 0.484,
+     "obsEqWhenCalled": 0.506,
+     "se": 0.063
+    },
+    {
+     "key": "St3 0.33",
+     "n": 30,
+     "predEqWhenCalled": 0.551,
+     "obsEqWhenCalled": 0.45,
+     "se": 0.091
+    },
+    {
+     "key": "St3 0.5",
+     "n": 27,
+     "predEqWhenCalled": 0.511,
+     "obsEqWhenCalled": 0.389,
+     "se": 0.094
+    },
+    {
+     "key": "St3 0.75",
+     "n": 26,
+     "predEqWhenCalled": 0.466,
+     "obsEqWhenCalled": 0.365,
+     "se": 0.094
+    },
+    {
+     "key": "St3 1",
+     "n": 24,
+     "predEqWhenCalled": 0.432,
+     "obsEqWhenCalled": 0.354,
+     "se": 0.097
+    },
+    {
+     "key": "St3 1.5",
+     "n": 21,
+     "predEqWhenCalled": 0.358,
+     "obsEqWhenCalled": 0.262,
+     "se": 0.095
+    }
+   ],
+   "facing": [
+    {
+     "key": "St1 call",
+     "n": 135,
+     "realVsFold": 22.348,
+     "se": 6.404,
+     "modelVsFold": 4.186
+    },
+    {
+     "key": "St1 fold",
+     "n": 135,
+     "realVsFold": 0,
+     "se": 0,
+     "modelVsFold": 0
+    },
+    {
+     "key": "St1 r2.5",
+     "n": 135,
+     "realVsFold": 23.453,
+     "se": 7.039,
+     "modelVsFold": 5.439
+    },
+    {
+     "key": "St1 r3.5",
+     "n": 114,
+     "realVsFold": 12.621,
+     "se": 7.076,
+     "modelVsFold": -1.871
+    },
+    {
+     "key": "St2 call",
+     "n": 44,
+     "realVsFold": 9.073,
+     "se": 10.195,
+     "modelVsFold": -1.606
+    },
+    {
+     "key": "St2 fold",
+     "n": 44,
+     "realVsFold": 0,
+     "se": 0,
+     "modelVsFold": 0
+    },
+    {
+     "key": "St2 r2.5",
+     "n": 44,
+     "realVsFold": -6.815,
+     "se": 10.383,
+     "modelVsFold": -6.943
+    },
+    {
+     "key": "St2 r3.5",
+     "n": 34,
+     "realVsFold": -22.517,
+     "se": 9.97,
+     "modelVsFold": -14.314
+    },
+    {
+     "key": "St3 call",
+     "n": 17,
+     "realVsFold": -3.641,
+     "se": 10.33,
+     "modelVsFold": -14.843
+    },
+    {
+     "key": "St3 fold",
+     "n": 17,
+     "realVsFold": 0,
+     "se": 0,
+     "modelVsFold": 0
+    },
+    {
+     "key": "St3 r2.5",
+     "n": 17,
+     "realVsFold": -26.613,
+     "se": 13.895,
+     "modelVsFold": -27.118
+    },
+    {
+     "key": "St3 r3.5",
+     "n": 11,
+     "realVsFold": -25.397,
+     "se": 11.888,
+     "modelVsFold": -21.76
+    }
+   ],
+   "modelChoice": {
+    "1": 13,
+    "check": 223,
+    "1.5": 90,
+    "0.33": 40,
+    "0.5": 26,
+    "0.75": 17
+   }
   }
+ },
+ "cfr": {
+  "date": "2026-11-26T21:20:51.945Z",
+  "summary": {
+   "spots": 24,
+   "sizes": [
+    0.5,
+    1
+   ],
+   "ms": 53866,
+   "buckets": {
+    "5": {
+     "comboExplMean": 0.01192,
+     "comboExplMax": 0.02807,
+     "bucketExplMean": 0.00002,
+     "msMean": 18.58333
+    },
+    "10": {
+     "comboExplMean": 0.00457,
+     "comboExplMax": 0.00755,
+     "bucketExplMean": 0.00004,
+     "msMean": 38.5
+    },
+    "20": {
+     "comboExplMean": 0.0031,
+     "comboExplMax": 0.00819,
+     "bucketExplMean": 0.00004,
+     "msMean": 68.875
+    },
+    "40": {
+     "comboExplMean": 0.00244,
+     "comboExplMax": 0.0075,
+     "bucketExplMean": 0.00004,
+     "msMean": 141.08333
+    }
+   },
+   "raise": {
+    "10": {
+     "noRaiseInRaiseGameMean": 0.17184,
+     "noRaiseInRaiseGameMax": 0.3409,
+     "raiseInRaiseGameMean": 0.00907,
+     "raiseInRaiseGameMax": 0.01612,
+     "noRaiseInNoRaiseGameMean": 0.0045,
+     "msMean": 73.875,
+     "raiseFreqIPMean": 0.21421,
+     "raiseFreqOOPMean": 0.17175
+    },
+    "20": {
+     "noRaiseInRaiseGameMean": 0.17089,
+     "noRaiseInRaiseGameMax": 0.32879,
+     "raiseInRaiseGameMean": 0.00482,
+     "raiseInRaiseGameMax": 0.0099,
+     "noRaiseInNoRaiseGameMean": 0.003,
+     "msMean": 125.54167,
+     "raiseFreqIPMean": 0.23987,
+     "raiseFreqOOPMean": 0.21258
+    }
+   },
+   "convergence": {
+    "100": 0.00282,
+    "300": 0.00057,
+    "700": 0.00015,
+    "2500": 0.00002
+   }
+  },
+  "rows": [
+   {
+    "spot": 0,
+    "nO": 443,
+    "nI": 270,
+    "stack": 8.59,
+    "buckets": {
+     "5": {
+      "ms": 45,
+      "bucketExpl": 0.00002,
+      "comboExpl": 0.00729,
+      "value": 0.1482,
+      "comboValue": 0.1482
+     },
+     "10": {
+      "ms": 71,
+      "bucketExpl": 0.00004,
+      "comboExpl": 0.00507,
+      "value": 0.1481,
+      "comboValue": 0.1481
+     },
+     "20": {
+      "ms": 70,
+      "bucketExpl": 0.00004,
+      "comboExpl": 0.00282,
+      "value": 0.1483,
+      "comboValue": 0.1483
+     },
+     "40": {
+      "ms": 152,
+      "bucketExpl": 0.00003,
+      "comboExpl": 0.00113,
+      "value": 0.1492,
+      "comboValue": 0.1492
+     }
+    },
+    "raise": {
+     "10": {
+      "ms": 97,
+      "noRaiseInRaiseGame": 0.2492,
+      "raiseInRaiseGame": 0.01049,
+      "noRaiseInNoRaiseGame": 0.00507,
+      "raiseFreqIP": 0.146,
+      "raiseFreqOOP": 0.071
+     },
+     "20": {
+      "ms": 142,
+      "noRaiseInRaiseGame": 0.23539,
+      "raiseInRaiseGame": 0.00573,
+      "noRaiseInNoRaiseGame": 0.00282,
+      "raiseFreqIP": 0.193,
+      "raiseFreqOOP": 0.093
+     }
+    },
+    "conv": {
+     "100": 0.002878,
+     "300": 0.000432,
+     "700": 0.000105,
+     "2500": 0.000013
+    }
+   },
+   {
+    "spot": 1,
+    "nO": 209,
+    "nI": 218,
+    "stack": 2.05,
+    "buckets": {
+     "5": {
+      "ms": 33,
+      "bucketExpl": 0.00001,
+      "comboExpl": 0.00833,
+      "value": 0.4038,
+      "comboValue": 0.4038
+     },
+     "10": {
+      "ms": 34,
+      "bucketExpl": 0.00002,
+      "comboExpl": 0.00368,
+      "value": 0.4008,
+      "comboValue": 0.4008
+     },
+     "20": {
+      "ms": 87,
+      "bucketExpl": 0.00003,
+      "comboExpl": 0.00154,
+      "value": 0.4017,
+      "comboValue": 0.4017
+     },
+     "40": {
+      "ms": 172,
+      "bucketExpl": 0.00004,
+      "comboExpl": 0.00152,
+      "value": 0.4017,
+      "comboValue": 0.4017
+     }
+    },
+    "raise": {
+     "10": {
+      "ms": 66,
+      "noRaiseInRaiseGame": 0.0802,
+      "raiseInRaiseGame": 0.01246,
+      "noRaiseInNoRaiseGame": 0.00368,
+      "raiseFreqIP": 0.054,
+      "raiseFreqOOP": 0.602
+     },
+     "20": {
+      "ms": 96,
+      "noRaiseInRaiseGame": 0.11999,
+      "raiseInRaiseGame": 0.00452,
+      "noRaiseInNoRaiseGame": 0.00154,
+      "raiseFreqIP": 0.14,
+      "raiseFreqOOP": 0.424
+     }
+    },
+    "conv": {
+     "100": 0.001884,
+     "300": 0.00033,
+     "700": 0.000076,
+     "2500": 0.000006
+    }
+   },
+   {
+    "spot": 2,
+    "nO": 282,
+    "nI": 489,
+    "stack": 8.22,
+    "buckets": {
+     "5": {
+      "ms": 21,
+      "bucketExpl": 0.00001,
+      "comboExpl": 0.006,
+      "value": -0.2696,
+      "comboValue": -0.2696
+     },
+     "10": {
+      "ms": 55,
+      "bucketExpl": 0.00003,
+      "comboExpl": 0.00273,
+      "value": -0.2693,
+      "comboValue": -0.2693
+     },
+     "20": {
+      "ms": 60,
+      "bucketExpl": 0.00003,
+      "comboExpl": 0.00185,
+      "value": -0.2702,
+      "comboValue": -0.2702
+     },
+     "40": {
+      "ms": 143,
+      "bucketExpl": 0.00004,
+      "comboExpl": 0.00185,
+      "value": -0.2702,
+      "comboValue": -0.2702
+     }
+    },
+    "raise": {
+     "10": {
+      "ms": 85,
+      "noRaiseInRaiseGame": 0.05424,
+      "raiseInRaiseGame": 0.00442,
+      "noRaiseInNoRaiseGame": 0.00273,
+      "raiseFreqIP": 0.245,
+      "raiseFreqOOP": 0.219
+     },
+     "20": {
+      "ms": 162,
+      "noRaiseInRaiseGame": 0.0516,
+      "raiseInRaiseGame": 0.004,
+      "noRaiseInNoRaiseGame": 0.00185,
+      "raiseFreqIP": 0.257,
+      "raiseFreqOOP": 0.205
+     }
+    },
+    "conv": {
+     "100": 0.002645,
+     "300": 0.00038,
+     "700": 0.000095,
+     "2500": 0.000008
+    }
+   },
+   {
+    "spot": 3,
+    "nO": 298,
+    "nI": 179,
+    "stack": 4.72,
+    "buckets": {
+     "5": {
+      "ms": 18,
+      "bucketExpl": 0.00003,
+      "comboExpl": 0.0063,
+      "value": -0.2344,
+      "comboValue": -0.2344
+     },
+     "10": {
+      "ms": 43,
+      "bucketExpl": 0.00003,
+      "comboExpl": 0.0036,
+      "value": -0.2354,
+      "comboValue": -0.2354
+     },
+     "20": {
+      "ms": 85,
+      "bucketExpl": 0.00003,
+      "comboExpl": 0.00172,
+      "value": -0.2343,
+      "comboValue": -0.2343
+     },
+     "40": {
+      "ms": 186,
+      "bucketExpl": 0.00003,
+      "comboExpl": 0.00129,
+      "value": -0.2341,
+      "comboValue": -0.2341
+     }
+    },
+    "raise": {
+     "10": {
+      "ms": 157,
+      "noRaiseInRaiseGame": 0.09699,
+      "raiseInRaiseGame": 0.00903,
+      "noRaiseInNoRaiseGame": 0.0036,
+      "raiseFreqIP": 0.132,
+      "raiseFreqOOP": 0.123
+     },
+     "20": {
+      "ms": 196,
+      "noRaiseInRaiseGame": 0.09193,
+      "raiseInRaiseGame": 0.00521,
+      "noRaiseInNoRaiseGame": 0.00172,
+      "raiseFreqIP": 0.13,
+      "raiseFreqOOP": 0.196
+     }
+    },
+    "conv": {
+     "100": 0.002495,
+     "300": 0.000847,
+     "700": 0.000265,
+     "2500": 0.00003
+    }
+   },
+   {
+    "spot": 4,
+    "nO": 115,
+    "nI": 151,
+    "stack": 4.53,
+    "buckets": {
+     "5": {
+      "ms": 29,
+      "bucketExpl": 0.00001,
+      "comboExpl": 0.0099,
+      "value": 0.1279,
+      "comboValue": 0.1279
+     },
+     "10": {
+      "ms": 34,
+      "bucketExpl": 0.00004,
+      "comboExpl": 0.00387,
+      "value": 0.1322,
+      "comboValue": 0.1322
+     },
+     "20": {
+      "ms": 64,
+      "bucketExpl": 0.00003,
+      "comboExpl": 0.00287,
+      "value": 0.1319,
+      "comboValue": 0.1319
+     },
+     "40": {
+      "ms": 121,
+      "bucketExpl": 0.00003,
+      "comboExpl": 0.00299,
+      "value": 0.1318,
+      "comboValue": 0.1318
+     }
+    },
+    "raise": {
+     "10": {
+      "ms": 69,
+      "noRaiseInRaiseGame": 0.24068,
+      "raiseInRaiseGame": 0.01348,
+      "noRaiseInNoRaiseGame": 0.00387,
+      "raiseFreqIP": 0.191,
+      "raiseFreqOOP": 0.162
+     },
+     "20": {
+      "ms": 118,
+      "noRaiseInRaiseGame": 0.22106,
+      "raiseInRaiseGame": 0.00534,
+      "noRaiseInNoRaiseGame": 0.00287,
+      "raiseFreqIP": 0.256,
+      "raiseFreqOOP": 0.227
+     }
+    },
+    "conv": {
+     "100": 0.003952,
+     "300": 0.000843,
+     "700": 0.000208,
+     "2500": 0.000026
+    }
+   },
+   {
+    "spot": 5,
+    "nO": 302,
+    "nI": 215,
+    "stack": 15,
+    "buckets": {
+     "5": {
+      "ms": 13,
+      "bucketExpl": 0.00001,
+      "comboExpl": 0.00971,
+      "value": -0.0402,
+      "comboValue": -0.0402
+     },
+     "10": {
+      "ms": 34,
+      "bucketExpl": 0.00004,
+      "comboExpl": 0.00558,
+      "value": -0.0377,
+      "comboValue": -0.0377
+     },
+     "20": {
+      "ms": 65,
+      "bucketExpl": 0.00002,
+      "comboExpl": 0.0032,
+      "value": -0.0377,
+      "comboValue": -0.0377
+     },
+     "40": {
+      "ms": 153,
+      "bucketExpl": 0.00002,
+      "comboExpl": 0.00228,
+      "value": -0.0373,
+      "comboValue": -0.0373
+     }
+    },
+    "raise": {
+     "10": {
+      "ms": 83,
+      "noRaiseInRaiseGame": 0.29538,
+      "raiseInRaiseGame": 0.01252,
+      "noRaiseInNoRaiseGame": 0.00558,
+      "raiseFreqIP": 0.139,
+      "raiseFreqOOP": 0.164
+     },
+     "20": {
+      "ms": 115,
+      "noRaiseInRaiseGame": 0.30866,
+      "raiseInRaiseGame": 0.00428,
+      "noRaiseInNoRaiseGame": 0.0032,
+      "raiseFreqIP": 0.205,
+      "raiseFreqOOP": 0.185
+     }
+    },
+    "conv": {
+     "100": 0.002969,
+     "300": 0.000804,
+     "700": 0.000212,
+     "2500": 0.000018
+    }
+   },
+   {
+    "spot": 6,
+    "nO": 297,
+    "nI": 514,
+    "stack": 17.73,
+    "buckets": {
+     "5": {
+      "ms": 10,
+      "bucketExpl": 0.00001,
+      "comboExpl": 0.00961,
+      "value": -0.0071,
+      "comboValue": -0.0071
+     },
+     "10": {
+      "ms": 39,
+      "bucketExpl": 0.00003,
+      "comboExpl": 0.00537,
+      "value": -0.0006,
+      "comboValue": -0.0006
+     },
+     "20": {
+      "ms": 80,
+      "bucketExpl": 0.00003,
+      "comboExpl": 0.00321,
+      "value": -0.0001,
+      "comboValue": -0.0001
+     },
+     "40": {
+      "ms": 165,
+      "bucketExpl": 0.00004,
+      "comboExpl": 0.00197,
+      "value": 0.0008,
+      "comboValue": 0.0008
+     }
+    },
+    "raise": {
+     "10": {
+      "ms": 67,
+      "noRaiseInRaiseGame": 0.24219,
+      "raiseInRaiseGame": 0.01094,
+      "noRaiseInNoRaiseGame": 0.00537,
+      "raiseFreqIP": 0.136,
+      "raiseFreqOOP": 0.066
+     },
+     "20": {
+      "ms": 146,
+      "noRaiseInRaiseGame": 0.26619,
+      "raiseInRaiseGame": 0.00509,
+      "noRaiseInNoRaiseGame": 0.00321,
+      "raiseFreqIP": 0.145,
+      "raiseFreqOOP": 0.133
+     }
+    },
+    "conv": {
+     "100": 0.003114,
+     "300": 0.000681,
+     "700": 0.000135,
+     "2500": 0.000012
+    }
+   },
+   {
+    "spot": 7,
+    "nO": 311,
+    "nI": 264,
+    "stack": 17.73,
+    "buckets": {
+     "5": {
+      "ms": 14,
+      "bucketExpl": 0.00002,
+      "comboExpl": 0.01081,
+      "value": -0.2799,
+      "comboValue": -0.2799
+     },
+     "10": {
+      "ms": 35,
+      "bucketExpl": 0.00004,
+      "comboExpl": 0.00247,
+      "value": -0.2774,
+      "comboValue": -0.2774
+     },
+     "20": {
+      "ms": 70,
+      "bucketExpl": 0.00005,
+      "comboExpl": 0.00186,
+      "value": -0.2767,
+      "comboValue": -0.2767
+     },
+     "40": {
+      "ms": 132,
+      "bucketExpl": 0.00005,
+      "comboExpl": 0.00139,
+      "value": -0.2767,
+      "comboValue": -0.2767
+     }
+    },
+    "raise": {
+     "10": {
+      "ms": 70,
+      "noRaiseInRaiseGame": 0.11038,
+      "raiseInRaiseGame": 0.00783,
+      "noRaiseInNoRaiseGame": 0.00247,
+      "raiseFreqIP": 0.146,
+      "raiseFreqOOP": 0.026
+     },
+     "20": {
+      "ms": 132,
+      "noRaiseInRaiseGame": 0.10136,
+      "raiseInRaiseGame": 0.00388,
+      "noRaiseInNoRaiseGame": 0.00186,
+      "raiseFreqIP": 0.195,
+      "raiseFreqOOP": 0.125
+     }
+    },
+    "conv": {
+     "100": 0.004594,
+     "300": 0.000933,
+     "700": 0.00018,
+     "2500": 0.000029
+    }
+   },
+   {
+    "spot": 8,
+    "nO": 1081,
+    "nI": 299,
+    "stack": 7.52,
+    "buckets": {
+     "5": {
+      "ms": 32,
+      "bucketExpl": 0.00003,
+      "comboExpl": 0.00964,
+      "value": 0.1298,
+      "comboValue": 0.1298
+     },
+     "10": {
+      "ms": 42,
+      "bucketExpl": 0.00005,
+      "comboExpl": 0.00616,
+      "value": 0.1304,
+      "comboValue": 0.1304
+     },
+     "20": {
+      "ms": 64,
+      "bucketExpl": 0.00005,
+      "comboExpl": 0.00294,
+      "value": 0.1346,
+      "comboValue": 0.1346
+     },
+     "40": {
+      "ms": 124,
+      "bucketExpl": 0.00005,
+      "comboExpl": 0.00223,
+      "value": 0.1357,
+      "comboValue": 0.1357
+     }
+    },
+    "raise": {
+     "10": {
+      "ms": 76,
+      "noRaiseInRaiseGame": 0.28392,
+      "raiseInRaiseGame": 0.01612,
+      "noRaiseInNoRaiseGame": 0.00616,
+      "raiseFreqIP": 0.126,
+      "raiseFreqOOP": 0.171
+     },
+     "20": {
+      "ms": 114,
+      "noRaiseInRaiseGame": 0.23592,
+      "raiseInRaiseGame": 0.00619,
+      "noRaiseInNoRaiseGame": 0.00294,
+      "raiseFreqIP": 0.15,
+      "raiseFreqOOP": 0.186
+     }
+    },
+    "conv": {
+     "100": 0.002137,
+     "300": 0.000566,
+     "700": 0.000208,
+     "2500": 0.000038
+    }
+   },
+   {
+    "spot": 9,
+    "nO": 329,
+    "nI": 438,
+    "stack": 3.96,
+    "buckets": {
+     "5": {
+      "ms": 14,
+      "bucketExpl": 0.00002,
+      "comboExpl": 0.01408,
+      "value": -0.2112,
+      "comboValue": -0.2112
+     },
+     "10": {
+      "ms": 40,
+      "bucketExpl": 0.00005,
+      "comboExpl": 0.00558,
+      "value": -0.206,
+      "comboValue": -0.206
+     },
+     "20": {
+      "ms": 84,
+      "bucketExpl": 0.00011,
+      "comboExpl": 0.00369,
+      "value": -0.2069,
+      "comboValue": -0.2069
+     },
+     "40": {
+      "ms": 186,
+      "bucketExpl": 0.00009,
+      "comboExpl": 0.00327,
+      "value": -0.2068,
+      "comboValue": -0.2068
+     }
+    },
+    "raise": {
+     "10": {
+      "ms": 59,
+      "noRaiseInRaiseGame": 0.18809,
+      "raiseInRaiseGame": 0.00759,
+      "noRaiseInNoRaiseGame": 0.00558,
+      "raiseFreqIP": 0.162,
+      "raiseFreqOOP": 0.027
+     },
+     "20": {
+      "ms": 143,
+      "noRaiseInRaiseGame": 0.16713,
+      "raiseInRaiseGame": 0.00574,
+      "noRaiseInNoRaiseGame": 0.00369,
+      "raiseFreqIP": 0.168,
+      "raiseFreqOOP": 0.11
+     }
+    },
+    "conv": {
+     "100": 0.003243,
+     "300": 0.000473,
+     "700": 0.000104,
+     "2500": 0.00003
+    }
+   },
+   {
+    "spot": 10,
+    "nO": 348,
+    "nI": 248,
+    "stack": 17.73,
+    "buckets": {
+     "5": {
+      "ms": 19,
+      "bucketExpl": 0.00001,
+      "comboExpl": 0.00797,
+      "value": -0.2735,
+      "comboValue": -0.2735
+     },
+     "10": {
+      "ms": 36,
+      "bucketExpl": 0.00004,
+      "comboExpl": 0.00237,
+      "value": -0.2732,
+      "comboValue": -0.2732
+     },
+     "20": {
+      "ms": 66,
+      "bucketExpl": 0.00004,
+      "comboExpl": 0.00153,
+      "value": -0.2723,
+      "comboValue": -0.2723
+     },
+     "40": {
+      "ms": 226,
+      "bucketExpl": 0.00004,
+      "comboExpl": 0.0009,
+      "value": -0.2722,
+      "comboValue": -0.2722
+     }
+    },
+    "raise": {
+     "10": {
+      "ms": 86,
+      "noRaiseInRaiseGame": 0.09076,
+      "raiseInRaiseGame": 0.00841,
+      "noRaiseInNoRaiseGame": 0.00237,
+      "raiseFreqIP": 0.121,
+      "raiseFreqOOP": 0.13
+     },
+     "20": {
+      "ms": 162,
+      "noRaiseInRaiseGame": 0.09217,
+      "raiseInRaiseGame": 0.00502,
+      "noRaiseInNoRaiseGame": 0.00153,
+      "raiseFreqIP": 0.187,
+      "raiseFreqOOP": 0.171
+     }
+    },
+    "conv": {
+     "100": 0.003811,
+     "300": 0.000808,
+     "700": 0.000235,
+     "2500": 0.000027
+    }
+   },
+   {
+    "spot": 11,
+    "nO": 131,
+    "nI": 77,
+    "stack": 2.51,
+    "buckets": {
+     "5": {
+      "ms": 12,
+      "bucketExpl": 0.00002,
+      "comboExpl": 0.00937,
+      "value": -0.3178,
+      "comboValue": -0.3178
+     },
+     "10": {
+      "ms": 32,
+      "bucketExpl": 0.00004,
+      "comboExpl": 0.00514,
+      "value": -0.3158,
+      "comboValue": -0.3158
+     },
+     "20": {
+      "ms": 59,
+      "bucketExpl": 0.00004,
+      "comboExpl": 0.00395,
+      "value": -0.3155,
+      "comboValue": -0.3155
+     },
+     "40": {
+      "ms": 115,
+      "bucketExpl": 0.00005,
+      "comboExpl": 0.00285,
+      "value": -0.3142,
+      "comboValue": -0.3142
+     }
+    },
+    "raise": {
+     "10": {
+      "ms": 65,
+      "noRaiseInRaiseGame": 0.12604,
+      "raiseInRaiseGame": 0.00885,
+      "noRaiseInNoRaiseGame": 0.00514,
+      "raiseFreqIP": 0.266,
+      "raiseFreqOOP": 0.119
+     },
+     "20": {
+      "ms": 115,
+      "noRaiseInRaiseGame": 0.11931,
+      "raiseInRaiseGame": 0.00582,
+      "noRaiseInNoRaiseGame": 0.00395,
+      "raiseFreqIP": 0.349,
+      "raiseFreqOOP": 0.228
+     }
+    },
+    "conv": {
+     "100": 0.002552,
+     "300": 0.000385,
+     "700": 0.000095,
+     "2500": 0.000009
+    }
+   },
+   {
+    "spot": 12,
+    "nO": 100,
+    "nI": 140,
+    "stack": 0.74,
+    "buckets": {
+     "5": {
+      "ms": 15,
+      "bucketExpl": 0.00001,
+      "comboExpl": 0.02807,
+      "value": -0.4149,
+      "comboValue": -0.4149
+     },
+     "10": {
+      "ms": 27,
+      "bucketExpl": 0.00001,
+      "comboExpl": 0.00305,
+      "value": -0.4059,
+      "comboValue": -0.4059
+     },
+     "20": {
+      "ms": 53,
+      "bucketExpl": 0.00002,
+      "comboExpl": 0.00207,
+      "value": -0.4059,
+      "comboValue": -0.4059
+     },
+     "40": {
+      "ms": 122,
+      "bucketExpl": 0.00003,
+      "comboExpl": 0.00114,
+      "value": -0.4054,
+      "comboValue": -0.4054
+     }
+    },
+    "raise": {
+     "10": {
+      "ms": 54,
+      "noRaiseInRaiseGame": 0.00661,
+      "raiseInRaiseGame": 0.00302,
+      "noRaiseInNoRaiseGame": 0.00247,
+      "raiseFreqIP": 0.541,
+      "raiseFreqOOP": 0.133
+     },
+     "20": {
+      "ms": 80,
+      "noRaiseInRaiseGame": 0.00538,
+      "raiseInRaiseGame": 0.00275,
+      "noRaiseInNoRaiseGame": 0.00156,
+      "raiseFreqIP": 0.399,
+      "raiseFreqOOP": 0.246
+     }
+    },
+    "conv": {
+     "100": 0.001143,
+     "300": 0.000214,
+     "700": 0.00007,
+     "2500": 0.000006
+    }
+   },
+   {
+    "spot": 13,
+    "nO": 126,
+    "nI": 66,
+    "stack": 2.51,
+    "buckets": {
+     "5": {
+      "ms": 22,
+      "bucketExpl": 0.00001,
+      "comboExpl": 0.02161,
+      "value": -0.3948,
+      "comboValue": -0.3948
+     },
+     "10": {
+      "ms": 32,
+      "bucketExpl": 0.00001,
+      "comboExpl": 0.00633,
+      "value": -0.3934,
+      "comboValue": -0.3934
+     },
+     "20": {
+      "ms": 63,
+      "bucketExpl": 0.00002,
+      "comboExpl": 0.00819,
+      "value": -0.3938,
+      "comboValue": -0.3938
+     },
+     "40": {
+      "ms": 105,
+      "bucketExpl": 0.00002,
+      "comboExpl": 0.0075,
+      "value": -0.3933,
+      "comboValue": -0.3933
+     }
+    },
+    "raise": {
+     "10": {
+      "ms": 51,
+      "noRaiseInRaiseGame": 0.05004,
+      "raiseInRaiseGame": 0.01285,
+      "noRaiseInNoRaiseGame": 0.00633,
+      "raiseFreqIP": 0.278,
+      "raiseFreqOOP": 0.112
+     },
+     "20": {
+      "ms": 98,
+      "noRaiseInRaiseGame": 0.04778,
+      "raiseInRaiseGame": 0.00914,
+      "noRaiseInNoRaiseGame": 0.00819,
+      "raiseFreqIP": 0.291,
+      "raiseFreqOOP": 0.234
+     }
+    },
+    "conv": {
+     "100": 0.002546,
+     "300": 0.000324,
+     "700": 0.000061,
+     "2500": 0.000006
+    }
+   },
+   {
+    "spot": 14,
+    "nO": 295,
+    "nI": 1081,
+    "stack": 49.5,
+    "buckets": {
+     "5": {
+      "ms": 17,
+      "bucketExpl": 0.00004,
+      "comboExpl": 0.00815,
+      "value": 0.1012,
+      "comboValue": 0.1012
+     },
+     "10": {
+      "ms": 41,
+      "bucketExpl": 0.00004,
+      "comboExpl": 0.00408,
+      "value": 0.1054,
+      "comboValue": 0.1054
+     },
+     "20": {
+      "ms": 91,
+      "bucketExpl": 0.00005,
+      "comboExpl": 0.00221,
+      "value": 0.1079,
+      "comboValue": 0.1079
+     },
+     "40": {
+      "ms": 140,
+      "bucketExpl": 0.00004,
+      "comboExpl": 0.00195,
+      "value": 0.1077,
+      "comboValue": 0.1077
+     }
+    },
+    "raise": {
+     "10": {
+      "ms": 86,
+      "noRaiseInRaiseGame": 0.2297,
+      "raiseInRaiseGame": 0.00999,
+      "noRaiseInNoRaiseGame": 0.00408,
+      "raiseFreqIP": 0.145,
+      "raiseFreqOOP": 0.121
+     },
+     "20": {
+      "ms": 140,
+      "noRaiseInRaiseGame": 0.2483,
+      "raiseInRaiseGame": 0.00358,
+      "noRaiseInNoRaiseGame": 0.00221,
+      "raiseFreqIP": 0.169,
+      "raiseFreqOOP": 0.157
+     }
+    },
+    "conv": {
+     "100": 0.003297,
+     "300": 0.000762,
+     "700": 0.000227,
+     "2500": 0.000025
+    }
+   },
+   {
+    "spot": 15,
+    "nO": 189,
+    "nI": 184,
+    "stack": 1.98,
+    "buckets": {
+     "5": {
+      "ms": 13,
+      "bucketExpl": 0.00002,
+      "comboExpl": 0.01382,
+      "value": -0.118,
+      "comboValue": -0.118
+     },
+     "10": {
+      "ms": 30,
+      "bucketExpl": 0.00003,
+      "comboExpl": 0.00755,
+      "value": -0.1147,
+      "comboValue": -0.1147
+     },
+     "20": {
+      "ms": 54,
+      "bucketExpl": 0.00004,
+      "comboExpl": 0.00555,
+      "value": -0.1137,
+      "comboValue": -0.1137
+     },
+     "40": {
+      "ms": 102,
+      "bucketExpl": 0.00006,
+      "comboExpl": 0.00395,
+      "value": -0.1133,
+      "comboValue": -0.1133
+     }
+    },
+    "raise": {
+     "10": {
+      "ms": 60,
+      "noRaiseInRaiseGame": 0.1563,
+      "raiseInRaiseGame": 0.00972,
+      "noRaiseInNoRaiseGame": 0.00755,
+      "raiseFreqIP": 0.161,
+      "raiseFreqOOP": 0.213
+     },
+     "20": {
+      "ms": 114,
+      "noRaiseInRaiseGame": 0.15842,
+      "raiseInRaiseGame": 0.00409,
+      "noRaiseInNoRaiseGame": 0.00555,
+      "raiseFreqIP": 0.195,
+      "raiseFreqOOP": 0.201
+     }
+    },
+    "conv": {
+     "100": 0.002499,
+     "300": 0.000587,
+     "700": 0.000122,
+     "2500": 0.000011
+    }
+   },
+   {
+    "spot": 16,
+    "nO": 246,
+    "nI": 178,
+    "stack": 2.9,
+    "buckets": {
+     "5": {
+      "ms": 16,
+      "bucketExpl": 0.00003,
+      "comboExpl": 0.01565,
+      "value": 0.0167,
+      "comboValue": 0.0167
+     },
+     "10": {
+      "ms": 40,
+      "bucketExpl": 0.00005,
+      "comboExpl": 0.00715,
+      "value": 0.0201,
+      "comboValue": 0.0201
+     },
+     "20": {
+      "ms": 76,
+      "bucketExpl": 0.00004,
+      "comboExpl": 0.00631,
+      "value": 0.021,
+      "comboValue": 0.021
+     },
+     "40": {
+      "ms": 188,
+      "bucketExpl": 0.00005,
+      "comboExpl": 0.00439,
+      "value": 0.0227,
+      "comboValue": 0.0227
+     }
+    },
+    "raise": {
+     "10": {
+      "ms": 75,
+      "noRaiseInRaiseGame": 0.3409,
+      "raiseInRaiseGame": 0.01083,
+      "noRaiseInNoRaiseGame": 0.00715,
+      "raiseFreqIP": 0.161,
+      "raiseFreqOOP": 0.122
+     },
+     "20": {
+      "ms": 171,
+      "noRaiseInRaiseGame": 0.32879,
+      "raiseInRaiseGame": 0.0099,
+      "noRaiseInNoRaiseGame": 0.00631,
+      "raiseFreqIP": 0.195,
+      "raiseFreqOOP": 0.15
+     }
+    },
+    "conv": {
+     "100": 0.003032,
+     "300": 0.000788,
+     "700": 0.000214,
+     "2500": 0.000016
+    }
+   },
+   {
+    "spot": 17,
+    "nO": 91,
+    "nI": 184,
+    "stack": 0.72,
+    "buckets": {
+     "5": {
+      "ms": 15,
+      "bucketExpl": 0.00001,
+      "comboExpl": 0.02453,
+      "value": -0.2498,
+      "comboValue": -0.2498
+     },
+     "10": {
+      "ms": 32,
+      "bucketExpl": 0.00007,
+      "comboExpl": 0.00733,
+      "value": -0.2616,
+      "comboValue": -0.2616
+     },
+     "20": {
+      "ms": 58,
+      "bucketExpl": 0.00002,
+      "comboExpl": 0.00381,
+      "value": -0.2636,
+      "comboValue": -0.2636
+     },
+     "40": {
+      "ms": 102,
+      "bucketExpl": 0.00003,
+      "comboExpl": 0.00379,
+      "value": -0.2636,
+      "comboValue": -0.2636
+     }
+    },
+    "raise": {
+     "10": {
+      "ms": 51,
+      "noRaiseInRaiseGame": 0.01075,
+      "raiseInRaiseGame": 0.0061,
+      "noRaiseInNoRaiseGame": 0.00694,
+      "raiseFreqIP": 0.538,
+      "raiseFreqOOP": 0.275
+     },
+     "20": {
+      "ms": 87,
+      "noRaiseInRaiseGame": 0.00733,
+      "raiseInRaiseGame": 0.00235,
+      "noRaiseInNoRaiseGame": 0.00328,
+      "raiseFreqIP": 0.523,
+      "raiseFreqOOP": 0.361
+     }
+    },
+    "conv": {
+     "100": 0.000617,
+     "300": 0.000074,
+     "700": 0.000013,
+     "2500": 0.000002
+    }
+   },
+   {
+    "spot": 18,
+    "nO": 368,
+    "nI": 271,
+    "stack": 13.79,
+    "buckets": {
+     "5": {
+      "ms": 13,
+      "bucketExpl": 0.00003,
+      "comboExpl": 0.01068,
+      "value": -0.1426,
+      "comboValue": -0.1426
+     },
+     "10": {
+      "ms": 36,
+      "bucketExpl": 0.00002,
+      "comboExpl": 0.00514,
+      "value": -0.1412,
+      "comboValue": -0.1412
+     },
+     "20": {
+      "ms": 60,
+      "bucketExpl": 0.00003,
+      "comboExpl": 0.00428,
+      "value": -0.1407,
+      "comboValue": -0.1407
+     },
+     "40": {
+      "ms": 122,
+      "bucketExpl": 0.00003,
+      "comboExpl": 0.00378,
+      "value": -0.1406,
+      "comboValue": -0.1406
+     }
+    },
+    "raise": {
+     "10": {
+      "ms": 71,
+      "noRaiseInRaiseGame": 0.19425,
+      "raiseInRaiseGame": 0.00611,
+      "noRaiseInNoRaiseGame": 0.00514,
+      "raiseFreqIP": 0.218,
+      "raiseFreqOOP": 0.203
+     },
+     "20": {
+      "ms": 109,
+      "noRaiseInRaiseGame": 0.19316,
+      "raiseInRaiseGame": 0.00476,
+      "noRaiseInNoRaiseGame": 0.00428,
+      "raiseFreqIP": 0.289,
+      "raiseFreqOOP": 0.247
+     }
+    },
+    "conv": {
+     "100": 0.003997,
+     "300": 0.000783,
+     "700": 0.000233,
+     "2500": 0.00002
+    }
+   },
+   {
+    "spot": 19,
+    "nO": 312,
+    "nI": 284,
+    "stack": 14.92,
+    "buckets": {
+     "5": {
+      "ms": 11,
+      "bucketExpl": 0.00002,
+      "comboExpl": 0.01128,
+      "value": -0.0308,
+      "comboValue": -0.0308
+     },
+     "10": {
+      "ms": 28,
+      "bucketExpl": 0.00003,
+      "comboExpl": 0.00573,
+      "value": -0.0288,
+      "comboValue": -0.0288
+     },
+     "20": {
+      "ms": 57,
+      "bucketExpl": 0.00004,
+      "comboExpl": 0.00295,
+      "value": -0.0289,
+      "comboValue": -0.0289
+     },
+     "40": {
+      "ms": 111,
+      "bucketExpl": 0.00004,
+      "comboExpl": 0.00215,
+      "value": -0.0291,
+      "comboValue": -0.0291
+     }
+    },
+    "raise": {
+     "10": {
+      "ms": 58,
+      "noRaiseInRaiseGame": 0.30437,
+      "raiseInRaiseGame": 0.01221,
+      "noRaiseInNoRaiseGame": 0.00573,
+      "raiseFreqIP": 0.169,
+      "raiseFreqOOP": 0.144
+     },
+     "20": {
+      "ms": 106,
+      "noRaiseInRaiseGame": 0.28218,
+      "raiseInRaiseGame": 0.00527,
+      "noRaiseInNoRaiseGame": 0.00295,
+      "raiseFreqIP": 0.203,
+      "raiseFreqOOP": 0.211
+     }
+    },
+    "conv": {
+     "100": 0.003791,
+     "300": 0.000953,
+     "700": 0.000313,
+     "2500": 0.000049
+    }
+   },
+   {
+    "spot": 20,
+    "nO": 39,
+    "nI": 44,
+    "stack": 0.58,
+    "buckets": {
+     "5": {
+      "ms": 14,
+      "bucketExpl": 0,
+      "comboExpl": 0.02485,
+      "value": -0.4553,
+      "comboValue": -0.4553
+     },
+     "10": {
+      "ms": 34,
+      "bucketExpl": 0.00002,
+      "comboExpl": 0.0019,
+      "value": -0.4381,
+      "comboValue": -0.4381
+     },
+     "20": {
+      "ms": 74,
+      "bucketExpl": 0.00004,
+      "comboExpl": 0.00176,
+      "value": -0.437,
+      "comboValue": -0.437
+     },
+     "40": {
+      "ms": 111,
+      "bucketExpl": 0.00003,
+      "comboExpl": 0.00076,
+      "value": -0.4361,
+      "comboValue": -0.4361
+     }
+    },
+    "raise": {
+     "10": {
+      "ms": 52,
+      "noRaiseInRaiseGame": 0.00172,
+      "raiseInRaiseGame": 0.00109,
+      "noRaiseInNoRaiseGame": 0.00121,
+      "raiseFreqIP": 0.317,
+      "raiseFreqOOP": 0.269
+     },
+     "20": {
+      "ms": 79,
+      "noRaiseInRaiseGame": 0.00112,
+      "raiseInRaiseGame": 0.00084,
+      "noRaiseInNoRaiseGame": 0.00054,
+      "raiseFreqIP": 0.356,
+      "raiseFreqOOP": 0.284
+     }
+    },
+    "conv": {
+     "100": 0.001763,
+     "300": 0.000347,
+     "700": 0.000063,
+     "2500": 0.000011
+    }
+   },
+   {
+    "spot": 21,
+    "nO": 297,
+    "nI": 409,
+    "stack": 17.73,
+    "buckets": {
+     "5": {
+      "ms": 19,
+      "bucketExpl": 0.00003,
+      "comboExpl": 0.00789,
+      "value": 0.0076,
+      "comboValue": 0.0076
+     },
+     "10": {
+      "ms": 36,
+      "bucketExpl": 0.00004,
+      "comboExpl": 0.00577,
+      "value": 0.0094,
+      "comboValue": 0.0094
+     },
+     "20": {
+      "ms": 54,
+      "bucketExpl": 0.00003,
+      "comboExpl": 0.00268,
+      "value": 0.0099,
+      "comboValue": 0.0099
+     },
+     "40": {
+      "ms": 117,
+      "bucketExpl": 0.00003,
+      "comboExpl": 0.00237,
+      "value": 0.0099,
+      "comboValue": 0.0099
+     }
+    },
+    "raise": {
+     "10": {
+      "ms": 60,
+      "noRaiseInRaiseGame": 0.272,
+      "raiseInRaiseGame": 0.00559,
+      "noRaiseInNoRaiseGame": 0.00577,
+      "raiseFreqIP": 0.183,
+      "raiseFreqOOP": 0.186
+     },
+     "20": {
+      "ms": 100,
+      "noRaiseInRaiseGame": 0.32054,
+      "raiseInRaiseGame": 0.0029,
+      "noRaiseInNoRaiseGame": 0.00268,
+      "raiseFreqIP": 0.181,
+      "raiseFreqOOP": 0.183
+     }
+    },
+    "conv": {
+     "100": 0.002266,
+     "300": 0.000331,
+     "700": 0.000077,
+     "2500": 0.000008
+    }
+   },
+   {
+    "spot": 22,
+    "nO": 278,
+    "nI": 233,
+    "stack": 17.73,
+    "buckets": {
+     "5": {
+      "ms": 13,
+      "bucketExpl": 0.00004,
+      "comboExpl": 0.00138,
+      "value": -0.0644,
+      "comboValue": -0.0644
+     },
+     "10": {
+      "ms": 47,
+      "bucketExpl": 0.00003,
+      "comboExpl": 0.0014,
+      "value": -0.0644,
+      "comboValue": -0.0644
+     },
+     "20": {
+      "ms": 57,
+      "bucketExpl": 0.00003,
+      "comboExpl": 0.00139,
+      "value": -0.0644,
+      "comboValue": -0.0644
+     },
+     "40": {
+      "ms": 142,
+      "bucketExpl": 0.00004,
+      "comboExpl": 0.00138,
+      "value": -0.0644,
+      "comboValue": -0.0644
+     }
+    },
+    "raise": {
+     "10": {
+      "ms": 97,
+      "noRaiseInRaiseGame": 0.20695,
+      "raiseInRaiseGame": 0.0051,
+      "noRaiseInNoRaiseGame": 0.0014,
+      "raiseFreqIP": 0.38,
+      "raiseFreqOOP": 0.369
+     },
+     "20": {
+      "ms": 140,
+      "noRaiseInRaiseGame": 0.20691,
+      "raiseInRaiseGame": 0.00488,
+      "noRaiseInNoRaiseGame": 0.00139,
+      "raiseFreqIP": 0.399,
+      "raiseFreqOOP": 0.382
+     }
+    },
+    "conv": {
+     "100": 0.002264,
+     "300": 0.000242,
+     "700": 0.000063,
+     "2500": 0.000012
+    }
+   },
+   {
+    "spot": 23,
+    "nO": 281,
+    "nI": 1081,
+    "stack": 13.86,
+    "buckets": {
+     "5": {
+      "ms": 18,
+      "bucketExpl": 0.00001,
+      "comboExpl": 0.00917,
+      "value": 0.0897,
+      "comboValue": 0.0897
+     },
+     "10": {
+      "ms": 46,
+      "bucketExpl": 0.00004,
+      "comboExpl": 0.00252,
+      "value": 0.0916,
+      "comboValue": 0.0916
+     },
+     "20": {
+      "ms": 102,
+      "bucketExpl": 0.00002,
+      "comboExpl": 0.00194,
+      "value": 0.0932,
+      "comboValue": 0.0932
+     },
+     "40": {
+      "ms": 149,
+      "bucketExpl": 0.00003,
+      "comboExpl": 0.00172,
+      "value": 0.0936,
+      "comboValue": 0.0936
+     }
+    },
+    "raise": {
+     "10": {
+      "ms": 78,
+      "noRaiseInRaiseGame": 0.29257,
+      "raiseInRaiseGame": 0.01289,
+      "noRaiseInNoRaiseGame": 0.00252,
+      "raiseFreqIP": 0.186,
+      "raiseFreqOOP": 0.095
+     },
+     "20": {
+      "ms": 148,
+      "noRaiseInRaiseGame": 0.29074,
+      "raiseInRaiseGame": 0.00431,
+      "noRaiseInNoRaiseGame": 0.00194,
+      "raiseFreqIP": 0.182,
+      "raiseFreqOOP": 0.163
+     }
+    },
+    "conv": {
+     "100": 0.004284,
+     "300": 0.000863,
+     "700": 0.000183,
+     "2500": 0.000052
+    }
+   }
+  ]
  }
 }

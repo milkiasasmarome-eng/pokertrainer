@@ -60,8 +60,8 @@ Vor den Korrekturen lag der Coach bei 3,7 gegenüber 3,0 BB/100. Einordnung: 2.5
 
 ## 5. Bekannte Grenzen
 
-- **Kein GTO-Solver.** Empfehlungen sind Modellschätzungen („Faustregel, kein Solver-Ergebnis“). Das River-Modellspiel ist ein vereinfachtes Gleichgewicht (eine bis zwei Größen, keine Raises, 10 Stärkegruppen).
-- **Reaktionsmodell:** Fold-/Call-Wahrscheinlichkeiten beruhen auf MDF, Range-Zusammensetzung, konservativem Abschlag und (exploitativ) geglätteten Gegnerwerten. Die Größenwahl postflop bevorzugt eher große Einsätze; ½ Pot wird selten empfohlen.
+- **Kein GTO-Solver.** Empfehlungen sind Modellschätzungen („Faustregel, kein Solver-Ergebnis“). Das River-Modellspiel ist ein vereinfachtes Gleichgewicht (eine bis zwei Größen, seit 2.1 höchstens ein Raise und Stackgrenze, 10 Stärkegruppen, Tiefenanalyse 20); siehe [STRATEGIE.md](STRATEGIE.md).
+- **Reaktionsmodell:** Seit 2.1 exploitativ ein an der Gegnerpopulation kalibriertes Schwellenmodell, gemittelt mit dem MDF-Modell (gleichgewichtsnah: MDF). Analyse der Größenwahl, Kalibrierung, Validierung gegen unbekannte Strategien und der Vergleich 2.1 gegen 2.0.1 in [STRATEGIE.md](STRATEGIE.md); große Einsätze sind dort realisiert schwächer, als das Modell erwartet.
 - **Preflop-Anker:** Abweichungen vom Faustregel-Chart werden nur bei belegtem Exploit empfohlen. Gegen die Computergegner wären manche Bluff-3-Bets kurzfristig profitabel; der Coach empfiehlt sie erst, wenn die eigenen Beobachtungen das stützen.
 - **Monte-Carlo am Rand:** Bei Equity nahe 0 oder 1 und Stufe „Präzise“ weicht der Mittelwert um etwa 0,17 Prozentpunkte ab, das 95-%-Intervall deckt dort etwa 84–86 % statt 95 % ab (Prüfskript von Prüfer A, je 600 Läufe). Für Entscheidungen ohne Bedeutung, aber dokumentiert.
 - **Sprachausgabe** nur mit lokaler deutscher Systemstimme (keine Online-Stimmen, keine Verbindung nach außen).

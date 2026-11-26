@@ -48,12 +48,13 @@ function lines(d) {
   d.absolute.forEach(a => L.push('| ' + a.group + ' | ' + a.heroName + ' | ' + a.condName + ' | ' + de(a.adj.bb100) + ' | ' + ci(a.adj) + ' | ' + de(a.raw.bb100) + ' | ' + n0(a.adj.hands) + ' | ' + n0(a.decisions) + ' | ' + a.invalid + ' |'));
   L.push('');
   // Größenverteilung und Rechenzeit der Coach-Läufe
-  const agg = hero => { const o = { labels: {}, n: 0, ms: 0, maxMs: 0, maxIt: 0, dec: 0, chart: 0 }; d.runs.filter(r => r.hero === hero).forEach(r => { Object.keys(r.labels || {}).forEach(k => { o.labels[k] = (o.labels[k] || 0) + r.labels[k]; }); o.ms += (r.avgMs || 0) * r.decisions; o.dec += r.decisions; o.maxMs = Math.max(o.maxMs, r.maxMs); o.maxIt = Math.max(o.maxIt, r.maxIters || 0); o.chart += r.chartApplied || 0; }); return o; };
+  const agg = hero => { const o = { labels: {}, n: 0, ms: 0, maxMs: 0, maxIt: 0, dec: 0, chart: 0, gap: 0 }; d.runs.filter(r => r.hero === hero).forEach(r => { Object.keys(r.labels || {}).forEach(k => { o.labels[k] = (o.labels[k] || 0) + r.labels[k]; }); o.ms += (r.avgMs || 0) * r.decisions; o.dec += r.decisions; o.maxMs = Math.max(o.maxMs, r.maxMs); o.maxIt = Math.max(o.maxIt, r.maxIters || 0); o.chart += r.chartApplied || 0; o.gap += r.chartGapBB || 0; }); return o; };
   const A = agg('coach21'), B = agg('coach201');
   if (A.dec && B.dec) {
     const keys = ['⅓', '½', '¾', 'Pot', 'Overbet', 'All-in'];
     L.push('### Empfohlene Einsatzgrößen postflop (Bet ohne offenen Einsatz)', '', '| Version | ' + keys.join(' | ') + ' | Check | Call | Fold |', '|---|' + keys.map(() => '---:').join('|') + '|---:|---:|---:|');
     [['2.1', A], ['2.0.1', B]].forEach(([nm, o]) => L.push('| ' + nm + ' | ' + keys.map(k => n0(o.labels[k] || 0)).join(' | ') + ' | ' + n0(o.labels.check || 0) + ' | ' + n0(o.labels.call || 0) + ' | ' + n0(o.labels.fold || 0) + ' |'));
+    L.push('', 'Empfehlung ≠ höchster Modell-EV (Preflop-Anker am Faustregel-Chart): 2.1 in ' + n0(A.chart) + ' von ' + n0(A.dec) + ' Entscheidungen (' + de(100 * A.chart / A.dec) + ' %), mittlerer Modellabstand ' + de(A.chart ? A.gap / A.chart : 0, 2) + ' BB; 2.0.1 in ' + n0(B.chart) + ' (' + de(100 * B.chart / B.dec) + ' %), ' + de(B.chart ? B.gap / B.chart : 0, 2) + ' BB.');
     L.push('', 'Rechenzeit je Entscheidung (Node, ohne Zeitbremse): 2.1 Ø ' + de(A.ms / A.dec) + ' ms, höchstens ' + n0(A.maxMs) + ' ms; 2.0.1 Ø ' + de(B.ms / B.dec) + ' ms, höchstens ' + n0(B.maxMs) + ' ms. Höchstzahl Simulationen je Entscheidung: 2.1 ' + n0(A.maxIt) + ', 2.0.1 ' + n0(B.maxIt) + ' (Grenze 5.000).', '');
   }
   return L;

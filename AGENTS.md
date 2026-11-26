@@ -36,3 +36,7 @@ node tests/e2e.js                                  # Browser-Tests (Playwright +
 - Preflop folgt der Coach dem Faustregel-Chart; Abweichungen nur bei belegtem Exploit (`coach.preflopAnchor`). Wer die EV-Annahmen ändert, muss `tests/run.js` „Regression Prüfer C“ grün halten.
 - Importierte Daten sind nicht vertrauenswürdig: jede neue Ausgabe von Daten aus Sicherungen über `esc()`, jedes neue Feld in `validHand`/`validLearning` prüfen.
 - Der automatische Tipp darf 5.000 Simulationen je Entscheidung nicht überschreiten (`input.live`).
+
+## Hinweise zu Coach und Strategie (2.1)
+- Das Reaktionsmodell postflop (exploitativ) ist ein an der Gegnerpopulation kalibriertes Schwellenmodell (`PT.ev.POP`, `popRespond`), gemittelt mit dem MDF-Modell. Wer Gegner-KI, Range-Schätzung oder Statistik ändert, muss neu kalibrieren: `node tests/strategy/sizing-study.js <Wurzel> <Seed> <Hände> bots base`, dann `node tests/strategy/fit-response.js base <Training> <Prüfung>` (siehe docs/STRATEGIE.md).
+- Strategische Vergleiche nur über `tests/strategy/compare.js` (gepaarte Seeds, Block-Bootstrap, All-in-Bereinigung); Bericht mit `node tools/report-strategy.js`. Eine Verbesserung gilt erst als belegt, wenn das 95-%-Intervall der Differenz über 0 liegt.

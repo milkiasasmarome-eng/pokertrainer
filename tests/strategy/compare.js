@@ -132,7 +132,7 @@ function aggregate(planName, runs, h) {
     res.split = {};
     (splitBy || []).forEach(key => {
       const parts = {}; pairs.forEach(p => { const v = key === 'stack' ? p[0].job.startBB + ' BB' : key === 'comp' ? (COMP_NAME[p[0].job.comp + '|' + p[0].job.difficulty] || p[0].job.comp) : condKey(p[0].job); (parts[v] = parts[v] || []).push(p); });
-      res.split[key] = Object.keys(parts).sort().map((v, i) => Object.assign({ value: v }, one(parts[v], true, 31 + i), { rawDiff: one(parts[v], false, 31 + i).diff, aAhead: parts[v].filter(([ra, rb]) => ra.sumBBAdj > rb.sumBBAdj).length }));
+      res.split[key] = Object.keys(parts).sort((x, y) => key === 'stack' ? parseFloat(x) - parseFloat(y) : x < y ? -1 : x > y ? 1 : 0).map((v, i) => Object.assign({ value: v }, one(parts[v], true, 31 + i), { rawDiff: one(parts[v], false, 31 + i).diff, aAhead: parts[v].filter(([ra, rb]) => ra.sumBBAdj > rb.sumBBAdj).length }));
     });
     comparisons.push(res);
   }
