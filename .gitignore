@@ -1,0 +1,5 @@
+node_modules/
+tests/results/*.tmp
+tools/preflop-part-*.json
+.DS_Store
+*.log

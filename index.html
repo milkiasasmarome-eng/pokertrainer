@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; worker-src 'self'; connect-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<title>PokerTrainer 2.0 – No-Limit Hold'em Trainer mit Coach</title>
+<meta name="description" content="Kostenloser No-Limit-Hold'em-Trainer im Browser: 6-max Cash Game mit Spielgeld, 100 Computergegnern, Echtzeit-Coach mit Equity und EV, Hand-Replayer, Range-Matrix und Lernfortschritt. Ohne Konto, läuft offline.">
+<meta name="theme-color" content="#0f5a4a">
+<meta name="color-scheme" content="light dark">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/icons/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="de_DE">
+<meta property="og:site_name" content="PokerTrainer">
+<meta property="og:title" content="PokerTrainer 2.0 – No-Limit Hold'em Trainer mit Coach">
+<meta property="og:description" content="Trainiere 6-max Cash Game gegen 100 Computergegner. Coach mit Equity, Pot Odds und EV, Replayer, Range-Matrix, Lernfortschritt. Spielgeld, kostenlos, ohne Konto.">
+<meta property="og:url" content="https://milkiasasmarome-eng.github.io/pokertrainer/">
+<meta property="og:image" content="https://milkiasasmarome-eng.github.io/pokertrainer/assets/images/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PokerTrainer 2.0: grüner Pokertisch mit Karten und Coach-Hinweis">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="assets/css/app.css?v=2.0.0">
+</head>
+<body>
+<a class="skip" href="#main">Zum Inhalt springen</a>
+<div class="app" id="app">
+  <header class="top">
+    <div class="brand">
+      <img src="assets/icons/favicon.svg" alt="" width="30" height="30">
+      <div><h1>PokerTrainer <span class="ver">2.0</span></h1>
+      <span class="sub">No-Limit Hold'em · 6-max · Spielgeld</span></div>
+    </div>
+    <div class="status" id="status" aria-live="polite"></div>
+    <div class="tools">
+      <button class="ghost icon" id="bView" type="button" title="Einfache oder erweiterte Ansicht" aria-pressed="false">Erweitert</button>
+      <button class="ghost icon" id="bTheme" type="button" title="Hell, dunkel oder automatisch" aria-label="Darstellung wechseln">◐</button>
+    </div>
+  </header>
+  <nav class="tabs" id="nav" aria-label="Bereiche">
+    <a href="#tisch" data-view="tisch">Tisch</a>
+    <a href="#training" data-view="training">Training</a>
+    <a href="#analyse" data-view="analyse">Handhistorie</a>
+    <a href="#ranges" data-view="ranges">Ranges</a>
+    <a href="#gegner" data-view="gegner">Gegner</a>
+    <a href="#fortschritt" data-view="fortschritt">Fortschritt</a>
+    <a href="#einstellungen" data-view="einstellungen">Einstellungen</a>
+    <a href="#hilfe" data-view="hilfe">Hilfe</a>
+  </nav>
+  <div class="notice" id="notice" hidden></div>
+  <main id="main" tabindex="-1">
+    <section class="view" id="view-tisch" aria-label="Pokertisch">
+      <div class="layout">
+        <div class="tablewrap">
+          <div class="table" id="table">
+            <div class="felt"><div class="logo-felt">PokerTrainer</div></div>
+            <div class="center">
+              <div class="pots" id="pots" aria-live="polite"></div>
+              <div class="board" id="board" aria-label="Board"></div>
+              <div class="result" id="result" aria-live="polite"></div>
+            </div>
+            <div id="seats"></div>
+          </div>
+          <div class="result2" id="result2"></div>
+          <div class="trainbar" id="trainbar" hidden></div>
+          <div class="actions" id="actions">
+            <div class="mainacts">
+              <button class="act fold" id="bFold" type="button">Fold<kbd>F</kbd></button>
+              <button class="act call" id="bCall" type="button">Check<kbd>C</kbd></button>
+              <button class="act raise" id="bRaise" type="button">Raise<kbd>R</kbd></button>
+            </div>
+            <div class="raisebox">
+              <div class="presets" id="presets"></div>
+              <div class="amtrow">
+                <input id="slider" type="range" min="0" max="100" step="1" aria-label="Betrag wählen">
+                <label class="sr" for="amt">Betrag</label>
+                <input id="amt" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" aria-describedby="msg" aria-label="Betrag (Raise auf)">
+              </div>
+            </div>
+            <button class="primary pulse" id="bNext" type="button">Nächste Hand<kbd>N</kbd></button>
+          </div>
+          <div class="msg" id="msg" role="alert"></div>
+        </div>
+        <aside class="side">
+          <section class="panel coach" aria-labelledby="coachH">
+            <div class="coachhead">
+              <h2 id="coachH">Coach</h2>
+              <div class="seg" role="group" aria-label="Tipp-Modus" id="modes">
+                <button type="button" data-mode="vorher" aria-pressed="true">vorher</button>
+                <button type="button" data-mode="nachher" aria-pressed="false">nachher</button>
+                <button type="button" data-mode="aus" aria-pressed="false">aus</button>
+              </div>
+            </div>
+            <div class="coachopts">
+              <div class="seg small" role="group" aria-label="Strategiemodus" id="smodes">
+                <button type="button" data-smode="exploit" aria-pressed="true" title="Nutzt beobachtete Gegnerwerte">Exploitativ</button>
+                <button type="button" data-smode="gto" aria-pressed="false" title="Ausgewogenes Gegnermodell">Gleichgewichtsnah</button>
+              </div>
+              <label class="mini">Tiefe
+                <select id="depth">
+                  <option value="auto">automatisch</option>
+                  <option value="einsteiger">Einsteiger</option>
+                  <option value="fortgeschritten">Fortgeschritten</option>
+                  <option value="experte">Experte</option>
+                </select>
+              </label>
+            </div>
+            <div class="tipbox" id="tipBox" aria-live="polite"></div>
+            <p class="faust" id="faust">Modellschätzung, kein Solver-Ergebnis</p>
+            <div class="tipfoot">
+              <label class="switch"><input type="checkbox" id="speechOn" checked> Sprachausgabe</label>
+              <button class="ghost" id="bSay" type="button">Vorlesen</button>
+              <button class="ghost" id="bDeep" type="button" title="Präzisere Analyse dieser Entscheidung">Tiefenanalyse</button>
+            </div>
+            <div class="speechstat" id="speechStat"></div>
+          </section>
+          <section class="panel log" aria-labelledby="logH">
+            <h2 id="logH">Handverlauf</h2>
+            <ol id="log"></ol>
+          </section>
+        </aside>
+      </div>
+    </section>
+    <section class="view" id="view-training" hidden></section>
+    <section class="view" id="view-analyse" hidden></section>
+    <section class="view" id="view-ranges" hidden></section>
+    <section class="view" id="view-gegner" hidden></section>
+    <section class="view" id="view-fortschritt" hidden></section>
+    <section class="view" id="view-einstellungen" hidden></section>
+    <section class="view" id="view-hilfe" hidden></section>
+  </main>
+  <footer class="foot">
+    <span>PokerTrainer <span id="verText">2.0.0</span> · nur Spielgeld, kein Glücksspiel · Daten bleiben in deinem Browser</span>
+    <a href="#hilfe/datenschutz">Datenschutz &amp; Rechtliches</a>
+  </footer>
+</div>
+<div class="modal" id="modal" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="modalH">
+    <div class="sheethead"><h2 id="modalH"></h2><button class="x" id="modalX" type="button" aria-label="Schließen">×</button></div>
+    <div id="modalBody"></div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<input type="file" id="fileIn" accept=".json,application/json,text/plain" hidden>
+<!--ENGINE-->
+<script src="assets/js/engine/core.js?v=2.0.0"></script>
+<script src="assets/js/engine/evaluator.js?v=2.0.0"></script>
+<script src="assets/js/engine/preflop-data.js?v=2.0.0"></script>
+<script src="assets/js/engine/rules.js?v=2.0.0"></script>
+<script src="assets/js/engine/ranges.js?v=2.0.0"></script>
+<script src="assets/js/engine/equity.js?v=2.0.0"></script>
+<script src="assets/js/engine/stats.js?v=2.0.0"></script>
+<script src="assets/js/engine/bots.js?v=2.0.0"></script>
+<script src="assets/js/engine/session.js?v=2.0.0"></script>
+<script src="assets/js/engine/ev.js?v=2.0.0"></script>
+<script src="assets/js/engine/cfr.js?v=2.0.0"></script>
+<script src="assets/js/engine/coach.js?v=2.0.0"></script>
+<script src="assets/js/engine/training.js?v=2.0.0"></script>
+<script src="assets/js/engine/speech.js?v=2.0.0"></script>
+<!--/ENGINE-->
+<!--UI-->
+<script src="assets/js/ui/store.js?v=2.0.0"></script>
+<script src="assets/js/ui/app.js?v=2.0.0"></script>
+<script src="assets/js/ui/views.js?v=2.0.0"></script>
+<!--/UI-->
+</body>
+</html>
