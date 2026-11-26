@@ -18,19 +18,25 @@
   --felt:#11604f;--felt-hi:#1b7d67;--felt-lo:#0a4438;
   --card:#fbf8f0;--suit-red:#c3332b;--suit-black:#16181b;--accent:#cf3f2c;--accent-ink:#fff;
   --good:#1d7f47;--ok:#a8691a;--bad:#c3332b;--focus:#2f7de1;--info:#245a91;
-  --fold:#8b939b;--call:#2f9a5d;--raise:#d0533d;--mixed:#c49a2c}
+  --fold:#8b939b;--call:#2f9a5d;--raise:#d0533d;--mixed:#c49a2c;--bad-ink:#b12d25;--good-ink:#1a7442}
 @media (prefers-color-scheme:dark){:root:not([data-theme=light]){
-  --room:#0e1113;--ink:#ebe9e4;--muted:#a0a7ae;--panel:#171b1e;--panel2:#1e2327;--line:#2d343a;--rail:#2b211b;--shadow:rgba(0,0,0,.5);--info:#6aa6e6}}
-:root[data-theme=dark]{color-scheme:dark;--room:#0e1113;--ink:#ebe9e4;--muted:#a0a7ae;--panel:#171b1e;--panel2:#1e2327;--line:#2d343a;--rail:#2b211b;--shadow:rgba(0,0,0,.5);--info:#6aa6e6}
+  --room:#0e1113;--ink:#ebe9e4;--muted:#a0a7ae;--panel:#171b1e;--panel2:#1e2327;--line:#2d343a;--rail:#2b211b;--shadow:rgba(0,0,0,.5);--info:#6aa6e6;--bad-ink:#ff8a7d;--good-ink:#5fcf8e}}
+:root[data-theme=dark]{color-scheme:dark;--room:#0e1113;--ink:#ebe9e4;--muted:#a0a7ae;--panel:#171b1e;--panel2:#1e2327;--line:#2d343a;--rail:#2b211b;--shadow:rgba(0,0,0,.5);--info:#6aa6e6;--bad-ink:#ff8a7d;--good-ink:#5fcf8e}
 :root[data-theme=light]{color-scheme:light}
 *{box-sizing:border-box;min-width:0}
 html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
-@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transition:none!important}}
 body{margin:0;background:var(--room);color:var(--ink);font:15px/1.45 system-ui,"Segoe UI",-apple-system,Roboto,"Helvetica Neue",Arial,"Segoe UI Symbol","DejaVu Sans","Noto Sans Symbols2","Apple Symbols",sans-serif;overflow-x:clip}
 button,input,select,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
 a{color:var(--info)}
 :focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+/* Fokus in Bereichen mit overflow nach innen ziehen, damit er nicht abgeschnitten wird (WCAG 2.4.7/2.4.11) */
+nav.tabs :focus-visible,.seg :focus-visible,.scroll :focus-visible,.log :focus-visible{outline-offset:-3px}
+.plate:focus-visible{outline:3px solid var(--focus)!important;outline-offset:2px;box-shadow:0 0 0 7px rgba(255,255,255,.85),0 4px 14px var(--shadow)}
+.linkbtn{background:none;border:0;padding:2px 0;min-height:24px;font:inherit;color:var(--info);text-decoration:underline;text-underline-offset:2px;cursor:pointer;text-align:left}
+input[type=checkbox]{width:22px;height:22px;accent-color:var(--focus)}
+.ghost[aria-pressed=true]{background:var(--ink);color:var(--panel);border-color:var(--ink)}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .skip{position:absolute;left:-999px;top:0;background:var(--ink);color:var(--panel);padding:8px 12px;z-index:100;border-radius:0 0 8px 0}
 .skip:focus{left:0}
@@ -48,7 +54,7 @@ header.top{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;justify-c
 select,.btn,.ghost,input[type=text],input[type=number],input[type=search]{min-height:40px;border-radius:10px;border:1px solid var(--line);background:var(--panel);padding:6px 12px}
 .btn:hover,.ghost:hover{border-color:var(--muted)}
 .btn.primary2{background:var(--ink);color:var(--panel);border-color:var(--ink);font-weight:650}
-.btn.danger{border-color:var(--bad);color:var(--bad)}
+.btn.danger{border-color:var(--bad);color:var(--bad-ink)}
 .icon{min-width:40px}
 nav.tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:thin;padding-bottom:2px;border-bottom:1px solid var(--line)}
 nav.tabs a{flex:0 0 auto;white-space:nowrap;text-decoration:none;color:var(--muted);padding:8px 12px;border-radius:10px 10px 0 0;font-weight:600;font-size:14px;border:1px solid transparent;border-bottom:0}
@@ -84,7 +90,9 @@ nav.tabs a:hover{color:var(--ink)}
 button.plate:hover{border-color:var(--muted)}
 .seat.me .plate{cursor:default;border-color:var(--muted)}
 .seat.act .plate{outline:3px solid #f1c94b;outline-offset:1px;box-shadow:0 0 0 6px rgba(241,201,75,.25),0 4px 14px var(--shadow)}
-.seat.folded .plate{opacity:.72}
+/* Gefoldete Plätze: Karten und Rahmen gedämpft, Text bleibt kontraststark (keine Deckkraft auf dem Text) */
+.seat.folded .plate{border-style:dashed;background:var(--panel2)}
+.seat.folded .hole{opacity:.6}
 .seat.win .plate{box-shadow:0 0 0 3px var(--good),0 4px 14px var(--shadow)}
 .r1{display:flex;justify-content:space-between;gap:6px;align-items:baseline}
 .nm{font-weight:700;font-size:15px;overflow-wrap:anywhere}
@@ -146,7 +154,7 @@ kbd{font:12px/1 ui-monospace,Consolas,monospace;border:1px solid currentColor;bo
 .amtrow{display:flex;gap:8px;align-items:center}
 #slider{flex:1 1 auto;accent-color:var(--accent);min-height:34px}
 #amt{width:120px;flex:0 0 auto;min-height:44px;font-size:17px;font-variant-numeric:tabular-nums;background:var(--room)}
-.msg{min-height:22px;font-size:14px;font-weight:600;color:var(--bad)}
+.msg{min-height:22px;font-size:14px;font-weight:600;color:var(--bad-ink)}
 .msg.info{color:var(--muted);font-weight:500}
 .trainbar{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--info);border-radius:12px;padding:8px 12px;font-size:14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
 .trainbar[hidden]{display:none}
@@ -213,7 +221,7 @@ table.hlist .cards{flex-wrap:nowrap}
 .tipmini b{font-weight:750}
 .tipmini a{margin-left:6px}
 .muted{color:var(--muted)}
-.good{color:var(--good)}.bad{color:var(--bad)}
+.good{color:var(--good-ink)}.bad{color:var(--bad-ink)}
 .btnrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
 .pill{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:1px 8px;font-size:12px;margin:1px 2px}
 .meter{height:10px;background:var(--panel2);border-radius:5px;overflow:hidden;border:1px solid var(--line)}
@@ -298,9 +306,215 @@ table.hlist .cards{flex-wrap:nowrap}
   .act,.primary{padding:8px 8px;min-height:48px}
   kbd{display:none}
 }
+/* Startüberwachung / Wiederherstellung (assets/js/recovery.js) */
+.recovery h2{margin:0 0 8px;font-size:20px}
+.recovery .recsheet{display:grid;gap:4px}
+.recovery .recreset{margin-top:12px;background:#f1efea;color:#15181b;border-color:#d1cec6}
+.recovery .btn{background:#fbfaf7;color:#15181b;border-color:#8b939b}
+.recovery .btn.primary2{background:#15181b;color:#fbfaf7}
+.recovery .btn.danger{color:#b12d25;border-color:#b12d25}
+.recovery .btn:disabled,.recovery input:disabled{opacity:.55;cursor:not-allowed}
+.recovery .small{color:#4a5056}
 @media print{nav.tabs,.tools,.actions,.foot{display:none}}
 
 </style>
+<script>
+/* PokerTrainer – Startüberwachung und Wiederherstellung.
+   Läuft als erstes Skript, ohne Engine und ohne Netzwerk. Verhindert einen dauerhaft hängenden Ladezustand:
+   - Skript-Ladefehler und ein Start, der nicht fertig wird, führen zu einer verständlichen Fehleranzeige.
+   - Wiederherstellung: Neu laden, abgesicherter Start (gespeicherte Daten bleiben unberührt),
+     Rohsicherung aller lokalen Daten herunterladen und erst danach lokale Daten zurücksetzen.
+   Gelöscht wird nie ohne vorher erzeugte Sicherung. */
+(function () {
+'use strict';
+if (window.PTRecovery) return;
+var DB = 'pokertrainer2', LS_PREFIX = /^pokertrainer/, SLOW_MS = 4000, FAIL_MS = 20000;
+var R = window.PTRecovery = { t0: Date.now(), state: 'start', reason: null, detail: '', errors: [], backupDone: false };
+var cs = document.currentScript, ver = (cs && /[?&]v=([^&]+)/.exec(cs.src || '') || [])[1] || null;
+R.version = ver;
+
+function isReady() { return !!(window.PTUI && window.PTUI.S && window.PTUI.S.ready); }
+function today() { var d = new Date(); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
+function el(tag, attrs, text) {
+  var e = document.createElement(tag);
+  if (attrs) Object.keys(attrs).forEach(function (k) { if (k === 'class') e.className = attrs[k]; else e.setAttribute(k, attrs[k]); });
+  if (text != null) e.textContent = text;
+  return e;
+}
+
+// ---------- Überwachung ----------
+// Ladefehler von <script>-Dateien erreichen window nur in der Capture-Phase.
+window.addEventListener('error', function (e) {
+  var t = e && e.target;
+  if (t && t !== window && t.tagName === 'SCRIPT') { R.fail('script', 'Programmdatei nicht geladen: ' + (t.getAttribute('src') || 'unbekannt')); return; }
+  if (!isReady() && e && e.message) R.errors.push(String(e.message).slice(0, 200));
+}, true);
+window.addEventListener('unhandledrejection', function (e) {
+  if (!isReady() && e && e.reason) R.errors.push(String(e.reason && e.reason.message || e.reason).slice(0, 200));
+});
+function arm(slowMs, failMs) {
+  clearTimeout(R._slow); clearTimeout(R._fail);
+  R._slow = setTimeout(function () {
+    if (isReady() || R.state === 'failed') return;
+    var st = document.getElementById('status');
+    if (st && /Lade/.test(st.textContent || '')) st.textContent = 'Lade … (dauert länger als üblich)';
+  }, slowMs);
+  R._fail = setTimeout(function () { if (!isReady()) R.fail('timeout', R.errors.length ? 'Letzte Meldung: ' + R.errors[R.errors.length - 1] : ''); }, failMs);
+}
+arm(SLOW_MS, FAIL_MS);
+
+/** Vom Controller aufgerufen, sobald der Trainer bedienbar ist. */
+R.ready = function () {
+  R.state = 'ready'; clearTimeout(R._slow); clearTimeout(R._fail);
+  // Ein nur wegen Zeitüberschreitung gezeigter Hinweis verschwindet, wenn der Start doch noch gelingt.
+  if (R.reason === 'timeout') R.hide();
+};
+R.hide = function () { var p = document.getElementById('recovery'); if (p) p.remove(); if (R.state === 'failed') R.state = isReady() ? 'ready' : 'start'; R.reason = null; setInert(false); };
+
+// ---------- Rohsicherung ----------
+function finite(k, v) { return typeof v === 'number' && !isFinite(v) ? String(v) : v; }
+/** Liest alle lokalen Daten roh (ohne Prüfung), damit auch beschädigte Einträge gesichert werden. */
+R.rawDump = function (timeoutMs) {
+  return new Promise(function (res, rej) {
+    var out = { format: 'PokerTrainer-Rohsicherung', version: 1, app: (window.PT && window.PT.VERSION) || ver, created: new Date().toISOString(), reason: R.reason || null, indexedDB: {}, localStorage: {} };
+    try { for (var i = 0; i < localStorage.length; i++) { var k = localStorage.key(i); if (LS_PREFIX.test(k)) out.localStorage[k] = localStorage.getItem(k); } } catch (e) { out.localStorageError = String(e && e.name || e); }
+    var done = false, timer = setTimeout(function () { fin(new Error('IndexedDB antwortet nicht')); }, timeoutMs || 6000);
+    function fin(err) {
+      if (done) return; done = true; clearTimeout(timer);
+      if (err) { out.indexedDBError = String(err && (err.name || err.message) || err); if (!Object.keys(out.localStorage).length) { rej(err); return; } }
+      res(out);
+    }
+    try {
+      if (!window.indexedDB) { out.indexedDBError = 'nicht vorhanden'; fin(); return; }
+      var created = false, rq = window.indexedDB.open(DB);
+      rq.onupgradeneeded = function (ev) { if (ev.oldVersion === 0) { created = true; try { rq.transaction.abort(); } catch (e) { /* leer */ } } };
+      rq.onblocked = function () { fin(new Error('IndexedDB blockiert')); };
+      rq.onerror = function (ev) { if (ev && ev.preventDefault) ev.preventDefault(); if (created) { out.indexedDB = {}; fin(); } else fin(rq.error || new Error('IndexedDB-Fehler')); };
+      rq.onsuccess = function () {
+        var d = rq.result, names = Array.prototype.slice.call(d.objectStoreNames), db = out.indexedDB[DB] = {};
+        if (!names.length) { d.close(); fin(); return; }
+        try {
+          var tx = d.transaction(names, 'readonly');
+          names.forEach(function (n) { var g = tx.objectStore(n).getAll(); g.onsuccess = function () { db[n] = g.result || []; }; });
+          tx.oncomplete = function () { d.close(); fin(); };
+          tx.onerror = tx.onabort = function () { d.close(); fin(tx.error || new Error('Lesefehler')); };
+        } catch (e) { d.close(); fin(e); }
+      };
+    } catch (e) { fin(e); }
+  }).then(function (o) { return JSON.stringify(o, finite); });
+};
+function download(name, text) {
+  var blob = new Blob([text], { type: 'application/json' }), url = URL.createObjectURL(blob), a = document.createElement('a');
+  a.href = url; a.download = name; a.rel = 'noopener'; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function () { URL.revokeObjectURL(url); }, 10000);
+}
+R.backup = function () {
+  return R.rawDump().then(function (text) {
+    var name = 'Sicherung_PokerTrainer_' + today() + '_Rohdaten.json';
+    download(name, text); R.backupDone = true; R.backupName = name; R.backupBytes = text.length;
+    return name;
+  });
+};
+/** Löscht die lokalen Daten des Trainers – nur nach erzeugter Rohsicherung. */
+R.reset = function () {
+  if (!R.backupDone) return Promise.reject(new Error('Erst eine Sicherung herunterladen.'));
+  return new Promise(function (res, rej) {
+    try { Object.keys(localStorage).forEach(function (k) { if (/^pokertrainer20\./.test(k)) localStorage.removeItem(k); }); } catch (e) { /* leer */ }
+    try {
+      if (window.PTUI && window.PTUI.Store && window.PTUI.Store.goMem) window.PTUI.Store.goMem('reset');
+      if (!window.indexedDB) { res(); return; }
+      var rq = window.indexedDB.deleteDatabase(DB), t = setTimeout(function () { rej(new Error('Zurücksetzen blockiert: Bitte andere Tabs mit dem PokerTrainer schließen.')); }, 6000);
+      rq.onsuccess = function () { clearTimeout(t); res(); };
+      rq.onerror = function () { clearTimeout(t); rej(rq.error || new Error('Löschen fehlgeschlagen')); };
+      rq.onblocked = function () { /* wartet auf andere Tabs; Zeitlimit oben */ };
+    } catch (e) { rej(e); }
+  });
+};
+function safeUrl() { return location.pathname + '?start=sicher' + (location.hash || '#tisch'); }
+function normalUrl() { return location.pathname + (location.hash || '#tisch'); }
+R.safeUrl = safeUrl; R.normalUrl = normalUrl;
+
+// ---------- Anzeige ----------
+function setInert(on) { var app = document.getElementById('app'); if (app) { if (on) app.setAttribute('inert', ''); else app.removeAttribute('inert'); } }
+var TEXT = {
+  timeout: ['Der Start dauert ungewöhnlich lange', 'Der PokerTrainer ist nach ' + Math.round(FAIL_MS / 1000) + ' Sekunden noch nicht bereit. Häufige Ursache: Der lokale Speicher des Browsers (IndexedDB) antwortet nicht.'],
+  script: ['Programmdatei fehlt', 'Eine Datei des PokerTrainers konnte nicht geladen werden (z. B. offline ohne vollständigen Zwischenspeicher oder nach einem unvollständigen Update).'],
+  boot: ['Gespeicherte Daten konnten nicht geladen werden', 'Beim Lesen der lokalen Daten ist ein Fehler aufgetreten. Der Trainer läuft vorerst ohne Speicherung; die gespeicherten Daten wurden nicht verändert.'],
+  storage: ['Lokaler Speicher nicht nutzbar', 'Der Browser-Speicher (IndexedDB) ist nicht erreichbar. Der Trainer läuft vorerst ohne Speicherung; vorhandene Daten wurden nicht verändert.']
+};
+/**
+ * Zeigt die Fehleranzeige. reason: timeout | script | boot | storage. Mehrfachaufrufe aktualisieren die Anzeige.
+ * opts.canContinue: Der Trainer ist trotzdem bedienbar (ohne Speicherung) – Schaltfläche „Ohne Speicherung weiterspielen“.
+ */
+R.fail = function (reason, detail, opts) {
+  opts = opts || {};
+  if (R.state === 'failed' && R.reason === reason && !detail) return;
+  R.state = 'failed'; R.reason = reason; R.detail = detail || ''; clearTimeout(R._slow); clearTimeout(R._fail);
+  if (!document.body) { document.addEventListener('DOMContentLoaded', function () { R.fail(reason, detail, opts); }); return; }
+  var old = document.getElementById('recovery'); if (old) old.remove();
+  var t = TEXT[reason] || TEXT.boot;
+  var box = el('div', { id: 'recovery', class: 'recovery', role: 'alertdialog', 'aria-modal': 'true', 'aria-labelledby': 'recH', 'aria-describedby': 'recP' });
+  box.style.cssText = 'position:fixed;inset:0;z-index:200;overflow:auto;background:rgba(10,14,16,.72);display:grid;place-items:center;padding:16px';
+  var sheet = el('div', { class: 'sheet recsheet' });
+  sheet.style.cssText = 'max-width:640px;width:100%;background:#fbfaf7;color:#15181b;border-radius:16px;padding:18px 20px;box-shadow:0 20px 60px rgba(0,0,0,.45)';
+  sheet.appendChild(el('h2', { id: 'recH', tabindex: '-1' }, t[0]));
+  sheet.appendChild(el('p', { id: 'recP' }, t[1]));
+  if (detail) sheet.appendChild(el('p', { class: 'small', id: 'recDetail' }, 'Technische Angabe: ' + String(detail).slice(0, 300)));
+  sheet.appendChild(el('p', { class: 'small' }, 'Deine Daten werden nie ohne vorherige Sicherung gelöscht.'));
+  var row = el('div', { class: 'btnrow' }), status = el('p', { class: 'small', id: 'recStatus', role: 'status', 'aria-live': 'polite' });
+  function btn(id, label, cls, fn) { var b = el('button', { id: id, type: 'button', class: 'btn' + (cls ? ' ' + cls : '') }, label); b.addEventListener('click', fn); row.appendChild(b); return b; }
+  btn('recReload', 'Neu laden', 'primary2', function () { location.reload(); });
+  if (reason === 'timeout') btn('recWait', 'Weiter warten', '', function () { R.hide(); arm(SLOW_MS, FAIL_MS); });
+  if (opts.canContinue) btn('recContinue', 'Ohne Speicherung weiterspielen', '', function () { R.hide(); });
+  else btn('recSafe', 'Ohne gespeicherte Daten starten', '', function () { location.href = safeUrl(); });
+  sheet.appendChild(row);
+  // Zweistufig: erst Sicherung, dann (nach Bestätigung) zurücksetzen
+  var fs = el('div', { class: 'box recreset' });
+  fs.appendChild(el('h3', null, 'Sicherung herunterladen und lokale Daten zurücksetzen'));
+  fs.appendChild(el('p', { class: 'small' }, 'Schritt 1 lädt alle lokalen Daten unverändert als Datei herunter (auch beschädigte Einträge). Diese Datei kannst du später unter Einstellungen → Daten → „Sicherung importieren“ einlesen; gültige Einträge werden übernommen. Schritt 2 löscht danach die lokalen Daten dieses Trainers in diesem Browser.'));
+  var r2 = el('div', { class: 'btnrow' });
+  var bB = el('button', { id: 'recBackup', type: 'button', class: 'btn' }, '1. Sicherung herunterladen');
+  var lab = el('label', { class: 'switch' }), chk = el('input', { type: 'checkbox', id: 'recSaved', disabled: '' });
+  lab.appendChild(chk); lab.appendChild(document.createTextNode(' Ich habe die Sicherungsdatei gespeichert.'));
+  var bR = el('button', { id: 'recReset', type: 'button', class: 'btn danger', disabled: '' }, '2. Lokale Daten zurücksetzen');
+  bB.addEventListener('click', function () {
+    bB.disabled = true; status.textContent = 'Sicherung wird erstellt …';
+    R.backup().then(function (name) {
+      status.textContent = 'Die Datei „' + name + '“ wurde zum Herunterladen angeboten (' + Math.max(1, Math.round(R.backupBytes / 1024)) + ' KB). Prüfe, ob sie gespeichert wurde.';
+      chk.disabled = false; bB.disabled = false; bB.textContent = '1. Sicherung erneut herunterladen';
+    }, function (e) {
+      bB.disabled = false;
+      status.textContent = 'Die Sicherung ist fehlgeschlagen (' + (e && (e.message || e.name) || e) + '). Ohne Sicherung wird nichts gelöscht. Nutze „Ohne gespeicherte Daten starten“ oder lade die Seite neu.';
+    });
+  });
+  chk.addEventListener('change', function () { bR.disabled = !(chk.checked && R.backupDone); });
+  bR.addEventListener('click', function () {
+    if (!(chk.checked && R.backupDone)) return;
+    bR.disabled = true; status.textContent = 'Lokale Daten werden zurückgesetzt …';
+    R.reset().then(function () { status.textContent = 'Zurückgesetzt. Der Trainer startet neu.'; setTimeout(function () { location.href = normalUrl(); }, 300); },
+      function (e) { bR.disabled = false; status.textContent = String(e && e.message || e); });
+  });
+  r2.appendChild(bB); r2.appendChild(lab); r2.appendChild(bR);
+  fs.appendChild(r2); fs.appendChild(status);
+  sheet.appendChild(fs);
+  box.appendChild(sheet);
+  document.body.appendChild(box);
+  setInert(true);
+  // Fokus in den Dialog; Tab bleibt innerhalb (Fokusfalle), Esc schließt nur, wenn der Trainer bedienbar ist.
+  box.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && (opts.canContinue || reason === 'timeout')) { e.preventDefault(); R.hide(); return; }
+    if (e.key !== 'Tab') return;
+    var f = Array.prototype.filter.call(box.querySelectorAll('button, input, a[href]'), function (x) { return !x.disabled; });
+    if (!f.length) return;
+    var i = f.indexOf(document.activeElement);
+    if (e.shiftKey && (i <= 0)) { e.preventDefault(); f[f.length - 1].focus(); }
+    else if (!e.shiftKey && i === f.length - 1) { e.preventDefault(); f[0].focus(); }
+  });
+  setTimeout(function () { var h = document.getElementById('recReload'); if (h) h.focus(); }, 0);
+};
+})();
+
+</script>
 </head>
 <body>
 <a class="skip" href="#main">Zum Inhalt springen</a>
@@ -311,9 +525,9 @@ table.hlist .cards{flex-wrap:nowrap}
       <div><h1>PokerTrainer <span class="ver">2.0</span></h1>
       <span class="sub">No-Limit Hold'em · 6-max · Spielgeld</span></div>
     </div>
-    <div class="status" id="status" aria-live="polite"></div>
+    <div class="status" id="status">Lade …</div>
     <div class="tools">
-      <button class="ghost icon" id="bView" type="button" title="Einfache oder erweiterte Ansicht" aria-pressed="false">Erweitert</button>
+      <button class="ghost icon" id="bView" type="button" title="Zwischen einfacher und erweiterter Ansicht wechseln" aria-pressed="false">Erweitert</button>
       <button class="ghost icon" id="bTheme" type="button" title="Hell, dunkel oder automatisch" aria-label="Darstellung wechseln"><svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10 2a8 8 0 0 1 0 16z" fill="currentColor"/></svg></button>
     </div>
   </header>
@@ -327,7 +541,7 @@ table.hlist .cards{flex-wrap:nowrap}
     <a href="#einstellungen" data-view="einstellungen">Einstellungen</a>
     <a href="#hilfe" data-view="hilfe">Hilfe</a>
   </nav>
-  <div class="notice" id="notice" hidden></div>
+  <div class="notice" id="notice" role="region" aria-label="Hinweise" hidden></div>
   <main id="main" tabindex="-1">
     <section class="view" id="view-tisch" aria-label="Pokertisch">
       <div class="layout">
@@ -335,9 +549,9 @@ table.hlist .cards{flex-wrap:nowrap}
           <div class="table" id="table">
             <div class="felt"><div class="logo-felt">PokerTrainer</div></div>
             <div class="center">
-              <div class="pots" id="pots" aria-live="polite"></div>
-              <div class="board" id="board" aria-label="Board"></div>
-              <div class="result" id="result" aria-live="polite"></div>
+              <div class="pots" id="pots"></div>
+              <div class="board" id="board" role="group" aria-label="Board"></div>
+              <div class="result" id="result"></div>
             </div>
             <div id="seats"></div>
           </div>
@@ -360,7 +574,7 @@ table.hlist .cards{flex-wrap:nowrap}
             </div>
             <button class="primary pulse" id="bNext" type="button">Nächste Hand<kbd>N</kbd></button>
           </div>
-          <div class="msg" id="msg" role="alert"></div>
+          <div class="msg" id="msg" role="alert" aria-atomic="true"></div>
         </div>
         <aside class="side">
           <section class="panel coach" aria-labelledby="coachH">
@@ -386,7 +600,7 @@ table.hlist .cards{flex-wrap:nowrap}
                 </select>
               </label>
             </div>
-            <div class="tipbox" id="tipBox" aria-live="polite"></div>
+            <div class="tipbox" id="tipBox"></div>
             <p class="faust" id="faust">Faustregel, kein Solver-Ergebnis</p>
             <div class="tipfoot">
               <label class="switch"><input type="checkbox" id="speechOn" checked> Sprachausgabe</label>
@@ -397,7 +611,7 @@ table.hlist .cards{flex-wrap:nowrap}
           </section>
           <section class="panel log" aria-labelledby="logH">
             <h2 id="logH">Handverlauf</h2>
-            <ol id="log"></ol>
+            <ol id="log" aria-live="off"></ol>
           </section>
         </aside>
       </div>
@@ -416,12 +630,13 @@ table.hlist .cards{flex-wrap:nowrap}
   </footer>
 </div>
 <div class="modal" id="modal" hidden>
-  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="modalH">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="modalH" tabindex="-1">
     <div class="sheethead"><h2 id="modalH"></h2><button class="x" id="modalX" type="button" aria-label="Schließen">×</button></div>
     <div id="modalBody"></div>
   </div>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="sr" id="announce" role="status" aria-live="polite" aria-atomic="true"></div>
 <input type="file" id="fileIn" accept=".json,application/json,text/plain" hidden>
 <script>window.PT_INLINE = true;</script>
 <script id="pt-engine">
@@ -3247,13 +3462,26 @@ function analyze(input) {
   var L0 = Q.LEVELS[level] || Q.LEVELS.standard;
   var live = level === 'schnell' || level === 'standard';
   var maxSim = live ? Math.min(L0.maxIter, 5000) : L0.maxIter;
+  if (input.maxSim != null) maxSim = Math.max(0, Math.min(maxSim, input.maxSim));  // nur für Tests: erschöpftes Budget nachstellen
   var budget = { left: maxSim, used: 0, calls: [] };
   var rng = PT.makeRng(input.seed != null ? input.seed : 'coach');
   var deadline = t0 + (live ? Math.min(L0.ms, 1400) : L0.ms);
   var res = {}, scale = level === 'praezise' ? 4 : level === 'tief' ? 10 : 1;
   budget.scale = scale;
   var prep = prepare(input, v, L0, budget, rng);
-  ['exploit', 'gto'].forEach(function (mode) { res[mode] = analyzeMode(input, v, mode, level, L0, budget, rng, deadline, set, prep); });
+  // Faire Verteilung (Prüfbefund A1): Beide Modi teilen die gemeinsamen Zwischenergebnisse (Ranges, Equity je Kombination)
+  // und erhalten danach je die Hälfte des Restbudgets und der Restzeit sowie eigene, vom Modus abhängige Zufallsströme.
+  // Die Reihenfolge der Modi verändert die Ergebnisse dadurch nicht.
+  var seedBase = String(input.seed != null ? input.seed : 'coach'), rest = budget.left, tNow = U.now(), tRest = Math.max(0, deadline - tNow);
+  var order = input._order || ['exploit', 'gto'], shareB = {}, shareT = {};
+  shareB.exploit = Math.floor(rest / 2); shareB.gto = rest - shareB.exploit;
+  order.forEach(function (mode, i) {
+    var bm = { left: shareB[mode], used: 0, calls: budget.calls, scale: scale, seedBase: seedBase + '|' + mode };
+    var dl = U.now() + (i === 0 ? tRest / 2 : Math.max(0, deadline - U.now()));
+    res[mode] = analyzeMode(input, v, mode, level, L0, bm, PT.makeRng(seedBase + '|modus|' + mode), Math.min(deadline, dl), set, prep);
+    budget.used += bm.used; budget.left -= bm.used;
+    res[mode].budgetShare = { granted: shareB[mode], used: bm.used };
+  });
   var main = set.mode === 'gto' ? res.gto : res.exploit, other = set.mode === 'gto' ? res.exploit : res.gto;
   var out = main;
   out.mode = set.mode === 'gto' ? 'gto' : 'exploit';
@@ -3264,6 +3492,11 @@ function analyze(input) {
   out.learnerHint = learnerHint(out, input.learner);
   out.text = explain(out, set.depth || 'fortgeschritten');
   return out;
+}
+/** Zufallsstrom aus Seed und Inhalt (Ranges) statt aus dem Modus: gleiche Eingaben ergeben in beiden Modi dieselben Stichproben */
+function rngFor(budget, tag, ranges) {
+  var base = (budget.seedBase || 'coach').replace(/\|(exploit|gto)$/, '');
+  return PT.makeRng(base + '|' + tag + '|' + ranges.map(R.hash).join(','));
 }
 /** Ranges beider Modi und eine gemeinsame Equity je Kombination (Vereinigung der Träger) */
 function prepare(input, v, L0, budget, rng) {
@@ -3329,14 +3562,14 @@ function analyzeMode(input, v, mode, level, L0, budget, rng, deadline, set, prep
     var o0 = relevant[0];
     eqNow = o0 ? o0.eqHU : 1; eqSE = o0 ? (o0.eqInfo.se || 0) : 0; eqMethod = o0 ? o0.eqInfo.method : 'kein Gegner';
     if (street === 0 && o0 && budget.left > 300) {
-      var mc = Q.equity({ hero: v.cards, board: board, ranges: [o0.w], level: level, rng: rng, budget: { left: Math.min((gto ? 800 : 1000) * (budget.scale || 1), budget.left), used: 0, calls: budget.calls }, deadline: deadline });
+      var mc = Q.equity({ hero: v.cards, board: board, ranges: [o0.w], level: level, rng: rngFor(budget, 'pf', [o0.w]), budget: { left: Math.min(1000 * (budget.scale || 1), budget.left), used: 0, calls: budget.calls }, deadline: deadline });
       budget.left -= mc.iters || 0; budget.used += mc.iters || 0;
       if (mc.eq != null) { eqNow = mc.eq; eqSE = mc.se || 0; eqMethod = mc.method; ctx.kappaPF = o0.eqHU > 0 ? mc.eq / o0.eqHU : 1; }
     }
     ctx.kappa = 1;
   } else {
-    var share = Math.min(budget.left, level === 'schnell' ? 600 : (gto ? 900 : 1200) * (budget.scale || 1));
-    var j = share >= 100 ? Q.equity({ hero: v.cards, board: board, ranges: relevant.map(function (o) { return o.w; }), level: level, rng: rng, budget: { left: share, used: 0, calls: budget.calls }, deadline: deadline, minIter: Math.min(300, share) }) : { eq: null, iters: 0, method: 'Näherung' };
+    var share = Math.min(budget.left, level === 'schnell' ? 600 : 1200 * (budget.scale || 1));
+    var j = share >= 100 ? Q.equity({ hero: v.cards, board: board, ranges: relevant.map(function (o) { return o.w; }), level: level, rng: rngFor(budget, 'mw', relevant.map(function (o) { return o.w; })), budget: { left: share, used: 0, calls: budget.calls }, deadline: deadline, minIter: Math.min(300, share) }) : { eq: null, iters: 0, method: 'Näherung' };
     budget.left -= j.iters || 0; budget.used += j.iters || 0;
     var prodHU = relevant.reduce(function (p, o) { return p * (o.eqHU == null ? 0.5 : o.eqHU); }, 1);
     eqNow = j.eq != null ? j.eq : prodHU; eqSE = j.se || 0.02; eqMethod = j.method + ' (Mehrgegner)';
@@ -3451,21 +3684,60 @@ function preflopAnchor(v, ctx, pre, acts, gto) {
   var top = acts[0], wTop = chartWeight(hc, top, unopened);
   var info = { kind: hc.kind, raise: hc.raise, call: hc.call, fold: hc.fold, applied: false, w: wTop };
   if (wTop >= CHART_MIN) return info;
-  // Exploit nur, wenn die nötige Fold-Annahme durch genug eigene Beobachtungen belegt ist
-  var ev = 0, obsN = 0;
-  if (!gto && group(top) === 'aggr') {
-    if (unopened) obsN = ctx.opps.filter(function (o) { return o.pending && (o.p.pos === 'SB' || o.p.pos === 'BB'); }).reduce(function (m, o) { var r = o.raw && o.raw.foldToSteal; return Math.min(m, r ? r[1] : 0); }, Infinity);
-    else if (raiser) { var ro = ctx.opps.filter(function (o) { return o.seat === pre.lastRaiser; })[0], key = pre.rc === 1 ? 'foldTo3Bet' : 'foldTo4Bet'; obsN = ro && ro.raw && ro.raw[key] ? ro.raw[key][1] : 0; }
-    if (!isFinite(obsN)) obsN = 0;
-  }
   var alt = null;
   for (var i = 1; i < acts.length; i++) if (chartWeight(hc, acts[i], unopened) >= CHART_MIN) { alt = acts[i]; break; }
   if (!alt) return info;
   var gapM = top.ev - alt.ev;
-  if (!gto && group(top) === 'aggr' && obsN >= 20 && gapM >= Math.max(0.5 * ctx.bb, 1.5 * top.u)) { info.exploit = { obs: obsN, gap: gapM }; return info; }
+  // Exploit nur, wenn die nötige Fold-Annahme statistisch belegt ist (Prüfbefund A6): Bayes-Schätzung der Fold-Rate des
+  // entscheidenden Gegners (Beta-Prior aus dem Populationsmittel, Stärke wie bei der Glättung) und Wahrscheinlichkeit,
+  // dass die wahre Fold-Rate über der Break-even-Rate liegt, ab der die Abweichung vom Chart nichts mehr bringt.
+  var evd = !gto && group(top) === 'aggr' ? exploitEvidence(ctx, pre, top, alt, unopened, raiser) : null;
+  if (evd) info.evidence = evd;
+  if (evd && evd.p >= 0.9 && gapM >= Math.max(0.3 * ctx.bb, top.u)) { info.exploit = { obs: evd.n, gap: gapM, p: evd.p, fBe: evd.fBe, post: evd.mean }; return info; }
   acts.splice(acts.indexOf(alt), 1); acts.unshift(alt);
-  info.applied = true; info.w = chartWeight(hc, alt, unopened); info.modelBest = top.label; info.modelGap = gapM; info.obs = obsN;
+  info.applied = true; info.w = chartWeight(hc, alt, unopened); info.modelBest = top.label; info.modelGap = gapM; info.obs = evd ? evd.n : 0;
   return info;
+}
+/** Beleg für eine exploitative Preflop-Abweichung: P(wahre Fold-Rate > Break-even-Rate | Beobachtungen) */
+function exploitEvidence(ctx, pre, top, alt, unopened, raiser) {
+  var key, ro;
+  if (unopened) { key = 'foldToSteal'; ro = ctx.opps.filter(function (o) { return o.pending && o.p.pos === 'BB'; })[0]; }
+  else if (raiser) { key = pre.rc === 1 ? 'foldTo3Bet' : 'foldTo4Bet'; ro = ctx.opps.filter(function (o) { return o.seat === pre.lastRaiser; })[0]; }
+  if (!ro || !top.parts || !top.parts.folds) return null;
+  var fr = top.parts.folds.filter(function (r) { return r.name === ro.p.name; })[0];
+  if (!fr || !(fr.f > 0) || !(fr.f < 1)) return null;
+  var raw = ro.raw && ro.raw[key] ? ro.raw[key] : [0, 0], k = R.PRIOR_K[key] || 15, m = R.PRIOR[key] != null ? R.PRIOR[key] : 0.5;
+  var pAF = top.parts.pAllFold != null ? top.parts.pAllFold : fr.f, P = ctx.pot;
+  if (!(pAF > 0) || !(pAF < 1)) return null;
+  var C = (top.ev - pAF * P) / (1 - pAF), b = (P - C) * pAF / fr.f;  // ∂EV/∂f dieses Gegners (übrige Gegner fest)
+  if (!(b > 0)) return null;
+  var fBe = clamp(fr.f - (top.ev - alt.ev) / b, 0, 1);
+  var a = m * k + raw[0], bb = (1 - m) * k + (raw[1] - raw[0]);
+  return { key: key, n: raw[1], folds: raw[0], fBe: fBe, fModel: fr.f, mean: a / (a + bb), p: 1 - betaCdf(fBe, a, bb) };
+}
+/** Regularisierte unvollständige Betafunktion I_x(a, b) (Kettenbruch nach Lentz) */
+function betaCdf(x, a, b) {
+  if (x <= 0) return 0; if (x >= 1) return 1;
+  var lbeta = lgamma(a + b) - lgamma(a) - lgamma(b), front = Math.exp(Math.log(x) * a + Math.log(1 - x) * b + lbeta);
+  if (x > (a + 1) / (a + b + 2)) return 1 - betaCdf(1 - x, b, a);
+  var f = 1, c = 1, d = 0, i, m, num;
+  for (i = 0; i <= 300; i++) {
+    m = i >> 1;
+    num = i === 0 ? 1 : (i % 2 === 0 ? m * (b - m) * x / ((a + 2 * m - 1) * (a + 2 * m)) : -((a + m) * (a + b + m) * x) / ((a + 2 * m) * (a + 2 * m + 1)));
+    d = 1 + num * d; if (Math.abs(d) < 1e-30) d = 1e-30; d = 1 / d;
+    c = 1 + num / c; if (Math.abs(c) < 1e-30) c = 1e-30;
+    var cd = c * d; f *= cd;
+    if (Math.abs(1 - cd) < 1e-12) break;
+  }
+  return clamp(front * (f - 1) / a, 0, 1);
+}
+function lgamma(z) {
+  // Lanczos-Näherung (g = 7, n = 9)
+  var g = 7, cf = [0.99999999999980993, 676.5203681218851, -1259.1392167224028, 771.32342877765313, -176.61502916214059, 12.507343278686905, -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7];
+  if (z < 0.5) return Math.log(Math.PI / Math.sin(Math.PI * z)) - lgamma(1 - z);
+  z -= 1; var x = cf[0]; for (var i = 1; i < g + 2; i++) x += cf[i] / (z + i);
+  var t = z + g + 0.5;
+  return 0.5 * Math.log(2 * Math.PI) + (z + 0.5) * Math.log(t) - t + Math.log(x);
 }
 function prevCur(v) {
   var lastRaise = null, prev = 0;
@@ -3603,7 +3875,7 @@ function explain(a, depth) {
     core = actWord + ': ' + (value ? 'Mit etwa ' + pct(eq.eq) + ' Equity holst du Value von schwächeren Händen.' : 'Die Bet gewinnt den Pot geschätzt in etwa ' + pct(p.pAllFold || 0) + ' der Fälle sofort' + (a.hand.draw && a.hand.draw.strong ? ', und dein Draw hat Rückhalt.' : '.'));
   }
   if (a.street === 0 && a.chart && a.chart.applied) core += ' Preflop folgt der Coach hier dem Faustregel-Chart (' + a.chart.kind + '); das vereinfachte EV-Modell sähe ' + a.chart.modelBest + ' um ' + bbTxt(a.chart.modelGap, bb) + ' vorn, aber nur wegen Fold-Annahmen, die nicht durch Gegnerwerte belegt sind.';
-  else if (a.street === 0 && a.chart && a.chart.exploit) core += ' Das weicht vom Faustregel-Chart ab und stützt sich auf ' + a.chart.exploit.obs + ' beobachtete Situationen dieses Gegners.';
+  else if (a.street === 0 && a.chart && a.chart.exploit) core += ' Das weicht vom Faustregel-Chart ab: Nach ' + a.chart.exploit.obs + ' beobachteten Situationen liegt die geschätzte Fold-Rate dieses Gegners bei ' + pct(a.chart.exploit.post) + '; mit ' + pct(a.chart.exploit.p) + ' Wahrscheinlichkeit über der Break-even-Rate von ' + pct(a.chart.exploit.fBe) + '.';
   lines.einsteiger.push(core);
   if (a.street === 0 && a.actions.length) lines.einsteiger.push(a.hand.top <= 0.4 ? a.hand.cls + ' gehört zu den besten ' + (a.hand.top < 0.01 ? '1' : Math.round(a.hand.top * 100)) + ' % aller Starthände.' : a.hand.cls + ' liegt auf Rang ' + (H.CLS_RANK[H.nameToIdx(a.hand.cls)] + 1) + ' von 169 Starthandklassen.');
   // Fortgeschritten
@@ -3674,7 +3946,8 @@ function grade(a, chosen) {
   }
   var cats = GRADE_SCORE[g] <= 45 ? mistakeCats(a, pick, best) : [];
   var text = chartCap ? chartCapText(a, pick, best, loss) : gradeText(g, a, pick, best, loss);
-  return { grade: g, simple: GRADE_SIMPLE[g], score: GRADE_SCORE[g], loss: loss, lossBB: loss / bb, u: u, chosenLabel: pick.label, bestLabel: best.label, text: text, cats: cats, interpolated: !!pick.interpolated };
+  var tied = a.actions.some(function (x) { return x !== pick && group(x) !== group(pick) && Math.abs(pick.ev - x.ev) <= Math.max(0.1 * bb, Math.max(pick.u || 0, x.u || 0)); });
+  return { grade: g, simple: GRADE_SIMPLE[g], score: GRADE_SCORE[g], loss: loss, lossBB: loss / bb, u: u, chosenLabel: pick.label, bestLabel: best.label, text: text, cats: cats, interpolated: !!pick.interpolated, tied: tied };
 }
 function chartCapText(a, pick, best, loss) {
   var bb = a.bb, aggr = group(pick) === 'aggr';
@@ -3685,7 +3958,13 @@ function chartCapText(a, pick, best, loss) {
 }
 function gradeText(g, a, pick, best, loss) {
   var bb = a.bb;
-  if (g === 'Optimal') return 'Deine Aktion ist die beste nach dem Modell. ' + a.text.speech;
+  if (g === 'Optimal') {
+    // Nicht „eindeutig optimal“ nennen, wenn Alternativen innerhalb der Unsicherheit liegen (Auftrag 2.1, Abschnitt 10)
+    var near = a.actions.filter(function (x) { return x !== pick && group(x) !== group(pick) && Math.abs(pick.ev - x.ev) <= Math.max(0.1 * bb, Math.max(pick.u || 0, x.u || 0)); });
+    if (near.length) return 'Deine Aktion liegt nach dem Modell vorn, aber ' + near.slice(0, 2).map(function (x) { return x.label; }).join(' und ') + (near.length > 1 ? ' liegen' : ' liegt') + ' im Rahmen der Unsicherheit gleichauf. ' + a.text.speech;
+    if (a.chart && a.chart.applied && pick === best) return 'Deine Aktion folgt dem Faustregel-Chart (' + a.chart.kind + '). ' + a.text.speech;
+    return 'Deine Aktion ist die beste nach dem Modell. ' + a.text.speech;
+  }
   var s = 'Empfohlen war ' + best.label + '. Deine Aktion (' + pick.label + ') kostet geschätzt ' + bbTxt(loss, bb) + ' gegenüber der besten Aktion';
   var uu = Math.max(best.u, pick.u || 0);
   if (GRADE_SCORE[g] >= 65) s += loss <= uu && uu >= 0.05 * bb ? ', das liegt im Rahmen der Unsicherheit (± ' + bbTxt(uu, bb) + ').' : ', ein kleiner Unterschied.';
@@ -3779,7 +4058,7 @@ var GLOSSARY = {
   'Rake': 'Gebühr des Veranstalters, die vom Pot abgezogen wird. In dieser App optional und standardmäßig aus.'
 };
 
-PT.coach = { analyze: analyze, grade: grade, explain: explain, GRADES: GRADES, GRADE_SCORE: GRADE_SCORE, GRADE_SIMPLE: GRADE_SIMPLE, CLASS_TEXT: CLASS_TEXT,
+PT.coach = { betaCdf: betaCdf, analyze: analyze, grade: grade, explain: explain, GRADES: GRADES, GRADE_SCORE: GRADE_SCORE, GRADE_SIMPLE: GRADE_SIMPLE, CLASS_TEXT: CLASS_TEXT,
   MISTAKES: MISTAKES, SPOTS: SPOTS, GLOSSARY: GLOSSARY, lineOf: lineOf, preInfo: preInfo, LINE_TEXT: LINE_TEXT, composition: composition };
 PT.glossary = GLOSSARY;
 })(typeof globalThis !== 'undefined' ? globalThis : (typeof self !== 'undefined' ? self : this));
@@ -3796,7 +4075,7 @@ function makeHandRecord(h, meta) {
   var rec = h.publicRecord(), hero = h.p.filter(function (q) { return q.isHero; })[0];
   return {
     v: 1, id: 'h' + (meta.session || 0) + '-' + h.no + '-' + (rec.ts || 0), ts: rec.ts, no: h.no, session: meta.session || 0, seed: meta.seed >>> 0,
-    training: meta.training || null, button: rec.button, sb: rec.sb, bb: rec.bb, n: rec.n,
+    training: meta.training || null, tseed: meta.tseed != null ? meta.tseed >>> 0 : null, button: rec.button, sb: rec.sb, bb: rec.bb, n: rec.n,
     seats: rec.seats.map(function (s) { return { seat: s.seat, id: s.id, name: s.name, pos: s.pos, start: s.start, hero: !!s.hero, typ: s.hero ? null : (meta.types ? meta.types[s.id] || null : null) }; }),
     hero: hero ? PT.cardsStr(hero.cards) : '', heroSeat: hero ? hero.seat : 0,
     board: rec.board.slice(), actions: rec.actions, shown: rec.shown, net: rec.net, won: rec.won, returned: rec.returned, rake: rec.rake, rakeCfg: rec.rakeCfg || null, showdown: rec.showdown, sawFlop: rec.sawFlop,
@@ -3807,20 +4086,44 @@ function makeHandRecord(h, meta) {
   };
 }
 function slimDecision(d) {
-  return { i: d.i, st: d.st, chosen: d.chosen, rec: d.rec, cls: d.cls, eq: d.eq, need: d.need, grade: d.grade, score: d.score, loss: d.loss,
+  var o = { i: d.i, st: d.st, chosen: d.chosen, rec: d.rec, cls: d.cls, eq: d.eq, need: d.need, grade: d.grade, score: d.score, loss: d.loss,
     cats: d.cats || [], tags: d.tags || [], evs: (d.evs || []).slice(0, 6), mode: d.mode, snap: d.snap || null, pos: d.pos };
+  if (d.x) o.x = d.x;
+  return o;
+}
+function rnd(x, f) { return typeof x === 'number' && isFinite(x) ? Math.round(x * f) / f : null; }
+function ri(x) { return typeof x === 'number' && isFinite(x) ? Math.round(x) : 0; }
+/**
+ * Entscheidungsdatensatz aus Analyse a und Bewertung g (Spieler- und Coachsicht zum Entscheidungszeitpunkt).
+ * ctx: { idx, street, pos, view, opps, seed, chosen: {type, amount, label}, extra: [Beträge] | null }
+ * x: Zusatzfelder für den Benchmark-Export (seit 2.1): Versionen, Stufe, Rechenaufwand, Equity-Fehler, Alternativen mit Typ und Betrag.
+ */
+function makeDecision(ctx, a, g) {
+  var bestA = a.actions.filter(function (y) { return y.label === a.bestLabel; })[0] || a.actions[0] || { type: a.best, amount: a.bestAmount };
+  function amt(y) { return (y.type === 'bet' || y.type === 'raise') && isInt(y.amount, 0, 1e13) ? y.amount : null; }
+  return { i: ctx.idx, st: ctx.street, chosen: ctx.chosen.label, rec: a.bestLabel, cls: a.classification, eq: rnd(a.equity.eq, 1000),
+    need: a.potOdds ? rnd(a.potOdds.need, 1000) : null, grade: g.grade, score: g.score, loss: isFinite(g.loss) ? Math.round(g.loss) : null, cats: g.cats, tags: a.spotTags,
+    evs: a.actions.slice(0, 6).map(function (y) { return { l: y.label, ev: ri(y.ev), u: ri(y.u) }; }), mode: a.mode, pos: ctx.pos,
+    snap: { view: ctx.view, opps: ctx.opps, seed: ctx.seed },
+    x: { v: 1, sw: PT.VERSION, mv: (C && C.MODEL_VERSION) || ('coach-' + PT.VERSION), lvl: a.level, it: a.iters | 0, max: a.maxSim | 0, ms: Math.max(0, Math.round(a.ms || 0)),
+      eq: { se: rnd(a.equity.se, 1e5), m: String(a.equity.method || '').slice(0, 80), lo: rnd(a.equity.rangeLo, 1e4), hi: rnd(a.equity.rangeHi, 1e4) },
+      best: { t: bestA.type, a: amt(bestA) }, ch: { t: ctx.chosen.type, a: amt(ctx.chosen) },
+      ex: (ctx.extra || []).filter(function (e) { return isInt(e, 0, 1e13); }).slice(0, 4),
+      alt: a.actions.slice(0, 12).map(function (y) { return { t: y.type, a: amt(y), l: String(y.label).slice(0, 80), ev: ri(y.ev), u: ri(y.u) }; }) } };
 }
 function unionTags(ds) { var o = []; ds.forEach(function (d) { (d.tags || []).forEach(function (t) { if (o.indexOf(t) < 0) o.push(t); }); }); return o; }
-var HAND_KEYS = ['v', 'id', 'ts', 'no', 'session', 'seed', 'training', 'button', 'sb', 'bb', 'n', 'seats', 'hero', 'heroSeat', 'board', 'actions', 'shown', 'net', 'won', 'returned', 'rake', 'rakeCfg', 'showdown', 'sawFlop', 'heroNet', 'pots', 'decisions', 'tags'];
+var HAND_KEYS = ['v', 'id', 'ts', 'no', 'session', 'seed', 'training', 'tseed', 'button', 'sb', 'bb', 'n', 'seats', 'hero', 'heroSeat', 'board', 'actions', 'shown', 'net', 'won', 'returned', 'rake', 'rakeCfg', 'showdown', 'sawFlop', 'heroNet', 'pots', 'decisions', 'tags'];
 function validHand(h) {
   if (!h || typeof h !== 'object' || Array.isArray(h)) return 'kein Datensatz';
   for (var k in h) if (HAND_KEYS.indexOf(k) < 0) return 'unbekanntes Feld';
   if (h.v !== 1 || typeof h.id !== 'string' || h.id.length > 80 || !/^[A-Za-z0-9_\-]+$/.test(h.id)) return 'ungültige ID';
-  if (!isInt(h.no, 0, 1e12) || typeof h.ts !== 'number' || !isInt(h.bb, 2, 1e7) || !isInt(h.sb, 1, h.bb) || !isInt(h.n, 2, 6) || !isInt(h.button, 0, h.n - 1)) return 'ungültige Kopfdaten';
+  if (!isInt(h.no, 0, 1e12) || !num(h.ts, 0, 8.64e15) || !isInt(h.bb, 2, 1e7) || !isInt(h.sb, 1, h.bb) || !isInt(h.n, 2, 6) || !isInt(h.button, 0, h.n - 1)) return 'ungültige Kopfdaten';
+  if ((h.session != null && !num(h.session, 0, 8.64e15)) || (h.seed != null && !isInt(h.seed, 0, 4294967295)) || (h.tseed != null && !isInt(h.tseed, 0, 4294967295))) return 'ungültige Kopfdaten';
   if (!Array.isArray(h.seats) || h.seats.length !== h.n) return 'ungültige Plätze';
   for (var i = 0; i < h.seats.length; i++) {
     var s = h.seats[i];
-    if (!s || typeof s.name !== 'string' || s.name.length > 40 || !/^[A-Za-zÀ-ÖØ-öø-ÿ0-9 .'\-]+$/.test(s.name) || !isInt(s.start, 0, 1e12) || typeof s.pos !== 'string' || s.pos.length > 4) return 'ungültiger Platz';
+    if (!s || typeof s !== 'object' || typeof s.name !== 'string' || s.name.length > 40 || !/^[A-Za-zÀ-ÖØ-öø-ÿ0-9 .'\-]+$/.test(s.name) || !isInt(s.start, 0, 1e12) || typeof s.pos !== 'string' || !/^[A-Z0-9+]{1,4}$/.test(s.pos)) return 'ungültiger Platz';
+    if ((s.seat != null && s.seat !== i) || (s.id != null && (typeof s.id !== 'string' || !ID_RE2.test(s.id))) || (s.hero != null && typeof s.hero !== 'boolean') || (s.typ != null && (typeof s.typ !== 'string' || !/^[A-Za-zäöü -]{1,20}$/.test(s.typ)))) return 'ungültiger Platz';
   }
   var hc = PT.parseCards(h.hero || ''), bc = PT.parseCards((h.board || []).join(''));
   if (!hc || hc.length !== 2 || !bc || bc.length > 5) return 'ungültige Karten';
@@ -3828,16 +4131,25 @@ function validHand(h) {
   for (var j = 0; j < h.actions.length; j++) {
     var a = h.actions[j];
     if (!a || !isInt(a.st, 0, 3) || !isInt(a.s, 0, h.n - 1) || ['sb', 'bb', 'fold', 'check', 'call', 'bet', 'raise'].indexOf(a.t) < 0 || !isInt(a.a, 0, 1e12)) return 'ungültige Aktion ' + (j + 1);
+    if ((a.ai != null && typeof a.ai !== 'boolean') || (a.cr != null && typeof a.cr !== 'boolean') || !optInts(a, ['add', 'tc', 'pot', 'cur'])) return 'ungültige Aktion ' + (j + 1);
   }
   if (!Array.isArray(h.decisions) || h.decisions.length > 50) return 'ungültige Entscheidungen';
   for (var d = 0; d < h.decisions.length; d++) {
     var x = h.decisions[d];
-    if (!x || typeof x.grade !== 'string' || C.GRADES.indexOf(x.grade) < 0 || typeof x.score !== 'number') return 'ungültige Entscheidung';
+    if (!x || typeof x !== 'object' || typeof x.grade !== 'string' || C.GRADES.indexOf(x.grade) < 0 || !num(x.score, -1e3, 1e3)) return 'ungültige Entscheidung';
     if (x.rec != null && (typeof x.rec !== 'string' || x.rec.length > 80)) return 'ungültige Empfehlung';
     if (x.chosen != null && (typeof x.chosen !== 'string' || x.chosen.length > 80)) return 'ungültige Aktion';
+    var de = validDecisionFields(x, h); if (de) return de;
   }
   if (!Array.isArray(h.net) || h.net.length !== h.n) return 'ungültiges Ergebnis';
-  for (var q = 0; q < h.n; q++) if (typeof h.net[q] !== 'number' || !isFinite(h.net[q])) return 'ungültiges Ergebnis';
+  for (var q = 0; q < h.n; q++) if (!isInt(h.net[q], -1e13, 1e13)) return 'ungültiges Ergebnis';
+  if (h.heroNet != null && !isInt(h.heroNet, -1e13, 1e13)) return 'ungültiges Ergebnis';
+  if ((h.won != null && !intList(h.won, h.n, 0, 1e13)) || (h.rake != null && !isInt(h.rake, 0, 1e13)) || (h.showdown != null && typeof h.showdown !== 'boolean')) return 'ungültiges Ergebnis';
+  if (h.sawFlop != null && !seatList(h.sawFlop, h.n)) return 'ungültiges Ergebnis';
+  if (h.returned != null) {
+    if (!Array.isArray(h.returned) || h.returned.length > 8) return 'ungültige Rückgabe';
+    for (var rr = 0; rr < h.returned.length; rr++) { var ret = h.returned[rr]; if (!ret || !isInt(ret.seat, 0, h.n - 1) || !isInt(ret.amount, 0, 1e13)) return 'ungültige Rückgabe'; }
+  }
   if (!isInt(h.heroSeat, 0, h.n - 1)) return 'ungültiger Heldenplatz';
   if (h.shown != null) {
     if (!Array.isArray(h.shown) || h.shown.length > h.n) return 'ungültige aufgedeckte Karten';
@@ -3855,6 +4167,40 @@ function validHand(h) {
   }
   if (h.tags != null && !strList(h.tags, 40)) return 'ungültige Tags';
   if (h.training != null && (typeof h.training !== 'string' || !TAG_RE.test(h.training))) return 'ungültige Trainingskategorie';
+  return null;
+}
+function num(x, lo, hi) { return typeof x === 'number' && isFinite(x) && x >= lo && x <= hi; }
+function optInts(o, keys) { for (var i = 0; i < keys.length; i++) { var v = o[keys[i]]; if (v != null && !isInt(v, -1e13, 1e13)) return false; } return true; }
+function intList(a, n, lo, hi) { if (!Array.isArray(a) || a.length !== n) return false; for (var i = 0; i < a.length; i++) if (!isInt(a[i], lo, hi)) return false; return true; }
+var LEVELS_OK = ['schnell', 'standard', 'praezise', 'tief'], ACT_T = ['fold', 'check', 'call', 'bet', 'raise'], X_KEYS = ['v', 'sw', 'mv', 'lvl', 'it', 'max', 'ms', 'eq', 'best', 'ch', 'ex', 'alt'];
+var HDEC_KEYS = ['i', 'st', 'chosen', 'rec', 'cls', 'eq', 'need', 'grade', 'score', 'loss', 'cats', 'tags', 'evs', 'mode', 'snap', 'pos', 'x'];
+function actRef(o) { return o && typeof o === 'object' && !Array.isArray(o) && ACT_T.indexOf(o.t) >= 0 && (o.a === null || isInt(o.a, 0, 1e13)); }
+/** Strenge Prüfung der übrigen Entscheidungsfelder (Zahlen endlich und im Wertebereich, Texte begrenzt, Zusatzfelder x). */
+function validDecisionFields(x, h) {
+  for (var k in x) if (HDEC_KEYS.indexOf(k) < 0) return 'unbekanntes Feld in Entscheidung';
+  if (x.i != null && !isInt(x.i, 0, 400)) return 'ungültige Entscheidung';
+  if ((x.eq != null && !num(x.eq, 0, 1)) || (x.need != null && !num(x.need, 0, 1)) || (x.loss != null && !num(x.loss, -1e13, 1e13))) return 'ungültige Entscheidung';
+  if (x.cls != null && (typeof x.cls !== 'string' || !/^[a-z]{1,20}$/.test(x.cls))) return 'ungültige Entscheidung';
+  if (x.mode != null && x.mode !== 'exploit' && x.mode !== 'gto') return 'ungültige Entscheidung';
+  if (x.pos != null && (typeof x.pos !== 'string' || !/^[A-Z0-9+]{1,4}$/.test(x.pos))) return 'ungültige Entscheidung';
+  if (x.evs != null) {
+    if (!Array.isArray(x.evs) || x.evs.length > 6) return 'ungültige EV-Liste';
+    for (var e = 0; e < x.evs.length; e++) { var y = x.evs[e]; if (!y || typeof y.l !== 'string' || y.l.length > 80 || !num(y.ev, -1e13, 1e13) || !num(y.u, -1e13, 1e13)) return 'ungültige EV-Liste'; }
+  }
+  if (x.x != null) {
+    var b = x.x;
+    if (!b || typeof b !== 'object' || Array.isArray(b)) return 'ungültige Zusatzfelder';
+    for (var k2 in b) if (X_KEYS.indexOf(k2) < 0) return 'unbekanntes Zusatzfeld';
+    if (b.v !== 1 || typeof b.sw !== 'string' || !/^[0-9A-Za-z.+-]{1,20}$/.test(b.sw) || typeof b.mv !== 'string' || !/^[0-9A-Za-z.+_-]{1,40}$/.test(b.mv) || LEVELS_OK.indexOf(b.lvl) < 0) return 'ungültige Zusatzfelder';
+    if (!isInt(b.it, 0, 1e8) || !isInt(b.max, 0, 1e8) || !isInt(b.ms, 0, 1e8)) return 'ungültige Zusatzfelder';
+    var q = b.eq;
+    if (!q || typeof q !== 'object' || (q.se !== null && !num(q.se, 0, 1)) || typeof q.m !== 'string' || q.m.length > 80 || (q.lo !== null && !num(q.lo, 0, 1)) || (q.hi !== null && !num(q.hi, 0, 1))) return 'ungültige Zusatzfelder';
+    if (!actRef(b.best) || !actRef(b.ch)) return 'ungültige Zusatzfelder';
+    if (!Array.isArray(b.ex) || b.ex.length > 4 || b.ex.some(function (z) { return !isInt(z, 0, 1e13); })) return 'ungültige Zusatzfelder';
+    if (!Array.isArray(b.alt) || b.alt.length > 12) return 'ungültige Zusatzfelder';
+    for (var j = 0; j < b.alt.length; j++) { var al = b.alt[j]; if (!actRef(al) || typeof al.l !== 'string' || al.l.length > 80 || !isInt(al.ev, -1e13, 1e13) || !isInt(al.u, -1e13, 1e13)) return 'ungültige Zusatzfelder'; }
+    if (x.snap == null) return 'Zusatzfelder ohne Momentaufnahme';
+  }
   return null;
 }
 function seatList(a, n) { if (!Array.isArray(a) || a.length > n) return false; for (var i = 0; i < a.length; i++) if (!isInt(a[i], 0, n - 1)) return false; return true; }
@@ -4243,9 +4589,183 @@ function handText(h) {
   return lines.join('\n');
 }
 
-PT.training = { makeHandRecord: makeHandRecord, validHand: validHand, newLearning: newLearning, addDecision: addDecision, validLearning: validLearning, repairLearning: repairLearning, validView: validView, validSnap: validSnap,
+PT.training = { makeHandRecord: makeHandRecord, makeDecision: makeDecision, slimDecision: slimDecision, validHand: validHand, newLearning: newLearning, addDecision: addDecision, validLearning: validLearning, repairLearning: repairLearning, validView: validView, validSnap: validSnap,
   profile: profile, goalStatus: goalStatus, srsAdd: srsAdd, srsDue: srsDue, srsReview: srsReview, BOX_DAYS: BOX_DAYS, SCEN: SCEN, generate: generate,
   quiz: quiz, QUIZ_TYPES: QUIZ_TYPES, handText: handText, levelOf: levelOf, defaultGoals: defaultGoals };
+})(typeof globalThis !== 'undefined' ? globalThis : (typeof self !== 'undefined' ? self : this));
+
+/* assets/js/engine/export.js */
+/* PokerTrainer 2.1 – Datenaustausch (kein DOM, läuft im Browser, im Web Worker und in Node):
+   - PT.benchmark: versionierter Export je Entscheidung für unabhängige Offline-Vergleiche (Schema: docs/BENCHMARK_EXPORT.md).
+     Zum Entscheidungszeitpunkt bekannte Informationen und spätere Informationen (Showdown, Ergebnis) stehen in getrennten Abschnitten.
+     Keine persönlichen Daten: keine Zeitstempel, keine Sitzungskennungen, keine Einstellungen außer Analysemodus und -stufe, kein Lernprofil.
+   - PT.dataport: Einlesen von Importdateien einschließlich der Rohsicherung aus der Startüberwachung (assets/js/recovery.js). */
+(function (G) {
+'use strict';
+var PT = G.PT, U = PT.util, isInt = U.isInt;
+var FORMAT = 'PokerTrainer-Benchmark', SCHEMA = 1;
+var TYPES = ['fold', 'check', 'call', 'bet', 'raise', 'sb', 'bb'];
+var STREETS = ['preflop', 'flop', 'turn', 'river'];
+var SEPARATION = 'knownAtDecision enthält ausschließlich Informationen, die dem Spieler zum Entscheidungszeitpunkt vorlagen (eigene Karten, öffentliche Aktionen, Board bis zur aktuellen Straße, beobachtete Gegnerwerte aus früheren Händen). revealedLater enthält Informationen, die erst danach bekannt wurden (spätere Aktionen, weitere Boardkarten, aufgedeckte Karten, Ergebnis) und darf für die Bewertung der Entscheidung nicht verwendet werden.';
+
+function modelVersion() { return (PT.coach && PT.coach.MODEL_VERSION) || ('coach-' + PT.VERSION); }
+/** Stabile, nicht sprechende Hand-ID (enthält keinen Zeitstempel). */
+function handId(h) { var s = String(h.id); return 'H' + U.fnv1a(s) + U.fnv1a(s + '|' + h.no + '|' + h.seed); }
+function card(c) { return PT.cardStr(c); }
+function num(x, d) { if (typeof x !== 'number' || !isFinite(x)) return null; var f = Math.pow(10, d == null ? 4 : d); return Math.round(x * f) / f; }
+function intOrNull(x) { return isInt(x, -1e13, 1e13) ? x : null; }
+
+/** Gegnerwerte zum Entscheidungszeitpunkt ohne Zeitstempel. */
+function oppOut(r) {
+  var stats = {}; Object.keys(r.stats || {}).forEach(function (k) { stats[k] = [r.stats[k][0], r.stats[k][1]]; });
+  var pos = {}; Object.keys(r.pos || {}).forEach(function (p) { var x = r.pos[p]; pos[p] = { h: x.h, vpip: x.vpip.slice(), pfr: x.pfr.slice() }; });
+  return { id: r.id, name: r.name, hands: r.hands, stats: stats, agg: r.agg ? { bet: r.agg.bet, raise: r.agg.raise, call: r.agg.call, fold: r.agg.fold, check: r.agg.check } : null, pos: pos,
+    shown: (r.shown || []).map(function (s) { return { hand: s.hand, pos: s.pos, cards: s.cards, board: s.board, actions: s.actions.slice(), net: s.net }; }) };
+}
+/** Rückweg für Nachrechnungen: Export-Gegner → Datenbank-Datensatz (Zeitstempel 0). */
+function oppIn(o) {
+  return { id: o.id, name: o.name, status: 'aktiv', hands: o.hands, stats: JSON.parse(JSON.stringify(o.stats)), agg: o.agg ? Object.assign({}, o.agg) : { bet: 0, raise: 0, call: 0, fold: 0, check: 0 },
+    pos: JSON.parse(JSON.stringify(o.pos)), shown: o.shown.map(function (s) { return { hand: s.hand, ts: 0, pos: s.pos, cards: s.cards, board: s.board, actions: s.actions.slice(), net: s.net }; }), lastSeen: 0, firstSeen: 0 };
+}
+function actOut(a) { return { street: STREETS[a.st], seat: a.s, type: a.t, amount: a.a, allIn: !!a.ai }; }
+
+function decisionOut(h, d, seq) {
+  var v = d.snap && d.snap.view, x = d.x || null, dId = handId(h) + '-A' + d.i;
+  var known = null;
+  if (v) {
+    known = {
+      street: STREETS[v.street], heroSeat: v.seat, position: (v.players[v.seat] || {}).pos || d.pos || null,
+      holeCards: v.cards.map(card), board: v.board.map(card), button: v.button, blinds: { sb: v.sb, bb: v.bb }, potTotal: v.pot,
+      toCall: v.legal.toCall,
+      stacks: v.players.map(function (q) { return { seat: q.seat, name: q.name, position: q.pos, stack: q.stack, bet: q.bet, committed: q.total, start: q.start, folded: q.folded, allIn: q.allIn, hero: !!q.hero }; }),
+      actions: v.actions.map(actOut),
+      legal: { fold: v.legal.canFold, check: v.legal.canCheck, call: v.legal.canCall, callAmount: v.legal.callAmt, raise: v.legal.canRaise, isBet: v.legal.isBet, minTo: v.legal.minTo, maxTo: v.legal.maxTo },
+      opponents: Object.keys(d.snap.opps || {}).sort().map(function (id) { return oppOut(d.snap.opps[id]); }),
+      publicView: JSON.parse(JSON.stringify(v))
+    };
+  }
+  var coach = {
+    analysisMode: d.mode || null,
+    level: x ? x.lvl : null,
+    recommendation: { label: d.rec || null, type: x ? x.best.t : null, amount: x ? x.best.a : null },
+    classification: d.cls || null,
+    alternatives: x ? x.alt.map(function (y) { return { label: y.l, type: y.t, amount: y.a, ev: y.ev, uncertainty: y.u }; })
+      : (d.evs || []).map(function (y) { return { label: y.l, type: null, amount: null, ev: y.ev, uncertainty: y.u }; }),
+    equity: { value: num(d.eq, 4), standardError: x ? x.eq.se : null, method: x ? x.eq.m : null, rangeLow: x ? x.eq.lo : null, rangeHigh: x ? x.eq.hi : null },
+    potOddsNeed: num(d.need, 4),
+    iterations: x ? x.it : null, maxIterations: x ? x.max : null, durationMs: x ? x.ms : null,
+    modelVersion: x ? x.mv : null, softwareVersion: x ? x.sw : null,
+    seed: d.snap ? d.snap.seed : null, extraSizes: x ? x.ex.slice() : []
+  };
+  var player = { label: d.chosen || null, type: x ? x.ch.t : null, amount: x ? x.ch.a : null, grade: d.grade, score: num(d.score, 2), evLoss: intOrNull(d.loss) };
+  var later = {
+    notice: 'Erst nach der Entscheidung bekannt – nicht für die Bewertung der Entscheidung verwenden.',
+    laterActions: h.actions.slice(d.i + 1).map(actOut),
+    finalBoard: h.board.slice(),
+    shownCards: (h.shown || []).map(function (s) { return { seat: s.seat, name: (h.seats[s.seat] || {}).name || null, cards: s.cards }; }),
+    showdown: !!h.showdown, heroNet: h.heroNet,
+    pots: (h.pots || []).map(function (p) { return { amount: p.amount, winners: p.winners.slice() }; })
+  };
+  return { decisionId: dId, handId: handId(h), actionIndex: d.i, sequence: seq, training: h.training || null, complete: !!(x && known),
+    // Austeilen reproduzierbar: Deck = PT.rng.stream(tableSeed, 'deal', handNumber) bzw. Trainingssituation aus trainingSeed
+    deal: { tableSeed: isInt(h.seed, 0, 4294967295) ? h.seed : null, handNumber: h.no, trainingSeed: h.tseed != null ? h.tseed : null },
+    knownAtDecision: known, coach: coach, playerDecision: player, revealedLater: later };
+}
+
+/**
+ * Baut den Benchmark-Export aus Handdatensätzen (PT.training.makeHandRecord). Ungültige Datensätze werden übersprungen.
+ * Gleiche Eingabe → byteweise gleiche Ausgabe (kein Exportzeitpunkt im Inhalt).
+ */
+function build(hands) {
+  var list = (hands || []).filter(function (h) { return PT.training && !PT.training.validHand(h); });
+  list.sort(function (a, b) { return a.ts !== b.ts ? a.ts - b.ts : (a.id < b.id ? -1 : a.id > b.id ? 1 : 0); });
+  var decisions = [], skipped = (hands || []).length - list.length;
+  list.forEach(function (h) { (h.decisions || []).slice().sort(function (a, b) { return a.i - b.i; }).forEach(function (d, k) { decisions.push(decisionOut(h, d, k + 1)); }); });
+  var body = JSON.stringify(decisions);
+  return { format: FORMAT, schemaVersion: SCHEMA, software: { name: 'PokerTrainer', version: PT.VERSION }, modelVersion: modelVersion(),
+    units: { money: 'Cent Spielgeld (blinds.bb = 1 Big Blind)', equity: 'Anteil 0–1', ev: 'Cent, Erwartungswert der Aktion gegenüber Fold ab dem Entscheidungszeitpunkt' },
+    separation: SEPARATION, hands: list.length, skippedHands: skipped, count: decisions.length, contentHash: U.fnv1a(body), decisions: decisions };
+}
+function exportText(hands) { return JSON.stringify(build(hands), null, 1) + '\n'; }
+
+/** Strukturprüfung eines Benchmark-Exports (für Empfänger und Tests). Gibt null oder eine Fehlerbeschreibung zurück. */
+function validate(o) {
+  if (!o || typeof o !== 'object' || o.format !== FORMAT) return 'kein Benchmark-Export';
+  if (o.schemaVersion !== SCHEMA) return 'unbekannte Schema-Version ' + o.schemaVersion;
+  if (!Array.isArray(o.decisions) || o.count !== o.decisions.length) return 'Entscheidungsliste ungültig';
+  if (U.fnv1a(JSON.stringify(o.decisions)) !== o.contentHash) return 'Prüfsumme stimmt nicht';
+  var ids = {};
+  for (var i = 0; i < o.decisions.length; i++) {
+    var d = o.decisions[i], k = d.knownAtDecision, c = d.coach, lt = d.revealedLater, n = 'Entscheidung ' + (i + 1) + ': ';
+    if (typeof d.decisionId !== 'string' || ids[d.decisionId]) return n + 'ID fehlt oder doppelt'; ids[d.decisionId] = 1;
+    if (typeof d.handId !== 'string' || !isInt(d.actionIndex, 0, 400)) return n + 'Hand-ID/Index';
+    if (!c || !Array.isArray(c.alternatives) || !c.equity || !lt || !Array.isArray(lt.laterActions)) return n + 'Abschnitte fehlen';
+    if (d.complete) {
+      if (!k || !Array.isArray(k.holeCards) || k.holeCards.length !== 2 || !Array.isArray(k.board) || [0, 3, 4, 5][STREETS.indexOf(k.street)] !== k.board.length) return n + 'Karten/Straße';
+      if (!k.legal || !Array.isArray(k.stacks) || !Array.isArray(k.actions) || !k.publicView) return n + 'Spielzustand';
+      if (typeof c.modelVersion !== 'string' || typeof c.softwareVersion !== 'string' || !isInt(c.iterations, 0, 1e8) || !isInt(c.durationMs, 0, 1e8)) return n + 'Versionen/Rechenangaben';
+      if (!isInt(c.seed, 0, 4294967295) || ['exploit', 'gto'].indexOf(c.analysisMode) < 0) return n + 'Seed/Modus';
+      for (var j = 0; j < c.alternatives.length; j++) { var a = c.alternatives[j]; if (TYPES.indexOf(a.type) < 0 || typeof a.ev !== 'number' || typeof a.uncertainty !== 'number') return n + 'Alternative ' + (j + 1); }
+      // Keine Karte, die erst später aufgedeckt wurde, darf im Abschnitt der Entscheidung stehen (Gegnerwerte enthalten nur frühere Hände)
+      var seen = {}; k.holeCards.concat(k.board).forEach(function (x) { seen[x] = 1; });
+      var pv = k.publicView; if (pv.players.some(function (q) { return q.cards; })) return n + 'verdeckte Karten im Spielzustand';
+      for (var s = 0; s < lt.shownCards.length; s++) { var sc = lt.shownCards[s]; if (sc.seat !== k.heroSeat && sc.cards.match(/../g).some(function (x) { return seen[x]; })) return n + 'spätere Karten im Entscheidungsabschnitt'; }
+    }
+  }
+  return null;
+}
+/** Eingabe für eine unabhängige Nachrechnung mit PT.coach.analyze (gleicher Seed, gleiche Gegnerwerte, gleiche Stufe). */
+function coachInput(d) {
+  if (!d || !d.complete) return null;
+  var opps = {}; d.knownAtDecision.opponents.forEach(function (o) { opps[o.id] = oppIn(o); });
+  return { view: JSON.parse(JSON.stringify(d.knownAtDecision.publicView)), opps: opps, settings: { mode: d.coach.analysisMode, level: d.coach.level }, seed: d.coach.seed,
+    extra: d.coach.extraSizes.length ? d.coach.extraSizes.slice() : undefined, live: d.coach.level === 'schnell' || d.coach.level === 'standard' };
+}
+
+// ---------- Import einschließlich Rohsicherung ----------
+var RAW = 'PokerTrainer-Rohsicherung', MAX_HANDS = 3000;
+function rawStores(o) {
+  var out = { meta: [], opps: [], hands: [], learn: [] }, idb = o.indexedDB && typeof o.indexedDB === 'object' ? o.indexedDB.pokertrainer2 : null;
+  if (idb && typeof idb === 'object') Object.keys(out).forEach(function (k) { if (Array.isArray(idb[k])) out[k] = idb[k]; });
+  var ls = o.localStorage && typeof o.localStorage === 'object' ? o.localStorage : {};
+  Object.keys(out).forEach(function (k) {
+    if (out[k].length || typeof ls['pokertrainer20.' + k] !== 'string') return;
+    try { var m = JSON.parse(ls['pokertrainer20.' + k]); if (m && typeof m === 'object' && !Array.isArray(m)) out[k] = Object.keys(m).map(function (x) { return m[x]; }); } catch (e) { /* beschädigt */ }
+  });
+  return out;
+}
+/** Rohsicherung → reguläre Sicherung: gültige Einträge übernehmen, beschädigte zählen und überspringen. */
+function rawToBackup(o) {
+  var st = rawStores(o), T = PT.training, S = PT.stats, info = { opps: 0, oppsSkipped: 0, hands: 0, handsSkipped: 0, hero: false, learning: 'fehlt' };
+  var objs = st.opps.filter(function (r) { return r && typeof r === 'object' && !Array.isArray(r); });
+  var db = S.dbFromList(objs); info.opps = Object.keys(db.opps).length; info.oppsSkipped = st.opps.length - info.opps;
+  var meta = st.meta.filter(function (m) { return m && m.k === 'state'; })[0] || null, hero = null;
+  if (meta && meta.heroRec && !S.validRecord(meta.heroRec)) { hero = S.cloneRecord(meta.heroRec); info.hero = true; }
+  var hands = st.hands.filter(function (h) { return !T.validHand(h); });
+  info.handsSkipped = st.hands.length - hands.length;
+  hands.sort(function (a, b) { return a.ts - b.ts; }); hands = hands.slice(-MAX_HANDS); info.hands = hands.length;
+  var lrec = st.learn.filter(function (m) { return m && m.k === 'learning'; })[0], learning = null;
+  if (lrec && lrec.v) {
+    if (!T.validLearning(lrec.v)) { learning = lrec.v; info.learning = 'übernommen'; }
+    else { var rep = T.repairLearning(lrec.v); if (rep) { learning = rep.learning; info.learning = 'repariert (' + rep.removed + ' Einträge entfernt)'; } else info.learning = 'beschädigt, nicht übernommen'; }
+  }
+  var payload = { opponents: S.dbList(db), hero: hero, hands: hands, learning: learning, settings: null, table: null };
+  return { text: S.backupExport(payload, 'aus Rohsicherung ' + String(o.created || '').slice(0, 40)), info: info };
+}
+/** Liest eine Importdatei (Datenbank, Sicherung oder Rohsicherung). Ergebnis wie PT.stats.dbImport, bei Rohsicherung mit .raw. */
+function parseImport(text) {
+  if (typeof text === 'string' && text.length <= 60 * 1024 * 1024 && /^\s*\{\s*"format"\s*:\s*"PokerTrainer-Rohsicherung"/.test(text.slice(0, 120))) {
+    var o; try { o = JSON.parse(text); } catch (e) { return { ok: false, error: 'Die Rohsicherung ist beschädigt oder abgeschnitten (kein gültiges JSON).' }; }
+    if (!o || o.format !== RAW || o.version !== 1) return { ok: false, error: 'Unbekannte Version der Rohsicherung.' };
+    var conv = rawToBackup(o), r = PT.stats.dbImport(conv.text);
+    if (r.ok) { r.raw = conv.info; r.kind = 'backup'; }
+    return r;
+  }
+  return PT.stats.dbImport(text);
+}
+
+PT.benchmark = { FORMAT: FORMAT, SCHEMA: SCHEMA, build: build, exportText: exportText, validate: validate, coachInput: coachInput, handId: handId, modelVersion: modelVersion, SEPARATION: SEPARATION };
+PT.dataport = { parseImport: parseImport, rawToBackup: rawToBackup, RAW: RAW };
 })(typeof globalThis !== 'undefined' ? globalThis : (typeof self !== 'undefined' ? self : this));
 
 /* assets/js/engine/speech.js */
@@ -4312,19 +4832,21 @@ PT.Speech = Speech; PT.toSpeech = toSpeech; PT.pickVoice = pickVoice;
 
 </script>
 <script id="pt-worker" type="text/plain">
-/* PokerTrainer 2.0 – Web Worker für Coach-Analysen (hält die Oberfläche bedienbar). */
+/* PokerTrainer 2.0 – Web Worker für Coach-Analysen und Importprüfung (hält die Oberfläche bedienbar). */
 /* global importScripts, self */
 (function () {
 'use strict';
 if (typeof importScripts === 'function' && !self.PT) {
   var v = '?v=2.0.1';
   importScripts('engine/core.js' + v, 'engine/evaluator.js' + v, 'engine/preflop-data.js' + v, 'engine/rules.js' + v, 'engine/ranges.js' + v, 'engine/equity.js' + v,
-    'engine/stats.js' + v, 'engine/bots.js' + v, 'engine/session.js' + v, 'engine/ev.js' + v, 'engine/cfr.js' + v, 'engine/coach.js' + v, 'engine/training.js' + v);
+    'engine/stats.js' + v, 'engine/bots.js' + v, 'engine/session.js' + v, 'engine/ev.js' + v, 'engine/cfr.js' + v, 'engine/coach.js' + v, 'engine/training.js' + v, 'engine/export.js' + v);
 }
 self.onmessage = function (e) {
   var m = e.data || {};
   try {
     if (m.kind === 'analyze') self.postMessage({ id: m.id, ok: true, result: self.PT.coach.analyze(m.input) });
+    // Prüfung einer Importdatei (Datenbank, Sicherung, Rohsicherung) ohne Blockade der Oberfläche
+    else if (m.kind === 'import') self.postMessage({ id: m.id, ok: true, result: self.PT.dataport.parseImport(m.input && m.input.text) });
     else self.postMessage({ id: m.id, ok: false, error: 'unbekannter Auftrag' });
   } catch (err) {
     self.postMessage({ id: m.id, ok: false, error: String(err && err.message || err) });
@@ -4335,60 +4857,110 @@ self.onmessage = function (e) {
 </script>
 <script>
 /* assets/js/ui/store.js */
-/* PokerTrainer 2.0 – Persistenz: IndexedDB (Rückfall localStorage, sonst nur Sitzung), Migration aus Entwurf 2. */
+/* PokerTrainer 2.0 – Persistenz: IndexedDB (Rückfall localStorage, sonst nur Sitzung), Migration aus Entwurf 2.
+   Seit 2.1: Zeitlimits für alle Startzugriffe (kein dauerhaft hängender Ladezustand), abgesicherter Start (?start=sicher),
+   Speicherfehler werden als abgelehnte Promise gemeldet statt synchron zu werfen. */
 (function () {
 'use strict';
 var PTUI = window.PTUI = window.PTUI || {};
 var NAME = 'pokertrainer2', VER = 1, LSK = 'pokertrainer20.', STORES = ['meta', 'opps', 'hands', 'learn', 'backup'];
 var KEYS = { meta: 'k', opps: 'id', hands: 'id', learn: 'k', backup: 'k' };
-var S = { mode: 'mem', db: null, mem: {} };
+var OPEN_TIMEOUT = 6000, LEGACY_TIMEOUT = 3000;
+var S = { mode: 'mem', db: null, mem: {}, reason: null, detail: '' };
 STORES.forEach(function (s) { S.mem[s] = {}; });
 
 function reqP(r) { return new Promise(function (res, rej) { r.onsuccess = function () { res(r.result); }; r.onerror = function () { rej(r.error); }; }); }
 function txDone(tx) { return new Promise(function (res, rej) { tx.oncomplete = function () { res(); }; tx.onerror = function () { rej(tx.error || new Error('Schreibfehler')); }; tx.onabort = function () { rej(tx.error || new Error('abgebrochen')); }; }); }
-function openIdb() {
+/** Führt fn aus; synchrone Ausnahmen (z. B. geschlossene Datenbank) werden zur abgelehnten Promise. */
+function safe(fn) { try { return fn(); } catch (e) { return Promise.reject(e); } }
+function errName(e) { return (e && (e.name || e.message)) || String(e); }
+function openIdb(timeoutMs) {
   return new Promise(function (res, rej) {
+    var done = false, timer = null;
+    function finish(ok, val) { if (done) return false; done = true; clearTimeout(timer); (ok ? res : rej)(val); return true; }
     try {
-      if (!window.indexedDB) { rej(new Error('kein IndexedDB')); return; }
+      if (!window.indexedDB) { var e0 = new Error('IndexedDB nicht vorhanden'); e0.kind = 'unavailable'; finish(false, e0); return; }
       var rq = window.indexedDB.open(NAME, VER);
+      timer = setTimeout(function () { var e1 = new Error('IndexedDB antwortet nicht (Zeitlimit ' + Math.round(timeoutMs / 1000) + ' s)'); e1.kind = 'timeout'; finish(false, e1); }, timeoutMs);
       rq.onupgradeneeded = function () {
         var d = rq.result;
         STORES.forEach(function (s) { if (!d.objectStoreNames.contains(s)) { var os = d.createObjectStore(s, { keyPath: KEYS[s] }); if (s === 'hands') os.createIndex('ts', 'ts'); } });
       };
-      rq.onsuccess = function () { var d = rq.result; d.onversionchange = function () { d.close(); }; res(d); };
-      rq.onerror = function () { rej(rq.error || new Error('IndexedDB-Fehler')); };
-      rq.onblocked = function () { rej(new Error('IndexedDB blockiert')); };
-    } catch (e) { rej(e); }
+      rq.onsuccess = function () {
+        var d = rq.result;
+        // Antwort nach dem Zeitlimit: Verbindung wieder schließen, die Sitzung läuft bereits ohne IndexedDB
+        if (done) { try { d.close(); } catch (e) { /* leer */ } return; }
+        d.onversionchange = function () { d.close(); };
+        // Fehlen Speicherbereiche (fremde oder beschädigte Datenbank gleicher Version), nicht stillschweigend weiterarbeiten
+        var missing = STORES.filter(function (s) { return !d.objectStoreNames.contains(s); });
+        if (missing.length) { try { d.close(); } catch (e) { /* leer */ } var e2 = new Error('Speicherbereiche fehlen: ' + missing.join(', ')); e2.kind = 'error'; finish(false, e2); return; }
+        finish(true, d);
+      };
+      rq.onerror = function (ev) {
+        if (ev && ev.preventDefault) ev.preventDefault();
+        var e3 = rq.error || new Error('IndexedDB-Fehler');
+        // Privater Modus / gesperrt: IndexedDB gibt es hier nicht → localStorage. Andere Fehler (z. B. VersionError nach einer
+        // Rückstufung, beschädigte Datenbank): Daten existieren, sind aber nicht lesbar → nur Arbeitsspeicher, nichts überschreiben.
+        e3.kind = /^(InvalidStateError|SecurityError|NotAllowedError|NotSupportedError)$/.test(e3.name || '') ? 'unavailable' : 'error';
+        finish(false, e3);
+      };
+      rq.onblocked = function () { var e4 = new Error('IndexedDB blockiert (anderer Tab mit älterer Version geöffnet)'); e4.kind = 'blocked'; finish(false, e4); };
+    } catch (e) { e.kind = e.kind || (e.name === 'SecurityError' ? 'unavailable' : 'error'); finish(false, e); }
   });
 }
 function lsOk() { try { var k = LSK + 'probe'; localStorage.setItem(k, '1'); localStorage.removeItem(k); return true; } catch (e) { return false; } }
-function lsGet(store) { try { return JSON.parse(localStorage.getItem(LSK + store) || '{}'); } catch (e) { return {}; } }
+function lsGet(store) {
+  var raw = localStorage.getItem(LSK + store), o;
+  if (!raw) return {};
+  try { o = JSON.parse(raw); } catch (e) { var er = new Error('localStorage-Bereich „' + store + '“ beschädigt'); er.name = 'DataError'; throw er; }
+  return o && typeof o === 'object' && !Array.isArray(o) ? o : {};
+}
 function lsSet(store, obj) { localStorage.setItem(LSK + store, JSON.stringify(obj)); }
+function safeStart() { try { return /(^|[?&])start=sicher(&|$)/.test(location.search.slice(1)); } catch (e) { return false; } }
 
 var Store = {
   mode: function () { return S.mode; },
-  init: function () {
-    return openIdb().then(function (d) { S.db = d; S.mode = 'idb'; }, function () { S.mode = lsOk() ? 'ls' : 'mem'; })
-      .then(function () { try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(function () {}); } catch (e) { /* leer */ } return S.mode; });
+  /** Warum gespeichert wird, wie gespeichert wird: { mode, reason: null|'safe'|'timeout'|'blocked'|'unavailable'|'error'|'fallback', detail } */
+  info: function () { return { mode: S.mode, reason: S.reason, detail: S.detail }; },
+  safeMode: safeStart,
+  init: function (opts) {
+    opts = opts || {};
+    if (safeStart()) { S.mode = 'mem'; S.reason = 'safe'; S.detail = 'abgesicherter Start'; return Promise.resolve(S.mode); }
+    return openIdb(opts.timeout || OPEN_TIMEOUT).then(function (d) { S.db = d; S.mode = 'idb'; }, function (e) {
+      S.detail = errName(e) + (e && e.message && e.message !== e.name ? ': ' + e.message : '');
+      // Hängt oder blockiert IndexedDB, wird NICHT auf localStorage ausgewichen: Dort lägen sonst getrennte, veraltete Daten.
+      if (e && (e.kind === 'timeout' || e.kind === 'blocked' || e.kind === 'error')) { S.mode = 'mem'; S.reason = e.kind; return; }
+      S.mode = lsOk() ? 'ls' : 'mem'; S.reason = S.mode === 'ls' ? 'fallback' : 'unavailable';
+    }).then(function () { try { if (S.mode === 'idb' && navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(function () {}); } catch (e) { /* leer */ } return S.mode; });
+  },
+  /** Ab sofort nur noch im Arbeitsspeicher arbeiten (nach einem Ladefehler); gespeicherte Daten bleiben unangetastet. */
+  goMem: function (reason, detail) {
+    if (S.db) { try { S.db.close(); } catch (e) { /* leer */ } }
+    S.db = null; S.mode = 'mem'; S.reason = reason || 'error'; S.detail = detail || S.detail;
+    STORES.forEach(function (s) { S.mem[s] = {}; });
   },
   get: function (store, key) {
-    if (S.mode === 'idb') return reqP(S.db.transaction(store, 'readonly').objectStore(store).get(key));
-    if (S.mode === 'ls') return Promise.resolve(lsGet(store)[key]);
-    return Promise.resolve(S.mem[store][key]);
+    return safe(function () {
+      if (S.mode === 'idb') return reqP(S.db.transaction(store, 'readonly').objectStore(store).get(key));
+      if (S.mode === 'ls') return Promise.resolve(lsGet(store)[key]);
+      return Promise.resolve(S.mem[store][key]);
+    });
   },
   all: function (store) {
-    if (S.mode === 'idb') return reqP(S.db.transaction(store, 'readonly').objectStore(store).getAll());
-    var o = S.mode === 'ls' ? lsGet(store) : S.mem[store];
-    return Promise.resolve(Object.keys(o).map(function (k) { return o[k]; }));
+    return safe(function () {
+      if (S.mode === 'idb') return reqP(S.db.transaction(store, 'readonly').objectStore(store).getAll());
+      var o = S.mode === 'ls' ? lsGet(store) : S.mem[store];
+      return Promise.resolve(Object.keys(o).map(function (k) { return o[k]; }));
+    });
   },
   put: function (store, vals, clearFirst) {
     vals = Array.isArray(vals) ? vals : [vals];
-    if (S.mode === 'idb') {
+    if (S.mode === 'idb') return safe(function () {
       var tx = S.db.transaction(store, 'readwrite'), os = tx.objectStore(store);
       if (clearFirst) os.clear();
       vals.forEach(function (v) { os.put(v); });
       return txDone(tx);
-    }
+    });
     try {
       var o = clearFirst ? {} : (S.mode === 'ls' ? lsGet(store) : S.mem[store]), kp = KEYS[store];
       vals.forEach(function (v) { o[v[kp]] = v; });
@@ -4398,16 +4970,17 @@ var Store = {
   },
   del: function (store, keys) {
     keys = Array.isArray(keys) ? keys : [keys];
-    if (S.mode === 'idb') { var tx = S.db.transaction(store, 'readwrite'), os = tx.objectStore(store); keys.forEach(function (k) { os.delete(k); }); return txDone(tx); }
-    var o = S.mode === 'ls' ? lsGet(store) : S.mem[store];
-    keys.forEach(function (k) { delete o[k]; });
-    if (S.mode === 'ls') lsSet(store, o);
-    return Promise.resolve();
+    if (S.mode === 'idb') return safe(function () { var tx = S.db.transaction(store, 'readwrite'), os = tx.objectStore(store); keys.forEach(function (k) { os.delete(k); }); return txDone(tx); });
+    return safe(function () {
+      var o = S.mode === 'ls' ? lsGet(store) : S.mem[store];
+      keys.forEach(function (k) { delete o[k]; });
+      if (S.mode === 'ls') lsSet(store, o);
+      return Promise.resolve();
+    });
   },
   clear: function (store) {
-    if (S.mode === 'idb') { var tx = S.db.transaction(store, 'readwrite'); tx.objectStore(store).clear(); return txDone(tx); }
-    if (S.mode === 'ls') localStorage.removeItem(LSK + store); else S.mem[store] = {};
-    return Promise.resolve();
+    if (S.mode === 'idb') return safe(function () { var tx = S.db.transaction(store, 'readwrite'); tx.objectStore(store).clear(); return txDone(tx); });
+    return safe(function () { if (S.mode === 'ls') localStorage.removeItem(LSK + store); else S.mem[store] = {}; return Promise.resolve(); });
   },
   clearAll: function () { return Promise.all(STORES.map(function (s) { return Store.clear(s); })); },
   /** Hände: neueste zuerst; begrenzt auf max Einträge (älteste werden entfernt) */
@@ -4426,15 +4999,18 @@ var Store = {
    */
   findLegacy: function () {
     function viaIdb() {
-      return new Promise(function (res) {
+      return new Promise(function (res0) {
+        var done = false, timer = setTimeout(function () { res(null); }, LEGACY_TIMEOUT);
+        function res(v) { if (done) return; done = true; clearTimeout(timer); res0(v); }
         try {
-          if (!window.indexedDB) { res(null); return; }
+          if (S.reason === 'safe' || !window.indexedDB) { res(null); return; }
           var created = false, rq = window.indexedDB.open('pokertrainer-v2');
           rq.onupgradeneeded = function (ev) { if (ev.oldVersion === 0) { created = true; try { rq.transaction.abort(); } catch (e) { /* leer */ } } };
-          rq.onerror = function () { res(null); };
+          rq.onerror = function (ev) { if (ev && ev.preventDefault) ev.preventDefault(); res(null); };
+          rq.onblocked = function () { res(null); };
           rq.onsuccess = function () {
             var d = rq.result;
-            if (created || !d.objectStoreNames.contains('gegner')) { d.close(); res(null); return; }
+            if (done || created || !d.objectStoreNames.contains('gegner') || !d.objectStoreNames.contains('meta')) { d.close(); res(null); return; }
             var tx = d.transaction(['gegner', 'meta'], 'readonly'), out = { opps: [], meta: null, source: 'IndexedDB pokertrainer-v2' };
             var a = tx.objectStore('gegner').getAll(); a.onsuccess = function () { out.opps = a.result || []; };
             var b = tx.objectStore('meta').get('tisch'); b.onsuccess = function () { out.meta = b.result ? b.result.v : null; };
@@ -4446,6 +5022,7 @@ var Store = {
     }
     return viaIdb().then(function (r) {
       if (r) return r;
+      if (S.reason === 'safe') return null;
       try {
         var g = localStorage.getItem('pokertrainer2.gegner'), m = localStorage.getItem('pokertrainer2.meta');
         if (g) return { opps: JSON.parse(g) || [], meta: m ? JSON.parse(m) : null, source: 'localStorage pokertrainer2' };
@@ -4476,8 +5053,22 @@ var S = PTUI.S = {
 };
 
 // ---------- Hilfen ----------
+function reducedMotion() { try { return !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { return false; } }
+function scrollMode() { return reducedMotion() ? 'auto' : 'smooth'; }
+/** Kurze Statusmeldung für Screenreader (eine Live-Region, sparsam: Zug des Spielers, Tipp, Handende, Moduswechsel). */
+function announce(text) {
+  var el = $('announce'); if (!el || !text) return;
+  clearTimeout(announce._t); el.textContent = '';
+  announce._t = setTimeout(function () { el.textContent = text; }, 40);
+}
+function withTimeout(p, ms, what) {
+  return new Promise(function (res, rej) {
+    var t = setTimeout(function () { var e = new Error(what + ': keine Antwort nach ' + Math.round(ms / 1000) + ' s'); e.kind = 'timeout'; rej(e); }, ms);
+    Promise.resolve(p).then(function (v) { clearTimeout(t); res(v); }, function (e) { clearTimeout(t); rej(e); });
+  });
+}
 function today() { var d = new Date(); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
-function dateTxt(ts) { if (!ts) return '–'; try { return new Date(ts).toLocaleString('de-DE', { dateStyle: 'short', timeStyle: 'short' }); } catch (e) { return new Date(ts).toISOString(); } }
+function dateTxt(ts) { if (typeof ts !== 'number' || !isFinite(ts) || ts <= 0 || ts > 8.64e15) return '–'; try { return new Date(ts).toLocaleString('de-DE', { dateStyle: 'short', timeStyle: 'short' }); } catch (e) { return new Date(ts).toISOString(); } }
 function plain(u) { return (u / 100).toFixed(2).replace('.', ','); }
 function bbTxt(u, d) { return U.fmtBB(u, S.table ? S.table.cfg.bb : 100, d); }
 function cardHtml(c, cls) {
@@ -4509,26 +5100,69 @@ function termify(textEsc) {
   return out;
 }
 function openModal(title, html) {
-  S.modalReturn = document.activeElement;
-  $('modalH').textContent = title; $('modalBody').innerHTML = html; $('modal').hidden = false; $('modalX').focus();
+  // Rückgabeziel nur beim ersten Öffnen merken (Folgedialoge, z. B. „Import bestätigen“ → „Import abgelehnt“, behalten das ursprüngliche Ziel)
+  if ($('modal').hidden) S.modalReturn = document.activeElement;
+  $('modalH').textContent = title; $('modalBody').innerHTML = html; $('modal').hidden = false;
+  $('app').setAttribute('inert', '');  // Hintergrund für Tastatur und Screenreader sperren
+  $('modalX').focus();
 }
 function closeModal() {
   $('modal').hidden = true; $('modalBody').innerHTML = '';
-  if (S.modalReturn && S.modalReturn.focus && document.body.contains(S.modalReturn)) S.modalReturn.focus();
+  $('app').removeAttribute('inert');
+  var r = S.modalReturn; S.modalReturn = null;
+  if (r && r.focus && document.body.contains(r)) r.focus();
+  else { var m = $('main'); if (m) m.focus({ preventScroll: true }); }
+}
+/** Fokusfalle: Tab und Umschalt+Tab bleiben im offenen Dialog. */
+function trapFocus(e, root) {
+  var f = Array.prototype.filter.call(root.querySelectorAll('a[href], button, input, select, textarea, summary, [tabindex]:not([tabindex="-1"])'), function (x) { return !x.disabled && !x.hidden && x.offsetParent !== null; });
+  if (!f.length) { e.preventDefault(); return; }
+  var i = f.indexOf(document.activeElement);
+  if (e.shiftKey && i <= 0) { e.preventDefault(); f[f.length - 1].focus(); }
+  else if (!e.shiftKey && (i === f.length - 1 || i < 0)) { e.preventDefault(); f[0].focus(); }
 }
 function showTerm(k) { openModal(k, '<p>' + esc(PT.glossary[k] || '') + '</p><p class="muted">Weitere Begriffe im Bereich Hilfe → Glossar.</p>'); }
 function showMsg(text, info) { var m = $('msg'); m.textContent = text || ''; m.classList.toggle('info', !!info); }
 
 // ---------- Analyse-Dienst (Web Worker, Rückfall Hauptthread) ----------
+/** Neuer Worker mit der Engine (Website: worker.js, Einzeldatei: Blob aus dem eingebetteten Code). Wirft, wenn nicht möglich. */
+function newWorker() {
+  if (typeof Worker !== 'function') throw new Error('Web Worker nicht verfügbar');
+  if (window.PT_INLINE) {
+    var src = document.getElementById('pt-engine').textContent + '\n' + document.getElementById('pt-worker').textContent;
+    return new Worker(URL.createObjectURL(new Blob([src], { type: 'text/javascript' })));
+  }
+  return new Worker('assets/js/worker.js?v=' + PT.VERSION);
+}
+function runJob(kind, input) {
+  if (kind === 'analyze') return PT.coach.analyze(input);
+  if (kind === 'import') return PT.dataport.parseImport(input.text);
+  throw new Error('unbekannter Auftrag');
+}
+/**
+ * Einmaliger Auftrag in einem eigenen Worker (z. B. Prüfung großer Importdateien), damit die Oberfläche bedienbar bleibt.
+ * Rückfall: Hauptthread. Zeitlimit: Ablehnung, der Worker wird beendet.
+ */
+function offThread(kind, input, timeoutMs) {
+  return new Promise(function (res, rej) {
+    var w = null, done = false, t = null;
+    function fin(ok, v) { if (done) return; done = true; clearTimeout(t); try { if (w) w.terminate(); } catch (e) { /* leer */ } (ok ? res : rej)(v); }
+    function main() { setTimeout(function () { try { fin(true, runJob(kind, input)); } catch (e) { fin(false, e); } }, 20); }
+    try { w = newWorker(); } catch (e) { w = null; }
+    if (!w) { main(); return; }
+    w.onmessage = function (e) { var m = e.data || {}; if (m.ok) fin(true, m.result); else fin(false, new Error(m.error || 'Fehler')); };
+    w.onerror = function (e) { if (e && e.preventDefault) e.preventDefault(); try { w.terminate(); } catch (x) { /* leer */ } w = null; if (!done) main(); };
+    t = setTimeout(function () { fin(false, new Error('Zeitüberschreitung')); }, timeoutMs || 60000);
+    try { w.postMessage({ id: 1, kind: kind, input: input }); } catch (e) { try { w.terminate(); } catch (x) { /* leer */ } w = null; main(); }
+  });
+}
+PTUI.offThread = offThread;
 var Analyzer = (function () {
   var worker = null, seq = 0, pending = {}, broken = false, busySince = 0;
   function spawn() {
     if (broken) return null;
     try {
-      if (window.PT_INLINE) {
-        var src = document.getElementById('pt-engine').textContent + '\n' + document.getElementById('pt-worker').textContent;
-        worker = new Worker(URL.createObjectURL(new Blob([src], { type: 'text/javascript' })));
-      } else worker = new Worker('assets/js/worker.js?v=' + PT.VERSION);
+      worker = newWorker();
       worker.onmessage = function (e) {
         var m = e.data || {}, p = pending[m.id]; if (!p) return;
         delete pending[m.id]; busySince = 0;
@@ -4548,7 +5182,7 @@ var Analyzer = (function () {
   function runMain(kind, input) {
     return new Promise(function (res, rej) {
       setTimeout(function () {
-        try { res(kind === 'analyze' ? PT.coach.analyze(input) : null); } catch (e) { rej(e); }
+        try { res(runJob(kind, input)); } catch (e) { rej(e); }
       }, 0);
     });
   }
@@ -4571,21 +5205,42 @@ var Analyzer = (function () {
     try { if (worker) worker.terminate(); } catch (e) { /* leer */ }
     worker = null;
   }
-  return { run: run, cancel: cancel, mode: function () { return broken ? 'Hauptthread' : (worker || !broken ? 'Web Worker' : 'Hauptthread'); } };
+  return { run: run, cancel: cancel, mode: function () { return broken || typeof Worker !== 'function' ? 'Hauptthread' : 'Web Worker'; } };
 })();
 PTUI.Analyzer = Analyzer;
 
 // ---------- Speicherung ----------
-function metaRecord() { return { k: 'state', v: 2, table: S.table, settings: S.settings, heroRec: S.heroRec, app: PT.VERSION, saved: Date.now() }; }
+// Offene Schreibvorgänge werden gesammelt, damit ein Update oder Neuladen erst nach dem Speichern erfolgt.
+var pendingWrites = [];
+function track(p) {
+  var q = Promise.resolve(p).catch(function () { /* Fehler meldet storageError */ });
+  pendingWrites.push(q);
+  q.then(function () { var i = pendingWrites.indexOf(q); if (i >= 0) pendingWrites.splice(i, 1); });
+  return p;
+}
+/** Wartet, bis alle Schreibvorgänge (auch die Speicherung der zuletzt beendeten Hand) abgeschlossen sind – höchstens ms. */
+function flushWrites(ms) {
+  var all = Promise.all(pendingWrites.slice());
+  return withTimeout(all, ms || 4000, 'Speichern').catch(function () { /* nach Zeitlimit trotzdem fortfahren */ });
+}
+PTUI.flushWrites = flushWrites; PTUI.track = track;
+/** Darf dieser Tab dauerhaft schreiben (Import, Löschen, neue Session)? */
+function canWrite(quiet) {
+  if (S.readonly) { if (!quiet) toast('Dieser Tab ist schreibgeschützt, weil der PokerTrainer in einem anderen Tab oder App-Fenster geöffnet ist.', 5000); return false; }
+  return true;
+}
+PTUI.canWrite = canWrite;
+// legacyDone bleibt bei jedem Speichern erhalten (sonst würde die Migration aus Entwurf 2 bei jedem Start erneut angeboten)
+function metaRecord() { var m = { k: 'state', v: 2, table: S.table, settings: S.settings, heroRec: S.heroRec, app: PT.VERSION, saved: Date.now() }; if (S.legacyDone) m.legacyDone = true; return m; }
 function persist(changedIds) {
   if (S.readonly) return Promise.resolve();
   var seen = {}, recs = (changedIds || []).filter(function (id) { if (seen[id] || !S.db.opps[id]) return false; seen[id] = 1; return true; }).map(function (id) { return S.db.opps[id]; });
   var p = [Store.put('meta', JSON.parse(JSON.stringify(metaRecord())))];
   if (recs.length) p.push(Store.put('opps', recs));
-  return Promise.all(p).then(function () { if (S.notes.storageErr) { S.notes.storageErr = ''; renderNotice(); } }, storageError);
+  return track(Promise.all(p).then(function () { if (S.notes.storageErr) { S.notes.storageErr = ''; renderNotice(); } }, storageError));
 }
-function persistAllOpps() { return Store.put('opps', PT.stats.dbList(S.db), true).catch(storageError); }
-function persistLearning() { if (S.readonly) return Promise.resolve(); return Store.put('learn', { k: 'learning', v: S.learning }).catch(storageError); }
+function persistAllOpps() { if (S.readonly) return Promise.resolve(); return track(Store.put('opps', PT.stats.dbList(S.db), true).catch(storageError)); }
+function persistLearning() { if (S.readonly) return Promise.resolve(); return track(Store.put('learn', { k: 'learning', v: S.learning }).catch(storageError)); }
 function storageError(e) { S.notes.storageErr = 'Speichern fehlgeschlagen (' + ((e && (e.name || e.message)) || e) + '). Bitte eine Sicherung exportieren.'; renderNotice(); }
 PTUI.persist = persist; PTUI.persistAllOpps = persistAllOpps; PTUI.persistLearning = persistLearning;
 
@@ -4663,8 +5318,9 @@ function renderSeats() {
       else if (h.bbSeat() === i) marks += '<span class="chipmark bb" title="Big Blind">BB</span>';
     }
     var extra = '<span class="hole">' + hole + '</span>' + marks + '<span class="lastact">' + esc(lastActLabel(h, i)) + '</span>';
-    var plate = me ? '<div class="plate" aria-label="Dein Platz">' + inner + extra + '</div>'
-      : '<button class="plate" type="button" data-opp="' + esc(d.id) + '" aria-label="Werte von ' + esc(d.name) + ' anzeigen">' + inner + extra + '</button>';
+    // Zugänglicher Name = sichtbarer Inhalt (Name, Position, Stack, Werte, Karten); der Zusatz nennt die Funktion
+    var plate = me ? '<div class="plate" role="group" aria-label="Dein Platz">' + inner + extra + '</div>'
+      : '<button class="plate" type="button" data-opp="' + esc(d.id) + '">' + inner + extra + '<span class="sr">' + (act ? ', ist am Zug' : '') + ', alle Werte anzeigen</span></button>';
     if (h && !h.done && d.bet > 0) bets += '<span class="bet b' + i + '">' + fmt(d.bet) + '</span>';
     html += '<div class="' + cls + '">' + plate + '</div>';
   }
@@ -4718,17 +5374,17 @@ function renderControls() {
   var h = S.hand, my = myTurn(), L = my ? h.legal(0) : null;
   $('bFold').disabled = !my || !L.canFold;
   $('bCall').disabled = !my;
-  $('bCall').innerHTML = (L ? (L.canCheck ? 'Check' : 'Call ' + fmt(L.callAmt) + (L.callAmt >= L.stack ? ' (All-in)' : '')) : 'Check / Call') + '<kbd>C</kbd>';
+  $('bCall').innerHTML = (L ? (L.canCheck ? 'Check' : 'Call ' + fmt(L.callAmt) + (L.callAmt >= L.stack ? ' (All-in)' : '')) : 'Check / Call') + '<kbd aria-hidden="true">C</kbd>';
   var canR = my && L.canRaise;
   $('bRaise').disabled = !canR;
-  $('bRaise').innerHTML = (L && L.isBet ? 'Bet' : 'Raise auf') + '<kbd>R</kbd>';
+  $('bRaise').innerHTML = (L && L.isBet ? 'Bet' : 'Raise auf') + '<kbd aria-hidden="true">R</kbd>';
   $('amt').disabled = !canR; $('slider').disabled = !canR;
   var pre = canR ? presetList(h, L) : [];
-  $('presets').innerHTML = pre.map(function (p, i) { return '<button class="preset" type="button" data-amt="' + p[1] + '" title="' + fmt(p[1]) + '">' + esc(p[0]) + (i < 9 ? '<kbd>' + (i + 1) + '</kbd>' : '') + '</button>'; }).join('');
+  $('presets').innerHTML = pre.map(function (p, i) { return '<button class="preset" type="button" data-amt="' + p[1] + '" title="' + fmt(p[1]) + '"' + (i < 9 ? ' aria-keyshortcuts="' + (i + 1) + '"' : '') + '>' + esc(p[0]) + '<span class="sr"> (' + fmt(p[1]) + ')</span>' + (i < 9 ? '<kbd aria-hidden="true">' + (i + 1) + '</kbd>' : '') + '</button>'; }).join('');
   var nextOk = S.ready && !S.readonly && (!h || h.done) && !S.reveal;
   $('bNext').disabled = !nextOk;
   $('bNext').classList.toggle('pulse', nextOk);
-  $('bNext').innerHTML = (S.training ? 'Nächste Situation' : 'Nächste Hand') + '<kbd>N</kbd>';
+  $('bNext').innerHTML = (S.training ? 'Nächste Situation' : 'Nächste Hand') + '<kbd aria-hidden="true">N</kbd>';
 }
 function renderStatus() {
   var t = S.table; if (!t) { $('status').textContent = 'Lade …'; return; }
@@ -4752,7 +5408,7 @@ function factsHtml(a) {
 }
 function evTableHtml(a) {
   var maxAbs = Math.max.apply(null, a.actions.map(function (x) { return Math.abs(x.ev); }).concat([1]));
-  return '<table class="evtable"><thead><tr><th>Aktion</th><th>EV</th><th>±</th><th></th></tr></thead><tbody>' + a.actions.slice(0, 9).map(function (x, i) {
+  return '<table class="evtable"><caption class="sr">EV je Aktion in Big Blinds, mit Unsicherheit</caption><thead><tr><th scope="col">Aktion</th><th scope="col">EV</th><th scope="col"><span aria-hidden="true">±</span><span class="sr">Unsicherheit</span></th><th scope="col"><span class="sr">Balken</span></th></tr></thead><tbody>' + a.actions.slice(0, 9).map(function (x, i) {
     var w = Math.round(50 * Math.abs(x.ev) / maxAbs);
     return '<tr' + (i === 0 ? ' class="best"' : '') + '><td>' + esc(x.label) + '</td><td>' + bbTxt(x.ev, 2) + '</td><td>' + bbTxt(x.u, 1) + '</td><td><span class="evbar' + (x.ev < 0 ? ' neg' : '') + '" style="width:' + w + 'px"></span></td></tr>';
   }).join('') + '</tbody></table>';
@@ -4760,7 +5416,7 @@ function evTableHtml(a) {
 function depthOf() { var d = S.settings.depth; if (d !== 'auto') return d; return S.prof ? S.prof.level : 'einsteiger'; }
 function analysisHtml(a, full) {
   var d = depthOf(), txt = a.text[d] || a.text.fortgeschritten, adv = S.settings.advanced;
-  var html = '<div class="tipaction">' + esc(a.bestLabel) + ' <span class="badge c-' + a.classification + '">' + esc(a.classText) + '</span></div>' +
+  var html = '<div class="tipaction"><span class="sr">Empfehlung: </span>' + esc(a.bestLabel) + ' <span class="badge c-' + esc(a.classification) + '">' + esc(a.classText) + '</span></div>' +
     '<p class="tipreason">' + termify(esc(txt)) + '</p>' + factsHtml(a);
   if (a.sizeNote) html += '<div class="small">' + esc(a.sizeNote) + '</div>';
   if (a.learnerHint && d === 'einsteiger') html += '<div class="small">' + esc(a.learnerHint) + '</div>';
@@ -4844,9 +5500,9 @@ function renderTrainbar() {
 }
 function render() {
   document.body.classList.toggle('simple', !S.settings.advanced);
-  $('bView').textContent = S.settings.advanced ? 'Erweitert' : 'Einfach';
+  // Feste Beschriftung, Zustand über aria-pressed (WCAG 2.5.3: sichtbarer Text = zugänglicher Name)
+  $('bView').textContent = 'Erweitert';
   $('bView').setAttribute('aria-pressed', String(!!S.settings.advanced));
-  $('bView').setAttribute('aria-label', 'Erweiterte Ansicht');  // feste Bezeichnung, Zustand über aria-pressed
   document.body.classList.toggle('four', !!S.settings.fourColor);
   renderStatus(); renderSeats(); renderCenter(); renderControls(); renderTip(); renderLog(); renderNotice(); renderTrainbar();
 }
@@ -4914,6 +5570,22 @@ function learnerSummary() {
   Object.keys(S.prof.spots).forEach(function (k) { var s = S.prof.spots[k]; spots[k] = { n: s.n, score: s.smooth == null ? 70 : s.smooth }; });
   return { spots: spots, cats: S.prof.cats };
 }
+// Zusammenfassung für Screenreader, wenn der Spieler am Zug ist: Straße, Board, Aktionen seit der eigenen letzten Aktion, Betrag
+function cardName(c) { return PT.cards.RANK_NAME_DE[c >> 2] + ' ' + PT.cards.SUIT_NAME[c & 3]; }
+function turnText(h) {
+  var L = h.legal(0), parts = [], i = h.actions.length - 1, acts = [];
+  for (; i >= 0; i--) { var x = h.actions[i]; if (x.s === 0 && x.t !== 'sb' && x.t !== 'bb') break; }
+  for (var k = i + 1; k < h.actions.length; k++) {
+    var a = h.actions[k]; if (a.s === 0) continue;
+    acts.push(h.p[a.s].name + ' ' + ({ sb: 'Small Blind', bb: 'Big Blind', check: 'Check', call: 'Call', fold: 'Fold', bet: 'Bet ' + fmt(a.a), raise: 'Raise auf ' + fmt(a.a) }[a.t] || a.t) + (a.ai ? ' All-in' : ''));
+  }
+  parts.push('Du bist am Zug, ' + PT.rules.STREET_NAME[h.street] + '.');
+  if (h.street === 0 && i < 0) parts.push('Deine Karten: ' + h.p[0].cards.map(cardName).join(', ') + '.');
+  if (h.street > 0) parts.push('Board: ' + h.board.map(cardName).join(', ') + '.');
+  if (acts.length) parts.push(acts.slice(-8).join(', ') + '.');
+  parts.push('Pot ' + fmt(h.potTotal()) + '. ' + (L.canCheck ? 'Check möglich.' : 'Call ' + fmt(L.callAmt) + '.'));
+  return parts.join(' ');
+}
 function coachSettings(level) { return { mode: S.settings.smode, level: level || S.settings.level, depth: depthOf() }; }
 function onHeroTurn() {
   var h = S.hand;
@@ -4926,13 +5598,19 @@ function onHeroTurn() {
   var L = h.legal(0);
   $('amt').value = L.canRaise ? plain(L.minTo) : ''; $('slider').value = 0;
   render();
+  S.turnSaid = { t: Date.now(), text: turnText(h) };
+  announce(S.turnSaid.text);
   var cur = S.cur;
   cur.promise = Analyzer.run('analyze', { view: view, opps: opps, settings: coachSettings(), seed: seed, learner: learnerSummary(), live: true }).then(function (a) {
     cur.analysis = a;
     if (S.cur === cur) {
       S.analysis = { decision: id, a: a };
       a.shownAfter = Math.round(performance.now() - cur.t0);
-      if (S.settings.tipMode === 'vorher' && myTurn()) { renderTip(); speakText(a.text.speech); }
+      if (S.settings.tipMode === 'vorher' && myTurn()) {
+        renderTip(); speakText(a.text.speech);
+        var tipSay = 'Coach empfiehlt ' + a.bestLabel + ' (' + a.classText + ').';
+        announce(S.turnSaid && Date.now() - S.turnSaid.t < 1500 ? S.turnSaid.text + ' ' + tipSay : tipSay);
+      }
     }
     return a;
   }, function (e) { if (e && e.message === 'abgebrochen') return null; if (S.cur === cur) showMsg('Analyse fehlgeschlagen: ' + (e && e.message)); return null; });
@@ -4973,14 +5651,13 @@ function gradeDecision(cur, chosen) {
     var isAggr = chosen.type === 'bet' || chosen.type === 'raise';
     var has = !isAggr || a.actions.some(function (x) { return (x.type === 'bet' || x.type === 'raise') && x.amount === chosen.amount; });
     if (has) return a;
-    return Analyzer.run('analyze', { view: cur.view, opps: cur.opps, settings: coachSettings(), seed: cur.seed, extra: [chosen.amount], learner: learnerSummary(), live: true }).catch(function () { return a; });
+    return Analyzer.run('analyze', { view: cur.view, opps: cur.opps, settings: coachSettings(), seed: cur.seed, extra: [chosen.amount], learner: learnerSummary(), live: true })
+      .then(function (a2) { a2._extra = [chosen.amount]; return a2; }, function () { return a; });
   }).then(function (a) {
     if (!a) return null;
     var g = PT.coach.grade(a, chosen);
-    var dec = { i: cur.idx, st: cur.street, chosen: chosen.label, rec: a.bestLabel, cls: a.classification, eq: Math.round(a.equity.eq * 1000) / 1000,
-      need: a.potOdds ? Math.round(a.potOdds.need * 1000) / 1000 : null, grade: g.grade, score: g.score, loss: Math.round(g.loss), cats: g.cats, tags: a.spotTags,
-      evs: a.actions.slice(0, 6).map(function (x) { return { l: x.label, ev: Math.round(x.ev), u: Math.round(x.u) }; }), mode: a.mode, pos: cur.pos,
-      snap: { view: cur.view, opps: cur.opps, seed: cur.seed } };
+    // Entscheidungsdatensatz inkl. Benchmark-Zusatzfeldern (Versionen, Stufe, Rechenaufwand, Alternativen mit EV und Unsicherheit)
+    var dec = PT.training.makeDecision({ idx: cur.idx, street: cur.street, pos: cur.pos, view: cur.view, opps: cur.opps, seed: cur.seed, chosen: chosen, extra: a._extra || null }, a, g);
     S.handDecisions.push(dec);
     var opp = a.opponents.filter(function (o) { return o.name === a.mainOpp; })[0];
     var tagsD = a.spotTags.slice(); if (cur.training && cur.target && tagsD.indexOf(cur.training) < 0 && PT.coach.SPOTS[cur.training]) tagsD.push(cur.training);  // Zielentscheidung zählt für ihre Trainingskategorie
@@ -4997,7 +5674,7 @@ function gradeDecision(cur, chosen) {
     S.verdict = { g: g, a: a, decision: cur.id };
     if (S.cur === cur || !myTurn()) {
       renderTip();
-      if (S.settings.tipMode === 'nachher') speakText(g.grade + '. ' + (g.score >= 80 ? '' : 'Empfohlen war ' + g.bestLabel + '.'));
+      if (S.settings.tipMode === 'nachher') { speakText(g.grade + '. ' + (g.score >= 80 ? '' : 'Empfohlen war ' + g.bestLabel + '.')); announce('Bewertung: ' + g.grade + '. ' + (g.score >= 80 ? '' : 'Empfohlen war ' + g.bestLabel + '.')); }
     }
     return dec;
   }).catch(function (e) { console.warn('Bewertung fehlgeschlagen', e); return null; });
@@ -5016,19 +5693,19 @@ function handEnded() {
   }
   var decisionsP = Promise.all(S.pendingGrades);
   var types = {}; h.p.forEach(function (q) { if (!q.isHero) types[q.id] = PT.stats.playerType(S.db.opps[q.id]); });
-  decisionsP.then(function () {
+  track(decisionsP.then(function () {
     if (!S.settings.recordHands || S.readonly) return;
-    var rec = PT.training.makeHandRecord(h, { session: S.sessionId, seed: S.table.seed, decisions: S.handDecisions.slice(), types: types, training: h.isTraining ? S.training && S.training.curCat : null });
+    var rec = PT.training.makeHandRecord(h, { session: S.sessionId, seed: S.table.seed, tseed: h.isTraining && S.training ? S.training.seed : null, decisions: S.handDecisions.slice(), types: types, training: h.isTraining ? S.training && S.training.curCat : null });
     return Store.addHand(rec, MAX_HANDS).catch(storageError);
-  });
+  }));
   if (notes.length) showMsg(notes.join(' '), true);
   if (h.result.showdown && !h.p[0].folded && S.shownBoard < h.board.length) { S.reveal = true; revealStep(); }
-  else { S.reveal = false; render(); }
+  else { S.reveal = false; render(); announce('Hand beendet. ' + resultText(h)); }
 }
 function revealStep() {
   var h = S.hand;
   S.shownBoard = S.shownBoard < 3 ? 3 : S.shownBoard + 1;
-  if (S.shownBoard >= h.board.length) { S.shownBoard = h.board.length; S.reveal = false; render(); return; }
+  if (S.shownBoard >= h.board.length) { S.shownBoard = h.board.length; S.reveal = false; render(); announce('Hand beendet. ' + resultText(h)); return; }
   render();
   S.timer = setTimeout(revealStep, Math.max(450, (SPEED[S.settings.speed] || 650) + 200));
 }
@@ -5091,6 +5768,7 @@ function setMode(mode) {
   S.settings.tipMode = mode;
   if (S.speech) S.speech.stop();
   renderTip();
+  announce('Tipp-Modus: ' + mode);
   if (mode === 'vorher' && myTurn() && S.analysis && S.cur && S.analysis.decision === S.cur.id) speakText(S.analysis.a.text.speech);
   persist([]);
 }
@@ -5152,7 +5830,10 @@ function bind() {
     if (act === 'trainstop') PTUI.stopTraining();
     else if (act === 'showrange' && S.analysis) { PTUI.lastRange = S.analysis.a; location.hash = '#ranges/aktuell'; }
     else if (act === 'legacydl' && S.legacyBackup) download(S.legacyBackup.name, S.legacyBackup.text);
-    else if (act === 'swupdate' && S.swWaiting) { if (S.hand && !S.hand.done) { toast('Bitte erst die laufende Hand beenden, dann aktualisieren.'); return; } S.swUpdating = true; S.swWaiting.postMessage({ type: 'SKIP_WAITING' }); }
+    else if (act === 'swupdate') swUpdate();
+    else if (act === 'reload' || act === 'takeover') { if (S.hand && !S.hand.done && !S.readonly) toast('Die laufende Hand wird nach dem Neuladen exakt fortgesetzt.'); persist([]); flushWrites(3000).then(function () { location.reload(); }); }
+    else if (act === 'normalstart') location.href = window.PTRecovery ? window.PTRecovery.normalUrl() : location.pathname + '#tisch';
+    else if (act === 'rawbackup' && window.PTRecovery) window.PTRecovery.backup().then(function (n) { toast('Rohsicherung „' + n + '“ heruntergeladen.'); }, function (e2) { toast('Rohsicherung fehlgeschlagen: ' + ((e2 && e2.message) || e2)); });
     else if (act === 'dismiss') { S.notes[b.getAttribute('data-note')] = ''; renderNotice(); }
   });
   window.addEventListener('hashchange', route);
@@ -5160,11 +5841,12 @@ function bind() {
     var g = e.target && e.target.closest && e.target.closest('[data-goto]');
     if (!g) return;
     e.preventDefault();
-    var t = $(g.getAttribute('data-goto')); if (t) { t.scrollIntoView({ behavior: 'smooth', block: 'start' }); t.setAttribute('tabindex', '-1'); t.focus({ preventScroll: true }); }
+    var t = $(g.getAttribute('data-goto')); if (t) { t.scrollIntoView({ behavior: scrollMode(), block: 'start' }); t.setAttribute('tabindex', '-1'); t.focus({ preventScroll: true }); }
   });
   document.addEventListener('keydown', function (e) {
     if (e.ctrlKey || e.metaKey || e.altKey) return;
-    if (!$('modal').hidden) { if (e.key === 'Escape') closeModal(); return; }
+    if ($('recovery')) return;
+    if (!$('modal').hidden) { if (e.key === 'Escape') { e.preventDefault(); closeModal(); } else if (e.key === 'Tab') trapFocus(e, $('modal')); return; }
     if (S.view !== 'tisch') return;
     var tg = e.target, tag = tg && tg.tagName;
     if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') { if (tg.id === 'amt' && e.key === 'Enter') { e.preventDefault(); onRaise(); } return; }
@@ -5185,25 +5867,49 @@ function bind() {
 }
 
 // ---------- Mehrere Tabs ----------
-function acquireLock() {
+// Nur ein Tab (oder ein App-Fenster der installierten PWA) schreibt. Weitere sind schreibgeschützt und
+// bieten an, zu übernehmen, sobald der schreibende Tab geschlossen wurde.
+function bcCheck() {
   return new Promise(function (res) {
+    try {
+      var bc = new BroadcastChannel('pokertrainer'), other = false;
+      bc.onmessage = function (ev) { if (ev.data === 'wer' && !S.readonly) bc.postMessage('ich'); else if (ev.data === 'ich') other = true; };
+      S.bc = bc;
+      bc.postMessage('wer');
+      setTimeout(function () { res(!other); }, 250);
+    } catch (e2) { res(true); }
+  });
+}
+/** Schreibender Tab beantwortet Anfragen neuer Tabs auch über BroadcastChannel (Rückfall ohne Web Locks). */
+function bcRespond() {
+  try { if (S.bc) return; var bc = S.bc = new BroadcastChannel('pokertrainer'); bc.onmessage = function (ev) { if (ev.data === 'wer' && !S.readonly) bc.postMessage('ich'); }; } catch (e) { /* leer */ }
+}
+function acquireLock() {
+  if (Store.safeMode()) return Promise.resolve(true);  // abgesicherter Start schreibt nie in den Speicher
+  var p = new Promise(function (res) {
     try {
       if (navigator.locks && navigator.locks.request) {
         navigator.locks.request('pokertrainer-tisch', { ifAvailable: true }, function (lock) {
           if (!lock) { res(false); return Promise.resolve(); }
           res(true); return new Promise(function () { /* bis zum Schließen halten */ });
-        }).catch(function () { res(true); });
+        }).catch(function () { bcCheck().then(res); });
         return;
       }
     } catch (e) { /* leer */ }
-    // Rückfall: BroadcastChannel-Abfrage
-    try {
-      var bc = new BroadcastChannel('pokertrainer'), other = false;
-      bc.onmessage = function (ev) { if (ev.data === 'wer') bc.postMessage('ich'); else if (ev.data === 'ich') other = true; };
-      bc.postMessage('wer');
-      setTimeout(function () { res(!other); }, 250);
-    } catch (e2) { res(true); }
+    bcCheck().then(res);
   });
+  // Antwortet die Web-Locks-Schnittstelle nicht, entscheidet die BroadcastChannel-Abfrage
+  return withTimeout(p, 3000, 'Tab-Sperre').catch(function () { return bcCheck(); });
+}
+function waitForTakeover() {
+  try {
+    if (!(navigator.locks && navigator.locks.request)) return;
+    navigator.locks.request('pokertrainer-tisch', function () {
+      S.notes.readonly = { html: '<span>Der andere Tab bzw. das App-Fenster mit dem PokerTrainer wurde geschlossen.</span><button class="btn" type="button" data-act="takeover">Hier weiterspielen (neu laden)</button>' };
+      renderNotice(); announce('Der andere Tab wurde geschlossen. Du kannst hier weiterspielen.');
+      return new Promise(function () { /* Sperre halten, bis neu geladen wird */ });
+    }).catch(function () { /* leer */ });
+  } catch (e) { /* leer */ }
 }
 
 // ---------- Service Worker ----------
@@ -5218,17 +5924,75 @@ function registerSW() {
       var nw = reg.installing; if (!nw) return;
       nw.addEventListener('statechange', function () { if (nw.state === 'installed' && navigator.serviceWorker.controller) waiting(nw); });
     });
+    PTUI.swReg = reg;
     setInterval(function () { reg.update().catch(function () {}); }, 60 * 60 * 1000);
   }).catch(function () { /* offline-fähig nur ohne SW */ });
   var reloading = false;
-  // Neu laden nur bei einem vom Nutzer bestätigten Update, nicht bei der ersten Installation
-  navigator.serviceWorker.addEventListener('controllerchange', function () { if (reloading || !S.swUpdating) return; reloading = true; persist([]).then(function () { location.reload(); }); });
+  // Neu laden nur bei einem vom Nutzer bestätigten Update, nicht bei der ersten Installation.
+  // Vorher werden alle offenen Schreibvorgänge abgeschlossen (laufende Hand: Update ist bis Handende gesperrt).
+  navigator.serviceWorker.addEventListener('controllerchange', function () {
+    if (reloading) return;
+    if (!S.swUpdating) {
+      // Update wurde in einem anderen Tab bestätigt: dieser Tab läuft noch mit dem alten Programmstand
+      if (S.hadController) { S.notes.update = { html: '<span>In einem anderen Tab wurde eine neue Version aktiviert. Bitte nach dieser Hand neu laden.</span><button class="btn" type="button" data-act="reload">Neu laden</button>' }; renderNotice(); }
+      S.hadController = true;
+      return;
+    }
+    reloading = true; persist([]); flushWrites(4000).then(function () { location.reload(); });
+  });
+}
+function swUpdate() {
+  if (!S.swWaiting) return;
+  if (S.hand && !S.hand.done) { toast('Bitte erst die laufende Hand beenden, dann aktualisieren.'); return; }
+  if (S.reveal) { toast('Einen Moment – die Hand wird noch aufgedeckt.'); return; }
+  S.swUpdating = true;
+  S.notes.update = { html: '<span>Daten werden gespeichert, dann wird aktualisiert …</span>' }; renderNotice();
+  persist([]); flushWrites(4000).then(function () { S.swWaiting.postMessage({ type: 'SKIP_WAITING' }); });
 }
 
 // ---------- Start ----------
 function legacyBackupText(list) {
   var body = JSON.stringify(list);
   return '{"format":"PokerTrainer-DB","version":1,"exported":' + JSON.stringify(new Date().toISOString()) + ',"count":' + list.length + ',"checksum":"' + U.fnv1a(body) + '","opponents":' + body + '}\n';
+}
+var ENUMS = { tipMode: ['vorher', 'nachher', 'aus'], smode: ['exploit', 'gto'], depth: ['auto', 'einsteiger', 'fortgeschritten', 'experte'], level: ['schnell', 'standard', 'praezise', 'tief'],
+  speed: Object.keys(SPEED), theme: ['auto', 'light', 'dark'] };
+/** Gespeicherte Einstellung nur übernehmen, wenn Typ und Wertebereich stimmen (beschädigte Daten führen sonst zu Folgefehlern). */
+function validSetting(k, x) {
+  if (k === 'seed') return x === null || U.isInt(x, 0, 4294967295);
+  if (ENUMS[k]) return ENUMS[k].indexOf(x) >= 0;
+  if (k === 'speechRate') return typeof x === 'number' && x >= 0.5 && x <= 2;
+  return typeof x === typeof DEFAULTS[k];
+}
+/** Prüft die gespeicherte laufende Hand, bevor sie nachgespielt wird. */
+function validRunning(run) {
+  var isInt = U.isInt;
+  if (!run || typeof run !== 'object' || Array.isArray(run)) return false;
+  if (!isInt(run.no, 1, 1e12) || !isInt(run.button, 0, N - 1) || typeof run.ts !== 'number' || !isFinite(run.ts) || !Array.isArray(run.acts) || run.acts.length > 400) return false;
+  return run.acts.every(function (x) {
+    return x && typeof x === 'object' && isInt(x.s, 0, N - 1) && ['fold', 'check', 'call', 'bet', 'raise', 'allin'].indexOf(x.type) >= 0 && (x.amount == null || isInt(x.amount, 0, 1e12));
+  });
+}
+function storageNotice() {
+  var inf = Store.info(), dl = '<button class="btn" type="button" data-act="rawbackup">Rohsicherung herunterladen</button>';
+  if (inf.reason === 'safe') return { html: '<span><b>Abgesicherter Start:</b> Gespeicherte Daten werden weder geladen noch verändert. Gespielt wird nur in dieser Sitzung.</span><span><button class="btn" type="button" data-act="normalstart">Normal starten</button> ' + dl + '</span>' };
+  if (inf.reason === 'timeout' || inf.reason === 'blocked' || inf.reason === 'error') return { html: '<span>Der lokale Speicher (IndexedDB) ist gerade nicht nutzbar (' + esc(inf.detail || inf.reason) + '). Diese Sitzung wird nicht gespeichert; vorhandene Daten bleiben unverändert.</span><span><button class="btn" type="button" data-act="reload">Neu laden</button> ' + dl + '</span>' };
+  if (inf.reason === 'fallback') return 'IndexedDB ist in diesem Browser nicht verfügbar (z. B. im privaten Modus). Daten werden im localStorage gespeichert – dort ist Platz für deutlich weniger Hände, und im privaten Modus gehen sie beim Schließen verloren. Bitte regelmäßig eine Sicherung exportieren.';
+  if (inf.mode === 'mem') return 'Dieser Browser erlaubt hier kein dauerhaftes Speichern. Bitte regelmäßig eine Sicherung exportieren.';
+  return '';
+}
+function bootFailed(e, stage) {
+  console.error(e);
+  // Sicherer Zustand: nur noch Arbeitsspeicher, gespeicherte Daten bleiben unverändert; Fehleranzeige mit Wiederherstellung
+  Store.goMem('error', (stage ? stage + ': ' : '') + ((e && e.message) || e));
+  try {
+    S.db = PT.stats.newDb(); S.heroRec = PT.stats.newRecord('hero', 'Du'); S.learning = PT.training.newLearning(); S.prof = PT.training.profile(S.learning);
+    S.hand = null; S.table = PT.session.newTable(PT.session.defaultConfig(), S.db, null); PT.session.syncStatuses(S.table, S.db);
+    S.notes.storage = storageNotice(); S.notes.resume = '';
+    S.ready = true;
+    route();
+  } catch (e2) { console.error(e2); }
+  if (window.PTRecovery) window.PTRecovery.fail('boot', (stage ? stage + ': ' : '') + ((e && e.message) || e), { canContinue: S.ready });
 }
 function boot() {
   S.dlReady = new Promise(function (res) {
@@ -5239,32 +6003,44 @@ function boot() {
   });
   bind();
   $('verText').textContent = PT.VERSION;
-  initSpeech();
+  try { initSpeech(); } catch (e) { console.warn('Sprachausgabe nicht verfügbar', e); S.speech = null; S.notes.speech = 'Dein Browser bietet keine Sprachfunktion. Der Trainer läuft ohne Ton weiter, die Tipps erscheinen als Text.'; }
   render();
+  var stage = 'Tab-Sperre';
   acquireLock().then(function (ok) {
     S.readonly = !ok;
-    if (!ok) S.notes.readonly = 'Der PokerTrainer ist bereits in einem anderen Tab geöffnet. Dieser Tab ist schreibgeschützt, damit keine Daten überschrieben werden.';
+    if (ok) bcRespond();
+    if (!ok) { S.notes.readonly = 'Der PokerTrainer ist bereits in einem anderen Tab oder App-Fenster geöffnet. Dieser Tab ist schreibgeschützt, damit keine Daten überschrieben werden.'; waitForTakeover(); }
+    stage = 'Speicher öffnen';
     return Store.init();
   }).then(function () {
-    return Promise.all([Store.get('meta', 'state'), Store.all('opps'), Store.get('learn', 'learning')]);
+    stage = 'Daten lesen';
+    return withTimeout(Promise.all([Store.get('meta', 'state'), Store.all('opps'), Store.get('learn', 'learning')]), 8000, 'Daten lesen');
   }).then(function (r) {
-    var meta = r[0], opps = r[1] || [], learn = r[2];
-    S.db = PT.stats.dbFromList(opps);
-    if (S.db.skipped) S.notes.storage = S.db.skipped + ' beschädigte Gegner-Einträge im Speicher wurden übersprungen.';
-    if (meta && meta.settings) Object.keys(DEFAULTS).forEach(function (k) { if (meta.settings[k] !== undefined && typeof meta.settings[k] === typeof DEFAULTS[k] || (k === 'seed')) S.settings[k] = meta.settings[k]; });
-    if (meta && meta.heroRec && !PT.stats.validRecord(meta.heroRec)) S.heroRec = PT.stats.cloneRecord(meta.heroRec);
+    stage = 'Daten prüfen';
+    var meta = r[0] && typeof r[0] === 'object' && !Array.isArray(r[0]) ? r[0] : null, opps = Array.isArray(r[1]) ? r[1] : [], learn = r[2] && typeof r[2] === 'object' ? r[2] : null;
+    var skipped = [];
+    if (r[0] != null && !meta) skipped.push('Einstellungen');
+    var oppObjs = opps.filter(function (x) { return x && typeof x === 'object' && !Array.isArray(x); });
+    S.db = PT.stats.dbFromList(oppObjs);
+    var badOpps = (S.db.skipped || 0) + (opps.length - oppObjs.length);
+    if (badOpps) skipped.push(badOpps + ' Gegner-Einträge');
+    if (meta && meta.settings && typeof meta.settings === 'object') Object.keys(DEFAULTS).forEach(function (k) { var x = meta.settings[k]; if (x !== undefined && validSetting(k, x)) S.settings[k] = x; });
+    if (meta && meta.heroRec) { if (!PT.stats.validRecord(meta.heroRec)) S.heroRec = PT.stats.cloneRecord(meta.heroRec); else skipped.push('eigene Werte'); }
     if (learn && learn.v) {
       if (!PT.training.validLearning(learn.v)) S.learning = learn.v;
-      else { var rep = PT.training.repairLearning(learn.v); if (rep) { S.learning = rep.learning; console.warn('Lerndaten repariert, entfernte Einträge: ' + rep.removed); } }
+      else { var rep = PT.training.repairLearning(learn.v); if (rep) { S.learning = rep.learning; if (rep.removed) skipped.push(rep.removed + ' Lerneinträge'); } else skipped.push('Lerndaten'); }
     }
     S.prof = PT.training.profile(S.learning);
     if (meta && PT.session.validTable(meta.table)) S.table = meta.table;
-    return Store.findLegacy().then(function (legacy) {
-      if (legacy && !(meta && meta.legacyDone)) {
+    else if (meta && meta.table) skipped.push('Tischstand');
+    if (skipped.length) S.notes.storage = 'Beschädigte Einträge im lokalen Speicher wurden übersprungen: ' + skipped.join(', ') + '. Die übrigen Daten wurden geladen.';
+    stage = 'Migration';
+    return withTimeout(Store.findLegacy(), 5000, 'Suche nach alten Daten').catch(function () { return null; }).then(function (legacy) {
+      if (legacy && !(meta && meta.legacyDone) && !S.readonly) {
         var list = Array.isArray(legacy.opps) ? legacy.opps : [];
         var text = legacyBackupText(list), name = 'Sicherung_PokerTrainer_' + today() + '_Datenbank.json';
         S.legacyBackup = { name: name, text: text };
-        Store.put('backup', { k: 'legacy-' + today(), name: name, text: text, ts: Date.now() });
+        track(Store.put('backup', { k: 'legacy-' + today(), name: name, text: text, ts: Date.now() }));
         S.dlReady.then(function () { download(name, text); });
         var old = PT.stats.dbFromList(list), n = 0;
         Object.keys(old.opps).forEach(function (id) { if (!S.db.opps[id]) { S.db.opps[id] = old.opps[id]; n++; } });
@@ -5275,28 +6051,27 @@ function boot() {
       }
     }).then(function () { return meta; });
   }).then(function (meta) {
+    stage = 'Tisch';
     if (!S.table) S.table = PT.session.newTable(PT.session.defaultConfig(), S.db, S.settings.seed != null ? S.settings.seed : null);
     PT.session.syncStatuses(S.table, S.db);
     applyTheme();
     var running = S.table.running;
     if (running) {
-      var h = PT.session.resumeHand(S.table, S.heroRec);
+      var backupT = JSON.parse(JSON.stringify(S.table)), h = null;
+      try { h = validRunning(running) ? PT.session.resumeHand(S.table, S.heroRec) : null; } catch (e) { console.warn('Wiederaufnahme fehlgeschlagen', e); h = null; }
       if (h && !h.done) { S.hand = h; S.notes.resume = 'Die beim Schließen laufende Hand #' + h.no + ' wurde exakt wiederhergestellt.'; }
       else if (h && h.done) { S.hand = h; }
-      else { S.table.running = null; S.notes.resume = 'Eine beim Schließen laufende Hand konnte nicht wiederhergestellt werden und wurde verworfen.'; }
+      else { S.table = backupT; S.table.running = null; S.hand = null; S.notes.resume = 'Eine beim Schließen laufende Hand konnte nicht wiederhergestellt werden und wurde verworfen.'; }
     }
-    var mr = metaRecord(); if (S.legacyDone || (meta && meta.legacyDone)) mr.legacyDone = true;
-    if (!S.readonly) Store.put('meta', JSON.parse(JSON.stringify(mr))).catch(storageError);
-    if (Store.mode() === 'mem') S.notes.storage = 'Dieser Browser erlaubt hier kein dauerhaftes Speichern. Bitte regelmäßig eine Sicherung exportieren.';
+    if (meta && meta.legacyDone) S.legacyDone = true;
+    var mr = metaRecord();
+    if (!S.readonly) track(Store.put('meta', JSON.parse(JSON.stringify(mr))).catch(storageError));
+    var sn = storageNotice(); if (sn) S.notes.storage = sn;
     S.ready = true;
     route();
+    if (window.PTRecovery) window.PTRecovery.ready();
     if (S.hand && !S.hand.done) drive();
-  }).catch(function (e) {
-    console.error(e);
-    S.table = S.table || PT.session.newTable(PT.session.defaultConfig(), S.db); S.ready = true;
-    S.notes.storage = 'Gespeicherte Daten konnten nicht geladen werden (' + ((e && e.message) || e) + ').';
-    route();
-  });
+  }).catch(function (e) { bootFailed(e, stage); });
   registerSW();
 }
 PTUI.h = { $: $, esc: esc, cardHtml: cardHtml, cardsHtml: cardsHtml, backHtml: backHtml, openModal: openModal, closeModal: closeModal, toast: toast, download: download,
@@ -5319,7 +6094,18 @@ function sectionHead(title, sub) { return '<div class="panel"><h2>' + esc(title)
 function scoreColor(s) { return s == null ? '' : s >= 75 ? 'good' : s < 55 ? 'bad' : ''; }
 function meter(score) { if (score == null) return '<div class="meter"><i style="width:0"></i></div>'; var c = score >= 75 ? '' : score >= 55 ? ' warn' : ' bad'; return '<div class="meter' + c + '"><i style="width:' + Math.round(Math.max(0, Math.min(100, score))) + '%"></i></div>'; }
 function n0(x) { return x == null ? '–' : Math.round(x); }
-function num(x, d) { return x == null || !isFinite(x) ? '–' : x.toFixed(d == null ? 1 : d).replace('.', ','); }
+function num(x, d) { return typeof x !== 'number' || !isFinite(x) ? '–' : x.toFixed(d == null ? 1 : d).replace('.', ','); }
+function int(x) { return typeof x === 'number' && isFinite(x) ? String(Math.round(x)) : '–'; }
+/** Gespeicherte Hände lesen und prüfen: Beschädigte oder manipulierte Einträge werden nicht angezeigt (und nie per innerHTML ausgegeben). */
+function loadHands() {
+  return Store.all('hands').then(function (l) {
+    var ok = [], bad = 0;
+    (l || []).forEach(function (h) { if (PT.training.validHand(h)) bad++; else ok.push(h); });
+    ok.skipped = bad;
+    return ok;
+  });
+}
+PTUI.loadHands = loadHands;
 
 // ---------- Training ----------
 var quizState = null;
@@ -5372,14 +6158,19 @@ views.analyse = function (el, arg) {
   el.innerHTML = '<div class="panel"><h2>Handhistorie</h2><p class="small">Gespeichert werden bis zu 3.000 eigene Hände mit Entscheidungen, Empfehlungen und Bewertungen – lokal in diesem Browser.</p>' +
     '<div class="toolbar"><input type="search" id="hq" placeholder="Suche: Karten (z. B. AK), Gegner, Board" aria-label="Suche"><select id="hk" aria-label="Filter"><option value="alle">alle Hände</option><option value="fehler">mit Fehlern</option><option value="showdown">mit Showdown</option><option value="training">nur Training</option><option value="gewonnen">gewonnen</option><option value="verloren">verloren</option></select>' +
     '<select id="hp" aria-label="Position"><option value="">alle Positionen</option>' + PT.stats.POSITIONS.map(function (p) { return '<option>' + p + '</option>'; }).join('') + '</select>' +
-    '<button class="btn" type="button" data-hx="json">Export JSON</button><button class="btn" type="button" data-hx="txt">Export Text</button></div><div id="hlist" class="scroll"><p class="muted">Lade …</p></div></div><div id="hreplay"></div>';
+    '<button class="btn" type="button" data-hx="json">Export JSON</button><button class="btn" type="button" data-hx="txt">Export Text</button>' +
+    '<button class="btn" type="button" data-hx="bench" title="Je Entscheidung: Spielzustand zum Entscheidungszeitpunkt, Coach-Empfehlung, Alternativen mit EV und Unsicherheit; spätere Informationen getrennt">Export Benchmark</button></div>' +
+    '<p class="small" id="hskip" hidden></p><div id="hlist" class="scroll"><p class="muted">Lade …</p></div></div><div id="hreplay"></div>';
   $('hq').value = hist.filter.q; $('hk').value = hist.filter.kind; $('hp').value = hist.filter.pos;
-  function load() { return Store.all('hands').then(function (l) { l.sort(function (a, b) { return b.ts - a.ts; }); hist.list = l; renderList(); if (arg) { var h = l.filter(function (x) { return x.id === arg; })[0]; if (h) openReplay(h); } }); }
+  function load() { return loadHands().then(function (l) {
+    if (l.skipped) { var sk = $('hskip'); if (sk) { sk.hidden = false; sk.textContent = l.skipped + ' beschädigte Einträge in der gespeicherten Handhistorie werden nicht angezeigt.'; } }
+    l.sort(function (a, b) { return b.ts - a.ts; }); hist.list = l; renderList(); if (arg) { var h = l.filter(function (x) { return x.id === arg; })[0]; if (h) openReplay(h); } }); }
   ['hq', 'hk', 'hp'].forEach(function (id) { $(id).addEventListener(id === 'hq' ? 'input' : 'change', function () { hist.filter = { q: $('hq').value, kind: $('hk').value, pos: $('hp').value }; renderList(); }); });
   el.onclick = function (e) {
     var r = e.target.closest('tr[data-hid]'); if (r) { var h = hist.list.filter(function (x) { return x.id === r.getAttribute('data-hid'); })[0]; if (h) openReplay(h); return; }
     var x = e.target.closest('[data-hx]'); if (x) { var f = filtered(), kind = x.getAttribute('data-hx');
       if (kind === 'json') H.download('PokerTrainer_Haende_' + H.today() + '.json', JSON.stringify({ format: 'PokerTrainer-Hands', version: 1, app: PT.VERSION, count: f.length, hands: f }));
+      else if (kind === 'bench') { var bt = PT.benchmark.exportText(f), bo = JSON.parse(bt); H.download('PokerTrainer_Benchmark_v' + PT.benchmark.SCHEMA + '_' + H.today() + '.json', bt); H.toast('Benchmark-Export: ' + bo.count + ' Entscheidungen aus ' + bo.hands + ' Händen.'); }
       else H.download('PokerTrainer_Haende_' + H.today() + '.txt', f.map(PT.training.handText).join('\n\n'), 'text/plain');
       return; }
     var st = e.target.closest('[data-step]'); if (st) { stepTo(st.getAttribute('data-step')); return; }
@@ -5387,7 +6178,6 @@ views.analyse = function (el, arg) {
     var rd = e.target.closest('[data-redo]'); if (rd) { redoDecision(+rd.getAttribute('data-redo')); return; }
     var rc = e.target.closest('[data-rchoice]'); if (rc) { chooseRedo(+rc.getAttribute('data-rchoice')); return; }
   };
-  el.onkeydown = function (e) { var r = e.target.closest('tr[data-hid]'); if (r && e.key === 'Enter') r.click(); };
   load();
 };
 function filtered() {
@@ -5413,7 +6203,7 @@ function renderList() {
   box.innerHTML = '<p class="small">' + l.length + ' Hände</p><div class="scroll"><table class="grid hlist"><thead><tr><th>Zeit</th><th>Hand</th><th>Pos.</th><th>Karten</th><th>Board</th><th class="n">Ergebnis</th><th>Bewertung</th></tr></thead><tbody>' +
     l.slice(0, 300).map(function (h) {
       var worst = h.decisions.reduce(function (m, d) { return !m || d.score < m.score ? d : m; }, null);
-      return '<tr class="click" tabindex="0" data-hid="' + esc(h.id) + '"><td>' + esc(H.dateTxt(h.ts)) + '</td><td>#' + h.no + (h.training ? ' <span class="pill">' + esc((PT.training.SCEN[h.training] || {}).name || 'Training') + '</span>' : '') + '</td><td>' + esc(h.seats[h.heroSeat].pos) + '</td><td><span class="cards">' + H.cardsHtml(h.hero, 'sm') + '</span></td><td><span class="cards">' + H.cardsHtml(h.board.join(''), 'sm') + '</span></td><td class="n ' + (h.heroNet > 0 ? 'good' : h.heroNet < 0 ? 'bad' : '') + '">' + U.fmtSigned(h.heroNet) + '</td><td>' + (worst ? H.gradeHtml({ grade: worst.grade, simple: PT.coach.GRADE_SIMPLE[worst.grade], lossBB: null }) : '–') + '</td></tr>';
+      return '<tr class="click" data-hid="' + esc(h.id) + '"><td><button type="button" class="linkbtn" aria-label="Hand #' + int(h.no) + ' vom ' + esc(H.dateTxt(h.ts)) + ' öffnen">' + esc(H.dateTxt(h.ts)) + '</button></td><td>#' + int(h.no) + (h.training ? ' <span class="pill">' + esc((PT.training.SCEN[h.training] || {}).name || 'Training') + '</span>' : '') + '</td><td>' + esc(h.seats[h.heroSeat].pos) + '</td><td><span class="cards">' + H.cardsHtml(h.hero, 'sm') + '</span></td><td><span class="cards">' + H.cardsHtml(h.board.join(''), 'sm') + '</span></td><td class="n ' + (h.heroNet > 0 ? 'good' : h.heroNet < 0 ? 'bad' : '') + '">' + U.fmtSigned(h.heroNet) + '</td><td>' + (worst ? H.gradeHtml({ grade: worst.grade, simple: PT.coach.GRADE_SIMPLE[worst.grade], lossBB: null }) : '–') + '</td></tr>';
     }).join('') + '</tbody></table></div>' + (l.length > 300 ? '<p class="muted">Es werden die neuesten 300 angezeigt; nutze Filter oder Export.</p>' : '');
 }
 function openReplay(h) {
@@ -5423,7 +6213,7 @@ function openReplay(h) {
   var rp = PT.rules.replay(h, all);
   hist.sel = { h: h, states: rp.states, shownHoles: shownHoles }; hist.step = 0; hist.redo = null; hist.later = false;
   renderReplay();
-  var r = $('hreplay'); if (r) r.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  var r = $('hreplay'); if (r) r.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
 }
 function stepTo(cmd) {
   var n = hist.sel.states.length - 1;
@@ -5448,12 +6238,12 @@ function renderReplay() {
       '<span class="hole">' + hole + '</span>' + (h.button === i ? '<span class="chipmark d">D</span>' : '') + '</div></div>' + (p.bet > 0 ? '<span class="bet b' + i + '">' + fmt(p.bet) + '</span>' : '');
   }
   var pots = st.pots.length > 1 ? st.pots.map(function (p2, k) { return '<span class="pot' + (k ? ' side' : '') + '">' + (k ? 'Side Pot ' + k + ' ' : 'Main Pot ') + fmt(p2.amount) + '</span>'; }).join('') : '<span class="pot">Pot ' + fmt(st.pot) + '</span>';
-  var html = '<div class="panel replay"><h2>Replayer – Hand #' + h.no + ' (' + esc(H.dateTxt(h.ts)) + ')</h2>' +
+  var html = '<div class="panel replay"><h2>Replayer – Hand #' + int(h.no) + ' (' + esc(H.dateTxt(h.ts)) + ')</h2>' +
     '<div class="table rtable"><div class="felt"></div><div class="center"><div class="pots">' + pots + '</div><div class="board">' + st.board.map(function (c) { return H.cardHtml(c); }).join('') + '</div></div>' + seats + '</div>' +
     '<div class="rcontrols"><button class="btn" type="button" data-step="first" aria-label="Zum Anfang">⏮</button><button class="btn" type="button" data-step="prev" aria-label="Schritt zurück">◀</button>' +
     '<button class="btn" type="button" data-step="play" aria-label="Abspielen">▶︎ Abspielen</button><button class="btn" type="button" data-step="pause" aria-label="Pause">⏸</button>' +
     '<button class="btn" type="button" data-step="next" aria-label="Schritt vor">▶</button><button class="btn" type="button" data-step="last" aria-label="Zum Ende">⏭</button>' +
-    '<span class="small">Schritt ' + (hist.step + 1) + ' von ' + hist.sel.states.length + ': ' + esc(st.label) + '</span>' +
+    '<span class="small" role="status">Schritt ' + (hist.step + 1) + ' von ' + hist.sel.states.length + ': ' + esc(st.label) + '</span>' +
     '<button class="btn" type="button" data-later="1" aria-pressed="' + hist.later + '">' + (hist.later ? 'Später bekannte Infos ausblenden' : 'Später bekannte Infos einblenden') + '</button></div>';
   html += '<div class="split"><div class="box"><h4>Damals bekannt</h4><p class="small">Deine Karten, Board bis hier, alle Aktionen bis hier' + (dec && dec.snap ? ', Gegnerwerte zum Entscheidungszeitpunkt' : '') + '.</p>' +
     (dec ? '<p>Nächste Aktion: <b>deine Entscheidung</b> – gespielt: ' + esc(dec.chosen) + ', empfohlen: ' + esc(dec.rec) + '</p><p>' + H.gradeHtml({ grade: dec.grade, simple: PT.coach.GRADE_SIMPLE[dec.grade], loss: dec.loss, lossBB: dec.loss / h.bb }) + '</p>' +
@@ -5499,7 +6289,7 @@ views.ranges = function (el, arg) {
     '<label class="mini">Stack (BB) <input id="rb" type="number" min="3" max="30" value="' + rg.bb + '" style="width:80px"></label>' +
     '<label class="mini"><input id="rip" type="checkbox"' + (rg.ip ? ' checked' : '') + '> in Position</label></div>' +
     '<div class="legend"><span><i style="background:var(--raise)"></i>Raise</span><span><i style="background:var(--call)"></i>Call</span><span><i style="background:var(--fold)"></i>Fold</span><span><i style="background:linear-gradient(var(--raise) 50%,var(--call) 50%)"></i>gemischte Strategie</span></div>' +
-    '<div class="grid2"><div><div class="matrix" id="mx" role="grid" aria-label="Range-Matrix"></div><p class="small" id="mxsum"></p></div><div class="box" id="mxinfo"><p class="muted">Wähle eine Hand für Details.</p></div></div></div>';
+    '<div class="grid2"><div><div class="matrix" id="mx" role="group" aria-label="Range-Matrix, 169 Starthandklassen. Pfeiltasten wechseln die Hand, Enter zeigt Details." aria-describedby="mxsum"></div><p class="small" id="mxsum"></p></div><div class="box" id="mxinfo" aria-live="polite"><p class="muted">Wähle eine Hand für Details.</p></div></div></div>';
   el.innerHTML = html;
   function draw() {
     rg.type = $('rt').value; rg.pos = $('rp').value; rg.opener = $('ro').value; rg.bb = Math.max(3, Math.min(30, +$('rb').value || 15)); rg.ip = $('rip').checked;
@@ -5507,7 +6297,8 @@ views.ranges = function (el, arg) {
     for (var r = 0; r < 13; r++) for (var c = 0; c < 13; c++) {
       var i = cellIdx(r, c), d = data.rows[i], name = PT.hands.className(i);
       var fill = '<span class="fill"><i style="height:' + (d.fold * 100) + '%;background:var(--fold)"></i><i style="height:' + (d.call * 100) + '%;background:var(--call)"></i><i style="height:' + (d.raise * 100) + '%;background:var(--raise)"></i></span>';
-      cells += '<button class="mcell" type="button" role="gridcell" data-ci="' + i + '" aria-pressed="' + (rg.sel === i) + '" aria-label="' + name + ': Raise ' + Math.round(d.raise * 100) + ' %, Call ' + Math.round(d.call * 100) + ' %">' + fill + '<span class="lbl">' + name + '</span></button>';
+      var focusCell = rg.sel != null ? rg.sel === i : i === 168;
+      cells += '<button class="mcell" type="button" data-ci="' + i + '" data-r="' + r + '" data-c="' + c + '" tabindex="' + (focusCell ? '0' : '-1') + '" aria-pressed="' + (rg.sel === i) + '" aria-label="' + name + ': Raise ' + Math.round(d.raise * 100) + ' %, Call ' + Math.round(d.call * 100) + ' %, Fold ' + Math.round(d.fold * 100) + ' %">' + fill + '<span class="lbl" aria-hidden="true">' + name + '</span></button>';
     }
     $('mx').innerHTML = cells;
     $('mxsum').textContent = data.summary;
@@ -5525,7 +6316,18 @@ views.ranges = function (el, arg) {
       '<p>Raise ' + pct(d.raise) + ' · Call ' + pct(d.call) + ' · Fold ' + pct(d.fold) + '</p><p class="small">' + esc(reason.join(' ')) + '</p><p class="small">' + esc(data.note) + '</p>';
   }
   ['rt', 'rp', 'ro', 'rb', 'rip'].forEach(function (id) { $(id).addEventListener('change', draw); });
-  $('mx').addEventListener('click', function (e) { var b = e.target.closest('[data-ci]'); if (!b) return; rg.sel = +b.getAttribute('data-ci'); draw(); });
+  $('mx').addEventListener('click', function (e) { var b = e.target.closest('[data-ci]'); if (!b) return; rg.sel = +b.getAttribute('data-ci'); draw(); var nb = $('mx').querySelector('[data-ci="' + rg.sel + '"]'); if (nb) nb.focus(); });
+  // Tastatur: ein Tab-Stopp für die Matrix, Pfeiltasten/Pos1/Ende bewegen den Fokus (Roving Tabindex)
+  $('mx').addEventListener('keydown', function (e) {
+    var b = e.target.closest('[data-ci]'); if (!b) return;
+    var r = +b.getAttribute('data-r'), c = +b.getAttribute('data-c'), k = e.key;
+    if (k === 'ArrowRight') c = Math.min(12, c + 1); else if (k === 'ArrowLeft') c = Math.max(0, c - 1);
+    else if (k === 'ArrowDown') r = Math.min(12, r + 1); else if (k === 'ArrowUp') r = Math.max(0, r - 1);
+    else if (k === 'Home') c = 0; else if (k === 'End') c = 12; else return;
+    e.preventDefault();
+    var nb = $('mx').querySelector('[data-r="' + r + '"][data-c="' + c + '"]'); if (!nb) return;
+    b.setAttribute('tabindex', '-1'); nb.setAttribute('tabindex', '0'); nb.focus();
+  });
   draw();
 };
 function rangeData() {
@@ -5571,7 +6373,7 @@ views.gegner = function (el) {
     $('glist').innerHTML = rows.length ? '<table class="grid"><thead><tr><th>Name</th><th class="n">Hände</th><th class="n">VPIP</th><th class="n">PFR</th><th class="n">3-Bet</th><th class="n">AF</th><th class="n">C-Bet</th><th class="n">WTSD</th><th>Typ</th><th>Belastbarkeit</th><th>zuletzt</th></tr></thead><tbody>' +
       rows.slice(0, 400).map(function (r) {
         var p = PT.stats.profile(r), af = p.af;
-        return '<tr class="click" tabindex="0" data-opp="' + esc(r.id) + '"><td>' + esc(r.name) + '</td><td class="n">' + r.hands + '</td><td class="n">' + V(p.vpip) + '</td><td class="n">' + V(p.pfr) + '</td><td class="n">' + V(p.threeBet) + '</td><td class="n">' + (af == null ? 'unbekannt' : af === Infinity ? '∞' : num(af)) +
+        return '<tr class="click" data-opp="' + esc(r.id) + '"><td><button type="button" class="linkbtn" aria-label="' + esc(r.name) + ': alle Werte anzeigen">' + esc(r.name) + '</button></td><td class="n">' + int(r.hands) + '</td><td class="n">' + V(p.vpip) + '</td><td class="n">' + V(p.pfr) + '</td><td class="n">' + V(p.threeBet) + '</td><td class="n">' + (af == null ? 'unbekannt' : af === Infinity ? '∞' : num(af)) +
           '</td><td class="n">' + V(p.cbetFlop) + '</td><td class="n">' + V(p.wtsd) + '</td><td>' + esc(p.typ) + '</td><td>' + esc(p.bel) + '</td><td>' + esc(H.dateTxt(r.lastSeen)) + '</td></tr>';
       }).join('') + '</tbody></table>' + (rows.length > 400 ? '<p class="muted">' + (rows.length - 400) + ' weitere Einträge, bitte filtern.</p>' : '') : '<p class="muted">Keine Einträge.</p>';
   }
@@ -5586,15 +6388,19 @@ views.gegner = function (el) {
     if (g.getAttribute('data-g') === 'export') { var txt = PT.stats.dbExport(S.db, new Date().toISOString()); H.download('PokerTrainer_Datenbank_' + H.today() + '.json', txt); H.toast('Datenbank mit ' + list.length + ' Gegnern exportiert.'); }
     else pickFile(function (text, name) { importText(text, name, 'db'); });
   };
-  el.onkeydown = function (e) { var r = e.target.closest('tr[data-opp]'); if (r && e.key === 'Enter') r.click(); };
 };
+var MAX_FILE = 60 * 1024 * 1024;
 function pickFile(cb) {
+  if (!PTUI.canWrite()) return;
   if (S.hand && !S.hand.done) { H.toast('Import ist nur zwischen zwei Händen möglich.'); return; }
   var f = $('fileIn'); f.value = '';
   f.onchange = function () {
     var file = f.files && f.files[0]; if (!file) return;
-    if (file.size > 60 * 1024 * 1024) { H.openModal('Import abgelehnt', '<p>Die Datei ist zu groß.</p>'); return; }
+    // Größe vor dem Lesen prüfen: zu große Dateien werden nie eingelesen
+    if (file.size > MAX_FILE) { H.openModal('Import abgelehnt', '<p>Die Datei ist zu groß (' + esc(String(Math.round(file.size / 1048576))) + ' MB, erlaubt sind höchstens 60 MB).</p><p>Die bestehenden Daten bleiben unverändert.</p>'); return; }
+    if (!file.size) { H.openModal('Import abgelehnt', '<p>Die Datei ist leer.</p><p>Die bestehenden Daten bleiben unverändert.</p>'); return; }
     var rd = new FileReader();
+    H.openModal('Datei wird geprüft …', '<p role="status">Die Datei <b>' + esc(file.name) + '</b> wird gelesen und geprüft. Die Oberfläche bleibt bedienbar.</p>');
     rd.onload = function () { cb(String(rd.result || ''), file.name); };
     rd.onerror = function () { H.openModal('Import abgelehnt', '<p>Die Datei konnte nicht gelesen werden. Die bestehenden Daten bleiben unverändert.</p>'); };
     rd.readAsText(file);
@@ -5602,16 +6408,26 @@ function pickFile(cb) {
   f.click();
 }
 function importText(text, fname, expect) {
-  var r = PT.stats.dbImport(text);
-  if (!r.ok) { H.openModal('Import abgelehnt', '<p>' + esc(r.error) + '</p><p>Die bestehenden Daten bleiben unverändert.</p>'); return; }
+  // Prüfung im Web Worker: große Dateien blockieren die Oberfläche nicht
+  PTUI.offThread('import', { text: text }, 90000).then(function (r) { showImport(r, fname); }, function (e) {
+    H.openModal('Import abgelehnt', '<p>Die Datei konnte nicht geprüft werden (' + esc((e && e.message) || e) + ').</p><p>Die bestehenden Daten bleiben unverändert.</p>');
+  });
+}
+function showImport(r, fname) {
+  if (!r || !r.ok) { H.openModal('Import abgelehnt', '<p>' + esc(r ? r.error : 'unbekannter Fehler') + '</p><p>Die bestehenden Daten bleiben unverändert.</p>'); return; }
   var what = r.kind === 'backup' ? 'eine vollständige Sicherung mit ' + r.count + ' Gegnern' + (r.hands ? ', ' + r.hands.length + ' Händen' : '') + (r.learning ? ' und Lerndaten' : '') : r.count + ' Gegner' + (r.migrated ? ' (Format aus Entwurf 2, wird umgewandelt)' : '');
-  H.openModal('Import bestätigen', '<p>Die Datei <b>' + esc(fname) + '</b> ist unbeschädigt und enthält ' + esc(what) + '.</p><p>Die aktuellen Daten werden ersetzt. Vorher wird automatisch eine Sicherung der aktuellen Daten heruntergeladen.</p>' +
+  var raw = r.raw ? '<p><b>Rohsicherung:</b> ' + esc(String(r.raw.opps)) + ' Gegner und ' + esc(String(r.raw.hands)) + ' Hände sind gültig und werden übernommen; übersprungen wurden ' + esc(String(r.raw.oppsSkipped)) + ' beschädigte Gegner-Einträge und ' + esc(String(r.raw.handsSkipped)) + ' beschädigte Hände. Lerndaten: ' + esc(r.raw.learning) + '.</p>' : '';
+  H.openModal('Import bestätigen', '<p>Die Datei <b>' + esc(fname) + '</b> ' + (r.raw ? 'ist eine Rohsicherung und enthält nach der Prüfung ' : 'ist unbeschädigt und enthält ') + esc(what) + '.</p>' + raw + '<p>Die aktuellen Daten werden ersetzt. Vorher wird automatisch eine Sicherung der aktuellen Daten heruntergeladen.</p>' +
     '<div class="btnrow"><button class="btn primary2" type="button" id="impOk">Importieren</button><button class="btn" type="button" id="impNo">Abbrechen</button></div>');
   $('impNo').onclick = H.closeModal;
+  // Lernprofil der Datei wird vor dem Ersetzen berechnet (Fehler → nichts geändert); applyImport nutzt es danach.
+  // (Bis 2.0.1 war newProf nur im Klick-Handler deklariert: Der Import einer vollständigen Sicherung brach mit ReferenceError ab.)
+  var newProf = null;
   $('impOk').onclick = function () {
+    if (!PTUI.canWrite()) { H.closeModal(); return; }
     if (S.hand && !S.hand.done) { H.closeModal(); H.toast('Import ist nur zwischen zwei Händen möglich.'); return; }
     var btn = $('impOk'); btn.disabled = true; btn.textContent = 'Sichere aktuelle Daten …';
-    var newProf = null;
+    newProf = null;
     try { if (r.kind === 'backup' && r.learning) newProf = PT.training.profile(r.learning); }
     catch (e) { H.openModal('Import abgelehnt', '<p>Die Lerndaten der Datei lassen sich nicht auswerten.</p><p>Die bestehenden Daten bleiben unverändert.</p>'); return; }
     // Erst wenn die Sicherung der bisherigen Daten fertig erzeugt ist, werden die Daten ersetzt.
@@ -5627,13 +6443,16 @@ function importText(text, fname, expect) {
     }
     PT.session.syncStatuses(S.table, S.db);
     p.push(PTUI.persistAllOpps(), PTUI.persist([]));
-    Promise.all(p).then(function () { H.closeModal(); H.toast('Import abgeschlossen: ' + r.count + ' Gegner übernommen.'); PTUI.route(); });
+    PTUI.track(Promise.all(p)).then(function () { H.closeModal(); H.toast('Import abgeschlossen: ' + r.count + ' Gegner übernommen.'); PTUI.route(); },
+      function (e) { H.openModal('Import unvollständig', '<p>Beim Speichern ist ein Fehler aufgetreten (' + esc((e && e.message) || e) + '). Die vorher heruntergeladene Sicherung enthält den alten Stand.</p>'); });
   }
 }
 function backupNow(tag) {
-  return Store.all('hands').then(function (hands) {
+  // Nur gültige Hände: Eine Sicherung mit beschädigten Einträgen ließe sich nicht wieder importieren (dafür gibt es die Rohsicherung)
+  return loadHands().then(function (hands) {
     var txt = PT.stats.backupExport({ opponents: PT.stats.dbList(S.db), hero: S.heroRec, hands: hands, learning: S.learning, settings: S.settings, table: S.table }, new Date().toISOString());
     H.download('Sicherung_PokerTrainer_' + H.today() + (tag ? '_' + tag : '') + '_Datenbank.json', txt);
+    return hands.skipped || 0;
   });
 }
 PTUI.backupNow = backupNow;
@@ -5641,7 +6460,7 @@ PTUI.backupNow = backupNow;
 // ---------- Fortschritt ----------
 views.fortschritt = function (el) {
   var prof = S.prof = PT.training.profile(S.learning), all = prof.all, L = S.learning;
-  Store.all('hands').then(function (hands) {
+  loadHands().then(function (hands) {
     var normal = hands.filter(function (h) { return !h.training; }), bb = S.table.cfg.bb;
     var res = normal.map(function (h) { return h.heroNet / h.bb; }), n = res.length, m = n ? res.reduce(function (a, b) { return a + b; }, 0) / n : 0;
     var sd2 = n > 1 ? Math.sqrt(res.reduce(function (a, b) { return a + (b - m) * (b - m); }, 0) / (n - 1)) : 0, ci = n > 1 ? 1.96 * sd2 / Math.sqrt(n) * 100 : null;
@@ -5674,7 +6493,7 @@ function levelName(l) { return { einsteiger: 'Einsteiger', fortgeschritten: 'For
 function tile(v, label, cls) { return '<div class="box stattile"><b class="' + (cls || '') + '">' + v + '</b><span>' + label + '</span></div>'; }
 function meterRaw(f) { return '<div class="meter warn"><i style="width:' + Math.round(100 * Math.max(0, Math.min(1, f))) + '%"></i></div>'; }
 function table3(rows, train) {
-  return '<div class="scroll"><table class="grid"><thead><tr><th></th><th class="n">n</th><th class="n">Qualität</th><th class="n">Ø EV-Verlust</th>' + (train ? '<th></th>' : '') + '</tr></thead><tbody>' + rows.map(function (r) {
+  return '<div class="scroll"><table class="grid"><thead><tr><th scope="col"><span class="sr">Bereich</span></th><th class="n">n</th><th class="n">Qualität</th><th class="n">Ø EV-Verlust</th>' + (train ? '<th><span class="sr">Aktion</span></th>' : '') + '</tr></thead><tbody>' + rows.map(function (r) {
     var s = r[1] || { n: 0 };
     return '<tr><td>' + esc(r[0]) + '</td><td class="n">' + s.n + '</td><td class="n ' + scoreColor(s.n >= 5 ? s.smooth : null) + '">' + (s.n ? n0(s.smooth) : '–') + '</td><td class="n">' + (s.n ? num(s.loss, 2) + ' BB' : '–') + '</td>' + (train ? '<td><button class="btn" type="button" data-train="' + r[2] + '">Training</button></td>' : '') + '</tr>';
   }).join('') + '</tbody></table></div>';
@@ -5718,7 +6537,7 @@ views.einstellungen = function (el) {
     '<div class="row"><label for="cSr">Sprechtempo</label><input id="cSr" type="range" min="0.7" max="1.5" step="0.05" value="' + st.speechRate + '"></div>' +
     '<div class="row"><label for="cRh">Hände speichern</label><input id="cRh" type="checkbox"' + (st.recordHands ? ' checked' : '') + '></div></form></div></div>' +
     '<div class="panel"><h2>Daten</h2><p class="small">Alle Daten liegen nur in diesem Browser (' + (Store.mode() === 'idb' ? 'IndexedDB' : Store.mode() === 'ls' ? 'localStorage' : 'nur im Arbeitsspeicher') + '). Andere Browser oder Geräte haben eigene, getrennte Daten.</p>' +
-    '<div class="btnrow"><button class="btn" type="button" id="dBk">Vollständige Sicherung exportieren</button><button class="btn" type="button" id="dIm">Sicherung importieren</button><button class="btn danger" type="button" id="dDel">Alle Daten löschen</button></div></div>';
+    '<div class="btnrow"><button class="btn" type="button" id="dBk">Vollständige Sicherung exportieren</button><button class="btn" type="button" id="dIm">Sicherung importieren</button><button class="btn" type="button" id="dRaw" title="Alle lokalen Daten unverändert, auch beschädigte Einträge">Rohsicherung exportieren</button><button class="btn danger" type="button" id="dDel">Alle Daten löschen</button></div></div>';
   function onT(id, fn) { $(id).addEventListener('change', fn); }
   onT('cTm', function () { PTUI.setSetting('tipMode', $('cTm').value); });
   onT('cSm', function () { PTUI.setSetting('smode', $('cSm').value); });
@@ -5732,6 +6551,7 @@ views.einstellungen = function (el) {
   onT('cSr', function () { PTUI.setSetting('speechRate', +$('cSr').value); });
   onT('cRh', function () { PTUI.setSetting('recordHands', $('cRh').checked); });
   $('sApply').addEventListener('click', function () {
+    if (!PTUI.canWrite()) return;
     if (S.hand && !S.hand.done) { H.toast('Bitte erst die laufende Hand beenden.'); return; }
     var bl = $('sBl').value.split('/').map(Number), cfg = PT.session.defaultConfig();
     cfg.sb = bl[0]; cfg.bb = bl[1]; cfg.startBB = Math.max(10, Math.min(1000, Math.round(+$('sSt').value || 100)));
@@ -5747,11 +6567,16 @@ views.einstellungen = function (el) {
   });
   $('dBk').addEventListener('click', function () { backupNow('').then(function () { H.toast('Sicherung exportiert.'); }); });
   $('dIm').addEventListener('click', function () { pickFile(function (t, n) { importText(t, n, 'backup'); }); });
+  $('dRaw').addEventListener('click', function () { if (window.PTRecovery) window.PTRecovery.backup().then(function (n) { H.toast('Rohsicherung „' + n + '“ exportiert.'); }, function (e) { H.toast('Rohsicherung fehlgeschlagen: ' + ((e && e.message) || e)); }); });
   $('dDel').addEventListener('click', function () {
+    if (!PTUI.canWrite()) return;
     H.openModal('Alle Daten löschen?', '<p>Gegnerdatenbank, Handhistorie, Lernfortschritt und Einstellungen in diesem Browser werden <b>unwiderruflich gelöscht</b>. Vorher wird eine Sicherung heruntergeladen.</p><div class="btnrow"><button class="btn danger" type="button" id="delOk">Endgültig löschen</button><button class="btn" type="button" id="delNo">Abbrechen</button></div>');
     $('delNo').onclick = H.closeModal;
     $('delOk').onclick = function () {
-      backupNow('vor-Loeschen').then(function () { return Store.clearAll(); }).then(function () { location.hash = '#tisch'; location.reload(); });
+      $('delOk').disabled = true;
+      // Beschädigte Einträge fehlen in der regulären Sicherung – dann zusätzlich die Rohsicherung aller Daten
+      backupNow('vor-Loeschen').then(function (skipped) { return (skipped || S.db.skipped) && window.PTRecovery ? window.PTRecovery.backup() : null; }).then(function () { return PTUI.flushWrites(3000); }).then(function () { return Store.clearAll(); }).then(function () { location.hash = '#tisch'; location.reload(); },
+        function (e) { H.openModal('Nicht gelöscht', '<p>Die Sicherung oder das Löschen ist fehlgeschlagen (' + esc((e && e.message) || e) + '). Es wurde nichts gelöscht, solange die Sicherung nicht erstellt war.</p>'); });
     };
   });
 };

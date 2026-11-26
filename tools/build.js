@@ -9,6 +9,9 @@ const read = f => fs.readFileSync(path.join(root, f), 'utf8');
 const index = read('index.html');
 const scripts = [...index.matchAll(/<script src="([^"?]+)\?v=[^"]*"><\/script>/g)].map(m => m[1]);
 const engine = scripts.filter(s => s.includes('/engine/')), ui = scripts.filter(s => s.includes('/ui/'));
+// Startüberwachung (assets/js/recovery.js) läuft als erstes Skript im <head>, unabhängig von Engine und Oberfläche
+const guard = scripts.filter(s => !s.includes('/engine/') && !s.includes('/ui/'));
+if (guard.join() !== 'assets/js/recovery.js') throw new Error('Unerwartete Skripte außerhalb von engine/ und ui/: ' + guard.join(', '));
 // 1) Versionsnummern in index.html und worker.js prüfen
 if (!index.includes('?v=' + VERSION)) throw new Error('index.html: Version passt nicht zu PT.VERSION ' + VERSION);
 // 2) Service Worker
@@ -73,9 +76,11 @@ let single = index
   .replace(/<meta property="og:[^>]*>\n/g, '').replace(/<meta name="twitter:[^>]*>\n/g, '')
   .replace('<link rel="stylesheet" href="assets/css/app.css?v=' + VERSION + '">', '<link rel="icon" href="' + favicon + '">\n<style>\n' + css + '\n</style>')
   .replace('<img src="assets/icons/favicon.svg"', '<img src="' + favicon + '"')
+  .replace('<script src="assets/js/recovery.js?v=' + VERSION + '"></script>', () => '<script>\n' + esc(read('assets/js/recovery.js')) + '\n</script>')
   .replace(/<!--ENGINE-->[\s\S]*<!--\/ENGINE-->/, () => '<script>window.PT_INLINE = true;</script>\n<script id="pt-engine">\n' + esc(engineSrc) + '\n</script>\n<script id="pt-worker" type="text/plain">\n' + esc(workerSrc) + '\n</script>')
   .replace(/<!--UI-->[\s\S]*<!--\/UI-->/, () => '<script>\n' + esc(uiSrc) + '\n</script>')
   .replace('<title>PokerTrainer 2.0', '<title>PokerTrainer 2.0 (Offline-Datei)');
+if (!/PTRecovery/.test(single)) throw new Error('Einzeldatei ohne Startüberwachung');
 if (/src="assets\//.test(single) || /href="assets\//.test(single)) throw new Error('Einzeldatei verweist noch auf externe Dateien');
 fs.mkdirSync(path.join(root, 'dist'), { recursive: true });
 fs.writeFileSync(path.join(root, 'dist', 'PokerTrainer_' + VERSION.split('.').slice(0, 2).join('.') + '.html'), single);

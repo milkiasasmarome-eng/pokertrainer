@@ -1,16 +1,24 @@
-/* PokerTrainer 2.0 – Browser-Tests (End-to-End) mit Playwright und Chrome.
+/* PokerTrainer 2.x – Browser-Tests (End-to-End) mit Playwright und Chrome/Chromium.
    Aufruf: node tests/e2e.js [Basis-URL]   (Standard: http://127.0.0.1:8765/)
    Voraussetzung: statischer Server im Projektordner, z. B. python3 -m http.server 8765 --bind 127.0.0.1
-   Ergebnis: tests/results/e2e.json und Screenshots in tests/results/screens/ */
+   Werkzeuge: npm --prefix tests ci (Playwright, axe-core). Browser: CHROME=Pfad, CHROME= (leer) für das Chromium von Playwright.
+   Teile: diese Datei (Grundfunktionen), tests/e2e/robust.js (Start, Sicherheit, Daten), tests/e2e/a11y.js (Barrierefreiheit).
+   Ergebnis: tests/results/e2e.json, Screenshots in tests/results/screens/, Barrierefreiheit in tests/results/a11y/ */
 'use strict';
-const path = require('path'), fs = require('fs');
-const { chromium } = require(process.env.PLAYWRIGHT || '/opt/npm-tools/node_modules/playwright');
-const BASE = process.argv[2] || 'http://127.0.0.1:8765/';
+const path = require('path'), fs = require('fs'), http = require('http');
+const LOCAL_PW = path.join(__dirname, 'node_modules', 'playwright');
+const { chromium } = require(process.env.PLAYWRIGHT || (fs.existsSync(LOCAL_PW) ? LOCAL_PW : '/opt/npm-tools/node_modules/playwright'));
+const CHROME = process.env.CHROME !== undefined ? (process.env.CHROME || undefined) : (fs.existsSync('/usr/bin/google-chrome') ? '/usr/bin/google-chrome' : undefined);
+const ONLY = (process.argv.find(a => a.startsWith('--nur=')) || '').slice(6);  // z. B. --nur=robust,a11y (nur Teilbereiche)
+const BASE = process.argv.slice(2).find(a => !a.startsWith('--')) || 'http://127.0.0.1:8765/';
+const ORIGIN = new URL(BASE).origin;
 const OUT = path.join(__dirname, 'results'), SHOTS = path.join(OUT, 'screens');
 fs.mkdirSync(SHOTS, { recursive: true });
 const results = []; let cur = null;
+let PART = 'basis';
 async function test(name, fn) {
-  const t0 = Date.now(); cur = { name, ok: true, checks: 0, notes: [] };
+  if (ONLY && !ONLY.split(',').includes(PART)) return;
+  const t0 = Date.now(); cur = { name, part: PART, ok: true, checks: 0, notes: [] };
   try { await fn(); } catch (e) { cur.ok = false; cur.notes.push('Ausnahme: ' + String(e && e.message || e).split('\n')[0]); }
   cur.ms = Date.now() - t0; results.push(cur);
   console.log((cur.ok ? 'BESTANDEN ' : 'FEHLER    ') + name + ' (' + cur.checks + ' Prüfungen, ' + cur.ms + ' ms)' + (cur.ok ? '' : '\n   ' + cur.notes.join('\n   ')));
@@ -40,13 +48,34 @@ async function playHand(page, policy) {
   return false;
 }
 (async () => {
-  const browser = await chromium.launch({ executablePath: process.env.CHROME || '/usr/bin/google-chrome', args: ['--no-sandbox'] });
-  const consoleErrors = [];
+  const browser = await chromium.launch({ executablePath: CHROME, args: ['--no-sandbox'] });
+  const consoleErrors = [], foreign = [], requests = { n: 0 };
+  // Netzwerkprotokoll aller Seiten: Jede Anfrage muss an den eigenen Ursprung gehen (oder data:/blob:/file: der Einzeldatei)
+  function watchNet(page, tag, extraOrigin) {
+    page.on('request', r => {
+      const u = r.url(); requests.n++;
+      if (/^(data|blob|file):/.test(u) || u.startsWith(ORIGIN + '/') || (extraOrigin && u.startsWith(new URL(extraOrigin).origin + '/'))) return;
+      foreign.push(tag + ': ' + u);
+    });
+  }
   function watch(page, tag) {
+    watchNet(page, tag);
     page.on('console', m => { if (m.type() === 'error') consoleErrors.push(tag + ': ' + m.text()); });
     page.on('pageerror', e => consoleErrors.push(tag + ' pageerror: ' + e.message));
     page.on('response', r => { if (r.status() >= 400) consoleErrors.push(tag + ' HTTP ' + r.status() + ' ' + r.url()); });
   }
+  // Zweiter Server mit einer Kopie der Website für den Update-Test (sw.js wird dort verändert)
+  const UPD_DIR = path.join(require('os').tmpdir(), 'pt-update-site-' + process.pid), ROOT = path.join(__dirname, '..');
+  const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css', '.json': 'application/json', '.webmanifest': 'application/manifest+json', '.png': 'image/png', '.svg': 'image/svg+xml' };
+  function copySite() { fs.rmSync(UPD_DIR, { recursive: true, force: true }); ['index.html', 'manifest.webmanifest', 'sw.js', 'assets', 'dist'].forEach(f => fs.cpSync(path.join(ROOT, f), path.join(UPD_DIR, f), { recursive: true })); }
+  copySite();
+  const updServer = http.createServer((req, res) => {
+    const u = decodeURIComponent(new URL(req.url, 'http://x').pathname), f = path.join(UPD_DIR, u.endsWith('/') ? u + 'index.html' : u);
+    if (!f.startsWith(UPD_DIR) || !fs.existsSync(f) || fs.statSync(f).isDirectory()) { res.writeHead(404); res.end(); return; }
+    res.writeHead(200, { 'Content-Type': MIME[path.extname(f)] || 'application/octet-stream', 'Cache-Control': 'no-cache' }); fs.createReadStream(f).pipe(res);
+  });
+  await new Promise(r => updServer.listen(0, '127.0.0.1', r));
+  const UPDATE_BASE = 'http://127.0.0.1:' + updServer.address().port + '/';
   const ctx = await browser.newContext({ viewport: { width: 1366, height: 900 }, acceptDownloads: true });
   const page = await ctx.newPage(); watch(page, 'desktop');
   const perf = {};
@@ -370,12 +399,22 @@ async function playHand(page, policy) {
     await c.close();
   });
 
+  const H = { browser, BASE, OUT, SHOTS, test, ok, note, watch, watchNet, waitTurnOrNext, playHand, UPDATE_BASE,
+    resetUpdateSite: copySite,
+    bumpUpdateSite: () => { const f = path.join(UPD_DIR, 'sw.js'); fs.writeFileSync(f, fs.readFileSync(f, 'utf8').replace(/(CACHE = 'pokertrainer-' \+ VERSION \+ '-[0-9a-f]+)'/, "$1-neu'") + '/* Update ' + Date.now() + ' */\n'); } };
+  PART = 'robust'; await require('./e2e/robust.js')(H);
+  PART = 'a11y'; await require('./e2e/a11y.js')(H);
+  PART = 'basis';
+  await test('Netzwerk: keine Verbindung zu fremden Adressen (alle Seiten, alle Tests)', async () => {
+    ok(requests.n > 200, requests.n + ' Anfragen protokolliert');
+    ok(foreign.length === 0, 'fremde Adressen: ' + [...new Set(foreign)].slice(0, 8).join(' | '));
+  });
   await test('Konsole: keine JavaScript-Fehler, keine 404', async () => {
     const relevant = consoleErrors.filter(e => !/favicon|net::ERR_INTERNET_DISCONNECTED|ERR_FILE_NOT_FOUND.*sw\.js/.test(e));
     ok(relevant.length === 0, relevant.slice(0, 8).join(' | '));
   });
 
-  await browser.close();
+  await browser.close(); updServer.close(); fs.rmSync(UPD_DIR, { recursive: true, force: true });
   const out = { base: BASE, date: new Date().toISOString(), passed: results.filter(r => r.ok).length, failed: results.filter(r => !r.ok).length, perf, tests: results };
   fs.writeFileSync(path.join(OUT, /127\.0\.0\.1|localhost/.test(BASE) ? 'e2e.json' : 'e2e-live.json'), JSON.stringify(out, null, 1));
   console.log('\n' + out.passed + ' bestanden, ' + out.failed + ' fehlgeschlagen · ' + JSON.stringify(perf));

@@ -1,0 +1,10 @@
+{
+  "name": "pokertrainer-tests",
+  "private": true,
+  "description": "Nur Testwerkzeuge (Browser-Tests, Barrierefreiheitsprüfung). Nicht Teil der veröffentlichten App.",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "axe-core": "4.14.1",
+    "playwright": "1.63.0"
+  }
+}
