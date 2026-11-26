@@ -1,6 +1,6 @@
 # Testergebnisse (automatisch erzeugt)
 
-Erzeugt mit `node tools/report.js` aus `tests/results/*.json`. Stand: 2026-11-26 19:03 UTC.
+Erzeugt mit `node tools/report.js` aus `tests/results/*.json`. Stand: 2026-11-26 19:07 UTC.
 
 ## Node-Testsuite (vollständig)
 
@@ -132,5 +132,16 @@ Gemessen (lokaler Server, Desktop-Chrome ohne Drosselung): Ladezeit 190 ms, bere
 
 ## Live-Website
 
-**Nicht ausgeführt.**
+Geprüft am 2026-11-26T19:20:00Z unter https://milkiasasmarome-eng.github.io/pokertrainer/ (integrierter Browser der Claude-Desktop-App (Chromium), Desktop und Mobil-Emulation 375 × 812):
+
+- ✓ Seite lädt über HTTPS, App startklar, Version 2.0.1: PT.VERSION 2.0.1, Fußzeile 2.0.1
+- ✓ Update-Ablauf für bestehende Installation: Hinweis „Neue Version bereit“ erschien; während einer laufenden Hand wurde das Update zurückgestellt; nach der Hand aktiviert, alter Cache 2.0.0 gelöscht, neuer Cache pokertrainer-2.0.1-b029524f89e3
+- ✓ Service Worker kontrolliert die Seite, Manifest erreichbar: sw.js aktiv, manifest.webmanifest gültig
+- ✓ Hinweis im Tippfeld: „Faustregel, kein Solver-Ergebnis“
+- ✓ 6 Hände mit Coach im Modus „vorher“ gespielt, Empfehlungen ausgeführt: 11 Tipps, längste Anzeigezeit 413 ms, höchstens 2.100 Simulationen je Entscheidung
+- ✓ Preflop-Empfehlungen plausibel: QQ CO 3-Bet, 82o HJ Fold, A6s UTG Open 2 BB, T7o BB Fold, J8o SB Fold
+- ✓ Alle Bereiche öffnen (Training, Handhistorie, Ranges, Gegner, Fortschritt, Einstellungen, Hilfe)
+- ✓ Keine Konsolenfehler
+- ✓ Keine externen Anfragen: 20 Ressourcen, alle vom eigenen Ursprung
+- ✓ Smartphone-Ansicht 375 px: kein horizontales Scrollen, Kurz-Tipp über den Aktionen sichtbar
 

@@ -1,0 +1,18 @@
+{
+  "date": "2026-11-26T19:20:00Z",
+  "url": "https://milkiasasmarome-eng.github.io/pokertrainer/",
+  "browser": "integrierter Browser der Claude-Desktop-App (Chromium), Desktop und Mobil-Emulation 375 × 812",
+  "version": "2.0.1",
+  "checks": [
+    { "name": "Seite lädt über HTTPS, App startklar, Version 2.0.1", "ok": true, "detail": "PT.VERSION 2.0.1, Fußzeile 2.0.1" },
+    { "name": "Update-Ablauf für bestehende Installation", "ok": true, "detail": "Hinweis „Neue Version bereit“ erschien; während einer laufenden Hand wurde das Update zurückgestellt; nach der Hand aktiviert, alter Cache 2.0.0 gelöscht, neuer Cache pokertrainer-2.0.1-b029524f89e3" },
+    { "name": "Service Worker kontrolliert die Seite, Manifest erreichbar", "ok": true, "detail": "sw.js aktiv, manifest.webmanifest gültig" },
+    { "name": "Hinweis im Tippfeld", "ok": true, "detail": "„Faustregel, kein Solver-Ergebnis“" },
+    { "name": "6 Hände mit Coach im Modus „vorher“ gespielt, Empfehlungen ausgeführt", "ok": true, "detail": "11 Tipps, längste Anzeigezeit 413 ms, höchstens 2.100 Simulationen je Entscheidung" },
+    { "name": "Preflop-Empfehlungen plausibel", "ok": true, "detail": "QQ CO 3-Bet, 82o HJ Fold, A6s UTG Open 2 BB, T7o BB Fold, J8o SB Fold" },
+    { "name": "Alle Bereiche öffnen (Training, Handhistorie, Ranges, Gegner, Fortschritt, Einstellungen, Hilfe)", "ok": true },
+    { "name": "Keine Konsolenfehler", "ok": true },
+    { "name": "Keine externen Anfragen", "ok": true, "detail": "20 Ressourcen, alle vom eigenen Ursprung" },
+    { "name": "Smartphone-Ansicht 375 px", "ok": true, "detail": "kein horizontales Scrollen, Kurz-Tipp über den Aktionen sichtbar" }
+  ]
+}
