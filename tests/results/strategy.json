@@ -868,5 +868,7406 @@
    },
    "note": "Endgültige Parameter: Training auf beiden Seeds (503, 504); Prüfwerte dieser Zeile sind in der Stichprobe, maßgeblich ist holdout (Training 503, Prüfung 504) und die Validierungsstudie mit dem neuen Modell"
   }
+ },
+ "sizing": {
+  "base-bots": {
+   "label": "base",
+   "comp": "bots",
+   "files": [
+    {
+     "file": "base-bots-503.json",
+     "seed": 503,
+     "hands": 3500,
+     "spots": 1071
+    },
+    {
+     "file": "base-bots-504.json",
+     "seed": 504,
+     "hands": 3250,
+     "spots": 1002
+    }
+   ],
+   "spots": 2073,
+   "betSpots": 1593,
+   "facingSpots": 480,
+   "calibration": {
+    "bySize": [
+     {
+      "key": "0.33",
+      "n": 1849,
+      "obsFold": 0.367,
+      "obsRaise": 0.046,
+      "predFold": 0.269,
+      "predFoldGto": 0.271,
+      "predRaise": 0.146,
+      "seFold": 0.011
+     },
+     {
+      "key": "0.5",
+      "n": 1838,
+      "obsFold": 0.489,
+      "obsRaise": 0.05,
+      "predFold": 0.352,
+      "predFoldGto": 0.342,
+      "predRaise": 0.129,
+      "seFold": 0.012
+     },
+     {
+      "key": "0.75",
+      "n": 1842,
+      "obsFold": 0.564,
+      "obsRaise": 0.053,
+      "predFold": 0.443,
+      "predFoldGto": 0.416,
+      "predRaise": 0.111,
+      "seFold": 0.012
+     },
+     {
+      "key": "1",
+      "n": 1838,
+      "obsFold": 0.628,
+      "obsRaise": 0.057,
+      "predFold": 0.476,
+      "predFoldGto": 0.437,
+      "predRaise": 0.104,
+      "seFold": 0.011
+     },
+     {
+      "key": "1.5",
+      "n": 1829,
+      "obsFold": 0.742,
+      "obsRaise": 0.062,
+      "predFold": 0.477,
+      "predFoldGto": 0.421,
+      "predRaise": 0.103,
+      "seFold": 0.01
+     }
+    ],
+    "byStreetSizeN": [
+     {
+      "key": "St1 n1 0.33",
+      "n": 659,
+      "obsFold": 0.317,
+      "obsRaise": 0.047,
+      "predFold": 0.223,
+      "predFoldGto": 0.222,
+      "predRaise": 0.159,
+      "seFold": 0.018
+     },
+     {
+      "key": "St1 n1 0.5",
+      "n": 653,
+      "obsFold": 0.462,
+      "obsRaise": 0.049,
+      "predFold": 0.309,
+      "predFoldGto": 0.296,
+      "predRaise": 0.141,
+      "seFold": 0.02
+     },
+     {
+      "key": "St1 n1 0.75",
+      "n": 659,
+      "obsFold": 0.536,
+      "obsRaise": 0.055,
+      "predFold": 0.408,
+      "predFoldGto": 0.377,
+      "predRaise": 0.121,
+      "seFold": 0.019
+     },
+     {
+      "key": "St1 n1 1",
+      "n": 659,
+      "obsFold": 0.59,
+      "obsRaise": 0.059,
+      "predFold": 0.452,
+      "predFoldGto": 0.407,
+      "predRaise": 0.112,
+      "seFold": 0.019
+     },
+     {
+      "key": "St1 n1 1.5",
+      "n": 659,
+      "obsFold": 0.687,
+      "obsRaise": 0.073,
+      "predFold": 0.474,
+      "predFoldGto": 0.409,
+      "predRaise": 0.107,
+      "seFold": 0.018
+     },
+     {
+      "key": "St1 n2 0.33",
+      "n": 268,
+      "obsFold": 0.369,
+      "obsRaise": 0.015,
+      "predFold": 0.401,
+      "predFoldGto": 0.404,
+      "predRaise": 0.122,
+      "seFold": 0.029
+     },
+     {
+      "key": "St1 n2 0.5",
+      "n": 268,
+      "obsFold": 0.481,
+      "obsRaise": 0.019,
+      "predFold": 0.478,
+      "predFoldGto": 0.469,
+      "predRaise": 0.106,
+      "seFold": 0.031
+     },
+     {
+      "key": "St1 n2 0.75",
+      "n": 268,
+      "obsFold": 0.563,
+      "obsRaise": 0.019,
+      "predFold": 0.553,
+      "predFoldGto": 0.528,
+      "predRaise": 0.091,
+      "seFold": 0.03
+     },
+     {
+      "key": "St1 n2 1",
+      "n": 268,
+      "obsFold": 0.604,
+      "obsRaise": 0.019,
+      "predFold": 0.562,
+      "predFoldGto": 0.527,
+      "predRaise": 0.089,
+      "seFold": 0.03
+     },
+     {
+      "key": "St1 n2 1.5",
+      "n": 268,
+      "obsFold": 0.698,
+      "obsRaise": 0.019,
+      "predFold": 0.529,
+      "predFoldGto": 0.483,
+      "predRaise": 0.096,
+      "seFold": 0.028
+     },
+     {
+      "key": "St1 n3+ 0.33",
+      "n": 22,
+      "obsFold": 0.364,
+      "obsRaise": 0,
+      "predFold": 0.45,
+      "predFoldGto": 0.467,
+      "predRaise": 0.097,
+      "seFold": 0.103
+     },
+     {
+      "key": "St1 n3+ 0.5",
+      "n": 22,
+      "obsFold": 0.591,
+      "obsRaise": 0,
+      "predFold": 0.506,
+      "predFoldGto": 0.509,
+      "predRaise": 0.087,
+      "seFold": 0.105
+     },
+     {
+      "key": "St1 n3+ 0.75",
+      "n": 22,
+      "obsFold": 0.636,
+      "obsRaise": 0,
+      "predFold": 0.556,
+      "predFoldGto": 0.547,
+      "predRaise": 0.079,
+      "seFold": 0.103
+     },
+     {
+      "key": "St1 n3+ 1",
+      "n": 22,
+      "obsFold": 0.682,
+      "obsRaise": 0,
+      "predFold": 0.549,
+      "predFoldGto": 0.532,
+      "predRaise": 0.08,
+      "seFold": 0.099
+     },
+     {
+      "key": "St1 n3+ 1.5",
+      "n": 22,
+      "obsFold": 0.818,
+      "obsRaise": 0,
+      "predFold": 0.498,
+      "predFoldGto": 0.476,
+      "predRaise": 0.09,
+      "seFold": 0.082
+     },
+     {
+      "key": "St2 n1 0.33",
+      "n": 422,
+      "obsFold": 0.258,
+      "obsRaise": 0.09,
+      "predFold": 0.22,
+      "predFoldGto": 0.22,
+      "predRaise": 0.155,
+      "seFold": 0.021
+     },
+     {
+      "key": "St2 n1 0.5",
+      "n": 421,
+      "obsFold": 0.382,
+      "obsRaise": 0.097,
+      "predFold": 0.305,
+      "predFoldGto": 0.294,
+      "predRaise": 0.137,
+      "seFold": 0.024
+     },
+     {
+      "key": "St2 n1 0.75",
+      "n": 419,
+      "obsFold": 0.473,
+      "obsRaise": 0.103,
+      "predFold": 0.404,
+      "predFoldGto": 0.376,
+      "predRaise": 0.118,
+      "seFold": 0.024
+     },
+     {
+      "key": "St2 n1 1",
+      "n": 419,
+      "obsFold": 0.544,
+      "obsRaise": 0.107,
+      "predFold": 0.447,
+      "predFoldGto": 0.405,
+      "predRaise": 0.109,
+      "seFold": 0.024
+     },
+     {
+      "key": "St2 n1 1.5",
+      "n": 416,
+      "obsFold": 0.685,
+      "obsRaise": 0.108,
+      "predFold": 0.466,
+      "predFoldGto": 0.406,
+      "predRaise": 0.104,
+      "seFold": 0.023
+     },
+     {
+      "key": "St2 n2 0.33",
+      "n": 110,
+      "obsFold": 0.318,
+      "obsRaise": 0.018,
+      "predFold": 0.4,
+      "predFoldGto": 0.404,
+      "predRaise": 0.12,
+      "seFold": 0.044
+     },
+     {
+      "key": "St2 n2 0.5",
+      "n": 110,
+      "obsFold": 0.445,
+      "obsRaise": 0.018,
+      "predFold": 0.474,
+      "predFoldGto": 0.466,
+      "predRaise": 0.105,
+      "seFold": 0.047
+     },
+     {
+      "key": "St2 n2 0.75",
+      "n": 110,
+      "obsFold": 0.5,
+      "obsRaise": 0.027,
+      "predFold": 0.546,
+      "predFoldGto": 0.523,
+      "predRaise": 0.09,
+      "seFold": 0.048
+     },
+     {
+      "key": "St2 n2 1",
+      "n": 110,
+      "obsFold": 0.582,
+      "obsRaise": 0.027,
+      "predFold": 0.552,
+      "predFoldGto": 0.521,
+      "predRaise": 0.089,
+      "seFold": 0.047
+     },
+     {
+      "key": "St2 n2 1.5",
+      "n": 110,
+      "obsFold": 0.8,
+      "obsRaise": 0.036,
+      "predFold": 0.515,
+      "predFoldGto": 0.476,
+      "predRaise": 0.097,
+      "seFold": 0.038
+     },
+     {
+      "key": "St2 n3+ 0.33",
+      "n": 19,
+      "obsFold": 0.474,
+      "obsRaise": 0,
+      "predFold": 0.455,
+      "predFoldGto": 0.463,
+      "predRaise": 0.103,
+      "seFold": 0.115
+     },
+     {
+      "key": "St2 n3+ 0.5",
+      "n": 19,
+      "obsFold": 0.737,
+      "obsRaise": 0,
+      "predFold": 0.5,
+      "predFoldGto": 0.501,
+      "predRaise": 0.094,
+      "seFold": 0.101
+     },
+     {
+      "key": "St2 n3+ 0.75",
+      "n": 19,
+      "obsFold": 0.842,
+      "obsRaise": 0,
+      "predFold": 0.542,
+      "predFoldGto": 0.535,
+      "predRaise": 0.086,
+      "seFold": 0.084
+     },
+     {
+      "key": "St2 n3+ 1",
+      "n": 19,
+      "obsFold": 1,
+      "obsRaise": 0,
+      "predFold": 0.53,
+      "predFoldGto": 0.518,
+      "predRaise": 0.089,
+      "seFold": 0
+     },
+     {
+      "key": "St2 n3+ 1.5",
+      "n": 19,
+      "obsFold": 1,
+      "obsRaise": 0,
+      "predFold": 0.48,
+      "predFoldGto": 0.463,
+      "predRaise": 0.099,
+      "seFold": 0
+     },
+     {
+      "key": "St3 n1 0.33",
+      "n": 275,
+      "obsFold": 0.589,
+      "obsRaise": 0.036,
+      "predFold": 0.214,
+      "predFoldGto": 0.217,
+      "predRaise": 0.152,
+      "seFold": 0.03
+     },
+     {
+      "key": "St3 n1 0.5",
+      "n": 271,
+      "obsFold": 0.657,
+      "obsRaise": 0.037,
+      "predFold": 0.301,
+      "predFoldGto": 0.292,
+      "predRaise": 0.137,
+      "seFold": 0.029
+     },
+     {
+      "key": "St3 n1 0.75",
+      "n": 271,
+      "obsFold": 0.712,
+      "obsRaise": 0.037,
+      "predFold": 0.397,
+      "predFoldGto": 0.37,
+      "predRaise": 0.116,
+      "seFold": 0.028
+     },
+     {
+      "key": "St3 n1 1",
+      "n": 267,
+      "obsFold": 0.801,
+      "obsRaise": 0.041,
+      "predFold": 0.44,
+      "predFoldGto": 0.4,
+      "predRaise": 0.108,
+      "seFold": 0.024
+     },
+     {
+      "key": "St3 n1 1.5",
+      "n": 261,
+      "obsFold": 0.923,
+      "obsRaise": 0.034,
+      "predFold": 0.433,
+      "predFoldGto": 0.379,
+      "predRaise": 0.106,
+      "seFold": 0.016
+     },
+     {
+      "key": "St3 n2 0.33",
+      "n": 62,
+      "obsFold": 0.629,
+      "obsRaise": 0,
+      "predFold": 0.388,
+      "predFoldGto": 0.393,
+      "predRaise": 0.119,
+      "seFold": 0.061
+     },
+     {
+      "key": "St3 n2 0.5",
+      "n": 62,
+      "obsFold": 0.694,
+      "obsRaise": 0.016,
+      "predFold": 0.46,
+      "predFoldGto": 0.455,
+      "predRaise": 0.104,
+      "seFold": 0.059
+     },
+     {
+      "key": "St3 n2 0.75",
+      "n": 62,
+      "obsFold": 0.774,
+      "obsRaise": 0.016,
+      "predFold": 0.533,
+      "predFoldGto": 0.512,
+      "predRaise": 0.09,
+      "seFold": 0.053
+     },
+     {
+      "key": "St3 n2 1",
+      "n": 62,
+      "obsFold": 0.855,
+      "obsRaise": 0.032,
+      "predFold": 0.543,
+      "predFoldGto": 0.511,
+      "predRaise": 0.088,
+      "seFold": 0.045
+     },
+     {
+      "key": "St3 n2 1.5",
+      "n": 62,
+      "obsFold": 0.887,
+      "obsRaise": 0.032,
+      "predFold": 0.481,
+      "predFoldGto": 0.44,
+      "predRaise": 0.1,
+      "seFold": 0.04
+     },
+     {
+      "key": "St3 n3+ 0.33",
+      "n": 12,
+      "obsFold": 0.667,
+      "obsRaise": 0,
+      "predFold": 0.418,
+      "predFoldGto": 0.446,
+      "predRaise": 0.095,
+      "seFold": 0.136
+     },
+     {
+      "key": "St3 n3+ 0.5",
+      "n": 12,
+      "obsFold": 0.833,
+      "obsRaise": 0,
+      "predFold": 0.462,
+      "predFoldGto": 0.482,
+      "predRaise": 0.088,
+      "seFold": 0.108
+     },
+     {
+      "key": "St3 n3+ 0.75",
+      "n": 12,
+      "obsFold": 0.917,
+      "obsRaise": 0,
+      "predFold": 0.513,
+      "predFoldGto": 0.521,
+      "predRaise": 0.08,
+      "seFold": 0.08
+     },
+     {
+      "key": "St3 n3+ 1",
+      "n": 12,
+      "obsFold": 0.917,
+      "obsRaise": 0,
+      "predFold": 0.51,
+      "predFoldGto": 0.507,
+      "predRaise": 0.08,
+      "seFold": 0.08
+     },
+     {
+      "key": "St3 n3+ 1.5",
+      "n": 12,
+      "obsFold": 0.917,
+      "obsRaise": 0,
+      "predFold": 0.442,
+      "predFoldGto": 0.427,
+      "predRaise": 0.092,
+      "seFold": 0.08
+     }
+    ],
+    "headsUp": [
+     {
+      "key": "Bet St1 0.33",
+      "n": 289,
+      "obsFold": 0.398,
+      "obsRaise": 0.042,
+      "predFold": 0.216,
+      "predFoldGto": 0.225,
+      "predRaise": 0.169,
+      "seFold": 0.029
+     },
+     {
+      "key": "Bet St1 0.5",
+      "n": 283,
+      "obsFold": 0.466,
+      "obsRaise": 0.046,
+      "predFold": 0.298,
+      "predFoldGto": 0.296,
+      "predRaise": 0.151,
+      "seFold": 0.03
+     },
+     {
+      "key": "Bet St1 0.75",
+      "n": 289,
+      "obsFold": 0.55,
+      "obsRaise": 0.045,
+      "predFold": 0.396,
+      "predFoldGto": 0.377,
+      "predRaise": 0.13,
+      "seFold": 0.029
+     },
+     {
+      "key": "Bet St1 1",
+      "n": 289,
+      "obsFold": 0.592,
+      "obsRaise": 0.045,
+      "predFold": 0.441,
+      "predFoldGto": 0.407,
+      "predRaise": 0.12,
+      "seFold": 0.029
+     },
+     {
+      "key": "Bet St1 1.5",
+      "n": 289,
+      "obsFold": 0.678,
+      "obsRaise": 0.048,
+      "predFold": 0.465,
+      "predFoldGto": 0.409,
+      "predRaise": 0.115,
+      "seFold": 0.027
+     },
+     {
+      "key": "Bet St2 0.33",
+      "n": 196,
+      "obsFold": 0.316,
+      "obsRaise": 0.097,
+      "predFold": 0.212,
+      "predFoldGto": 0.222,
+      "predRaise": 0.166,
+      "seFold": 0.033
+     },
+     {
+      "key": "Bet St2 0.5",
+      "n": 195,
+      "obsFold": 0.385,
+      "obsRaise": 0.113,
+      "predFold": 0.296,
+      "predFoldGto": 0.295,
+      "predRaise": 0.147,
+      "seFold": 0.035
+     },
+     {
+      "key": "Bet St2 0.75",
+      "n": 196,
+      "obsFold": 0.49,
+      "obsRaise": 0.112,
+      "predFold": 0.394,
+      "predFoldGto": 0.375,
+      "predRaise": 0.127,
+      "seFold": 0.036
+     },
+     {
+      "key": "Bet St2 1",
+      "n": 196,
+      "obsFold": 0.577,
+      "obsRaise": 0.122,
+      "predFold": 0.437,
+      "predFoldGto": 0.404,
+      "predRaise": 0.118,
+      "seFold": 0.035
+     },
+     {
+      "key": "Bet St2 1.5",
+      "n": 196,
+      "obsFold": 0.719,
+      "obsRaise": 0.117,
+      "predFold": 0.457,
+      "predFoldGto": 0.404,
+      "predRaise": 0.111,
+      "seFold": 0.032
+     },
+     {
+      "key": "Bet St3 0.33",
+      "n": 133,
+      "obsFold": 0.594,
+      "obsRaise": 0.023,
+      "predFold": 0.209,
+      "predFoldGto": 0.22,
+      "predRaise": 0.164,
+      "seFold": 0.043
+     },
+     {
+      "key": "Bet St3 0.5",
+      "n": 131,
+      "obsFold": 0.672,
+      "obsRaise": 0.023,
+      "predFold": 0.294,
+      "predFoldGto": 0.293,
+      "predRaise": 0.148,
+      "seFold": 0.041
+     },
+     {
+      "key": "Bet St3 0.75",
+      "n": 131,
+      "obsFold": 0.74,
+      "obsRaise": 0.023,
+      "predFold": 0.39,
+      "predFoldGto": 0.371,
+      "predRaise": 0.127,
+      "seFold": 0.038
+     },
+     {
+      "key": "Bet St3 1",
+      "n": 130,
+      "obsFold": 0.831,
+      "obsRaise": 0.023,
+      "predFold": 0.43,
+      "predFoldGto": 0.398,
+      "predRaise": 0.117,
+      "seFold": 0.033
+     },
+     {
+      "key": "Bet St3 1.5",
+      "n": 128,
+      "obsFold": 0.945,
+      "obsRaise": 0.008,
+      "predFold": 0.426,
+      "predFoldGto": 0.378,
+      "predRaise": 0.115,
+      "seFold": 0.02
+     },
+     {
+      "key": "C-Bet St1 0.33",
+      "n": 370,
+      "obsFold": 0.254,
+      "obsRaise": 0.051,
+      "predFold": 0.228,
+      "predFoldGto": 0.219,
+      "predRaise": 0.151,
+      "seFold": 0.023
+     },
+     {
+      "key": "C-Bet St1 0.5",
+      "n": 370,
+      "obsFold": 0.459,
+      "obsRaise": 0.051,
+      "predFold": 0.317,
+      "predFoldGto": 0.296,
+      "predRaise": 0.133,
+      "seFold": 0.026
+     },
+     {
+      "key": "C-Bet St1 0.75",
+      "n": 370,
+      "obsFold": 0.524,
+      "obsRaise": 0.062,
+      "predFold": 0.417,
+      "predFoldGto": 0.378,
+      "predRaise": 0.113,
+      "seFold": 0.026
+     },
+     {
+      "key": "C-Bet St1 1",
+      "n": 370,
+      "obsFold": 0.589,
+      "obsRaise": 0.07,
+      "predFold": 0.46,
+      "predFoldGto": 0.407,
+      "predRaise": 0.105,
+      "seFold": 0.026
+     },
+     {
+      "key": "C-Bet St1 1.5",
+      "n": 370,
+      "obsFold": 0.695,
+      "obsRaise": 0.092,
+      "predFold": 0.481,
+      "predFoldGto": 0.409,
+      "predRaise": 0.101,
+      "seFold": 0.024
+     },
+     {
+      "key": "C-Bet St2 0.33",
+      "n": 226,
+      "obsFold": 0.208,
+      "obsRaise": 0.084,
+      "predFold": 0.226,
+      "predFoldGto": 0.219,
+      "predRaise": 0.146,
+      "seFold": 0.027
+     },
+     {
+      "key": "C-Bet St2 0.5",
+      "n": 226,
+      "obsFold": 0.381,
+      "obsRaise": 0.084,
+      "predFold": 0.314,
+      "predFoldGto": 0.294,
+      "predRaise": 0.128,
+      "seFold": 0.032
+     },
+     {
+      "key": "C-Bet St2 0.75",
+      "n": 223,
+      "obsFold": 0.457,
+      "obsRaise": 0.094,
+      "predFold": 0.414,
+      "predFoldGto": 0.376,
+      "predRaise": 0.111,
+      "seFold": 0.033
+     },
+     {
+      "key": "C-Bet St2 1",
+      "n": 223,
+      "obsFold": 0.516,
+      "obsRaise": 0.094,
+      "predFold": 0.455,
+      "predFoldGto": 0.405,
+      "predRaise": 0.101,
+      "seFold": 0.033
+     },
+     {
+      "key": "C-Bet St2 1.5",
+      "n": 220,
+      "obsFold": 0.655,
+      "obsRaise": 0.1,
+      "predFold": 0.475,
+      "predFoldGto": 0.407,
+      "predRaise": 0.097,
+      "seFold": 0.032
+     },
+     {
+      "key": "C-Bet St3 0.33",
+      "n": 142,
+      "obsFold": 0.585,
+      "obsRaise": 0.049,
+      "predFold": 0.219,
+      "predFoldGto": 0.214,
+      "predRaise": 0.14,
+      "seFold": 0.041
+     },
+     {
+      "key": "C-Bet St3 0.5",
+      "n": 140,
+      "obsFold": 0.643,
+      "obsRaise": 0.05,
+      "predFold": 0.308,
+      "predFoldGto": 0.29,
+      "predRaise": 0.126,
+      "seFold": 0.04
+     },
+     {
+      "key": "C-Bet St3 0.75",
+      "n": 140,
+      "obsFold": 0.686,
+      "obsRaise": 0.05,
+      "predFold": 0.404,
+      "predFoldGto": 0.37,
+      "predRaise": 0.106,
+      "seFold": 0.039
+     },
+     {
+      "key": "C-Bet St3 1",
+      "n": 137,
+      "obsFold": 0.774,
+      "obsRaise": 0.058,
+      "predFold": 0.449,
+      "predFoldGto": 0.402,
+      "predRaise": 0.099,
+      "seFold": 0.036
+     },
+     {
+      "key": "C-Bet St3 1.5",
+      "n": 133,
+      "obsFold": 0.902,
+      "obsRaise": 0.06,
+      "predFold": 0.439,
+      "predFoldGto": 0.381,
+      "predRaise": 0.097,
+      "seFold": 0.026
+     }
+    ],
+    "byHudType": [
+     {
+      "key": "LAG 0.33",
+      "n": 222,
+      "obsFold": 0.401,
+      "obsRaise": 0.068,
+      "predFold": 0.221,
+      "predFoldGto": 0.217,
+      "predRaise": 0.195,
+      "seFold": 0.033
+     },
+     {
+      "key": "LAG 0.5",
+      "n": 220,
+      "obsFold": 0.486,
+      "obsRaise": 0.068,
+      "predFold": 0.31,
+      "predFoldGto": 0.293,
+      "predRaise": 0.174,
+      "seFold": 0.034
+     },
+     {
+      "key": "LAG 0.75",
+      "n": 220,
+      "obsFold": 0.559,
+      "obsRaise": 0.077,
+      "predFold": 0.408,
+      "predFoldGto": 0.374,
+      "predRaise": 0.149,
+      "seFold": 0.033
+     },
+     {
+      "key": "LAG 1",
+      "n": 219,
+      "obsFold": 0.626,
+      "obsRaise": 0.087,
+      "predFold": 0.45,
+      "predFoldGto": 0.403,
+      "predRaise": 0.138,
+      "seFold": 0.033
+     },
+     {
+      "key": "LAG 1.5",
+      "n": 218,
+      "obsFold": 0.743,
+      "obsRaise": 0.087,
+      "predFold": 0.465,
+      "predFoldGto": 0.399,
+      "predRaise": 0.133,
+      "seFold": 0.03
+     },
+     {
+      "key": "Nit 0.33",
+      "n": 21,
+      "obsFold": 0.667,
+      "obsRaise": 0,
+      "predFold": 0.131,
+      "predFoldGto": 0.216,
+      "predRaise": 0.166,
+      "seFold": 0.103
+     },
+     {
+      "key": "Nit 0.5",
+      "n": 21,
+      "obsFold": 0.714,
+      "obsRaise": 0,
+      "predFold": 0.223,
+      "predFoldGto": 0.295,
+      "predRaise": 0.148,
+      "seFold": 0.099
+     },
+     {
+      "key": "Nit 0.75",
+      "n": 21,
+      "obsFold": 0.81,
+      "obsRaise": 0,
+      "predFold": 0.323,
+      "predFoldGto": 0.378,
+      "predRaise": 0.129,
+      "seFold": 0.086
+     },
+     {
+      "key": "Nit 1",
+      "n": 21,
+      "obsFold": 0.905,
+      "obsRaise": 0,
+      "predFold": 0.372,
+      "predFoldGto": 0.407,
+      "predRaise": 0.12,
+      "seFold": 0.064
+     },
+     {
+      "key": "Nit 1.5",
+      "n": 21,
+      "obsFold": 0.952,
+      "obsRaise": 0,
+      "predFold": 0.397,
+      "predFoldGto": 0.402,
+      "predRaise": 0.115,
+      "seFold": 0.046
+     },
+     {
+      "key": "TAG 0.33",
+      "n": 245,
+      "obsFold": 0.437,
+      "obsRaise": 0.053,
+      "predFold": 0.219,
+      "predFoldGto": 0.218,
+      "predRaise": 0.183,
+      "seFold": 0.032
+     },
+     {
+      "key": "TAG 0.5",
+      "n": 245,
+      "obsFold": 0.522,
+      "obsRaise": 0.061,
+      "predFold": 0.308,
+      "predFoldGto": 0.294,
+      "predRaise": 0.162,
+      "seFold": 0.032
+     },
+     {
+      "key": "TAG 0.75",
+      "n": 245,
+      "obsFold": 0.576,
+      "obsRaise": 0.061,
+      "predFold": 0.406,
+      "predFoldGto": 0.375,
+      "predRaise": 0.138,
+      "seFold": 0.032
+     },
+     {
+      "key": "TAG 1",
+      "n": 244,
+      "obsFold": 0.648,
+      "obsRaise": 0.061,
+      "predFold": 0.45,
+      "predFoldGto": 0.406,
+      "predRaise": 0.128,
+      "seFold": 0.031
+     },
+     {
+      "key": "TAG 1.5",
+      "n": 242,
+      "obsFold": 0.773,
+      "obsRaise": 0.074,
+      "predFold": 0.466,
+      "predFoldGto": 0.404,
+      "predRaise": 0.123,
+      "seFold": 0.027
+     },
+     {
+      "key": "loose-passiv 0.33",
+      "n": 186,
+      "obsFold": 0.172,
+      "obsRaise": 0.027,
+      "predFold": 0.196,
+      "predFoldGto": 0.224,
+      "predRaise": 0.088,
+      "seFold": 0.028
+     },
+     {
+      "key": "loose-passiv 0.5",
+      "n": 185,
+      "obsFold": 0.341,
+      "obsRaise": 0.027,
+      "predFold": 0.281,
+      "predFoldGto": 0.296,
+      "predRaise": 0.078,
+      "seFold": 0.035
+     },
+     {
+      "key": "loose-passiv 0.75",
+      "n": 184,
+      "obsFold": 0.435,
+      "obsRaise": 0.038,
+      "predFold": 0.38,
+      "predFoldGto": 0.375,
+      "predRaise": 0.068,
+      "seFold": 0.037
+     },
+     {
+      "key": "loose-passiv 1",
+      "n": 183,
+      "obsFold": 0.486,
+      "obsRaise": 0.038,
+      "predFold": 0.426,
+      "predFoldGto": 0.404,
+      "predRaise": 0.062,
+      "seFold": 0.037
+     },
+     {
+      "key": "loose-passiv 1.5",
+      "n": 181,
+      "obsFold": 0.602,
+      "obsRaise": 0.055,
+      "predFold": 0.447,
+      "predFoldGto": 0.401,
+      "predRaise": 0.061,
+      "seFold": 0.036
+     },
+     {
+      "key": "sehr loose 0.33",
+      "n": 154,
+      "obsFold": 0.383,
+      "obsRaise": 0.052,
+      "predFold": 0.283,
+      "predFoldGto": 0.223,
+      "predRaise": 0.162,
+      "seFold": 0.039
+     },
+     {
+      "key": "sehr loose 0.5",
+      "n": 150,
+      "obsFold": 0.473,
+      "obsRaise": 0.053,
+      "predFold": 0.369,
+      "predFoldGto": 0.293,
+      "predRaise": 0.143,
+      "seFold": 0.041
+     },
+     {
+      "key": "sehr loose 0.75",
+      "n": 153,
+      "obsFold": 0.569,
+      "obsRaise": 0.059,
+      "predFold": 0.464,
+      "predFoldGto": 0.374,
+      "predRaise": 0.12,
+      "seFold": 0.04
+     },
+     {
+      "key": "sehr loose 1",
+      "n": 152,
+      "obsFold": 0.618,
+      "obsRaise": 0.066,
+      "predFold": 0.502,
+      "predFoldGto": 0.404,
+      "predRaise": 0.112,
+      "seFold": 0.039
+     },
+     {
+      "key": "sehr loose 1.5",
+      "n": 151,
+      "obsFold": 0.762,
+      "obsRaise": 0.066,
+      "predFold": 0.508,
+      "predFoldGto": 0.404,
+      "predRaise": 0.106,
+      "seFold": 0.035
+     },
+     {
+      "key": "unbekannt 0.33",
+      "n": 528,
+      "obsFold": 0.339,
+      "obsRaise": 0.072,
+      "predFold": 0.213,
+      "predFoldGto": 0.221,
+      "predRaise": 0.15,
+      "seFold": 0.021
+     },
+     {
+      "key": "unbekannt 0.5",
+      "n": 524,
+      "obsFold": 0.49,
+      "obsRaise": 0.076,
+      "predFold": 0.299,
+      "predFoldGto": 0.295,
+      "predRaise": 0.133,
+      "seFold": 0.022
+     },
+     {
+      "key": "unbekannt 0.75",
+      "n": 526,
+      "obsFold": 0.563,
+      "obsRaise": 0.078,
+      "predFold": 0.398,
+      "predFoldGto": 0.376,
+      "predRaise": 0.115,
+      "seFold": 0.022
+     },
+     {
+      "key": "unbekannt 1",
+      "n": 526,
+      "obsFold": 0.635,
+      "obsRaise": 0.084,
+      "predFold": 0.441,
+      "predFoldGto": 0.405,
+      "predRaise": 0.106,
+      "seFold": 0.021
+     },
+     {
+      "key": "unbekannt 1.5",
+      "n": 523,
+      "obsFold": 0.738,
+      "obsRaise": 0.086,
+      "predFold": 0.458,
+      "predFoldGto": 0.402,
+      "predRaise": 0.102,
+      "seFold": 0.019
+     }
+    ]
+   },
+   "value": {
+    "all": [
+     {
+      "key": "alle | 0.33",
+      "n": 1593,
+      "realVsCheck": 0.742,
+      "se": 0.471,
+      "modelVsCheck": 0.175
+     },
+     {
+      "key": "alle | 0.5",
+      "n": 1582,
+      "realVsCheck": 0.727,
+      "se": 0.5,
+      "modelVsCheck": 0.06
+     },
+     {
+      "key": "alle | 0.75",
+      "n": 1586,
+      "realVsCheck": -0.084,
+      "se": 0.551,
+      "modelVsCheck": -0.123
+     },
+     {
+      "key": "alle | 1",
+      "n": 1582,
+      "realVsCheck": -0.147,
+      "se": 0.605,
+      "modelVsCheck": -0.477
+     },
+     {
+      "key": "alle | 1.5",
+      "n": 1573,
+      "realVsCheck": 0.584,
+      "se": 0.65,
+      "modelVsCheck": -1.673
+     }
+    ],
+    "byEq": [
+     {
+      "key": "Equity 35–60 % | 0.33",
+      "n": 546,
+      "realVsCheck": 0.551,
+      "se": 0.657,
+      "modelVsCheck": -0.364
+     },
+     {
+      "key": "Equity 35–60 % | 0.5",
+      "n": 545,
+      "realVsCheck": 0.157,
+      "se": 0.655,
+      "modelVsCheck": -0.754
+     },
+     {
+      "key": "Equity 35–60 % | 0.75",
+      "n": 545,
+      "realVsCheck": -0.999,
+      "se": 0.761,
+      "modelVsCheck": -1.384
+     },
+     {
+      "key": "Equity 35–60 % | 1",
+      "n": 545,
+      "realVsCheck": -1.163,
+      "se": 0.818,
+      "modelVsCheck": -2.047
+     },
+     {
+      "key": "Equity 35–60 % | 1.5",
+      "n": 545,
+      "realVsCheck": -0.169,
+      "se": 0.931,
+      "modelVsCheck": -3.569
+     },
+     {
+      "key": "Equity < 35 % | 0.33",
+      "n": 605,
+      "realVsCheck": 1.049,
+      "se": 0.522,
+      "modelVsCheck": -1.034
+     },
+     {
+      "key": "Equity < 35 % | 0.5",
+      "n": 601,
+      "realVsCheck": 0.828,
+      "se": 0.635,
+      "modelVsCheck": -1.366
+     },
+     {
+      "key": "Equity < 35 % | 0.75",
+      "n": 605,
+      "realVsCheck": 0.858,
+      "se": 0.726,
+      "modelVsCheck": -1.556
+     },
+     {
+      "key": "Equity < 35 % | 1",
+      "n": 603,
+      "realVsCheck": 0.767,
+      "se": 0.814,
+      "modelVsCheck": -2.233
+     },
+     {
+      "key": "Equity < 35 % | 1.5",
+      "n": 600,
+      "realVsCheck": 1.53,
+      "se": 0.847,
+      "modelVsCheck": -4.638
+     },
+     {
+      "key": "Equity ≥ 60 % | 0.33",
+      "n": 442,
+      "realVsCheck": 0.558,
+      "se": 1.309,
+      "modelVsCheck": 2.494
+     },
+     {
+      "key": "Equity ≥ 60 % | 0.5",
+      "n": 436,
+      "realVsCheck": 1.3,
+      "se": 1.363,
+      "modelVsCheck": 3.045
+     },
+     {
+      "key": "Equity ≥ 60 % | 0.75",
+      "n": 436,
+      "realVsCheck": -0.247,
+      "se": 1.449,
+      "modelVsCheck": 3.441
+     },
+     {
+      "key": "Equity ≥ 60 % | 1",
+      "n": 434,
+      "realVsCheck": -0.141,
+      "se": 1.59,
+      "modelVsCheck": 3.934
+     },
+     {
+      "key": "Equity ≥ 60 % | 1.5",
+      "n": 428,
+      "realVsCheck": 0.219,
+      "se": 1.699,
+      "modelVsCheck": 4.899
+     }
+    ],
+    "byStreetEqN": [
+     {
+      "key": "St1 Equity 35–60 % n1 | 0.33",
+      "n": 280,
+      "realVsCheck": 0.153,
+      "se": 0.91,
+      "modelVsCheck": -0.133
+     },
+     {
+      "key": "St1 Equity 35–60 % n1 | 0.5",
+      "n": 279,
+      "realVsCheck": 0.44,
+      "se": 0.927,
+      "modelVsCheck": -0.259
+     },
+     {
+      "key": "St1 Equity 35–60 % n1 | 0.75",
+      "n": 280,
+      "realVsCheck": -0.4,
+      "se": 0.877,
+      "modelVsCheck": -0.47
+     },
+     {
+      "key": "St1 Equity 35–60 % n1 | 1",
+      "n": 280,
+      "realVsCheck": -0.209,
+      "se": 0.971,
+      "modelVsCheck": -0.835
+     },
+     {
+      "key": "St1 Equity 35–60 % n1 | 1.5",
+      "n": 280,
+      "realVsCheck": -1.685,
+      "se": 1.191,
+      "modelVsCheck": -1.826
+     },
+     {
+      "key": "St1 Equity 35–60 % n2 | 0.33",
+      "n": 28,
+      "realVsCheck": 1.606,
+      "se": 5.047,
+      "modelVsCheck": 0.424
+     },
+     {
+      "key": "St1 Equity 35–60 % n2 | 0.5",
+      "n": 28,
+      "realVsCheck": 4.267,
+      "se": 4.087,
+      "modelVsCheck": 0.414
+     },
+     {
+      "key": "St1 Equity 35–60 % n2 | 0.75",
+      "n": 28,
+      "realVsCheck": -3.451,
+      "se": 6.579,
+      "modelVsCheck": 0.241
+     },
+     {
+      "key": "St1 Equity 35–60 % n2 | 1",
+      "n": 28,
+      "realVsCheck": -4.379,
+      "se": 6.61,
+      "modelVsCheck": -0.032
+     },
+     {
+      "key": "St1 Equity 35–60 % n2 | 1.5",
+      "n": 28,
+      "realVsCheck": -2.799,
+      "se": 7.57,
+      "modelVsCheck": -0.523
+     },
+     {
+      "key": "St1 Equity < 35 % n1 | 0.33",
+      "n": 168,
+      "realVsCheck": 0.207,
+      "se": 0.975,
+      "modelVsCheck": -0.625
+     },
+     {
+      "key": "St1 Equity < 35 % n1 | 0.5",
+      "n": 164,
+      "realVsCheck": 0.277,
+      "se": 1.092,
+      "modelVsCheck": -0.754
+     },
+     {
+      "key": "St1 Equity < 35 % n1 | 0.75",
+      "n": 168,
+      "realVsCheck": 0.596,
+      "se": 1.211,
+      "modelVsCheck": -0.742
+     },
+     {
+      "key": "St1 Equity < 35 % n1 | 1",
+      "n": 168,
+      "realVsCheck": -0.106,
+      "se": 1.556,
+      "modelVsCheck": -1.196
+     },
+     {
+      "key": "St1 Equity < 35 % n1 | 1.5",
+      "n": 168,
+      "realVsCheck": -0.339,
+      "se": 1.687,
+      "modelVsCheck": -2.796
+     },
+     {
+      "key": "St1 Equity < 35 % n2 | 0.33",
+      "n": 83,
+      "realVsCheck": -1.149,
+      "se": 0.887,
+      "modelVsCheck": -0.545
+     },
+     {
+      "key": "St1 Equity < 35 % n2 | 0.5",
+      "n": 83,
+      "realVsCheck": -2.759,
+      "se": 1.547,
+      "modelVsCheck": -0.795
+     },
+     {
+      "key": "St1 Equity < 35 % n2 | 0.75",
+      "n": 83,
+      "realVsCheck": -3.832,
+      "se": 1.752,
+      "modelVsCheck": -1.113
+     },
+     {
+      "key": "St1 Equity < 35 % n2 | 1",
+      "n": 83,
+      "realVsCheck": -4.041,
+      "se": 1.981,
+      "modelVsCheck": -1.884
+     },
+     {
+      "key": "St1 Equity < 35 % n2 | 1.5",
+      "n": 83,
+      "realVsCheck": -2.306,
+      "se": 2.631,
+      "modelVsCheck": -3.917
+     },
+     {
+      "key": "St1 Equity < 35 % n3+ | 0.33",
+      "n": 7,
+      "realVsCheck": 1.971,
+      "se": 2.26,
+      "modelVsCheck": -0.505
+     },
+     {
+      "key": "St1 Equity < 35 % n3+ | 0.5",
+      "n": 7,
+      "realVsCheck": 0.414,
+      "se": 2.208,
+      "modelVsCheck": -0.955
+     },
+     {
+      "key": "St1 Equity < 35 % n3+ | 0.75",
+      "n": 7,
+      "realVsCheck": -0.357,
+      "se": 2.886,
+      "modelVsCheck": -1.635
+     },
+     {
+      "key": "St1 Equity < 35 % n3+ | 1",
+      "n": 7,
+      "realVsCheck": -1.143,
+      "se": 3.562,
+      "modelVsCheck": -2.519
+     },
+     {
+      "key": "St1 Equity < 35 % n3+ | 1.5",
+      "n": 7,
+      "realVsCheck": -3.229,
+      "se": 4.034,
+      "modelVsCheck": -4.448
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n1 | 0.33",
+      "n": 211,
+      "realVsCheck": -0.233,
+      "se": 1.417,
+      "modelVsCheck": 1.317
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n1 | 0.5",
+      "n": 210,
+      "realVsCheck": 0.517,
+      "se": 1.448,
+      "modelVsCheck": 1.684
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n1 | 0.75",
+      "n": 211,
+      "realVsCheck": -1.685,
+      "se": 1.513,
+      "modelVsCheck": 1.977
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n1 | 1",
+      "n": 211,
+      "realVsCheck": -1.899,
+      "se": 1.823,
+      "modelVsCheck": 2.208
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n1 | 1.5",
+      "n": 211,
+      "realVsCheck": -0.945,
+      "se": 1.968,
+      "modelVsCheck": 2.762
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n2 | 0.33",
+      "n": 23,
+      "realVsCheck": -0.577,
+      "se": 11.113,
+      "modelVsCheck": 3.07
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n2 | 0.5",
+      "n": 23,
+      "realVsCheck": 0.693,
+      "se": 10.198,
+      "modelVsCheck": 3.843
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n2 | 0.75",
+      "n": 23,
+      "realVsCheck": -5.847,
+      "se": 8.252,
+      "modelVsCheck": 4.305
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n2 | 1",
+      "n": 23,
+      "realVsCheck": 2.277,
+      "se": 9.986,
+      "modelVsCheck": 5.276
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n2 | 1.5",
+      "n": 23,
+      "realVsCheck": 8.149,
+      "se": 9.291,
+      "modelVsCheck": 7.976
+     },
+     {
+      "key": "St2 Equity 35–60 % n1 | 0.33",
+      "n": 138,
+      "realVsCheck": 0.182,
+      "se": 1.267,
+      "modelVsCheck": -0.526
+     },
+     {
+      "key": "St2 Equity 35–60 % n1 | 0.5",
+      "n": 138,
+      "realVsCheck": -2.018,
+      "se": 1.226,
+      "modelVsCheck": -0.997
+     },
+     {
+      "key": "St2 Equity 35–60 % n1 | 0.75",
+      "n": 137,
+      "realVsCheck": -2.524,
+      "se": 1.419,
+      "modelVsCheck": -1.753
+     },
+     {
+      "key": "St2 Equity 35–60 % n1 | 1",
+      "n": 137,
+      "realVsCheck": -4.079,
+      "se": 1.632,
+      "modelVsCheck": -2.563
+     },
+     {
+      "key": "St2 Equity 35–60 % n1 | 1.5",
+      "n": 137,
+      "realVsCheck": -0.094,
+      "se": 1.712,
+      "modelVsCheck": -4.625
+     },
+     {
+      "key": "St2 Equity 35–60 % n2 | 0.33",
+      "n": 11,
+      "realVsCheck": -4.873,
+      "se": 3.731,
+      "modelVsCheck": 0.786
+     },
+     {
+      "key": "St2 Equity 35–60 % n2 | 0.5",
+      "n": 11,
+      "realVsCheck": -8.409,
+      "se": 3.722,
+      "modelVsCheck": 0.578
+     },
+     {
+      "key": "St2 Equity 35–60 % n2 | 0.75",
+      "n": 11,
+      "realVsCheck": -16.945,
+      "se": 8.764,
+      "modelVsCheck": 0.17
+     },
+     {
+      "key": "St2 Equity 35–60 % n2 | 1",
+      "n": 11,
+      "realVsCheck": -13.227,
+      "se": 4.983,
+      "modelVsCheck": -0.164
+     },
+     {
+      "key": "St2 Equity 35–60 % n2 | 1.5",
+      "n": 11,
+      "realVsCheck": -4.409,
+      "se": 7.025,
+      "modelVsCheck": -0.313
+     },
+     {
+      "key": "St2 Equity 35–60 % n3+ | 0.33",
+      "n": 1,
+      "realVsCheck": 7.5,
+      "se": null,
+      "modelVsCheck": -0.186
+     },
+     {
+      "key": "St2 Equity 35–60 % n3+ | 0.5",
+      "n": 1,
+      "realVsCheck": 4.5,
+      "se": null,
+      "modelVsCheck": -0.496
+     },
+     {
+      "key": "St2 Equity 35–60 % n3+ | 0.75",
+      "n": 1,
+      "realVsCheck": 4.5,
+      "se": null,
+      "modelVsCheck": -1.145
+     },
+     {
+      "key": "St2 Equity 35–60 % n3+ | 1",
+      "n": 1,
+      "realVsCheck": 4.5,
+      "se": null,
+      "modelVsCheck": -1.811
+     },
+     {
+      "key": "St2 Equity 35–60 % n3+ | 1.5",
+      "n": 1,
+      "realVsCheck": 4.5,
+      "se": null,
+      "modelVsCheck": -2.974
+     },
+     {
+      "key": "St2 Equity < 35 % n1 | 0.33",
+      "n": 164,
+      "realVsCheck": 1.077,
+      "se": 1.056,
+      "modelVsCheck": -0.939
+     },
+     {
+      "key": "St2 Equity < 35 % n1 | 0.5",
+      "n": 164,
+      "realVsCheck": 0.607,
+      "se": 1.341,
+      "modelVsCheck": -1.213
+     },
+     {
+      "key": "St2 Equity < 35 % n1 | 0.75",
+      "n": 164,
+      "realVsCheck": 0.583,
+      "se": 1.581,
+      "modelVsCheck": -1.372
+     },
+     {
+      "key": "St2 Equity < 35 % n1 | 1",
+      "n": 164,
+      "realVsCheck": 0.978,
+      "se": 1.774,
+      "modelVsCheck": -2.185
+     },
+     {
+      "key": "St2 Equity < 35 % n1 | 1.5",
+      "n": 164,
+      "realVsCheck": -0.145,
+      "se": 1.805,
+      "modelVsCheck": -4.706
+     },
+     {
+      "key": "St2 Equity < 35 % n2 | 0.33",
+      "n": 40,
+      "realVsCheck": -1.8,
+      "se": 1.355,
+      "modelVsCheck": -0.822
+     },
+     {
+      "key": "St2 Equity < 35 % n2 | 0.5",
+      "n": 40,
+      "realVsCheck": -1.997,
+      "se": 1.716,
+      "modelVsCheck": -1.149
+     },
+     {
+      "key": "St2 Equity < 35 % n2 | 0.75",
+      "n": 40,
+      "realVsCheck": -3.875,
+      "se": 2.203,
+      "modelVsCheck": -1.594
+     },
+     {
+      "key": "St2 Equity < 35 % n2 | 1",
+      "n": 40,
+      "realVsCheck": -5.35,
+      "se": 2.671,
+      "modelVsCheck": -2.573
+     },
+     {
+      "key": "St2 Equity < 35 % n2 | 1.5",
+      "n": 40,
+      "realVsCheck": 0.605,
+      "se": 2.505,
+      "modelVsCheck": -5.18
+     },
+     {
+      "key": "St2 Equity < 35 % n3+ | 0.33",
+      "n": 5,
+      "realVsCheck": 0.56,
+      "se": 1.685,
+      "modelVsCheck": -1.062
+     },
+     {
+      "key": "St2 Equity < 35 % n3+ | 0.5",
+      "n": 5,
+      "realVsCheck": -0.16,
+      "se": 2.032,
+      "modelVsCheck": -1.596
+     },
+     {
+      "key": "St2 Equity < 35 % n3+ | 0.75",
+      "n": 5,
+      "realVsCheck": 0.68,
+      "se": 2.656,
+      "modelVsCheck": -2.392
+     },
+     {
+      "key": "St2 Equity < 35 % n3+ | 1",
+      "n": 5,
+      "realVsCheck": 4.3,
+      "se": 1.356,
+      "modelVsCheck": -3.459
+     },
+     {
+      "key": "St2 Equity < 35 % n3+ | 1.5",
+      "n": 5,
+      "realVsCheck": 4.3,
+      "se": 1.356,
+      "modelVsCheck": -5.779
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n1 | 0.33",
+      "n": 120,
+      "realVsCheck": 3.239,
+      "se": 3.356,
+      "modelVsCheck": 3.266
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n1 | 0.5",
+      "n": 119,
+      "realVsCheck": 5.23,
+      "se": 3.539,
+      "modelVsCheck": 4.184
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n1 | 0.75",
+      "n": 118,
+      "realVsCheck": 4.988,
+      "se": 3.994,
+      "modelVsCheck": 4.698
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n1 | 1",
+      "n": 118,
+      "realVsCheck": 2.519,
+      "se": 4.082,
+      "modelVsCheck": 5.213
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n1 | 1.5",
+      "n": 115,
+      "realVsCheck": -0.935,
+      "se": 4.298,
+      "modelVsCheck": 6.01
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n2 | 0.33",
+      "n": 4,
+      "realVsCheck": -1.16,
+      "se": 8.253,
+      "modelVsCheck": 4.672
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n2 | 0.5",
+      "n": 4,
+      "realVsCheck": 1.489,
+      "se": 9.436,
+      "modelVsCheck": 6.145
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n2 | 0.75",
+      "n": 4,
+      "realVsCheck": 5.34,
+      "se": 11.281,
+      "modelVsCheck": 8.092
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n2 | 1",
+      "n": 4,
+      "realVsCheck": 4.339,
+      "se": 10.071,
+      "modelVsCheck": 9.876
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n2 | 1.5",
+      "n": 4,
+      "realVsCheck": 48.189,
+      "se": 48.189,
+      "modelVsCheck": 14.807
+     },
+     {
+      "key": "St3 Equity 35–60 % n1 | 0.33",
+      "n": 79,
+      "realVsCheck": 3.356,
+      "se": 1.353,
+      "modelVsCheck": -1.366
+     },
+     {
+      "key": "St3 Equity 35–60 % n1 | 0.5",
+      "n": 79,
+      "realVsCheck": 3.166,
+      "se": 1.542,
+      "modelVsCheck": -2.656
+     },
+     {
+      "key": "St3 Equity 35–60 % n1 | 0.75",
+      "n": 79,
+      "realVsCheck": 3.274,
+      "se": 2.082,
+      "modelVsCheck": -4.644
+     },
+     {
+      "key": "St3 Equity 35–60 % n1 | 1",
+      "n": 79,
+      "realVsCheck": 3.751,
+      "se": 2.272,
+      "modelVsCheck": -6.245
+     },
+     {
+      "key": "St3 Equity 35–60 % n1 | 1.5",
+      "n": 79,
+      "realVsCheck": 7.256,
+      "se": 2.111,
+      "modelVsCheck": -9.43
+     },
+     {
+      "key": "St3 Equity 35–60 % n2 | 0.33",
+      "n": 8,
+      "realVsCheck": -4.15,
+      "se": 1.57,
+      "modelVsCheck": -0.23
+     },
+     {
+      "key": "St3 Equity 35–60 % n2 | 0.5",
+      "n": 8,
+      "realVsCheck": -5.875,
+      "se": 2.574,
+      "modelVsCheck": -1.138
+     },
+     {
+      "key": "St3 Equity 35–60 % n2 | 0.75",
+      "n": 8,
+      "realVsCheck": -9.175,
+      "se": 3.701,
+      "modelVsCheck": -2.838
+     },
+     {
+      "key": "St3 Equity 35–60 % n2 | 1",
+      "n": 8,
+      "realVsCheck": -6.987,
+      "se": 6.226,
+      "modelVsCheck": -4.054
+     },
+     {
+      "key": "St3 Equity 35–60 % n2 | 1.5",
+      "n": 8,
+      "realVsCheck": -8.137,
+      "se": 12.99,
+      "modelVsCheck": -4.348
+     },
+     {
+      "key": "St3 Equity 35–60 % n3+ | 0.33",
+      "n": 1,
+      "realVsCheck": 2.25,
+      "se": null,
+      "modelVsCheck": 0.764
+     },
+     {
+      "key": "St3 Equity 35–60 % n3+ | 0.5",
+      "n": 1,
+      "realVsCheck": 6.75,
+      "se": null,
+      "modelVsCheck": 0.371
+     },
+     {
+      "key": "St3 Equity 35–60 % n3+ | 0.75",
+      "n": 1,
+      "realVsCheck": 6.75,
+      "se": null,
+      "modelVsCheck": -0.461
+     },
+     {
+      "key": "St3 Equity 35–60 % n3+ | 1",
+      "n": 1,
+      "realVsCheck": 6.75,
+      "se": null,
+      "modelVsCheck": -0.657
+     },
+     {
+      "key": "St3 Equity 35–60 % n3+ | 1.5",
+      "n": 1,
+      "realVsCheck": 6.75,
+      "se": null,
+      "modelVsCheck": 0.365
+     },
+     {
+      "key": "St3 Equity < 35 % n1 | 0.33",
+      "n": 118,
+      "realVsCheck": 4.651,
+      "se": 1.519,
+      "modelVsCheck": -2.178
+     },
+     {
+      "key": "St3 Equity < 35 % n1 | 0.5",
+      "n": 118,
+      "realVsCheck": 5.396,
+      "se": 1.701,
+      "modelVsCheck": -2.871
+     },
+     {
+      "key": "St3 Equity < 35 % n1 | 0.75",
+      "n": 118,
+      "realVsCheck": 6.191,
+      "se": 1.884,
+      "modelVsCheck": -3.105
+     },
+     {
+      "key": "St3 Equity < 35 % n1 | 1",
+      "n": 116,
+      "realVsCheck": 6.761,
+      "se": 1.767,
+      "modelVsCheck": -3.667
+     },
+     {
+      "key": "St3 Equity < 35 % n1 | 1.5",
+      "n": 113,
+      "realVsCheck": 9.646,
+      "se": 1.328,
+      "modelVsCheck": -7.244
+     },
+     {
+      "key": "St3 Equity < 35 % n2 | 0.33",
+      "n": 17,
+      "realVsCheck": 1.806,
+      "se": 1.079,
+      "modelVsCheck": -1.118
+     },
+     {
+      "key": "St3 Equity < 35 % n2 | 0.5",
+      "n": 17,
+      "realVsCheck": 1.488,
+      "se": 1.232,
+      "modelVsCheck": -1.602
+     },
+     {
+      "key": "St3 Equity < 35 % n2 | 0.75",
+      "n": 17,
+      "realVsCheck": 3.259,
+      "se": 1.404,
+      "modelVsCheck": -2.188
+     },
+     {
+      "key": "St3 Equity < 35 % n2 | 1",
+      "n": 17,
+      "realVsCheck": 3.7,
+      "se": 1.465,
+      "modelVsCheck": -3.25
+     },
+     {
+      "key": "St3 Equity < 35 % n2 | 1.5",
+      "n": 17,
+      "realVsCheck": 4.141,
+      "se": 1.571,
+      "modelVsCheck": -6.427
+     },
+     {
+      "key": "St3 Equity < 35 % n3+ | 0.33",
+      "n": 3,
+      "realVsCheck": -1.8,
+      "se": 0.5,
+      "modelVsCheck": -1.278
+     },
+     {
+      "key": "St3 Equity < 35 % n3+ | 0.5",
+      "n": 3,
+      "realVsCheck": -0.767,
+      "se": 2.474,
+      "modelVsCheck": -2.005
+     },
+     {
+      "key": "St3 Equity < 35 % n3+ | 0.75",
+      "n": 3,
+      "realVsCheck": 3.167,
+      "se": 3.346,
+      "modelVsCheck": -2.953
+     },
+     {
+      "key": "St3 Equity < 35 % n3+ | 1",
+      "n": 3,
+      "realVsCheck": 2.833,
+      "se": 3.655,
+      "modelVsCheck": -4.161
+     },
+     {
+      "key": "St3 Equity < 35 % n3+ | 1.5",
+      "n": 3,
+      "realVsCheck": 2.167,
+      "se": 4.285,
+      "modelVsCheck": -7.025
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n1 | 0.33",
+      "n": 78,
+      "realVsCheck": -0.948,
+      "se": 1.817,
+      "modelVsCheck": 4.25
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n1 | 0.5",
+      "n": 74,
+      "realVsCheck": -2.498,
+      "se": 2.261,
+      "modelVsCheck": 4.706
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n1 | 0.75",
+      "n": 74,
+      "realVsCheck": -3.297,
+      "se": 2.549,
+      "modelVsCheck": 5.13
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n1 | 1",
+      "n": 72,
+      "realVsCheck": -0.528,
+      "se": 2.953,
+      "modelVsCheck": 6.151
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n1 | 1.5",
+      "n": 69,
+      "realVsCheck": 0.146,
+      "se": 2.568,
+      "modelVsCheck": 7.818
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n2 | 0.33",
+      "n": 6,
+      "realVsCheck": -0.15,
+      "se": 0.68,
+      "modelVsCheck": 1.973
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n2 | 0.5",
+      "n": 6,
+      "realVsCheck": -0.217,
+      "se": 1.039,
+      "modelVsCheck": 2.489
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n2 | 0.75",
+      "n": 6,
+      "realVsCheck": 2.75,
+      "se": 1.365,
+      "modelVsCheck": 2.98
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n2 | 1",
+      "n": 6,
+      "realVsCheck": 1.75,
+      "se": 1.25,
+      "modelVsCheck": 3.772
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n2 | 1.5",
+      "n": 6,
+      "realVsCheck": 1.75,
+      "se": 1.25,
+      "modelVsCheck": 6.802
+     }
+    ]
+   },
+   "policies": {
+    "all": {
+     "spots": 1593,
+     "rows": [
+      {
+       "policy": "Modell (beste EV)",
+       "vsCheck": 0.144,
+       "se": 0.486
+      },
+      {
+       "policy": "Modell, Größe frei nach Ausspielung (Orakel)",
+       "vsCheck": 3.888,
+       "se": 0.48
+      },
+      {
+       "policy": "immer Check",
+       "vsCheck": 0,
+       "se": 0
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 0.33",
+       "vsCheck": 0.089,
+       "se": 0.404
+      },
+      {
+       "policy": "immer Bet 0.33",
+       "vsCheck": 0.742,
+       "se": 0.471
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 0.5",
+       "vsCheck": 0.319,
+       "se": 0.414
+      },
+      {
+       "policy": "immer Bet 0.5",
+       "vsCheck": 0.749,
+       "se": 0.497
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 0.75",
+       "vsCheck": -0.262,
+       "se": 0.453
+      },
+      {
+       "policy": "immer Bet 0.75",
+       "vsCheck": -0.06,
+       "se": 0.549
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 1",
+       "vsCheck": -0.167,
+       "se": 0.49
+      },
+      {
+       "policy": "immer Bet 1",
+       "vsCheck": -0.096,
+       "se": 0.605
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 1.5",
+       "vsCheck": -0.078,
+       "se": 0.539
+      },
+      {
+       "policy": "immer Bet 1.5",
+       "vsCheck": 0.712,
+       "se": 0.654
+      }
+     ]
+    },
+    "headsUp": {
+     "spots": 1356,
+     "rows": [
+      {
+       "policy": "Modell (beste EV)",
+       "vsCheck": -0.175,
+       "se": 0.516
+      },
+      {
+       "policy": "Modell, Größe frei nach Ausspielung (Orakel)",
+       "vsCheck": 3.71,
+       "se": 0.505
+      },
+      {
+       "policy": "immer Check",
+       "vsCheck": 0,
+       "se": 0
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 0.33",
+       "vsCheck": 0.15,
+       "se": 0.423
+      },
+      {
+       "policy": "immer Bet 0.33",
+       "vsCheck": 1.002,
+       "se": 0.505
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 0.5",
+       "vsCheck": 0.375,
+       "se": 0.445
+      },
+      {
+       "policy": "immer Bet 0.5",
+       "vsCheck": 1.081,
+       "se": 0.539
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 0.75",
+       "vsCheck": 0.044,
+       "se": 0.487
+      },
+      {
+       "policy": "immer Bet 0.75",
+       "vsCheck": 0.556,
+       "se": 0.595
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 1",
+       "vsCheck": -0.019,
+       "se": 0.529
+      },
+      {
+       "policy": "immer Bet 1",
+       "vsCheck": 0.401,
+       "se": 0.657
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 1.5",
+       "vsCheck": -0.261,
+       "se": 0.56
+      },
+      {
+       "policy": "immer Bet 1.5",
+       "vsCheck": 0.749,
+       "se": 0.694
+      }
+     ]
+    },
+    "multiway": {
+     "spots": 237,
+     "rows": [
+      {
+       "policy": "Modell (beste EV)",
+       "vsCheck": 1.966,
+       "se": 1.404
+      },
+      {
+       "policy": "Modell, Größe frei nach Ausspielung (Orakel)",
+       "vsCheck": 4.907,
+       "se": 1.445
+      },
+      {
+       "policy": "immer Check",
+       "vsCheck": 0,
+       "se": 0
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 0.33",
+       "vsCheck": -0.259,
+       "se": 1.235
+      },
+      {
+       "policy": "immer Bet 0.33",
+       "vsCheck": -0.744,
+       "se": 1.295
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 0.5",
+       "vsCheck": -0.005,
+       "se": 1.123
+      },
+      {
+       "policy": "immer Bet 0.5",
+       "vsCheck": -1.148,
+       "se": 1.283
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 0.75",
+       "vsCheck": -2.011,
+       "se": 1.22
+      },
+      {
+       "policy": "immer Bet 0.75",
+       "vsCheck": -3.583,
+       "se": 1.413
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 1",
+       "vsCheck": -1.013,
+       "se": 1.299
+      },
+      {
+       "policy": "immer Bet 1",
+       "vsCheck": -2.941,
+       "se": 1.54
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 1.5",
+       "vsCheck": 0.967,
+       "se": 1.698
+      },
+      {
+       "policy": "immer Bet 1.5",
+       "vsCheck": 0.5,
+       "se": 1.895
+      }
+     ]
+    }
+   },
+   "eqWhenCalled": [
+    {
+     "key": "St1 0.33",
+     "n": 419,
+     "predEqWhenCalled": 0.507,
+     "obsEqWhenCalled": 0.472,
+     "se": 0.016
+    },
+    {
+     "key": "St1 0.5",
+     "n": 319,
+     "predEqWhenCalled": 0.466,
+     "obsEqWhenCalled": 0.403,
+     "se": 0.017
+    },
+    {
+     "key": "St1 0.75",
+     "n": 270,
+     "predEqWhenCalled": 0.427,
+     "obsEqWhenCalled": 0.367,
+     "se": 0.018
+    },
+    {
+     "key": "St1 1",
+     "n": 231,
+     "predEqWhenCalled": 0.417,
+     "obsEqWhenCalled": 0.346,
+     "se": 0.019
+    },
+    {
+     "key": "St1 1.5",
+     "n": 158,
+     "predEqWhenCalled": 0.411,
+     "obsEqWhenCalled": 0.327,
+     "se": 0.022
+    },
+    {
+     "key": "St2 0.33",
+     "n": 275,
+     "predEqWhenCalled": 0.474,
+     "obsEqWhenCalled": 0.413,
+     "se": 0.022
+    },
+    {
+     "key": "St2 0.5",
+     "n": 219,
+     "predEqWhenCalled": 0.439,
+     "obsEqWhenCalled": 0.358,
+     "se": 0.023
+    },
+    {
+     "key": "St2 0.75",
+     "n": 178,
+     "predEqWhenCalled": 0.396,
+     "obsEqWhenCalled": 0.335,
+     "se": 0.025
+    },
+    {
+     "key": "St2 1",
+     "n": 146,
+     "predEqWhenCalled": 0.374,
+     "obsEqWhenCalled": 0.326,
+     "se": 0.027
+    },
+    {
+     "key": "St2 1.5",
+     "n": 86,
+     "predEqWhenCalled": 0.346,
+     "obsEqWhenCalled": 0.304,
+     "se": 0.035
+    },
+    {
+     "key": "St3 0.33",
+     "n": 103,
+     "predEqWhenCalled": 0.42,
+     "obsEqWhenCalled": 0.243,
+     "se": 0.04
+    },
+    {
+     "key": "St3 0.5",
+     "n": 83,
+     "predEqWhenCalled": 0.368,
+     "obsEqWhenCalled": 0.211,
+     "se": 0.043
+    },
+    {
+     "key": "St3 0.75",
+     "n": 68,
+     "predEqWhenCalled": 0.293,
+     "obsEqWhenCalled": 0.169,
+     "se": 0.044
+    },
+    {
+     "key": "St3 1",
+     "n": 42,
+     "predEqWhenCalled": 0.221,
+     "obsEqWhenCalled": 0.131,
+     "se": 0.051
+    },
+    {
+     "key": "St3 1.5",
+     "n": 11,
+     "predEqWhenCalled": 0.416,
+     "obsEqWhenCalled": 0.136,
+     "se": 0.097
+    }
+   ],
+   "facing": [
+    {
+     "key": "St1 call",
+     "n": 296,
+     "realVsFold": 0.33,
+     "se": 1.56,
+     "modelVsFold": 1.128
+    },
+    {
+     "key": "St1 fold",
+     "n": 296,
+     "realVsFold": 0,
+     "se": 0,
+     "modelVsFold": 0
+    },
+    {
+     "key": "St1 r2.5",
+     "n": 296,
+     "realVsFold": -0.568,
+     "se": 1.827,
+     "modelVsFold": 1.263
+    },
+    {
+     "key": "St1 r3.5",
+     "n": 296,
+     "realVsFold": -2.726,
+     "se": 2.024,
+     "modelVsFold": -0.517
+    },
+    {
+     "key": "St2 call",
+     "n": 125,
+     "realVsFold": -2.88,
+     "se": 2.168,
+     "modelVsFold": -0.608
+    },
+    {
+     "key": "St2 fold",
+     "n": 125,
+     "realVsFold": 0,
+     "se": 0,
+     "modelVsFold": 0
+    },
+    {
+     "key": "St2 r2.5",
+     "n": 125,
+     "realVsFold": -6.039,
+     "se": 3.258,
+     "modelVsFold": -2.137
+    },
+    {
+     "key": "St2 r3.5",
+     "n": 125,
+     "realVsFold": -6.7,
+     "se": 3.433,
+     "modelVsFold": -5.972
+    },
+    {
+     "key": "St3 call",
+     "n": 59,
+     "realVsFold": -1.903,
+     "se": 2.178,
+     "modelVsFold": -4.862
+    },
+    {
+     "key": "St3 fold",
+     "n": 59,
+     "realVsFold": 0,
+     "se": 0,
+     "modelVsFold": 0
+    },
+    {
+     "key": "St3 r2.5",
+     "n": 59,
+     "realVsFold": -6.219,
+     "se": 3.915,
+     "modelVsFold": -10.07
+    },
+    {
+     "key": "St3 r3.5",
+     "n": 59,
+     "realVsFold": -4.876,
+     "se": 4.651,
+     "modelVsFold": -15.227
+    }
+   ],
+   "modelChoice": {
+    "1": 19,
+    "0.5": 83,
+    "check": 909,
+    "0.33": 148,
+    "1.5": 310,
+    "0.75": 124
+   }
+  },
+  "v21-bots": {
+   "label": "v21",
+   "comp": "bots",
+   "files": [
+    {
+     "file": "v21-bots-505.json",
+     "seed": 505,
+     "hands": 2000,
+     "spots": 557
+    }
+   ],
+   "spots": 557,
+   "betSpots": 463,
+   "facingSpots": 94,
+   "calibration": {
+    "bySize": [
+     {
+      "key": "0.33",
+      "n": 566,
+      "obsFold": 0.261,
+      "obsRaise": 0.041,
+      "predFold": 0.307,
+      "predFoldGto": 0.286,
+      "predRaise": 0.06,
+      "seFold": 0.018
+     },
+     {
+      "key": "0.5",
+      "n": 560,
+      "obsFold": 0.35,
+      "obsRaise": 0.041,
+      "predFold": 0.414,
+      "predFoldGto": 0.356,
+      "predRaise": 0.061,
+      "seFold": 0.02
+     },
+     {
+      "key": "0.75",
+      "n": 565,
+      "obsFold": 0.46,
+      "obsRaise": 0.042,
+      "predFold": 0.521,
+      "predFoldGto": 0.427,
+      "predRaise": 0.06,
+      "seFold": 0.021
+     },
+     {
+      "key": "1",
+      "n": 561,
+      "obsFold": 0.526,
+      "obsRaise": 0.05,
+      "predFold": 0.593,
+      "predFoldGto": 0.446,
+      "predRaise": 0.061,
+      "seFold": 0.021
+     },
+     {
+      "key": "1.5",
+      "n": 560,
+      "obsFold": 0.67,
+      "obsRaise": 0.064,
+      "predFold": 0.69,
+      "predFoldGto": 0.429,
+      "predRaise": 0.06,
+      "seFold": 0.02
+     }
+    ],
+    "byStreetSizeN": [
+     {
+      "key": "St1 n1 0.33",
+      "n": 226,
+      "obsFold": 0.27,
+      "obsRaise": 0.044,
+      "predFold": 0.301,
+      "predFoldGto": 0.222,
+      "predRaise": 0.066,
+      "seFold": 0.03
+     },
+     {
+      "key": "St1 n1 0.5",
+      "n": 221,
+      "obsFold": 0.416,
+      "obsRaise": 0.045,
+      "predFold": 0.401,
+      "predFoldGto": 0.295,
+      "predRaise": 0.067,
+      "seFold": 0.033
+     },
+     {
+      "key": "St1 n1 0.75",
+      "n": 226,
+      "obsFold": 0.482,
+      "obsRaise": 0.049,
+      "predFold": 0.504,
+      "predFoldGto": 0.377,
+      "predRaise": 0.066,
+      "seFold": 0.033
+     },
+     {
+      "key": "St1 n1 1",
+      "n": 226,
+      "obsFold": 0.522,
+      "obsRaise": 0.053,
+      "predFold": 0.571,
+      "predFoldGto": 0.407,
+      "predRaise": 0.066,
+      "seFold": 0.033
+     },
+     {
+      "key": "St1 n1 1.5",
+      "n": 226,
+      "obsFold": 0.628,
+      "obsRaise": 0.066,
+      "predFold": 0.651,
+      "predFoldGto": 0.409,
+      "predRaise": 0.066,
+      "seFold": 0.032
+     },
+     {
+      "key": "St1 n2 0.33",
+      "n": 90,
+      "obsFold": 0.256,
+      "obsRaise": 0.022,
+      "predFold": 0.3,
+      "predFoldGto": 0.404,
+      "predRaise": 0.058,
+      "seFold": 0.046
+     },
+     {
+      "key": "St1 n2 0.5",
+      "n": 90,
+      "obsFold": 0.289,
+      "obsRaise": 0.022,
+      "predFold": 0.409,
+      "predFoldGto": 0.469,
+      "predRaise": 0.058,
+      "seFold": 0.048
+     },
+     {
+      "key": "St1 n2 0.75",
+      "n": 90,
+      "obsFold": 0.5,
+      "obsRaise": 0.022,
+      "predFold": 0.513,
+      "predFoldGto": 0.528,
+      "predRaise": 0.058,
+      "seFold": 0.053
+     },
+     {
+      "key": "St1 n2 1",
+      "n": 90,
+      "obsFold": 0.578,
+      "obsRaise": 0.022,
+      "predFold": 0.582,
+      "predFoldGto": 0.528,
+      "predRaise": 0.058,
+      "seFold": 0.052
+     },
+     {
+      "key": "St1 n2 1.5",
+      "n": 90,
+      "obsFold": 0.678,
+      "obsRaise": 0.022,
+      "predFold": 0.664,
+      "predFoldGto": 0.484,
+      "predRaise": 0.058,
+      "seFold": 0.049
+     },
+     {
+      "key": "St1 n3+ 0.33",
+      "n": 25,
+      "obsFold": 0.4,
+      "obsRaise": 0,
+      "predFold": 0.404,
+      "predFoldGto": 0.465,
+      "predRaise": 0.046,
+      "seFold": 0.098
+     },
+     {
+      "key": "St1 n3+ 0.5",
+      "n": 25,
+      "obsFold": 0.44,
+      "obsRaise": 0,
+      "predFold": 0.512,
+      "predFoldGto": 0.513,
+      "predRaise": 0.046,
+      "seFold": 0.099
+     },
+     {
+      "key": "St1 n3+ 0.75",
+      "n": 25,
+      "obsFold": 0.56,
+      "obsRaise": 0,
+      "predFold": 0.606,
+      "predFoldGto": 0.555,
+      "predRaise": 0.046,
+      "seFold": 0.099
+     },
+     {
+      "key": "St1 n3+ 1",
+      "n": 25,
+      "obsFold": 0.6,
+      "obsRaise": 0,
+      "predFold": 0.664,
+      "predFoldGto": 0.539,
+      "predRaise": 0.046,
+      "seFold": 0.098
+     },
+     {
+      "key": "St1 n3+ 1.5",
+      "n": 25,
+      "obsFold": 0.76,
+      "obsRaise": 0,
+      "predFold": 0.73,
+      "predFoldGto": 0.479,
+      "predRaise": 0.046,
+      "seFold": 0.085
+     },
+     {
+      "key": "St2 n1 0.33",
+      "n": 102,
+      "obsFold": 0.127,
+      "obsRaise": 0.088,
+      "predFold": 0.204,
+      "predFoldGto": 0.219,
+      "predRaise": 0.072,
+      "seFold": 0.033
+     },
+     {
+      "key": "St2 n1 0.5",
+      "n": 102,
+      "obsFold": 0.186,
+      "obsRaise": 0.088,
+      "predFold": 0.313,
+      "predFoldGto": 0.295,
+      "predRaise": 0.072,
+      "seFold": 0.039
+     },
+     {
+      "key": "St2 n1 0.75",
+      "n": 102,
+      "obsFold": 0.275,
+      "obsRaise": 0.098,
+      "predFold": 0.432,
+      "predFoldGto": 0.376,
+      "predRaise": 0.072,
+      "seFold": 0.044
+     },
+     {
+      "key": "St2 n1 1",
+      "n": 101,
+      "obsFold": 0.366,
+      "obsRaise": 0.119,
+      "predFold": 0.525,
+      "predFoldGto": 0.406,
+      "predRaise": 0.073,
+      "seFold": 0.048
+     },
+     {
+      "key": "St2 n1 1.5",
+      "n": 100,
+      "obsFold": 0.57,
+      "obsRaise": 0.15,
+      "predFold": 0.681,
+      "predFoldGto": 0.408,
+      "predRaise": 0.07,
+      "seFold": 0.05
+     },
+     {
+      "key": "St2 n2 0.33",
+      "n": 40,
+      "obsFold": 0.2,
+      "obsRaise": 0.025,
+      "predFold": 0.241,
+      "predFoldGto": 0.4,
+      "predRaise": 0.065,
+      "seFold": 0.063
+     },
+     {
+      "key": "St2 n2 0.5",
+      "n": 40,
+      "obsFold": 0.275,
+      "obsRaise": 0.025,
+      "predFold": 0.349,
+      "predFoldGto": 0.458,
+      "predRaise": 0.065,
+      "seFold": 0.071
+     },
+     {
+      "key": "St2 n2 0.75",
+      "n": 40,
+      "obsFold": 0.4,
+      "obsRaise": 0.025,
+      "predFold": 0.46,
+      "predFoldGto": 0.513,
+      "predRaise": 0.065,
+      "seFold": 0.077
+     },
+     {
+      "key": "St2 n2 1",
+      "n": 40,
+      "obsFold": 0.475,
+      "obsRaise": 0.025,
+      "predFold": 0.548,
+      "predFoldGto": 0.513,
+      "predRaise": 0.065,
+      "seFold": 0.079
+     },
+     {
+      "key": "St2 n2 1.5",
+      "n": 40,
+      "obsFold": 0.625,
+      "obsRaise": 0.05,
+      "predFold": 0.697,
+      "predFoldGto": 0.475,
+      "predRaise": 0.065,
+      "seFold": 0.077
+     },
+     {
+      "key": "St2 n3+ 0.33",
+      "n": 13,
+      "obsFold": 0.308,
+      "obsRaise": 0,
+      "predFold": 0.373,
+      "predFoldGto": 0.466,
+      "predRaise": 0.044,
+      "seFold": 0.128
+     },
+     {
+      "key": "St2 n3+ 0.5",
+      "n": 13,
+      "obsFold": 0.385,
+      "obsRaise": 0,
+      "predFold": 0.509,
+      "predFoldGto": 0.511,
+      "predRaise": 0.044,
+      "seFold": 0.135
+     },
+     {
+      "key": "St2 n3+ 0.75",
+      "n": 13,
+      "obsFold": 0.462,
+      "obsRaise": 0,
+      "predFold": 0.615,
+      "predFoldGto": 0.546,
+      "predRaise": 0.044,
+      "seFold": 0.138
+     },
+     {
+      "key": "St2 n3+ 1",
+      "n": 13,
+      "obsFold": 0.462,
+      "obsRaise": 0,
+      "predFold": 0.68,
+      "predFoldGto": 0.529,
+      "predRaise": 0.044,
+      "seFold": 0.138
+     },
+     {
+      "key": "St2 n3+ 1.5",
+      "n": 13,
+      "obsFold": 0.769,
+      "obsRaise": 0,
+      "predFold": 0.797,
+      "predFoldGto": 0.47,
+      "predRaise": 0.044,
+      "seFold": 0.117
+     },
+     {
+      "key": "St3 n1 0.33",
+      "n": 47,
+      "obsFold": 0.362,
+      "obsRaise": 0.021,
+      "predFold": 0.454,
+      "predFoldGto": 0.218,
+      "predRaise": 0.034,
+      "seFold": 0.07
+     },
+     {
+      "key": "St3 n1 0.5",
+      "n": 46,
+      "obsFold": 0.413,
+      "obsRaise": 0.022,
+      "predFold": 0.573,
+      "predFoldGto": 0.293,
+      "predRaise": 0.035,
+      "seFold": 0.073
+     },
+     {
+      "key": "St3 n1 0.75",
+      "n": 46,
+      "obsFold": 0.543,
+      "obsRaise": 0,
+      "predFold": 0.684,
+      "predFoldGto": 0.369,
+      "predRaise": 0.033,
+      "seFold": 0.073
+     },
+     {
+      "key": "St3 n1 1",
+      "n": 43,
+      "obsFold": 0.698,
+      "obsRaise": 0.023,
+      "predFold": 0.75,
+      "predFoldGto": 0.395,
+      "predRaise": 0.035,
+      "seFold": 0.07
+     },
+     {
+      "key": "St3 n1 1.5",
+      "n": 43,
+      "obsFold": 0.884,
+      "obsRaise": 0.047,
+      "predFold": 0.817,
+      "predFoldGto": 0.376,
+      "predRaise": 0.029,
+      "seFold": 0.049
+     },
+     {
+      "key": "St3 n2 0.33",
+      "n": 20,
+      "obsFold": 0.5,
+      "obsRaise": 0,
+      "predFold": 0.517,
+      "predFoldGto": 0.393,
+      "predRaise": 0.025,
+      "seFold": 0.112
+     },
+     {
+      "key": "St3 n2 0.5",
+      "n": 20,
+      "obsFold": 0.55,
+      "obsRaise": 0,
+      "predFold": 0.627,
+      "predFoldGto": 0.449,
+      "predRaise": 0.025,
+      "seFold": 0.111
+     },
+     {
+      "key": "St3 n2 0.75",
+      "n": 20,
+      "obsFold": 0.75,
+      "obsRaise": 0,
+      "predFold": 0.731,
+      "predFoldGto": 0.503,
+      "predRaise": 0.025,
+      "seFold": 0.097
+     },
+     {
+      "key": "St3 n2 1",
+      "n": 20,
+      "obsFold": 0.75,
+      "obsRaise": 0,
+      "predFold": 0.794,
+      "predFoldGto": 0.501,
+      "predRaise": 0.025,
+      "seFold": 0.097
+     },
+     {
+      "key": "St3 n2 1.5",
+      "n": 20,
+      "obsFold": 1,
+      "obsRaise": 0,
+      "predFold": 0.861,
+      "predFoldGto": 0.44,
+      "predRaise": 0.025,
+      "seFold": 0
+     },
+     {
+      "key": "St3 n3+ 0.33",
+      "n": 3,
+      "obsFold": 0.667,
+      "obsRaise": 0,
+      "predFold": 0.602,
+      "predFoldGto": 0.463,
+      "predRaise": 0.018,
+      "seFold": 0.272
+     },
+     {
+      "key": "St3 n3+ 0.5",
+      "n": 3,
+      "obsFold": 0.667,
+      "obsRaise": 0,
+      "predFold": 0.71,
+      "predFoldGto": 0.513,
+      "predRaise": 0.018,
+      "seFold": 0.272
+     },
+     {
+      "key": "St3 n3+ 0.75",
+      "n": 3,
+      "obsFold": 0.667,
+      "obsRaise": 0,
+      "predFold": 0.795,
+      "predFoldGto": 0.558,
+      "predRaise": 0.018,
+      "seFold": 0.272
+     },
+     {
+      "key": "St3 n3+ 1",
+      "n": 3,
+      "obsFold": 1,
+      "obsRaise": 0,
+      "predFold": 0.843,
+      "predFoldGto": 0.543,
+      "predRaise": 0.018,
+      "seFold": 0
+     },
+     {
+      "key": "St3 n3+ 1.5",
+      "n": 3,
+      "obsFold": 1,
+      "obsRaise": 0,
+      "predFold": 0.893,
+      "predFoldGto": 0.451,
+      "predRaise": 0.018,
+      "seFold": 0
+     }
+    ],
+    "headsUp": [
+     {
+      "key": "Bet St1 0.33",
+      "n": 73,
+      "obsFold": 0.247,
+      "obsRaise": 0.027,
+      "predFold": 0.287,
+      "predFoldGto": 0.229,
+      "predRaise": 0.082,
+      "seFold": 0.05
+     },
+     {
+      "key": "Bet St1 0.5",
+      "n": 68,
+      "obsFold": 0.368,
+      "obsRaise": 0.029,
+      "predFold": 0.357,
+      "predFoldGto": 0.297,
+      "predRaise": 0.085,
+      "seFold": 0.058
+     },
+     {
+      "key": "Bet St1 0.75",
+      "n": 73,
+      "obsFold": 0.452,
+      "obsRaise": 0.027,
+      "predFold": 0.461,
+      "predFoldGto": 0.377,
+      "predRaise": 0.082,
+      "seFold": 0.058
+     },
+     {
+      "key": "Bet St1 1",
+      "n": 73,
+      "obsFold": 0.479,
+      "obsRaise": 0.027,
+      "predFold": 0.526,
+      "predFoldGto": 0.407,
+      "predRaise": 0.082,
+      "seFold": 0.058
+     },
+     {
+      "key": "Bet St1 1.5",
+      "n": 73,
+      "obsFold": 0.589,
+      "obsRaise": 0.027,
+      "predFold": 0.608,
+      "predFoldGto": 0.409,
+      "predRaise": 0.082,
+      "seFold": 0.058
+     },
+     {
+      "key": "Bet St2 0.33",
+      "n": 42,
+      "obsFold": 0.214,
+      "obsRaise": 0.095,
+      "predFold": 0.191,
+      "predFoldGto": 0.22,
+      "predRaise": 0.083,
+      "seFold": 0.063
+     },
+     {
+      "key": "Bet St2 0.5",
+      "n": 42,
+      "obsFold": 0.262,
+      "obsRaise": 0.095,
+      "predFold": 0.291,
+      "predFoldGto": 0.295,
+      "predRaise": 0.083,
+      "seFold": 0.068
+     },
+     {
+      "key": "Bet St2 0.75",
+      "n": 42,
+      "obsFold": 0.357,
+      "obsRaise": 0.095,
+      "predFold": 0.408,
+      "predFoldGto": 0.377,
+      "predRaise": 0.083,
+      "seFold": 0.074
+     },
+     {
+      "key": "Bet St2 1",
+      "n": 42,
+      "obsFold": 0.452,
+      "obsRaise": 0.095,
+      "predFold": 0.508,
+      "predFoldGto": 0.405,
+      "predRaise": 0.083,
+      "seFold": 0.077
+     },
+     {
+      "key": "Bet St2 1.5",
+      "n": 42,
+      "obsFold": 0.643,
+      "obsRaise": 0.143,
+      "predFold": 0.678,
+      "predFoldGto": 0.406,
+      "predRaise": 0.08,
+      "seFold": 0.074
+     },
+     {
+      "key": "Bet St3 0.33",
+      "n": 24,
+      "obsFold": 0.417,
+      "obsRaise": 0.042,
+      "predFold": 0.46,
+      "predFoldGto": 0.221,
+      "predRaise": 0.035,
+      "seFold": 0.101
+     },
+     {
+      "key": "Bet St3 0.5",
+      "n": 24,
+      "obsFold": 0.542,
+      "obsRaise": 0.042,
+      "predFold": 0.579,
+      "predFoldGto": 0.292,
+      "predRaise": 0.035,
+      "seFold": 0.102
+     },
+     {
+      "key": "Bet St3 0.75",
+      "n": 24,
+      "obsFold": 0.625,
+      "obsRaise": 0,
+      "predFold": 0.689,
+      "predFoldGto": 0.364,
+      "predRaise": 0.033,
+      "seFold": 0.099
+     },
+     {
+      "key": "Bet St3 1",
+      "n": 22,
+      "obsFold": 0.773,
+      "obsRaise": 0.045,
+      "predFold": 0.75,
+      "predFoldGto": 0.391,
+      "predRaise": 0.036,
+      "seFold": 0.089
+     },
+     {
+      "key": "Bet St3 1.5",
+      "n": 22,
+      "obsFold": 0.955,
+      "obsRaise": 0.045,
+      "predFold": 0.818,
+      "predFoldGto": 0.373,
+      "predRaise": 0.032,
+      "seFold": 0.044
+     },
+     {
+      "key": "C-Bet St1 0.33",
+      "n": 153,
+      "obsFold": 0.281,
+      "obsRaise": 0.052,
+      "predFold": 0.308,
+      "predFoldGto": 0.218,
+      "predRaise": 0.059,
+      "seFold": 0.036
+     },
+     {
+      "key": "C-Bet St1 0.5",
+      "n": 153,
+      "obsFold": 0.438,
+      "obsRaise": 0.052,
+      "predFold": 0.42,
+      "predFoldGto": 0.295,
+      "predRaise": 0.059,
+      "seFold": 0.04
+     },
+     {
+      "key": "C-Bet St1 0.75",
+      "n": 153,
+      "obsFold": 0.497,
+      "obsRaise": 0.059,
+      "predFold": 0.525,
+      "predFoldGto": 0.377,
+      "predRaise": 0.059,
+      "seFold": 0.04
+     },
+     {
+      "key": "C-Bet St1 1",
+      "n": 153,
+      "obsFold": 0.542,
+      "obsRaise": 0.065,
+      "predFold": 0.592,
+      "predFoldGto": 0.407,
+      "predRaise": 0.059,
+      "seFold": 0.04
+     },
+     {
+      "key": "C-Bet St1 1.5",
+      "n": 153,
+      "obsFold": 0.647,
+      "obsRaise": 0.085,
+      "predFold": 0.672,
+      "predFoldGto": 0.409,
+      "predRaise": 0.059,
+      "seFold": 0.039
+     },
+     {
+      "key": "C-Bet St2 0.33",
+      "n": 60,
+      "obsFold": 0.067,
+      "obsRaise": 0.083,
+      "predFold": 0.213,
+      "predFoldGto": 0.218,
+      "predRaise": 0.065,
+      "seFold": 0.032
+     },
+     {
+      "key": "C-Bet St2 0.5",
+      "n": 60,
+      "obsFold": 0.133,
+      "obsRaise": 0.083,
+      "predFold": 0.329,
+      "predFoldGto": 0.294,
+      "predRaise": 0.065,
+      "seFold": 0.044
+     },
+     {
+      "key": "C-Bet St2 0.75",
+      "n": 60,
+      "obsFold": 0.217,
+      "obsRaise": 0.1,
+      "predFold": 0.449,
+      "predFoldGto": 0.376,
+      "predRaise": 0.064,
+      "seFold": 0.053
+     },
+     {
+      "key": "C-Bet St2 1",
+      "n": 59,
+      "obsFold": 0.305,
+      "obsRaise": 0.136,
+      "predFold": 0.537,
+      "predFoldGto": 0.407,
+      "predRaise": 0.065,
+      "seFold": 0.06
+     },
+     {
+      "key": "C-Bet St2 1.5",
+      "n": 58,
+      "obsFold": 0.517,
+      "obsRaise": 0.155,
+      "predFold": 0.684,
+      "predFoldGto": 0.409,
+      "predRaise": 0.063,
+      "seFold": 0.066
+     },
+     {
+      "key": "C-Bet St3 0.33",
+      "n": 23,
+      "obsFold": 0.304,
+      "obsRaise": 0,
+      "predFold": 0.447,
+      "predFoldGto": 0.214,
+      "predRaise": 0.033,
+      "seFold": 0.096
+     },
+     {
+      "key": "C-Bet St3 0.5",
+      "n": 22,
+      "obsFold": 0.273,
+      "obsRaise": 0,
+      "predFold": 0.568,
+      "predFoldGto": 0.294,
+      "predRaise": 0.035,
+      "seFold": 0.095
+     },
+     {
+      "key": "C-Bet St3 0.75",
+      "n": 22,
+      "obsFold": 0.455,
+      "obsRaise": 0,
+      "predFold": 0.679,
+      "predFoldGto": 0.374,
+      "predRaise": 0.033,
+      "seFold": 0.106
+     },
+     {
+      "key": "C-Bet St3 1",
+      "n": 21,
+      "obsFold": 0.619,
+      "obsRaise": 0,
+      "predFold": 0.749,
+      "predFoldGto": 0.399,
+      "predRaise": 0.034,
+      "seFold": 0.106
+     },
+     {
+      "key": "C-Bet St3 1.5",
+      "n": 21,
+      "obsFold": 0.81,
+      "obsRaise": 0.048,
+      "predFold": 0.817,
+      "predFoldGto": 0.379,
+      "predRaise": 0.026,
+      "seFold": 0.086
+     }
+    ],
+    "byHudType": [
+     {
+      "key": "LAG 0.33",
+      "n": 21,
+      "obsFold": 0.19,
+      "obsRaise": 0.095,
+      "predFold": 0.358,
+      "predFoldGto": 0.214,
+      "predRaise": 0.071,
+      "seFold": 0.086
+     },
+     {
+      "key": "LAG 0.5",
+      "n": 20,
+      "obsFold": 0.3,
+      "obsRaise": 0.1,
+      "predFold": 0.46,
+      "predFoldGto": 0.295,
+      "predRaise": 0.075,
+      "seFold": 0.102
+     },
+     {
+      "key": "LAG 0.75",
+      "n": 20,
+      "obsFold": 0.3,
+      "obsRaise": 0.05,
+      "predFold": 0.557,
+      "predFoldGto": 0.373,
+      "predRaise": 0.072,
+      "seFold": 0.102
+     },
+     {
+      "key": "LAG 1",
+      "n": 18,
+      "obsFold": 0.333,
+      "obsRaise": 0.111,
+      "predFold": 0.603,
+      "predFoldGto": 0.407,
+      "predRaise": 0.08,
+      "seFold": 0.111
+     },
+     {
+      "key": "LAG 1.5",
+      "n": 18,
+      "obsFold": 0.444,
+      "obsRaise": 0.167,
+      "predFold": 0.71,
+      "predFoldGto": 0.409,
+      "predRaise": 0.08,
+      "seFold": 0.117
+     },
+     {
+      "key": "TAG 0.33",
+      "n": 58,
+      "obsFold": 0.397,
+      "obsRaise": 0.069,
+      "predFold": 0.344,
+      "predFoldGto": 0.218,
+      "predRaise": 0.071,
+      "seFold": 0.064
+     },
+     {
+      "key": "TAG 0.5",
+      "n": 58,
+      "obsFold": 0.517,
+      "obsRaise": 0.069,
+      "predFold": 0.463,
+      "predFoldGto": 0.296,
+      "predRaise": 0.071,
+      "seFold": 0.066
+     },
+     {
+      "key": "TAG 0.75",
+      "n": 58,
+      "obsFold": 0.586,
+      "obsRaise": 0.069,
+      "predFold": 0.573,
+      "predFoldGto": 0.376,
+      "predRaise": 0.07,
+      "seFold": 0.065
+     },
+     {
+      "key": "TAG 1",
+      "n": 57,
+      "obsFold": 0.667,
+      "obsRaise": 0.088,
+      "predFold": 0.65,
+      "predFoldGto": 0.405,
+      "predRaise": 0.071,
+      "seFold": 0.062
+     },
+     {
+      "key": "TAG 1.5",
+      "n": 57,
+      "obsFold": 0.807,
+      "obsRaise": 0.105,
+      "predFold": 0.751,
+      "predFoldGto": 0.406,
+      "predRaise": 0.071,
+      "seFold": 0.052
+     },
+     {
+      "key": "loose-passiv 0.33",
+      "n": 59,
+      "obsFold": 0.136,
+      "obsRaise": 0.034,
+      "predFold": 0.231,
+      "predFoldGto": 0.224,
+      "predRaise": 0.057,
+      "seFold": 0.045
+     },
+     {
+      "key": "loose-passiv 0.5",
+      "n": 59,
+      "obsFold": 0.254,
+      "obsRaise": 0.034,
+      "predFold": 0.331,
+      "predFoldGto": 0.296,
+      "predRaise": 0.057,
+      "seFold": 0.057
+     },
+     {
+      "key": "loose-passiv 0.75",
+      "n": 59,
+      "obsFold": 0.39,
+      "obsRaise": 0.068,
+      "predFold": 0.439,
+      "predFoldGto": 0.376,
+      "predRaise": 0.057,
+      "seFold": 0.063
+     },
+     {
+      "key": "loose-passiv 1",
+      "n": 59,
+      "obsFold": 0.441,
+      "obsRaise": 0.085,
+      "predFold": 0.516,
+      "predFoldGto": 0.405,
+      "predRaise": 0.057,
+      "seFold": 0.065
+     },
+     {
+      "key": "loose-passiv 1.5",
+      "n": 59,
+      "obsFold": 0.627,
+      "obsRaise": 0.085,
+      "predFold": 0.619,
+      "predFoldGto": 0.403,
+      "predRaise": 0.056,
+      "seFold": 0.063
+     },
+     {
+      "key": "sehr loose 0.33",
+      "n": 63,
+      "obsFold": 0.333,
+      "obsRaise": 0.032,
+      "predFold": 0.29,
+      "predFoldGto": 0.222,
+      "predRaise": 0.055,
+      "seFold": 0.059
+     },
+     {
+      "key": "sehr loose 0.5",
+      "n": 62,
+      "obsFold": 0.419,
+      "obsRaise": 0.032,
+      "predFold": 0.39,
+      "predFoldGto": 0.295,
+      "predRaise": 0.055,
+      "seFold": 0.063
+     },
+     {
+      "key": "sehr loose 0.75",
+      "n": 63,
+      "obsFold": 0.476,
+      "obsRaise": 0.032,
+      "predFold": 0.496,
+      "predFoldGto": 0.376,
+      "predRaise": 0.054,
+      "seFold": 0.063
+     },
+     {
+      "key": "sehr loose 1",
+      "n": 62,
+      "obsFold": 0.548,
+      "obsRaise": 0.032,
+      "predFold": 0.565,
+      "predFoldGto": 0.404,
+      "predRaise": 0.055,
+      "seFold": 0.063
+     },
+     {
+      "key": "sehr loose 1.5",
+      "n": 62,
+      "obsFold": 0.677,
+      "obsRaise": 0.048,
+      "predFold": 0.658,
+      "predFoldGto": 0.403,
+      "predRaise": 0.054,
+      "seFold": 0.059
+     },
+     {
+      "key": "unbekannt 0.33",
+      "n": 174,
+      "obsFold": 0.201,
+      "obsRaise": 0.057,
+      "predFold": 0.291,
+      "predFoldGto": 0.221,
+      "predRaise": 0.067,
+      "seFold": 0.03
+     },
+     {
+      "key": "unbekannt 0.5",
+      "n": 170,
+      "obsFold": 0.312,
+      "obsRaise": 0.059,
+      "predFold": 0.395,
+      "predFoldGto": 0.294,
+      "predRaise": 0.067,
+      "seFold": 0.036
+     },
+     {
+      "key": "unbekannt 0.75",
+      "n": 174,
+      "obsFold": 0.397,
+      "obsRaise": 0.057,
+      "predFold": 0.505,
+      "predFoldGto": 0.376,
+      "predRaise": 0.067,
+      "seFold": 0.037
+     },
+     {
+      "key": "unbekannt 1",
+      "n": 174,
+      "obsFold": 0.466,
+      "obsRaise": 0.063,
+      "predFold": 0.58,
+      "predFoldGto": 0.405,
+      "predRaise": 0.066,
+      "seFold": 0.038
+     },
+     {
+      "key": "unbekannt 1.5",
+      "n": 173,
+      "obsFold": 0.601,
+      "obsRaise": 0.087,
+      "predFold": 0.679,
+      "predFoldGto": 0.405,
+      "predRaise": 0.064,
+      "seFold": 0.037
+     }
+    ]
+   },
+   "value": {
+    "all": [
+     {
+      "key": "alle | 0.33",
+      "n": 463,
+      "realVsCheck": 0.226,
+      "se": 1.126,
+      "modelVsCheck": 1.267
+     },
+     {
+      "key": "alle | 0.5",
+      "n": 457,
+      "realVsCheck": 0.759,
+      "se": 1.177,
+      "modelVsCheck": 1.638
+     },
+     {
+      "key": "alle | 0.75",
+      "n": 462,
+      "realVsCheck": -1.367,
+      "se": 1.341,
+      "modelVsCheck": 1.991
+     },
+     {
+      "key": "alle | 1",
+      "n": 458,
+      "realVsCheck": -2.172,
+      "se": 1.424,
+      "modelVsCheck": 2.002
+     },
+     {
+      "key": "alle | 1.5",
+      "n": 457,
+      "realVsCheck": -3.954,
+      "se": 1.482,
+      "modelVsCheck": 2.243
+     }
+    ],
+    "byEq": [
+     {
+      "key": "Equity 35–60 % | 0.33",
+      "n": 134,
+      "realVsCheck": -0.683,
+      "se": 2.299,
+      "modelVsCheck": 0.394
+     },
+     {
+      "key": "Equity 35–60 % | 0.5",
+      "n": 132,
+      "realVsCheck": -1.195,
+      "se": 2.187,
+      "modelVsCheck": 0.339
+     },
+     {
+      "key": "Equity 35–60 % | 0.75",
+      "n": 133,
+      "realVsCheck": -2.562,
+      "se": 2.308,
+      "modelVsCheck": 0.414
+     },
+     {
+      "key": "Equity 35–60 % | 1",
+      "n": 133,
+      "realVsCheck": -3.674,
+      "se": 2.464,
+      "modelVsCheck": 0.478
+     },
+     {
+      "key": "Equity 35–60 % | 1.5",
+      "n": 133,
+      "realVsCheck": -4.514,
+      "se": 2.681,
+      "modelVsCheck": 0.563
+     },
+     {
+      "key": "Equity < 35 % | 0.33",
+      "n": 153,
+      "realVsCheck": 2.318,
+      "se": 1.518,
+      "modelVsCheck": 0.705
+     },
+     {
+      "key": "Equity < 35 % | 0.5",
+      "n": 150,
+      "realVsCheck": 0.755,
+      "se": 1.926,
+      "modelVsCheck": 1.317
+     },
+     {
+      "key": "Equity < 35 % | 0.75",
+      "n": 153,
+      "realVsCheck": -0.675,
+      "se": 2.372,
+      "modelVsCheck": 1.929
+     },
+     {
+      "key": "Equity < 35 % | 1",
+      "n": 150,
+      "realVsCheck": -0.049,
+      "se": 2.572,
+      "modelVsCheck": 1.67
+     },
+     {
+      "key": "Equity < 35 % | 1.5",
+      "n": 150,
+      "realVsCheck": 0.574,
+      "se": 2.76,
+      "modelVsCheck": 2.15
+     },
+     {
+      "key": "Equity ≥ 60 % | 0.33",
+      "n": 176,
+      "realVsCheck": -0.901,
+      "se": 1.995,
+      "modelVsCheck": 2.42
+     },
+     {
+      "key": "Equity ≥ 60 % | 0.5",
+      "n": 175,
+      "realVsCheck": 2.238,
+      "se": 2.003,
+      "modelVsCheck": 2.892
+     },
+     {
+      "key": "Equity ≥ 60 % | 0.75",
+      "n": 176,
+      "realVsCheck": -1.066,
+      "se": 2.269,
+      "modelVsCheck": 3.237
+     },
+     {
+      "key": "Equity ≥ 60 % | 1",
+      "n": 175,
+      "realVsCheck": -2.85,
+      "se": 2.357,
+      "modelVsCheck": 3.445
+     },
+     {
+      "key": "Equity ≥ 60 % | 1.5",
+      "n": 174,
+      "realVsCheck": -7.429,
+      "se": 2.275,
+      "modelVsCheck": 3.607
+     }
+    ],
+    "byStreetEqN": [
+     {
+      "key": "St1 Equity 35–60 % n1 | 0.33",
+      "n": 76,
+      "realVsCheck": 1.372,
+      "se": 2.22,
+      "modelVsCheck": 0.315
+     },
+     {
+      "key": "St1 Equity 35–60 % n1 | 0.5",
+      "n": 75,
+      "realVsCheck": 2.138,
+      "se": 2.523,
+      "modelVsCheck": 0.337
+     },
+     {
+      "key": "St1 Equity 35–60 % n1 | 0.75",
+      "n": 76,
+      "realVsCheck": -0.083,
+      "se": 2.749,
+      "modelVsCheck": 0.317
+     },
+     {
+      "key": "St1 Equity 35–60 % n1 | 1",
+      "n": 76,
+      "realVsCheck": -0.769,
+      "se": 3.195,
+      "modelVsCheck": 0.265
+     },
+     {
+      "key": "St1 Equity 35–60 % n1 | 1.5",
+      "n": 76,
+      "realVsCheck": 0.158,
+      "se": 3.235,
+      "modelVsCheck": 0.139
+     },
+     {
+      "key": "St1 Equity 35–60 % n2 | 0.33",
+      "n": 18,
+      "realVsCheck": 2.761,
+      "se": 5.205,
+      "modelVsCheck": 0.396
+     },
+     {
+      "key": "St1 Equity 35–60 % n2 | 0.5",
+      "n": 18,
+      "realVsCheck": 3.717,
+      "se": 5.429,
+      "modelVsCheck": 0.42
+     },
+     {
+      "key": "St1 Equity 35–60 % n2 | 0.75",
+      "n": 18,
+      "realVsCheck": 0.756,
+      "se": 5.652,
+      "modelVsCheck": 0.363
+     },
+     {
+      "key": "St1 Equity 35–60 % n2 | 1",
+      "n": 18,
+      "realVsCheck": 1.085,
+      "se": 6.19,
+      "modelVsCheck": 0.261
+     },
+     {
+      "key": "St1 Equity 35–60 % n2 | 1.5",
+      "n": 18,
+      "realVsCheck": -8.635,
+      "se": 7.846,
+      "modelVsCheck": -0.008
+     },
+     {
+      "key": "St1 Equity 35–60 % n3+ | 0.33",
+      "n": 2,
+      "realVsCheck": 1.1,
+      "se": 0.5,
+      "modelVsCheck": 0.893
+     },
+     {
+      "key": "St1 Equity 35–60 % n3+ | 0.5",
+      "n": 2,
+      "realVsCheck": -16,
+      "se": 19,
+      "modelVsCheck": -0.108
+     },
+     {
+      "key": "St1 Equity 35–60 % n3+ | 0.75",
+      "n": 2,
+      "realVsCheck": 15.431,
+      "se": 10.431,
+      "modelVsCheck": 0.067
+     },
+     {
+      "key": "St1 Equity 35–60 % n3+ | 1",
+      "n": 2,
+      "realVsCheck": 16.431,
+      "se": 9.431,
+      "modelVsCheck": 0.024
+     },
+     {
+      "key": "St1 Equity 35–60 % n3+ | 1.5",
+      "n": 2,
+      "realVsCheck": 2.972,
+      "se": 5.972,
+      "modelVsCheck": -0.13
+     },
+     {
+      "key": "St1 Equity < 35 % n1 | 0.33",
+      "n": 56,
+      "realVsCheck": 2.275,
+      "se": 1.549,
+      "modelVsCheck": 0.013
+     },
+     {
+      "key": "St1 Equity < 35 % n1 | 0.5",
+      "n": 53,
+      "realVsCheck": 2.902,
+      "se": 1.778,
+      "modelVsCheck": 0.069
+     },
+     {
+      "key": "St1 Equity < 35 % n1 | 0.75",
+      "n": 56,
+      "realVsCheck": 2.8,
+      "se": 2.354,
+      "modelVsCheck": 0.172
+     },
+     {
+      "key": "St1 Equity < 35 % n1 | 1",
+      "n": 56,
+      "realVsCheck": -3.75,
+      "se": 4.049,
+      "modelVsCheck": 0.205
+     },
+     {
+      "key": "St1 Equity < 35 % n1 | 1.5",
+      "n": 56,
+      "realVsCheck": -7.027,
+      "se": 4.344,
+      "modelVsCheck": 0.138
+     },
+     {
+      "key": "St1 Equity < 35 % n2 | 0.33",
+      "n": 20,
+      "realVsCheck": 0.065,
+      "se": 2.491,
+      "modelVsCheck": -0.517
+     },
+     {
+      "key": "St1 Equity < 35 % n2 | 0.5",
+      "n": 20,
+      "realVsCheck": 0.66,
+      "se": 1.953,
+      "modelVsCheck": -0.679
+     },
+     {
+      "key": "St1 Equity < 35 % n2 | 0.75",
+      "n": 20,
+      "realVsCheck": 0.62,
+      "se": 2.371,
+      "modelVsCheck": -0.871
+     },
+     {
+      "key": "St1 Equity < 35 % n2 | 1",
+      "n": 20,
+      "realVsCheck": 6.925,
+      "se": 3.867,
+      "modelVsCheck": -1.052
+     },
+     {
+      "key": "St1 Equity < 35 % n2 | 1.5",
+      "n": 20,
+      "realVsCheck": 4.679,
+      "se": 5.388,
+      "modelVsCheck": -1.443
+     },
+     {
+      "key": "St1 Equity < 35 % n3+ | 0.33",
+      "n": 6,
+      "realVsCheck": 14.633,
+      "se": 13.635,
+      "modelVsCheck": -0.851
+     },
+     {
+      "key": "St1 Equity < 35 % n3+ | 0.5",
+      "n": 6,
+      "realVsCheck": 6.033,
+      "se": 5.338,
+      "modelVsCheck": -1.012
+     },
+     {
+      "key": "St1 Equity < 35 % n3+ | 0.75",
+      "n": 6,
+      "realVsCheck": 13.766,
+      "se": 14.245,
+      "modelVsCheck": -1.158
+     },
+     {
+      "key": "St1 Equity < 35 % n3+ | 1",
+      "n": 6,
+      "realVsCheck": 14.099,
+      "se": 15.204,
+      "modelVsCheck": -1.3
+     },
+     {
+      "key": "St1 Equity < 35 % n3+ | 1.5",
+      "n": 6,
+      "realVsCheck": 13.79,
+      "se": 17.253,
+      "modelVsCheck": -1.643
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n1 | 0.33",
+      "n": 94,
+      "realVsCheck": -0.949,
+      "se": 2.528,
+      "modelVsCheck": 1.51
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n1 | 0.5",
+      "n": 93,
+      "realVsCheck": -0.302,
+      "se": 2.721,
+      "modelVsCheck": 1.899
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n1 | 0.75",
+      "n": 94,
+      "realVsCheck": -5.841,
+      "se": 2.838,
+      "modelVsCheck": 2.219
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n1 | 1",
+      "n": 94,
+      "realVsCheck": -5.711,
+      "se": 2.933,
+      "modelVsCheck": 2.445
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n1 | 1.5",
+      "n": 94,
+      "realVsCheck": -8.247,
+      "se": 2.903,
+      "modelVsCheck": 2.721
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n2 | 0.33",
+      "n": 7,
+      "realVsCheck": -16.469,
+      "se": 12.718,
+      "modelVsCheck": 1.851
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n2 | 0.5",
+      "n": 7,
+      "realVsCheck": -15.483,
+      "se": 12.481,
+      "modelVsCheck": 2.289
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n2 | 0.75",
+      "n": 7,
+      "realVsCheck": -3.34,
+      "se": 5.857,
+      "modelVsCheck": 2.646
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n2 | 1",
+      "n": 7,
+      "realVsCheck": -6.683,
+      "se": 5.617,
+      "modelVsCheck": 2.882
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n2 | 1.5",
+      "n": 7,
+      "realVsCheck": -13.226,
+      "se": 12.636,
+      "modelVsCheck": 3.243
+     },
+     {
+      "key": "St2 Equity 35–60 % n1 | 0.33",
+      "n": 23,
+      "realVsCheck": -17.243,
+      "se": 6.971,
+      "modelVsCheck": -0.112
+     },
+     {
+      "key": "St2 Equity 35–60 % n1 | 0.5",
+      "n": 23,
+      "realVsCheck": -13.207,
+      "se": 7.547,
+      "modelVsCheck": -0.053
+     },
+     {
+      "key": "St2 Equity 35–60 % n1 | 0.75",
+      "n": 23,
+      "realVsCheck": -14.472,
+      "se": 7.642,
+      "modelVsCheck": 0.196
+     },
+     {
+      "key": "St2 Equity 35–60 % n1 | 1",
+      "n": 23,
+      "realVsCheck": -17.12,
+      "se": 6.498,
+      "modelVsCheck": 0.594
+     },
+     {
+      "key": "St2 Equity 35–60 % n1 | 1.5",
+      "n": 23,
+      "realVsCheck": -18.682,
+      "se": 7.336,
+      "modelVsCheck": 1.588
+     },
+     {
+      "key": "St2 Equity 35–60 % n2 | 0.33",
+      "n": 2,
+      "realVsCheck": -5.3,
+      "se": 8.1,
+      "modelVsCheck": 4.612
+     },
+     {
+      "key": "St2 Equity 35–60 % n2 | 0.5",
+      "n": 2,
+      "realVsCheck": -8.05,
+      "se": 12.35,
+      "modelVsCheck": 5.25
+     },
+     {
+      "key": "St2 Equity 35–60 % n2 | 0.75",
+      "n": 2,
+      "realVsCheck": -12.05,
+      "se": 18.45,
+      "modelVsCheck": 5.779
+     },
+     {
+      "key": "St2 Equity 35–60 % n2 | 1",
+      "n": 2,
+      "realVsCheck": -16.1,
+      "se": 24.6,
+      "modelVsCheck": 5.778
+     },
+     {
+      "key": "St2 Equity 35–60 % n2 | 1.5",
+      "n": 2,
+      "realVsCheck": -30.55,
+      "se": 30.55,
+      "modelVsCheck": 4.51
+     },
+     {
+      "key": "St2 Equity < 35 % n1 | 0.33",
+      "n": 33,
+      "realVsCheck": 1.597,
+      "se": 3.292,
+      "modelVsCheck": -0.967
+     },
+     {
+      "key": "St2 Equity < 35 % n1 | 0.5",
+      "n": 33,
+      "realVsCheck": -2.07,
+      "se": 5.615,
+      "modelVsCheck": -0.53
+     },
+     {
+      "key": "St2 Equity < 35 % n1 | 0.75",
+      "n": 33,
+      "realVsCheck": -7.094,
+      "se": 6.799,
+      "modelVsCheck": 0.144
+     },
+     {
+      "key": "St2 Equity < 35 % n1 | 1",
+      "n": 32,
+      "realVsCheck": -2.475,
+      "se": 5.41,
+      "modelVsCheck": 0.048
+     },
+     {
+      "key": "St2 Equity < 35 % n1 | 1.5",
+      "n": 32,
+      "realVsCheck": -3.557,
+      "se": 5.943,
+      "modelVsCheck": 1.814
+     },
+     {
+      "key": "St2 Equity < 35 % n2 | 0.33",
+      "n": 12,
+      "realVsCheck": 1.692,
+      "se": 4.392,
+      "modelVsCheck": -1.041
+     },
+     {
+      "key": "St2 Equity < 35 % n2 | 0.5",
+      "n": 12,
+      "realVsCheck": -2.025,
+      "se": 9.177,
+      "modelVsCheck": -1.455
+     },
+     {
+      "key": "St2 Equity < 35 % n2 | 0.75",
+      "n": 12,
+      "realVsCheck": -12.225,
+      "se": 11.448,
+      "modelVsCheck": -1.859
+     },
+     {
+      "key": "St2 Equity < 35 % n2 | 1",
+      "n": 12,
+      "realVsCheck": -13.25,
+      "se": 11.227,
+      "modelVsCheck": -2.043
+     },
+     {
+      "key": "St2 Equity < 35 % n2 | 1.5",
+      "n": 12,
+      "realVsCheck": -7.875,
+      "se": 9.097,
+      "modelVsCheck": -1.824
+     },
+     {
+      "key": "St2 Equity < 35 % n3+ | 0.33",
+      "n": 4,
+      "realVsCheck": 3.825,
+      "se": 3.599,
+      "modelVsCheck": -1.33
+     },
+     {
+      "key": "St2 Equity < 35 % n3+ | 0.5",
+      "n": 4,
+      "realVsCheck": 5.725,
+      "se": 5.147,
+      "modelVsCheck": -1.39
+     },
+     {
+      "key": "St2 Equity < 35 % n3+ | 0.75",
+      "n": 4,
+      "realVsCheck": 6.7,
+      "se": 5.384,
+      "modelVsCheck": -1.266
+     },
+     {
+      "key": "St2 Equity < 35 % n3+ | 1",
+      "n": 4,
+      "realVsCheck": 9.25,
+      "se": 6.883,
+      "modelVsCheck": -1.146
+     },
+     {
+      "key": "St2 Equity < 35 % n3+ | 1.5",
+      "n": 4,
+      "realVsCheck": 9.925,
+      "se": 9.417,
+      "modelVsCheck": -0.4
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n1 | 0.33",
+      "n": 46,
+      "realVsCheck": 2.042,
+      "se": 4.437,
+      "modelVsCheck": 3.333
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n1 | 0.5",
+      "n": 46,
+      "realVsCheck": 8.89,
+      "se": 3.544,
+      "modelVsCheck": 3.923
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n1 | 0.75",
+      "n": 46,
+      "realVsCheck": 4.122,
+      "se": 5.22,
+      "modelVsCheck": 4.332
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n1 | 1",
+      "n": 46,
+      "realVsCheck": -0.364,
+      "se": 5.544,
+      "modelVsCheck": 4.429
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n1 | 1.5",
+      "n": 45,
+      "realVsCheck": -7.833,
+      "se": 5.425,
+      "modelVsCheck": 4.286
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n2 | 0.33",
+      "n": 6,
+      "realVsCheck": -7.667,
+      "se": 21.489,
+      "modelVsCheck": 5.98
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n2 | 0.5",
+      "n": 6,
+      "realVsCheck": 11.483,
+      "se": 24.461,
+      "modelVsCheck": 7.536
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n2 | 0.75",
+      "n": 6,
+      "realVsCheck": 21.783,
+      "se": 25.889,
+      "modelVsCheck": 9.284
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n2 | 1",
+      "n": 6,
+      "realVsCheck": 21.35,
+      "se": 25.383,
+      "modelVsCheck": 10.834
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n2 | 1.5",
+      "n": 6,
+      "realVsCheck": 8.15,
+      "se": 20.527,
+      "modelVsCheck": 12.173
+     },
+     {
+      "key": "St3 Equity 35–60 % n1 | 0.33",
+      "n": 11,
+      "realVsCheck": 16.1,
+      "se": 14.463,
+      "modelVsCheck": 1.241
+     },
+     {
+      "key": "St3 Equity 35–60 % n1 | 0.5",
+      "n": 10,
+      "realVsCheck": -0.99,
+      "se": 5.948,
+      "modelVsCheck": 0.277
+     },
+     {
+      "key": "St3 Equity 35–60 % n1 | 0.75",
+      "n": 10,
+      "realVsCheck": 0.36,
+      "se": 7.435,
+      "modelVsCheck": 0.709
+     },
+     {
+      "key": "St3 Equity 35–60 % n1 | 1",
+      "n": 10,
+      "realVsCheck": -2.36,
+      "se": 8.756,
+      "modelVsCheck": 1.133
+     },
+     {
+      "key": "St3 Equity 35–60 % n1 | 1.5",
+      "n": 10,
+      "realVsCheck": 0.09,
+      "se": 10.033,
+      "modelVsCheck": 1.545
+     },
+     {
+      "key": "St3 Equity 35–60 % n2 | 0.33",
+      "n": 2,
+      "realVsCheck": -8.8,
+      "se": 1.1,
+      "modelVsCheck": -0.174
+     },
+     {
+      "key": "St3 Equity 35–60 % n2 | 0.5",
+      "n": 2,
+      "realVsCheck": -11.65,
+      "se": 3.35,
+      "modelVsCheck": -0.006
+     },
+     {
+      "key": "St3 Equity 35–60 % n2 | 0.75",
+      "n": 2,
+      "realVsCheck": -12.75,
+      "se": 9.75,
+      "modelVsCheck": 0.55
+     },
+     {
+      "key": "St3 Equity 35–60 % n2 | 1",
+      "n": 2,
+      "realVsCheck": -16.5,
+      "se": 13.5,
+      "modelVsCheck": 1.108
+     },
+     {
+      "key": "St3 Equity 35–60 % n2 | 1.5",
+      "n": 2,
+      "realVsCheck": 13.5,
+      "se": 16.5,
+      "modelVsCheck": 1.894
+     },
+     {
+      "key": "St3 Equity < 35 % n1 | 0.33",
+      "n": 15,
+      "realVsCheck": -6.48,
+      "se": 6.834,
+      "modelVsCheck": 9.043
+     },
+     {
+      "key": "St3 Equity < 35 % n1 | 0.5",
+      "n": 15,
+      "realVsCheck": -10.94,
+      "se": 7.613,
+      "modelVsCheck": 13.842
+     },
+     {
+      "key": "St3 Equity < 35 % n1 | 0.75",
+      "n": 15,
+      "realVsCheck": -9.24,
+      "se": 9.97,
+      "modelVsCheck": 18.458
+     },
+     {
+      "key": "St3 Equity < 35 % n1 | 1",
+      "n": 13,
+      "realVsCheck": 3.523,
+      "se": 11.737,
+      "modelVsCheck": 17.968
+     },
+     {
+      "key": "St3 Equity < 35 % n1 | 1.5",
+      "n": 13,
+      "realVsCheck": 19.923,
+      "se": 10.348,
+      "modelVsCheck": 19.358
+     },
+     {
+      "key": "St3 Equity < 35 % n2 | 0.33",
+      "n": 6,
+      "realVsCheck": 24.733,
+      "se": 17.378,
+      "modelVsCheck": 6.154
+     },
+     {
+      "key": "St3 Equity < 35 % n2 | 0.5",
+      "n": 6,
+      "realVsCheck": 24.3,
+      "se": 17.076,
+      "modelVsCheck": 7.741
+     },
+     {
+      "key": "St3 Equity < 35 % n2 | 0.75",
+      "n": 6,
+      "realVsCheck": 23.433,
+      "se": 16.766,
+      "modelVsCheck": 9.229
+     },
+     {
+      "key": "St3 Equity < 35 % n2 | 1",
+      "n": 6,
+      "realVsCheck": 21.817,
+      "se": 16.719,
+      "modelVsCheck": 10.225
+     },
+     {
+      "key": "St3 Equity < 35 % n2 | 1.5",
+      "n": 6,
+      "realVsCheck": 34.817,
+      "se": 18.444,
+      "modelVsCheck": 11.073
+     },
+     {
+      "key": "St3 Equity < 35 % n3+ | 0.33",
+      "n": 1,
+      "realVsCheck": -1.3,
+      "se": null,
+      "modelVsCheck": -0.156
+     },
+     {
+      "key": "St3 Equity < 35 % n3+ | 0.5",
+      "n": 1,
+      "realVsCheck": -2,
+      "se": null,
+      "modelVsCheck": 0.024
+     },
+     {
+      "key": "St3 Equity < 35 % n3+ | 0.75",
+      "n": 1,
+      "realVsCheck": -3,
+      "se": null,
+      "modelVsCheck": 0.304
+     },
+     {
+      "key": "St3 Equity < 35 % n3+ | 1",
+      "n": 1,
+      "realVsCheck": 4,
+      "se": null,
+      "modelVsCheck": 0.533
+     },
+     {
+      "key": "St3 Equity < 35 % n3+ | 1.5",
+      "n": 1,
+      "realVsCheck": 4,
+      "se": null,
+      "modelVsCheck": 0.826
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n1 | 0.33",
+      "n": 21,
+      "realVsCheck": 1.195,
+      "se": 2.429,
+      "modelVsCheck": 3.275
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n1 | 0.5",
+      "n": 21,
+      "realVsCheck": 3.229,
+      "se": 2.509,
+      "modelVsCheck": 3.453
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n1 | 0.75",
+      "n": 21,
+      "realVsCheck": 3.957,
+      "se": 2.605,
+      "modelVsCheck": 3.401
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n1 | 1",
+      "n": 20,
+      "realVsCheck": -0.85,
+      "se": 3.479,
+      "modelVsCheck": 3.386
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n1 | 1.5",
+      "n": 20,
+      "realVsCheck": -3.79,
+      "se": 2.23,
+      "modelVsCheck": 3.378
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n2 | 0.33",
+      "n": 2,
+      "realVsCheck": -13.55,
+      "se": 3.15,
+      "modelVsCheck": 6.501
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n2 | 0.5",
+      "n": 2,
+      "realVsCheck": -8.75,
+      "se": 1.75,
+      "modelVsCheck": 7.599
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n2 | 0.75",
+      "n": 2,
+      "realVsCheck": -9.3,
+      "se": 7.7,
+      "modelVsCheck": 8.124
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n2 | 1",
+      "n": 2,
+      "realVsCheck": -4.8,
+      "se": 12.2,
+      "modelVsCheck": 8.205
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n2 | 1.5",
+      "n": 2,
+      "realVsCheck": -22.75,
+      "se": 5.75,
+      "modelVsCheck": 7.801
+     }
+    ]
+   },
+   "policies": {
+    "all": {
+     "spots": 463,
+     "rows": [
+      {
+       "policy": "Modell (beste EV)",
+       "vsCheck": -3.045,
+       "se": 1.4
+      },
+      {
+       "policy": "Modell, Größe frei nach Ausspielung (Orakel)",
+       "vsCheck": 7.972,
+       "se": 1.064
+      },
+      {
+       "policy": "immer Check",
+       "vsCheck": 0,
+       "se": 0
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 0.33",
+       "vsCheck": -0.024,
+       "se": 1.05
+      },
+      {
+       "policy": "immer Bet 0.33",
+       "vsCheck": 0.226,
+       "se": 1.126
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 0.5",
+       "vsCheck": 0.825,
+       "se": 1.149
+      },
+      {
+       "policy": "immer Bet 0.5",
+       "vsCheck": 1.133,
+       "se": 1.208
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 0.75",
+       "vsCheck": -0.937,
+       "se": 1.284
+      },
+      {
+       "policy": "immer Bet 0.75",
+       "vsCheck": -1.035,
+       "se": 1.379
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 1",
+       "vsCheck": -2.144,
+       "se": 1.374
+      },
+      {
+       "policy": "immer Bet 1",
+       "vsCheck": -2.371,
+       "se": 1.489
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 1.5",
+       "vsCheck": -3.728,
+       "se": 1.431
+      },
+      {
+       "policy": "immer Bet 1.5",
+       "vsCheck": -4.061,
+       "se": 1.541
+      }
+     ]
+    },
+    "headsUp": {
+     "spots": 375,
+     "rows": [
+      {
+       "policy": "Modell (beste EV)",
+       "vsCheck": -4.28,
+       "se": 1.625
+      },
+      {
+       "policy": "Modell, Größe frei nach Ausspielung (Orakel)",
+       "vsCheck": 7.976,
+       "se": 1.188
+      },
+      {
+       "policy": "immer Check",
+       "vsCheck": 0,
+       "se": 0
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 0.33",
+       "vsCheck": 0.063,
+       "se": 1.175
+      },
+      {
+       "policy": "immer Bet 0.33",
+       "vsCheck": -0.007,
+       "se": 1.237
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 0.5",
+       "vsCheck": 0.835,
+       "se": 1.292
+      },
+      {
+       "policy": "immer Bet 0.5",
+       "vsCheck": 1.051,
+       "se": 1.328
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 0.75",
+       "vsCheck": -1.65,
+       "se": 1.479
+      },
+      {
+       "policy": "immer Bet 0.75",
+       "vsCheck": -1.801,
+       "se": 1.531
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 1",
+       "vsCheck": -3.157,
+       "se": 1.583
+      },
+      {
+       "policy": "immer Bet 1",
+       "vsCheck": -3.713,
+       "se": 1.661
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 1.5",
+       "vsCheck": -4.609,
+       "se": 1.624
+      },
+      {
+       "policy": "immer Bet 1.5",
+       "vsCheck": -5.178,
+       "se": 1.702
+      }
+     ]
+    },
+    "multiway": {
+     "spots": 88,
+     "rows": [
+      {
+       "policy": "Modell (beste EV)",
+       "vsCheck": 2.215,
+       "se": 2.45
+      },
+      {
+       "policy": "Modell, Größe frei nach Ausspielung (Orakel)",
+       "vsCheck": 7.955,
+       "se": 2.409
+      },
+      {
+       "policy": "immer Check",
+       "vsCheck": 0,
+       "se": 0
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 0.33",
+       "vsCheck": -0.393,
+       "se": 2.344
+      },
+      {
+       "policy": "immer Bet 0.33",
+       "vsCheck": 1.217,
+       "se": 2.721
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 0.5",
+       "vsCheck": 0.78,
+       "se": 2.505
+      },
+      {
+       "policy": "immer Bet 0.5",
+       "vsCheck": 1.481,
+       "se": 2.905
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 0.75",
+       "vsCheck": 2.101,
+       "se": 2.432
+      },
+      {
+       "policy": "immer Bet 0.75",
+       "vsCheck": 2.23,
+       "se": 3.172
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 1",
+       "vsCheck": 2.175,
+       "se": 2.563
+      },
+      {
+       "policy": "immer Bet 1",
+       "vsCheck": 3.351,
+       "se": 3.309
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 1.5",
+       "vsCheck": 0.024,
+       "se": 2.958
+      },
+      {
+       "policy": "immer Bet 1.5",
+       "vsCheck": 0.701,
+       "se": 3.598
+      }
+     ]
+    }
+   },
+   "eqWhenCalled": [
+    {
+     "key": "St1 0.33",
+     "n": 155,
+     "predEqWhenCalled": 0.497,
+     "obsEqWhenCalled": 0.527,
+     "se": 0.025
+    },
+    {
+     "key": "St1 0.5",
+     "n": 119,
+     "predEqWhenCalled": 0.48,
+     "obsEqWhenCalled": 0.479,
+     "se": 0.029
+    },
+    {
+     "key": "St1 0.75",
+     "n": 106,
+     "predEqWhenCalled": 0.435,
+     "obsEqWhenCalled": 0.432,
+     "se": 0.03
+    },
+    {
+     "key": "St1 1",
+     "n": 96,
+     "predEqWhenCalled": 0.412,
+     "obsEqWhenCalled": 0.413,
+     "se": 0.031
+    },
+    {
+     "key": "St1 1.5",
+     "n": 69,
+     "predEqWhenCalled": 0.403,
+     "obsEqWhenCalled": 0.366,
+     "se": 0.034
+    },
+    {
+     "key": "St2 0.33",
+     "n": 80,
+     "predEqWhenCalled": 0.511,
+     "obsEqWhenCalled": 0.452,
+     "se": 0.044
+    },
+    {
+     "key": "St2 0.5",
+     "n": 74,
+     "predEqWhenCalled": 0.49,
+     "obsEqWhenCalled": 0.429,
+     "se": 0.045
+    },
+    {
+     "key": "St2 0.75",
+     "n": 64,
+     "predEqWhenCalled": 0.464,
+     "obsEqWhenCalled": 0.404,
+     "se": 0.048
+    },
+    {
+     "key": "St2 1",
+     "n": 52,
+     "predEqWhenCalled": 0.453,
+     "obsEqWhenCalled": 0.38,
+     "se": 0.051
+    },
+    {
+     "key": "St2 1.5",
+     "n": 28,
+     "predEqWhenCalled": 0.367,
+     "obsEqWhenCalled": 0.286,
+     "se": 0.061
+    },
+    {
+     "key": "St3 0.33",
+     "n": 29,
+     "predEqWhenCalled": 0.418,
+     "obsEqWhenCalled": 0.414,
+     "se": 0.093
+    },
+    {
+     "key": "St3 0.5",
+     "n": 26,
+     "predEqWhenCalled": 0.375,
+     "obsEqWhenCalled": 0.346,
+     "se": 0.095
+    },
+    {
+     "key": "St3 0.75",
+     "n": 21,
+     "predEqWhenCalled": 0.324,
+     "obsEqWhenCalled": 0.333,
+     "se": 0.105
+    },
+    {
+     "key": "St3 1",
+     "n": 12,
+     "predEqWhenCalled": 0.262,
+     "obsEqWhenCalled": 0.167,
+     "se": 0.112
+    },
+    {
+     "key": "St3 1.5",
+     "n": 3,
+     "predEqWhenCalled": 0.049,
+     "obsEqWhenCalled": 0,
+     "se": 0
+    }
+   ],
+   "facing": [
+    {
+     "key": "St1 call",
+     "n": 68,
+     "realVsFold": -1.208,
+     "se": 3.722,
+     "modelVsFold": 0.053
+    },
+    {
+     "key": "St1 fold",
+     "n": 68,
+     "realVsFold": 0,
+     "se": 0,
+     "modelVsFold": 0
+    },
+    {
+     "key": "St1 r2.5",
+     "n": 68,
+     "realVsFold": -7.313,
+     "se": 4.163,
+     "modelVsFold": -4.681
+    },
+    {
+     "key": "St1 r3.5",
+     "n": 68,
+     "realVsFold": -10.519,
+     "se": 4.871,
+     "modelVsFold": -6.764
+    },
+    {
+     "key": "St2 call",
+     "n": 21,
+     "realVsFold": 4.71,
+     "se": 10.258,
+     "modelVsFold": -0.287
+    },
+    {
+     "key": "St2 fold",
+     "n": 21,
+     "realVsFold": 0,
+     "se": 0,
+     "modelVsFold": 0
+    },
+    {
+     "key": "St2 r2.5",
+     "n": 21,
+     "realVsFold": 7.279,
+     "se": 10.989,
+     "modelVsFold": -6.843
+    },
+    {
+     "key": "St2 r3.5",
+     "n": 21,
+     "realVsFold": -4.224,
+     "se": 9.28,
+     "modelVsFold": -9.307
+    },
+    {
+     "key": "St3 call",
+     "n": 5,
+     "realVsFold": -12.6,
+     "se": 6.131,
+     "modelVsFold": 0.969
+    },
+    {
+     "key": "St3 fold",
+     "n": 5,
+     "realVsFold": 0,
+     "se": 0,
+     "modelVsFold": 0
+    },
+    {
+     "key": "St3 r2.5",
+     "n": 5,
+     "realVsFold": -14.84,
+     "se": 26.853,
+     "modelVsFold": -8.613
+    },
+    {
+     "key": "St3 r3.5",
+     "n": 5,
+     "realVsFold": -19.74,
+     "se": 27.783,
+     "modelVsFold": -10.668
+    }
+   ],
+   "modelChoice": {
+    "1": 41,
+    "1.5": 220,
+    "check": 95,
+    "0.33": 45,
+    "0.5": 32,
+    "0.75": 30
+   }
+  },
+  "v21-synth": {
+   "label": "v21",
+   "comp": "synth",
+   "files": [
+    {
+     "file": "v21-synth-601.json",
+     "seed": 601,
+     "hands": 2000,
+     "spots": 599
+    }
+   ],
+   "spots": 599,
+   "betSpots": 411,
+   "facingSpots": 188,
+   "calibration": {
+    "bySize": [
+     {
+      "key": "0.33",
+      "n": 762,
+      "obsFold": 0.219,
+      "obsRaise": 0.08,
+      "predFold": 0.131,
+      "predFoldGto": 0.383,
+      "predRaise": 0.048,
+      "seFold": 0.015
+     },
+     {
+      "key": "0.5",
+      "n": 748,
+      "obsFold": 0.235,
+      "obsRaise": 0.082,
+      "predFold": 0.194,
+      "predFoldGto": 0.44,
+      "predRaise": 0.049,
+      "seFold": 0.016
+     },
+     {
+      "key": "0.75",
+      "n": 748,
+      "obsFold": 0.254,
+      "obsRaise": 0.079,
+      "predFold": 0.267,
+      "predFoldGto": 0.494,
+      "predRaise": 0.047,
+      "seFold": 0.016
+     },
+     {
+      "key": "1",
+      "n": 733,
+      "obsFold": 0.266,
+      "obsRaise": 0.078,
+      "predFold": 0.328,
+      "predFoldGto": 0.496,
+      "predRaise": 0.047,
+      "seFold": 0.016
+     },
+     {
+      "key": "1.5",
+      "n": 714,
+      "obsFold": 0.294,
+      "obsRaise": 0.074,
+      "predFold": 0.419,
+      "predFoldGto": 0.455,
+      "predRaise": 0.047,
+      "seFold": 0.017
+     }
+    ],
+    "byStreetSizeN": [
+     {
+      "key": "St1 n1 0.33",
+      "n": 66,
+      "obsFold": 0.212,
+      "obsRaise": 0.076,
+      "predFold": 0.098,
+      "predFoldGto": 0.226,
+      "predRaise": 0.056,
+      "seFold": 0.05
+     },
+     {
+      "key": "St1 n1 0.5",
+      "n": 64,
+      "obsFold": 0.234,
+      "obsRaise": 0.078,
+      "predFold": 0.145,
+      "predFoldGto": 0.296,
+      "predRaise": 0.057,
+      "seFold": 0.053
+     },
+     {
+      "key": "St1 n1 0.75",
+      "n": 65,
+      "obsFold": 0.246,
+      "obsRaise": 0.077,
+      "predFold": 0.202,
+      "predFoldGto": 0.377,
+      "predRaise": 0.055,
+      "seFold": 0.053
+     },
+     {
+      "key": "St1 n1 1",
+      "n": 64,
+      "obsFold": 0.25,
+      "obsRaise": 0.078,
+      "predFold": 0.247,
+      "predFoldGto": 0.407,
+      "predRaise": 0.056,
+      "seFold": 0.054
+     },
+     {
+      "key": "St1 n1 1.5",
+      "n": 64,
+      "obsFold": 0.281,
+      "obsRaise": 0.078,
+      "predFold": 0.314,
+      "predFoldGto": 0.409,
+      "predRaise": 0.054,
+      "seFold": 0.056
+     },
+     {
+      "key": "St1 n2 0.33",
+      "n": 152,
+      "obsFold": 0.178,
+      "obsRaise": 0.092,
+      "predFold": 0.124,
+      "predFoldGto": 0.405,
+      "predRaise": 0.051,
+      "seFold": 0.031
+     },
+     {
+      "key": "St1 n2 0.5",
+      "n": 152,
+      "obsFold": 0.197,
+      "obsRaise": 0.092,
+      "predFold": 0.183,
+      "predFoldGto": 0.468,
+      "predRaise": 0.051,
+      "seFold": 0.032
+     },
+     {
+      "key": "St1 n2 0.75",
+      "n": 152,
+      "obsFold": 0.217,
+      "obsRaise": 0.086,
+      "predFold": 0.252,
+      "predFoldGto": 0.527,
+      "predRaise": 0.049,
+      "seFold": 0.033
+     },
+     {
+      "key": "St1 n2 1",
+      "n": 150,
+      "obsFold": 0.233,
+      "obsRaise": 0.087,
+      "predFold": 0.308,
+      "predFoldGto": 0.528,
+      "predRaise": 0.05,
+      "seFold": 0.035
+     },
+     {
+      "key": "St1 n2 1.5",
+      "n": 150,
+      "obsFold": 0.253,
+      "obsRaise": 0.087,
+      "predFold": 0.38,
+      "predFoldGto": 0.484,
+      "predRaise": 0.05,
+      "seFold": 0.036
+     },
+     {
+      "key": "St1 n3+ 0.33",
+      "n": 185,
+      "obsFold": 0.205,
+      "obsRaise": 0.092,
+      "predFold": 0.132,
+      "predFoldGto": 0.465,
+      "predRaise": 0.052,
+      "seFold": 0.03
+     },
+     {
+      "key": "St1 n3+ 0.5",
+      "n": 185,
+      "obsFold": 0.211,
+      "obsRaise": 0.092,
+      "predFold": 0.19,
+      "predFoldGto": 0.503,
+      "predRaise": 0.052,
+      "seFold": 0.03
+     },
+     {
+      "key": "St1 n3+ 0.75",
+      "n": 185,
+      "obsFold": 0.216,
+      "obsRaise": 0.092,
+      "predFold": 0.258,
+      "predFoldGto": 0.538,
+      "predRaise": 0.052,
+      "seFold": 0.03
+     },
+     {
+      "key": "St1 n3+ 1",
+      "n": 185,
+      "obsFold": 0.227,
+      "obsRaise": 0.092,
+      "predFold": 0.31,
+      "predFoldGto": 0.522,
+      "predRaise": 0.052,
+      "seFold": 0.031
+     },
+     {
+      "key": "St1 n3+ 1.5",
+      "n": 185,
+      "obsFold": 0.254,
+      "obsRaise": 0.086,
+      "predFold": 0.38,
+      "predFoldGto": 0.468,
+      "predRaise": 0.052,
+      "seFold": 0.032
+     },
+     {
+      "key": "St2 n1 0.33",
+      "n": 56,
+      "obsFold": 0.071,
+      "obsRaise": 0.214,
+      "predFold": 0.071,
+      "predFoldGto": 0.224,
+      "predRaise": 0.063,
+      "seFold": 0.034
+     },
+     {
+      "key": "St2 n1 0.5",
+      "n": 55,
+      "obsFold": 0.073,
+      "obsRaise": 0.218,
+      "predFold": 0.119,
+      "predFoldGto": 0.294,
+      "predRaise": 0.064,
+      "seFold": 0.035
+     },
+     {
+      "key": "St2 n1 0.75",
+      "n": 55,
+      "obsFold": 0.109,
+      "obsRaise": 0.2,
+      "predFold": 0.183,
+      "predFoldGto": 0.373,
+      "predRaise": 0.061,
+      "seFold": 0.042
+     },
+     {
+      "key": "St2 n1 1",
+      "n": 53,
+      "obsFold": 0.113,
+      "obsRaise": 0.189,
+      "predFold": 0.244,
+      "predFoldGto": 0.403,
+      "predRaise": 0.062,
+      "seFold": 0.044
+     },
+     {
+      "key": "St2 n1 1.5",
+      "n": 52,
+      "obsFold": 0.135,
+      "obsRaise": 0.154,
+      "predFold": 0.362,
+      "predFoldGto": 0.406,
+      "predRaise": 0.06,
+      "seFold": 0.047
+     },
+     {
+      "key": "St2 n2 0.33",
+      "n": 90,
+      "obsFold": 0.178,
+      "obsRaise": 0,
+      "predFold": 0.086,
+      "predFoldGto": 0.401,
+      "predRaise": 0.053,
+      "seFold": 0.04
+     },
+     {
+      "key": "St2 n2 0.5",
+      "n": 88,
+      "obsFold": 0.193,
+      "obsRaise": 0,
+      "predFold": 0.142,
+      "predFoldGto": 0.462,
+      "predRaise": 0.055,
+      "seFold": 0.042
+     },
+     {
+      "key": "St2 n2 0.75",
+      "n": 88,
+      "obsFold": 0.25,
+      "obsRaise": 0,
+      "predFold": 0.216,
+      "predFoldGto": 0.521,
+      "predRaise": 0.055,
+      "seFold": 0.046
+     },
+     {
+      "key": "St2 n2 1",
+      "n": 88,
+      "obsFold": 0.261,
+      "obsRaise": 0,
+      "predFold": 0.284,
+      "predFoldGto": 0.521,
+      "predRaise": 0.052,
+      "seFold": 0.047
+     },
+     {
+      "key": "St2 n2 1.5",
+      "n": 84,
+      "obsFold": 0.286,
+      "obsRaise": 0,
+      "predFold": 0.41,
+      "predFoldGto": 0.48,
+      "predRaise": 0.053,
+      "seFold": 0.049
+     },
+     {
+      "key": "St2 n3+ 0.33",
+      "n": 78,
+      "obsFold": 0.205,
+      "obsRaise": 0.077,
+      "predFold": 0.1,
+      "predFoldGto": 0.443,
+      "predRaise": 0.052,
+      "seFold": 0.046
+     },
+     {
+      "key": "St2 n3+ 0.5",
+      "n": 78,
+      "obsFold": 0.231,
+      "obsRaise": 0.077,
+      "predFold": 0.157,
+      "predFoldGto": 0.476,
+      "predRaise": 0.052,
+      "seFold": 0.048
+     },
+     {
+      "key": "St2 n3+ 0.75",
+      "n": 78,
+      "obsFold": 0.231,
+      "obsRaise": 0.077,
+      "predFold": 0.233,
+      "predFoldGto": 0.508,
+      "predRaise": 0.047,
+      "seFold": 0.048
+     },
+     {
+      "key": "St2 n3+ 1",
+      "n": 72,
+      "obsFold": 0.236,
+      "obsRaise": 0.069,
+      "predFold": 0.317,
+      "predFoldGto": 0.497,
+      "predRaise": 0.045,
+      "seFold": 0.05
+     },
+     {
+      "key": "St2 n3+ 1.5",
+      "n": 63,
+      "obsFold": 0.302,
+      "obsRaise": 0.079,
+      "predFold": 0.463,
+      "predFoldGto": 0.449,
+      "predRaise": 0.051,
+      "seFold": 0.058
+     },
+     {
+      "key": "St3 n1 0.33",
+      "n": 44,
+      "obsFold": 0.273,
+      "obsRaise": 0.023,
+      "predFold": 0.177,
+      "predFoldGto": 0.213,
+      "predRaise": 0.026,
+      "seFold": 0.067
+     },
+     {
+      "key": "St3 n1 0.5",
+      "n": 41,
+      "obsFold": 0.317,
+      "obsRaise": 0.024,
+      "predFold": 0.261,
+      "predFoldGto": 0.286,
+      "predRaise": 0.028,
+      "seFold": 0.073
+     },
+     {
+      "key": "St3 n1 0.75",
+      "n": 40,
+      "obsFold": 0.325,
+      "obsRaise": 0.025,
+      "predFold": 0.357,
+      "predFoldGto": 0.36,
+      "predRaise": 0.026,
+      "seFold": 0.074
+     },
+     {
+      "key": "St3 n1 1",
+      "n": 36,
+      "obsFold": 0.333,
+      "obsRaise": 0.028,
+      "predFold": 0.437,
+      "predFoldGto": 0.397,
+      "predRaise": 0.027,
+      "seFold": 0.079
+     },
+     {
+      "key": "St3 n1 1.5",
+      "n": 33,
+      "obsFold": 0.364,
+      "obsRaise": 0.03,
+      "predFold": 0.531,
+      "predFoldGto": 0.38,
+      "predRaise": 0.027,
+      "seFold": 0.084
+     },
+     {
+      "key": "St3 n2 0.33",
+      "n": 64,
+      "obsFold": 0.438,
+      "obsRaise": 0.078,
+      "predFold": 0.232,
+      "predFoldGto": 0.384,
+      "predRaise": 0.021,
+      "seFold": 0.062
+     },
+     {
+      "key": "St3 n2 0.5",
+      "n": 58,
+      "obsFold": 0.483,
+      "obsRaise": 0.086,
+      "predFold": 0.342,
+      "predFoldGto": 0.463,
+      "predRaise": 0.023,
+      "seFold": 0.066
+     },
+     {
+      "key": "St3 n2 0.75",
+      "n": 58,
+      "obsFold": 0.5,
+      "obsRaise": 0.086,
+      "predFold": 0.444,
+      "predFoldGto": 0.524,
+      "predRaise": 0.023,
+      "seFold": 0.066
+     },
+     {
+      "key": "St3 n2 1",
+      "n": 58,
+      "obsFold": 0.517,
+      "obsRaise": 0.086,
+      "predFold": 0.513,
+      "predFoldGto": 0.523,
+      "predRaise": 0.022,
+      "seFold": 0.066
+     },
+     {
+      "key": "St3 n2 1.5",
+      "n": 56,
+      "obsFold": 0.536,
+      "obsRaise": 0.071,
+      "predFold": 0.606,
+      "predFoldGto": 0.455,
+      "predRaise": 0.019,
+      "seFold": 0.067
+     },
+     {
+      "key": "St3 n3+ 0.33",
+      "n": 27,
+      "obsFold": 0.444,
+      "obsRaise": 0.037,
+      "predFold": 0.288,
+      "predFoldGto": 0.457,
+      "predRaise": 0.021,
+      "seFold": 0.096
+     },
+     {
+      "key": "St3 n3+ 0.5",
+      "n": 27,
+      "obsFold": 0.444,
+      "obsRaise": 0.037,
+      "predFold": 0.394,
+      "predFoldGto": 0.501,
+      "predRaise": 0.021,
+      "seFold": 0.096
+     },
+     {
+      "key": "St3 n3+ 0.75",
+      "n": 27,
+      "obsFold": 0.481,
+      "obsRaise": 0.037,
+      "predFold": 0.5,
+      "predFoldGto": 0.54,
+      "predRaise": 0.021,
+      "seFold": 0.096
+     },
+     {
+      "key": "St3 n3+ 1",
+      "n": 27,
+      "obsFold": 0.519,
+      "obsRaise": 0.037,
+      "predFold": 0.568,
+      "predFoldGto": 0.523,
+      "predRaise": 0.021,
+      "seFold": 0.096
+     },
+     {
+      "key": "St3 n3+ 1.5",
+      "n": 27,
+      "obsFold": 0.556,
+      "obsRaise": 0.037,
+      "predFold": 0.648,
+      "predFoldGto": 0.435,
+      "predRaise": 0.021,
+      "seFold": 0.096
+     }
+    ],
+    "headsUp": [
+     {
+      "key": "Bet St1 0.33",
+      "n": 28,
+      "obsFold": 0.143,
+      "obsRaise": 0.143,
+      "predFold": 0.125,
+      "predFoldGto": 0.239,
+      "predRaise": 0.058,
+      "seFold": 0.066
+     },
+     {
+      "key": "Bet St1 0.5",
+      "n": 27,
+      "obsFold": 0.148,
+      "obsRaise": 0.148,
+      "predFold": 0.172,
+      "predFoldGto": 0.298,
+      "predRaise": 0.058,
+      "seFold": 0.068
+     },
+     {
+      "key": "Bet St1 0.75",
+      "n": 28,
+      "obsFold": 0.179,
+      "obsRaise": 0.143,
+      "predFold": 0.228,
+      "predFoldGto": 0.377,
+      "predRaise": 0.053,
+      "seFold": 0.072
+     },
+     {
+      "key": "Bet St1 1",
+      "n": 27,
+      "obsFold": 0.185,
+      "obsRaise": 0.148,
+      "predFold": 0.274,
+      "predFoldGto": 0.407,
+      "predRaise": 0.055,
+      "seFold": 0.075
+     },
+     {
+      "key": "Bet St1 1.5",
+      "n": 27,
+      "obsFold": 0.185,
+      "obsRaise": 0.148,
+      "predFold": 0.342,
+      "predFoldGto": 0.408,
+      "predRaise": 0.055,
+      "seFold": 0.075
+     },
+     {
+      "key": "Bet St2 0.33",
+      "n": 29,
+      "obsFold": 0.103,
+      "obsRaise": 0.276,
+      "predFold": 0.069,
+      "predFoldGto": 0.23,
+      "predRaise": 0.062,
+      "seFold": 0.057
+     },
+     {
+      "key": "Bet St2 0.5",
+      "n": 29,
+      "obsFold": 0.103,
+      "obsRaise": 0.276,
+      "predFold": 0.112,
+      "predFoldGto": 0.295,
+      "predRaise": 0.062,
+      "seFold": 0.057
+     },
+     {
+      "key": "Bet St2 0.75",
+      "n": 29,
+      "obsFold": 0.103,
+      "obsRaise": 0.241,
+      "predFold": 0.172,
+      "predFoldGto": 0.373,
+      "predRaise": 0.06,
+      "seFold": 0.057
+     },
+     {
+      "key": "Bet St2 1",
+      "n": 28,
+      "obsFold": 0.107,
+      "obsRaise": 0.214,
+      "predFold": 0.236,
+      "predFoldGto": 0.404,
+      "predRaise": 0.058,
+      "seFold": 0.058
+     },
+     {
+      "key": "Bet St2 1.5",
+      "n": 27,
+      "obsFold": 0.111,
+      "obsRaise": 0.185,
+      "predFold": 0.35,
+      "predFoldGto": 0.407,
+      "predRaise": 0.056,
+      "seFold": 0.06
+     },
+     {
+      "key": "Bet St3 0.33",
+      "n": 20,
+      "obsFold": 0.15,
+      "obsRaise": 0.05,
+      "predFold": 0.173,
+      "predFoldGto": 0.231,
+      "predRaise": 0.031,
+      "seFold": 0.08
+     },
+     {
+      "key": "Bet St3 0.5",
+      "n": 20,
+      "obsFold": 0.2,
+      "obsRaise": 0.05,
+      "predFold": 0.241,
+      "predFoldGto": 0.291,
+      "predRaise": 0.029,
+      "seFold": 0.089
+     },
+     {
+      "key": "Bet St3 0.75",
+      "n": 19,
+      "obsFold": 0.211,
+      "obsRaise": 0.053,
+      "predFold": 0.338,
+      "predFoldGto": 0.369,
+      "predRaise": 0.03,
+      "seFold": 0.094
+     },
+     {
+      "key": "Bet St3 1",
+      "n": 18,
+      "obsFold": 0.278,
+      "obsRaise": 0.056,
+      "predFold": 0.407,
+      "predFoldGto": 0.393,
+      "predRaise": 0.027,
+      "seFold": 0.106
+     },
+     {
+      "key": "Bet St3 1.5",
+      "n": 16,
+      "obsFold": 0.375,
+      "obsRaise": 0.063,
+      "predFold": 0.505,
+      "predFoldGto": 0.378,
+      "predRaise": 0.028,
+      "seFold": 0.121
+     },
+     {
+      "key": "C-Bet St1 0.33",
+      "n": 38,
+      "obsFold": 0.263,
+      "obsRaise": 0.026,
+      "predFold": 0.078,
+      "predFoldGto": 0.217,
+      "predRaise": 0.054,
+      "seFold": 0.071
+     },
+     {
+      "key": "C-Bet St1 0.5",
+      "n": 37,
+      "obsFold": 0.297,
+      "obsRaise": 0.027,
+      "predFold": 0.126,
+      "predFoldGto": 0.295,
+      "predRaise": 0.056,
+      "seFold": 0.075
+     },
+     {
+      "key": "C-Bet St1 0.75",
+      "n": 37,
+      "obsFold": 0.297,
+      "obsRaise": 0.027,
+      "predFold": 0.181,
+      "predFoldGto": 0.377,
+      "predRaise": 0.056,
+      "seFold": 0.075
+     },
+     {
+      "key": "C-Bet St1 1",
+      "n": 37,
+      "obsFold": 0.297,
+      "obsRaise": 0.027,
+      "predFold": 0.227,
+      "predFoldGto": 0.407,
+      "predRaise": 0.056,
+      "seFold": 0.075
+     },
+     {
+      "key": "C-Bet St1 1.5",
+      "n": 37,
+      "obsFold": 0.351,
+      "obsRaise": 0.027,
+      "predFold": 0.293,
+      "predFoldGto": 0.409,
+      "predRaise": 0.054,
+      "seFold": 0.078
+     },
+     {
+      "key": "C-Bet St2 0.33",
+      "n": 27,
+      "obsFold": 0.037,
+      "obsRaise": 0.148,
+      "predFold": 0.074,
+      "predFoldGto": 0.218,
+      "predRaise": 0.064,
+      "seFold": 0.036
+     },
+     {
+      "key": "C-Bet St2 0.5",
+      "n": 26,
+      "obsFold": 0.038,
+      "obsRaise": 0.154,
+      "predFold": 0.127,
+      "predFoldGto": 0.293,
+      "predRaise": 0.067,
+      "seFold": 0.038
+     },
+     {
+      "key": "C-Bet St2 0.75",
+      "n": 26,
+      "obsFold": 0.115,
+      "obsRaise": 0.154,
+      "predFold": 0.196,
+      "predFoldGto": 0.373,
+      "predRaise": 0.062,
+      "seFold": 0.063
+     },
+     {
+      "key": "C-Bet St2 1",
+      "n": 25,
+      "obsFold": 0.12,
+      "obsRaise": 0.16,
+      "predFold": 0.254,
+      "predFoldGto": 0.402,
+      "predRaise": 0.065,
+      "seFold": 0.065
+     },
+     {
+      "key": "C-Bet St2 1.5",
+      "n": 25,
+      "obsFold": 0.16,
+      "obsRaise": 0.12,
+      "predFold": 0.376,
+      "predFoldGto": 0.405,
+      "predRaise": 0.064,
+      "seFold": 0.073
+     },
+     {
+      "key": "C-Bet St3 0.33",
+      "n": 24,
+      "obsFold": 0.375,
+      "obsRaise": 0,
+      "predFold": 0.181,
+      "predFoldGto": 0.198,
+      "predRaise": 0.023,
+      "seFold": 0.099
+     },
+     {
+      "key": "C-Bet St3 0.5",
+      "n": 21,
+      "obsFold": 0.429,
+      "obsRaise": 0,
+      "predFold": 0.28,
+      "predFoldGto": 0.282,
+      "predRaise": 0.026,
+      "seFold": 0.108
+     },
+     {
+      "key": "C-Bet St3 0.75",
+      "n": 21,
+      "obsFold": 0.429,
+      "obsRaise": 0,
+      "predFold": 0.373,
+      "predFoldGto": 0.352,
+      "predRaise": 0.023,
+      "seFold": 0.108
+     },
+     {
+      "key": "C-Bet St3 1",
+      "n": 18,
+      "obsFold": 0.389,
+      "obsRaise": 0,
+      "predFold": 0.466,
+      "predFoldGto": 0.401,
+      "predRaise": 0.027,
+      "seFold": 0.115
+     },
+     {
+      "key": "C-Bet St3 1.5",
+      "n": 17,
+      "obsFold": 0.353,
+      "obsRaise": 0,
+      "predFold": 0.556,
+      "predFoldGto": 0.382,
+      "predRaise": 0.025,
+      "seFold": 0.116
+     }
+    ],
+    "byHudType": [
+     {
+      "key": "Nit 0.33",
+      "n": 3,
+      "obsFold": 0,
+      "obsRaise": 0,
+      "predFold": 0.26,
+      "predFoldGto": 0.229,
+      "predRaise": 0.093,
+      "seFold": 0
+     },
+     {
+      "key": "Nit 0.5",
+      "n": 3,
+      "obsFold": 0,
+      "obsRaise": 0,
+      "predFold": 0.371,
+      "predFoldGto": 0.297,
+      "predRaise": 0.093,
+      "seFold": 0
+     },
+     {
+      "key": "Nit 0.75",
+      "n": 3,
+      "obsFold": 0,
+      "obsRaise": 0,
+      "predFold": 0.5,
+      "predFoldGto": 0.378,
+      "predRaise": 0.093,
+      "seFold": 0
+     },
+     {
+      "key": "Nit 1",
+      "n": 3,
+      "obsFold": 0,
+      "obsRaise": 0,
+      "predFold": 0.592,
+      "predFoldGto": 0.407,
+      "predRaise": 0.093,
+      "seFold": 0
+     },
+     {
+      "key": "Nit 1.5",
+      "n": 3,
+      "obsFold": 0,
+      "obsRaise": 0,
+      "predFold": 0.719,
+      "predFoldGto": 0.401,
+      "predRaise": 0.093,
+      "seFold": 0
+     },
+     {
+      "key": "TAG 0.33",
+      "n": 3,
+      "obsFold": 0,
+      "obsRaise": 0,
+      "predFold": 0.31,
+      "predFoldGto": 0.197,
+      "predRaise": 0.058,
+      "seFold": 0
+     },
+     {
+      "key": "TAG 0.5",
+      "n": 2,
+      "obsFold": 0,
+      "obsRaise": 0,
+      "predFold": 0.438,
+      "predFoldGto": 0.294,
+      "predRaise": 0.087,
+      "seFold": 0
+     },
+     {
+      "key": "TAG 0.75",
+      "n": 2,
+      "obsFold": 0,
+      "obsRaise": 0,
+      "predFold": 0.515,
+      "predFoldGto": 0.367,
+      "predRaise": 0.033,
+      "seFold": 0
+     },
+     {
+      "key": "TAG 1",
+      "n": 1,
+      "obsFold": 0,
+      "obsRaise": 0,
+      "predFold": 0.676,
+      "predFoldGto": 0.407,
+      "predRaise": 0.065,
+      "seFold": 0
+     },
+     {
+      "key": "TAG 1.5",
+      "n": 1,
+      "obsFold": 1,
+      "obsRaise": 0,
+      "predFold": 0.734,
+      "predFoldGto": 0.409,
+      "predRaise": 0.065,
+      "seFold": 0
+     },
+     {
+      "key": "sehr loose 0.33",
+      "n": 113,
+      "obsFold": 0.186,
+      "obsRaise": 0.088,
+      "predFold": 0.063,
+      "predFoldGto": 0.224,
+      "predRaise": 0.045,
+      "seFold": 0.037
+     },
+     {
+      "key": "sehr loose 0.5",
+      "n": 111,
+      "obsFold": 0.207,
+      "obsRaise": 0.09,
+      "predFold": 0.105,
+      "predFoldGto": 0.293,
+      "predRaise": 0.046,
+      "seFold": 0.038
+     },
+     {
+      "key": "sehr loose 0.75",
+      "n": 111,
+      "obsFold": 0.225,
+      "obsRaise": 0.081,
+      "predFold": 0.163,
+      "predFoldGto": 0.37,
+      "predRaise": 0.045,
+      "seFold": 0.04
+     },
+     {
+      "key": "sehr loose 1",
+      "n": 106,
+      "obsFold": 0.226,
+      "obsRaise": 0.075,
+      "predFold": 0.212,
+      "predFoldGto": 0.404,
+      "predRaise": 0.046,
+      "seFold": 0.041
+     },
+     {
+      "key": "sehr loose 1.5",
+      "n": 103,
+      "obsFold": 0.243,
+      "obsRaise": 0.068,
+      "predFold": 0.292,
+      "predFoldGto": 0.402,
+      "predRaise": 0.046,
+      "seFold": 0.042
+     },
+     {
+      "key": "unbekannt 0.33",
+      "n": 47,
+      "obsFold": 0.191,
+      "obsRaise": 0.17,
+      "predFold": 0.201,
+      "predFoldGto": 0.219,
+      "predRaise": 0.059,
+      "seFold": 0.057
+     },
+     {
+      "key": "unbekannt 0.5",
+      "n": 44,
+      "obsFold": 0.205,
+      "obsRaise": 0.182,
+      "predFold": 0.293,
+      "predFoldGto": 0.294,
+      "predRaise": 0.063,
+      "seFold": 0.061
+     },
+     {
+      "key": "unbekannt 0.75",
+      "n": 44,
+      "obsFold": 0.227,
+      "obsRaise": 0.182,
+      "predFold": 0.383,
+      "predFoldGto": 0.374,
+      "predRaise": 0.06,
+      "seFold": 0.063
+     },
+     {
+      "key": "unbekannt 1",
+      "n": 43,
+      "obsFold": 0.233,
+      "obsRaise": 0.186,
+      "predFold": 0.454,
+      "predFoldGto": 0.401,
+      "predRaise": 0.061,
+      "seFold": 0.064
+     },
+     {
+      "key": "unbekannt 1.5",
+      "n": 42,
+      "obsFold": 0.262,
+      "obsRaise": 0.167,
+      "predFold": 0.56,
+      "predFoldGto": 0.401,
+      "predRaise": 0.058,
+      "seFold": 0.068
+     }
+    ]
+   },
+   "value": {
+    "all": [
+     {
+      "key": "alle | 0.33",
+      "n": 411,
+      "realVsCheck": -2.556,
+      "se": 1.647,
+      "modelVsCheck": 1.747
+     },
+     {
+      "key": "alle | 0.5",
+      "n": 401,
+      "realVsCheck": -2.675,
+      "se": 1.75,
+      "modelVsCheck": 1.95
+     },
+     {
+      "key": "alle | 0.75",
+      "n": 401,
+      "realVsCheck": -2.101,
+      "se": 1.966,
+      "modelVsCheck": 2.166
+     },
+     {
+      "key": "alle | 1",
+      "n": 391,
+      "realVsCheck": -2.183,
+      "se": 2.093,
+      "modelVsCheck": 1.61
+     },
+     {
+      "key": "alle | 1.5",
+      "n": 381,
+      "realVsCheck": -2.969,
+      "se": 2.252,
+      "modelVsCheck": -0.109
+     }
+    ],
+    "byEq": [
+     {
+      "key": "Equity 35–60 % | 0.33",
+      "n": 119,
+      "realVsCheck": -2.773,
+      "se": 2.827,
+      "modelVsCheck": 0.968
+     },
+     {
+      "key": "Equity 35–60 % | 0.5",
+      "n": 117,
+      "realVsCheck": -3.807,
+      "se": 3.004,
+      "modelVsCheck": 0.824
+     },
+     {
+      "key": "Equity 35–60 % | 0.75",
+      "n": 118,
+      "realVsCheck": -4.55,
+      "se": 3.418,
+      "modelVsCheck": 0.739
+     },
+     {
+      "key": "Equity 35–60 % | 1",
+      "n": 116,
+      "realVsCheck": -8.43,
+      "se": 3.22,
+      "modelVsCheck": 0.054
+     },
+     {
+      "key": "Equity 35–60 % | 1.5",
+      "n": 116,
+      "realVsCheck": -7.463,
+      "se": 3.888,
+      "modelVsCheck": -0.53
+     },
+     {
+      "key": "Equity < 35 % | 0.33",
+      "n": 189,
+      "realVsCheck": -2.177,
+      "se": 1.813,
+      "modelVsCheck": -1.333
+     },
+     {
+      "key": "Equity < 35 % | 0.5",
+      "n": 186,
+      "realVsCheck": -3.404,
+      "se": 1.984,
+      "modelVsCheck": -1.91
+     },
+     {
+      "key": "Equity < 35 % | 0.75",
+      "n": 186,
+      "realVsCheck": -4.092,
+      "se": 2.346,
+      "modelVsCheck": -2.862
+     },
+     {
+      "key": "Equity < 35 % | 1",
+      "n": 183,
+      "realVsCheck": -3.169,
+      "se": 2.635,
+      "modelVsCheck": -3.536
+     },
+     {
+      "key": "Equity < 35 % | 1.5",
+      "n": 181,
+      "realVsCheck": -6.932,
+      "se": 2.741,
+      "modelVsCheck": -5.217
+     },
+     {
+      "key": "Equity ≥ 60 % | 0.33",
+      "n": 103,
+      "realVsCheck": -3.001,
+      "se": 4.658,
+      "modelVsCheck": 8.299
+     },
+     {
+      "key": "Equity ≥ 60 % | 0.5",
+      "n": 98,
+      "realVsCheck": 0.057,
+      "se": 4.944,
+      "modelVsCheck": 10.618
+     },
+     {
+      "key": "Equity ≥ 60 % | 0.75",
+      "n": 97,
+      "realVsCheck": 4.698,
+      "se": 5.321,
+      "modelVsCheck": 13.543
+     },
+     {
+      "key": "Equity ≥ 60 % | 1",
+      "n": 92,
+      "realVsCheck": 7.655,
+      "se": 5.834,
+      "modelVsCheck": 13.807
+     },
+     {
+      "key": "Equity ≥ 60 % | 1.5",
+      "n": 84,
+      "realVsCheck": 11.775,
+      "se": 6.159,
+      "modelVsCheck": 11.481
+     }
+    ],
+    "byStreetEqN": [
+     {
+      "key": "St1 Equity 35–60 % n1 | 0.33",
+      "n": 29,
+      "realVsCheck": -2.656,
+      "se": 4.807,
+      "modelVsCheck": -0.202
+     },
+     {
+      "key": "St1 Equity 35–60 % n1 | 0.5",
+      "n": 28,
+      "realVsCheck": -6.287,
+      "se": 5.532,
+      "modelVsCheck": -0.358
+     },
+     {
+      "key": "St1 Equity 35–60 % n1 | 0.75",
+      "n": 29,
+      "realVsCheck": -6.78,
+      "se": 5.429,
+      "modelVsCheck": -0.588
+     },
+     {
+      "key": "St1 Equity 35–60 % n1 | 1",
+      "n": 29,
+      "realVsCheck": -4.186,
+      "se": 4.931,
+      "modelVsCheck": -0.874
+     },
+     {
+      "key": "St1 Equity 35–60 % n1 | 1.5",
+      "n": 29,
+      "realVsCheck": -4.624,
+      "se": 5.137,
+      "modelVsCheck": -1.544
+     },
+     {
+      "key": "St1 Equity 35–60 % n2 | 0.33",
+      "n": 23,
+      "realVsCheck": 0.557,
+      "se": 6.146,
+      "modelVsCheck": 0.398
+     },
+     {
+      "key": "St1 Equity 35–60 % n2 | 0.5",
+      "n": 23,
+      "realVsCheck": 0.817,
+      "se": 6.794,
+      "modelVsCheck": 0.439
+     },
+     {
+      "key": "St1 Equity 35–60 % n2 | 0.75",
+      "n": 23,
+      "realVsCheck": 3.443,
+      "se": 9.844,
+      "modelVsCheck": 0.413
+     },
+     {
+      "key": "St1 Equity 35–60 % n2 | 1",
+      "n": 23,
+      "realVsCheck": -8.674,
+      "se": 8.267,
+      "modelVsCheck": 0.321
+     },
+     {
+      "key": "St1 Equity 35–60 % n2 | 1.5",
+      "n": 23,
+      "realVsCheck": 2.077,
+      "se": 12.068,
+      "modelVsCheck": 0.033
+     },
+     {
+      "key": "St1 Equity 35–60 % n3+ | 0.33",
+      "n": 10,
+      "realVsCheck": 9.493,
+      "se": 24.387,
+      "modelVsCheck": 3.014
+     },
+     {
+      "key": "St1 Equity 35–60 % n3+ | 0.5",
+      "n": 10,
+      "realVsCheck": 9.17,
+      "se": 24.436,
+      "modelVsCheck": 4.157
+     },
+     {
+      "key": "St1 Equity 35–60 % n3+ | 0.75",
+      "n": 10,
+      "realVsCheck": 8.63,
+      "se": 24.531,
+      "modelVsCheck": 5.602
+     },
+     {
+      "key": "St1 Equity 35–60 % n3+ | 1",
+      "n": 10,
+      "realVsCheck": -2.132,
+      "se": 20.349,
+      "modelVsCheck": 6.793
+     },
+     {
+      "key": "St1 Equity 35–60 % n3+ | 1.5",
+      "n": 10,
+      "realVsCheck": -4.268,
+      "se": 20.399,
+      "modelVsCheck": 8.765
+     },
+     {
+      "key": "St1 Equity < 35 % n1 | 0.33",
+      "n": 15,
+      "realVsCheck": -3.199,
+      "se": 3.24,
+      "modelVsCheck": -2.769
+     },
+     {
+      "key": "St1 Equity < 35 % n1 | 0.5",
+      "n": 14,
+      "realVsCheck": -6.314,
+      "se": 3.538,
+      "modelVsCheck": -2.342
+     },
+     {
+      "key": "St1 Equity < 35 % n1 | 0.75",
+      "n": 14,
+      "realVsCheck": 4.04,
+      "se": 8.717,
+      "modelVsCheck": -3.046
+     },
+     {
+      "key": "St1 Equity < 35 % n1 | 1",
+      "n": 13,
+      "realVsCheck": 4.744,
+      "se": 9.578,
+      "modelVsCheck": -3.31
+     },
+     {
+      "key": "St1 Equity < 35 % n1 | 1.5",
+      "n": 13,
+      "realVsCheck": 15.266,
+      "se": 13.01,
+      "modelVsCheck": -4.601
+     },
+     {
+      "key": "St1 Equity < 35 % n2 | 0.33",
+      "n": 40,
+      "realVsCheck": 0.859,
+      "se": 4.18,
+      "modelVsCheck": -0.947
+     },
+     {
+      "key": "St1 Equity < 35 % n2 | 0.5",
+      "n": 40,
+      "realVsCheck": -0.407,
+      "se": 4.568,
+      "modelVsCheck": -1.443
+     },
+     {
+      "key": "St1 Equity < 35 % n2 | 0.75",
+      "n": 40,
+      "realVsCheck": -0.744,
+      "se": 5.432,
+      "modelVsCheck": -2.378
+     },
+     {
+      "key": "St1 Equity < 35 % n2 | 1",
+      "n": 39,
+      "realVsCheck": -4.507,
+      "se": 5.77,
+      "modelVsCheck": -2.793
+     },
+     {
+      "key": "St1 Equity < 35 % n2 | 1.5",
+      "n": 39,
+      "realVsCheck": -8.736,
+      "se": 5.51,
+      "modelVsCheck": -4.091
+     },
+     {
+      "key": "St1 Equity < 35 % n3+ | 0.33",
+      "n": 46,
+      "realVsCheck": -0.801,
+      "se": 5.312,
+      "modelVsCheck": -1.159
+     },
+     {
+      "key": "St1 Equity < 35 % n3+ | 0.5",
+      "n": 46,
+      "realVsCheck": -1.393,
+      "se": 5.461,
+      "modelVsCheck": -1.829
+     },
+     {
+      "key": "St1 Equity < 35 % n3+ | 0.75",
+      "n": 46,
+      "realVsCheck": -3.797,
+      "se": 6.032,
+      "modelVsCheck": -2.806
+     },
+     {
+      "key": "St1 Equity < 35 % n3+ | 1",
+      "n": 46,
+      "realVsCheck": -6.12,
+      "se": 6.393,
+      "modelVsCheck": -3.752
+     },
+     {
+      "key": "St1 Equity < 35 % n3+ | 1.5",
+      "n": 46,
+      "realVsCheck": -9.691,
+      "se": 7.183,
+      "modelVsCheck": -5.659
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n1 | 0.33",
+      "n": 22,
+      "realVsCheck": -4.33,
+      "se": 8.079,
+      "modelVsCheck": 1.891
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n1 | 0.5",
+      "n": 22,
+      "realVsCheck": -5.182,
+      "se": 8.149,
+      "modelVsCheck": 2.648
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n1 | 0.75",
+      "n": 22,
+      "realVsCheck": -5.128,
+      "se": 8.338,
+      "modelVsCheck": 3.57
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n1 | 1",
+      "n": 22,
+      "realVsCheck": -5.747,
+      "se": 8.835,
+      "modelVsCheck": 4.421
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n1 | 1.5",
+      "n": 22,
+      "realVsCheck": -3.945,
+      "se": 9.187,
+      "modelVsCheck": 5.742
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n2 | 0.33",
+      "n": 13,
+      "realVsCheck": -9.91,
+      "se": 20.067,
+      "modelVsCheck": 3.094
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n2 | 0.5",
+      "n": 13,
+      "realVsCheck": 3.398,
+      "se": 21.85,
+      "modelVsCheck": 4.251
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n2 | 0.75",
+      "n": 13,
+      "realVsCheck": 13.827,
+      "se": 21.85,
+      "modelVsCheck": 5.67
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n2 | 1",
+      "n": 13,
+      "realVsCheck": 16.554,
+      "se": 22.03,
+      "modelVsCheck": 6.857
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n2 | 1.5",
+      "n": 13,
+      "realVsCheck": 16.693,
+      "se": 21.327,
+      "modelVsCheck": 8.891
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n3+ | 0.33",
+      "n": 2,
+      "realVsCheck": 31.86,
+      "se": 35.96,
+      "modelVsCheck": 6.365
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n3+ | 0.5",
+      "n": 2,
+      "realVsCheck": 30.761,
+      "se": 37.06,
+      "modelVsCheck": 8.974
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n3+ | 0.75",
+      "n": 2,
+      "realVsCheck": 29.21,
+      "se": 38.611,
+      "modelVsCheck": 12.255
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n3+ | 1",
+      "n": 2,
+      "realVsCheck": 27.66,
+      "se": 40.16,
+      "modelVsCheck": 15.272
+     },
+     {
+      "key": "St1 Equity ≥ 60 % n3+ | 1.5",
+      "n": 2,
+      "realVsCheck": 24.511,
+      "se": 43.311,
+      "modelVsCheck": 20.791
+     },
+     {
+      "key": "St2 Equity 35–60 % n1 | 0.33",
+      "n": 21,
+      "realVsCheck": -8.881,
+      "se": 4.724,
+      "modelVsCheck": -0.661
+     },
+     {
+      "key": "St2 Equity 35–60 % n1 | 0.5",
+      "n": 21,
+      "realVsCheck": -7.938,
+      "se": 4.269,
+      "modelVsCheck": -1.09
+     },
+     {
+      "key": "St2 Equity 35–60 % n1 | 0.75",
+      "n": 21,
+      "realVsCheck": -10.539,
+      "se": 4.9,
+      "modelVsCheck": -1.726
+     },
+     {
+      "key": "St2 Equity 35–60 % n1 | 1",
+      "n": 21,
+      "realVsCheck": -11.701,
+      "se": 5.337,
+      "modelVsCheck": -2.271
+     },
+     {
+      "key": "St2 Equity 35–60 % n1 | 1.5",
+      "n": 21,
+      "realVsCheck": -13.148,
+      "se": 5.9,
+      "modelVsCheck": -3.159
+     },
+     {
+      "key": "St2 Equity 35–60 % n2 | 0.33",
+      "n": 11,
+      "realVsCheck": -4.2,
+      "se": 5.025,
+      "modelVsCheck": 0.587
+     },
+     {
+      "key": "St2 Equity 35–60 % n2 | 0.5",
+      "n": 11,
+      "realVsCheck": -6.164,
+      "se": 6.986,
+      "modelVsCheck": 0.394
+     },
+     {
+      "key": "St2 Equity 35–60 % n2 | 0.75",
+      "n": 11,
+      "realVsCheck": -8.182,
+      "se": 9.749,
+      "modelVsCheck": 0.039
+     },
+     {
+      "key": "St2 Equity 35–60 % n2 | 1",
+      "n": 11,
+      "realVsCheck": -13.836,
+      "se": 13.947,
+      "modelVsCheck": -0.539
+     },
+     {
+      "key": "St2 Equity 35–60 % n2 | 1.5",
+      "n": 11,
+      "realVsCheck": -12.591,
+      "se": 17.369,
+      "modelVsCheck": -1.697
+     },
+     {
+      "key": "St2 Equity 35–60 % n3+ | 0.33",
+      "n": 4,
+      "realVsCheck": -10.55,
+      "se": 12.34,
+      "modelVsCheck": 8.628
+     },
+     {
+      "key": "St2 Equity 35–60 % n3+ | 0.5",
+      "n": 4,
+      "realVsCheck": -14.25,
+      "se": 14.878,
+      "modelVsCheck": 12.17
+     },
+     {
+      "key": "St2 Equity 35–60 % n3+ | 0.75",
+      "n": 4,
+      "realVsCheck": -11.042,
+      "se": 15.661,
+      "modelVsCheck": 15.09
+     },
+     {
+      "key": "St2 Equity 35–60 % n3+ | 1",
+      "n": 3,
+      "realVsCheck": -19.9,
+      "se": 18.77,
+      "modelVsCheck": 4.401
+     },
+     {
+      "key": "St2 Equity 35–60 % n3+ | 1.5",
+      "n": 3,
+      "realVsCheck": -22.067,
+      "se": 17.639,
+      "modelVsCheck": 5.077
+     },
+     {
+      "key": "St2 Equity < 35 % n1 | 0.33",
+      "n": 9,
+      "realVsCheck": -17.538,
+      "se": 9.965,
+      "modelVsCheck": -1.776
+     },
+     {
+      "key": "St2 Equity < 35 % n1 | 0.5",
+      "n": 9,
+      "realVsCheck": -21.133,
+      "se": 10.436,
+      "modelVsCheck": -2.69
+     },
+     {
+      "key": "St2 Equity < 35 % n1 | 0.75",
+      "n": 9,
+      "realVsCheck": -19.624,
+      "se": 9.665,
+      "modelVsCheck": -3.861
+     },
+     {
+      "key": "St2 Equity < 35 % n1 | 1",
+      "n": 8,
+      "realVsCheck": -12.813,
+      "se": 7.08,
+      "modelVsCheck": -5.207
+     },
+     {
+      "key": "St2 Equity < 35 % n1 | 1.5",
+      "n": 8,
+      "realVsCheck": -16.388,
+      "se": 8.831,
+      "modelVsCheck": -4.817
+     },
+     {
+      "key": "St2 Equity < 35 % n2 | 0.33",
+      "n": 25,
+      "realVsCheck": 2.126,
+      "se": 2.676,
+      "modelVsCheck": -1.656
+     },
+     {
+      "key": "St2 Equity < 35 % n2 | 0.5",
+      "n": 24,
+      "realVsCheck": 2.16,
+      "se": 3.61,
+      "modelVsCheck": -1.807
+     },
+     {
+      "key": "St2 Equity < 35 % n2 | 0.75",
+      "n": 24,
+      "realVsCheck": 1.285,
+      "se": 4.636,
+      "modelVsCheck": -2.682
+     },
+     {
+      "key": "St2 Equity < 35 % n2 | 1",
+      "n": 24,
+      "realVsCheck": -0.365,
+      "se": 5.688,
+      "modelVsCheck": -3.458
+     },
+     {
+      "key": "St2 Equity < 35 % n2 | 1.5",
+      "n": 24,
+      "realVsCheck": -2.811,
+      "se": 6.87,
+      "modelVsCheck": -4.866
+     },
+     {
+      "key": "St2 Equity < 35 % n3+ | 0.33",
+      "n": 18,
+      "realVsCheck": -9.628,
+      "se": 6.128,
+      "modelVsCheck": -1.385
+     },
+     {
+      "key": "St2 Equity < 35 % n3+ | 0.5",
+      "n": 18,
+      "realVsCheck": -13.086,
+      "se": 7.111,
+      "modelVsCheck": -2.168
+     },
+     {
+      "key": "St2 Equity < 35 % n3+ | 0.75",
+      "n": 18,
+      "realVsCheck": -18.167,
+      "se": 8.686,
+      "modelVsCheck": -3.517
+     },
+     {
+      "key": "St2 Equity < 35 % n3+ | 1",
+      "n": 18,
+      "realVsCheck": 7.591,
+      "se": 12.403,
+      "modelVsCheck": -3.787
+     },
+     {
+      "key": "St2 Equity < 35 % n3+ | 1.5",
+      "n": 16,
+      "realVsCheck": -10.647,
+      "se": 7.046,
+      "modelVsCheck": -8.207
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n1 | 0.33",
+      "n": 26,
+      "realVsCheck": 9.715,
+      "se": 8.459,
+      "modelVsCheck": 6.062
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n1 | 0.5",
+      "n": 25,
+      "realVsCheck": 9.993,
+      "se": 9.096,
+      "modelVsCheck": 6.852
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n1 | 0.75",
+      "n": 25,
+      "realVsCheck": 15.61,
+      "se": 9.773,
+      "modelVsCheck": 9.069
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n1 | 1",
+      "n": 24,
+      "realVsCheck": 23.682,
+      "se": 11.453,
+      "modelVsCheck": 10.192
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n1 | 1.5",
+      "n": 23,
+      "realVsCheck": 26.007,
+      "se": 11.529,
+      "modelVsCheck": 12.588
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n2 | 0.33",
+      "n": 9,
+      "realVsCheck": -4.181,
+      "se": 17.484,
+      "modelVsCheck": 13.6
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n2 | 0.5",
+      "n": 9,
+      "realVsCheck": 8.875,
+      "se": 12.797,
+      "modelVsCheck": 19.442
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n2 | 0.75",
+      "n": 9,
+      "realVsCheck": 24.164,
+      "se": 16.721,
+      "modelVsCheck": 27.157
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n2 | 1",
+      "n": 9,
+      "realVsCheck": 13.147,
+      "se": 19.382,
+      "modelVsCheck": 32.18
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n2 | 1.5",
+      "n": 7,
+      "realVsCheck": 29.52,
+      "se": 20.848,
+      "modelVsCheck": 28.965
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n3+ | 0.33",
+      "n": 3,
+      "realVsCheck": -61.2,
+      "se": 61.2,
+      "modelVsCheck": 46.252
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n3+ | 0.5",
+      "n": 3,
+      "realVsCheck": -59.333,
+      "se": 59.333,
+      "modelVsCheck": 66.165
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n3+ | 0.75",
+      "n": 3,
+      "realVsCheck": -75.255,
+      "se": 50.033,
+      "modelVsCheck": 86.965
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n3+ | 1",
+      "n": 2,
+      "realVsCheck": -81,
+      "se": 81,
+      "modelVsCheck": 95.24
+     },
+     {
+      "key": "St2 Equity ≥ 60 % n3+ | 1.5",
+      "n": 1,
+      "realVsCheck": -146,
+      "se": null,
+      "modelVsCheck": 8.337
+     },
+     {
+      "key": "St3 Equity 35–60 % n1 | 0.33",
+      "n": 11,
+      "realVsCheck": -2.423,
+      "se": 2.923,
+      "modelVsCheck": 0.159
+     },
+     {
+      "key": "St3 Equity 35–60 % n1 | 0.5",
+      "n": 11,
+      "realVsCheck": -6.368,
+      "se": 3.098,
+      "modelVsCheck": -0.309
+     },
+     {
+      "key": "St3 Equity 35–60 % n1 | 0.75",
+      "n": 11,
+      "realVsCheck": -9.668,
+      "se": 4.612,
+      "modelVsCheck": -1.183
+     },
+     {
+      "key": "St3 Equity 35–60 % n1 | 1",
+      "n": 10,
+      "realVsCheck": -13.085,
+      "se": 6.885,
+      "modelVsCheck": -2.441
+     },
+     {
+      "key": "St3 Equity 35–60 % n1 | 1.5",
+      "n": 10,
+      "realVsCheck": -18.165,
+      "se": 8.846,
+      "modelVsCheck": -4.169
+     },
+     {
+      "key": "St3 Equity 35–60 % n2 | 0.33",
+      "n": 10,
+      "realVsCheck": -5.911,
+      "se": 5.772,
+      "modelVsCheck": 5.292
+     },
+     {
+      "key": "St3 Equity 35–60 % n2 | 0.5",
+      "n": 9,
+      "realVsCheck": -2.03,
+      "se": 5.573,
+      "modelVsCheck": 3.114
+     },
+     {
+      "key": "St3 Equity 35–60 % n2 | 0.75",
+      "n": 9,
+      "realVsCheck": -4.876,
+      "se": 7.088,
+      "modelVsCheck": 3.024
+     },
+     {
+      "key": "St3 Equity 35–60 % n2 | 1",
+      "n": 9,
+      "realVsCheck": -5.244,
+      "se": 8.197,
+      "modelVsCheck": 2.345
+     },
+     {
+      "key": "St3 Equity 35–60 % n2 | 1.5",
+      "n": 9,
+      "realVsCheck": -8.244,
+      "se": 9.958,
+      "modelVsCheck": 0.709
+     },
+     {
+      "key": "St3 Equity < 35 % n1 | 0.33",
+      "n": 12,
+      "realVsCheck": -4.342,
+      "se": 2.915,
+      "modelVsCheck": -0.029
+     },
+     {
+      "key": "St3 Equity < 35 % n1 | 0.5",
+      "n": 11,
+      "realVsCheck": -3.164,
+      "se": 2.794,
+      "modelVsCheck": -1.744
+     },
+     {
+      "key": "St3 Equity < 35 % n1 | 0.75",
+      "n": 11,
+      "realVsCheck": -4.955,
+      "se": 4.155,
+      "modelVsCheck": -2.127
+     },
+     {
+      "key": "St3 Equity < 35 % n1 | 1",
+      "n": 11,
+      "realVsCheck": -6.736,
+      "se": 5.511,
+      "modelVsCheck": -2.423
+     },
+     {
+      "key": "St3 Equity < 35 % n1 | 1.5",
+      "n": 11,
+      "realVsCheck": -10.387,
+      "se": 8.241,
+      "modelVsCheck": -3.004
+     },
+     {
+      "key": "St3 Equity < 35 % n2 | 0.33",
+      "n": 16,
+      "realVsCheck": -0.888,
+      "se": 1.666,
+      "modelVsCheck": -1.374
+     },
+     {
+      "key": "St3 Equity < 35 % n2 | 0.5",
+      "n": 16,
+      "realVsCheck": -1.763,
+      "se": 2.394,
+      "modelVsCheck": -2.114
+     },
+     {
+      "key": "St3 Equity < 35 % n2 | 0.75",
+      "n": 16,
+      "realVsCheck": -4.55,
+      "se": 3.005,
+      "modelVsCheck": -3.151
+     },
+     {
+      "key": "St3 Equity < 35 % n2 | 1",
+      "n": 16,
+      "realVsCheck": -6.944,
+      "se": 5.26,
+      "modelVsCheck": -4.147
+     },
+     {
+      "key": "St3 Equity < 35 % n2 | 1.5",
+      "n": 16,
+      "realVsCheck": -8.506,
+      "se": 5.497,
+      "modelVsCheck": -5.88
+     },
+     {
+      "key": "St3 Equity < 35 % n3+ | 0.33",
+      "n": 8,
+      "realVsCheck": -2.075,
+      "se": 1.05,
+      "modelVsCheck": -1.827
+     },
+     {
+      "key": "St3 Equity < 35 % n3+ | 0.5",
+      "n": 8,
+      "realVsCheck": -3.425,
+      "se": 1.385,
+      "modelVsCheck": -2.623
+     },
+     {
+      "key": "St3 Equity < 35 % n3+ | 0.75",
+      "n": 8,
+      "realVsCheck": -1.65,
+      "se": 3.095,
+      "modelVsCheck": -3.653
+     },
+     {
+      "key": "St3 Equity < 35 % n3+ | 1",
+      "n": 8,
+      "realVsCheck": -3.063,
+      "se": 3.481,
+      "modelVsCheck": -4.586
+     },
+     {
+      "key": "St3 Equity < 35 % n3+ | 1.5",
+      "n": 8,
+      "realVsCheck": -5.925,
+      "se": 4.302,
+      "modelVsCheck": -6.349
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n1 | 0.33",
+      "n": 21,
+      "realVsCheck": -6.018,
+      "se": 6.581,
+      "modelVsCheck": 8.979
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n1 | 0.5",
+      "n": 19,
+      "realVsCheck": -5.251,
+      "se": 7.856,
+      "modelVsCheck": 11.063
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n1 | 0.75",
+      "n": 18,
+      "realVsCheck": -3.832,
+      "se": 9.412,
+      "modelVsCheck": 11.822
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n1 | 1",
+      "n": 15,
+      "realVsCheck": -1.075,
+      "se": 10.815,
+      "modelVsCheck": 8.343
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n1 | 1.5",
+      "n": 12,
+      "realVsCheck": 5.207,
+      "se": 12.919,
+      "modelVsCheck": 6.176
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n2 | 0.33",
+      "n": 6,
+      "realVsCheck": -8.95,
+      "se": 13.362,
+      "modelVsCheck": 23.229
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n2 | 0.5",
+      "n": 4,
+      "realVsCheck": -9.5,
+      "se": 17.182,
+      "modelVsCheck": 34.407
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n2 | 0.75",
+      "n": 4,
+      "realVsCheck": 4.325,
+      "se": 16.396,
+      "modelVsCheck": 43.268
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n2 | 1",
+      "n": 4,
+      "realVsCheck": 12.9,
+      "se": 17.306,
+      "modelVsCheck": 45.712
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n2 | 1.5",
+      "n": 3,
+      "realVsCheck": 29.533,
+      "se": 25.168,
+      "modelVsCheck": 27.723
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n3+ | 0.33",
+      "n": 1,
+      "realVsCheck": 0,
+      "se": null,
+      "modelVsCheck": 13.552
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n3+ | 0.5",
+      "n": 1,
+      "realVsCheck": 0,
+      "se": null,
+      "modelVsCheck": 16.547
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n3+ | 0.75",
+      "n": 1,
+      "realVsCheck": 0,
+      "se": null,
+      "modelVsCheck": 19.029
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n3+ | 1",
+      "n": 1,
+      "realVsCheck": 0,
+      "se": null,
+      "modelVsCheck": 20.584
+     },
+     {
+      "key": "St3 Equity ≥ 60 % n3+ | 1.5",
+      "n": 1,
+      "realVsCheck": 0,
+      "se": null,
+      "modelVsCheck": 22.988
+     }
+    ]
+   },
+   "policies": {
+    "all": {
+     "spots": 411,
+     "rows": [
+      {
+       "policy": "Modell (beste EV)",
+       "vsCheck": 1.286,
+       "se": 1.647
+      },
+      {
+       "policy": "Modell, Größe frei nach Ausspielung (Orakel)",
+       "vsCheck": 6.836,
+       "se": 1.752
+      },
+      {
+       "policy": "immer Check",
+       "vsCheck": 0,
+       "se": 0
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 0.33",
+       "vsCheck": -1.598,
+       "se": 1.426
+      },
+      {
+       "policy": "immer Bet 0.33",
+       "vsCheck": -2.556,
+       "se": 1.647
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 0.5",
+       "vsCheck": -1.042,
+       "se": 1.473
+      },
+      {
+       "policy": "immer Bet 0.5",
+       "vsCheck": -2.689,
+       "se": 1.715
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 0.75",
+       "vsCheck": 0.063,
+       "se": 1.62
+      },
+      {
+       "policy": "immer Bet 0.75",
+       "vsCheck": -2.12,
+       "se": 1.925
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 1",
+       "vsCheck": 0.558,
+       "se": 1.699
+      },
+      {
+       "policy": "immer Bet 1",
+       "vsCheck": -2.145,
+       "se": 2.033
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 1.5",
+       "vsCheck": 1.619,
+       "se": 1.833
+      },
+      {
+       "policy": "immer Bet 1.5",
+       "vsCheck": -2.301,
+       "se": 2.216
+      }
+     ]
+    },
+    "headsUp": {
+     "spots": 166,
+     "rows": [
+      {
+       "policy": "Modell (beste EV)",
+       "vsCheck": 2.003,
+       "se": 2.486
+      },
+      {
+       "policy": "Modell, Größe frei nach Ausspielung (Orakel)",
+       "vsCheck": 7.14,
+       "se": 2.449
+      },
+      {
+       "policy": "immer Check",
+       "vsCheck": 0,
+       "se": 0
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 0.33",
+       "vsCheck": -0.571,
+       "se": 1.951
+      },
+      {
+       "policy": "immer Bet 0.33",
+       "vsCheck": -3.115,
+       "se": 2.273
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 0.5",
+       "vsCheck": -0.631,
+       "se": 2.022
+      },
+      {
+       "policy": "immer Bet 0.5",
+       "vsCheck": -4.184,
+       "se": 2.371
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 0.75",
+       "vsCheck": 0.126,
+       "se": 2.2
+      },
+      {
+       "policy": "immer Bet 0.75",
+       "vsCheck": -2.962,
+       "se": 2.64
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 1",
+       "vsCheck": 1.156,
+       "se": 2.467
+      },
+      {
+       "policy": "immer Bet 1",
+       "vsCheck": -1.54,
+       "se": 2.834
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 1.5",
+       "vsCheck": 3.491,
+       "se": 2.72
+      },
+      {
+       "policy": "immer Bet 1.5",
+       "vsCheck": -0.269,
+       "se": 3.109
+      }
+     ]
+    },
+    "multiway": {
+     "spots": 245,
+     "rows": [
+      {
+       "policy": "Modell (beste EV)",
+       "vsCheck": 0.8,
+       "se": 2.194
+      },
+      {
+       "policy": "Modell, Größe frei nach Ausspielung (Orakel)",
+       "vsCheck": 6.63,
+       "se": 2.43
+      },
+      {
+       "policy": "immer Check",
+       "vsCheck": 0,
+       "se": 0
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 0.33",
+       "vsCheck": -2.294,
+       "se": 1.995
+      },
+      {
+       "policy": "immer Bet 0.33",
+       "vsCheck": -2.177,
+       "se": 2.297
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 0.5",
+       "vsCheck": -1.321,
+       "se": 2.06
+      },
+      {
+       "policy": "immer Bet 0.5",
+       "vsCheck": -1.675,
+       "se": 2.388
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 0.75",
+       "vsCheck": 0.021,
+       "se": 2.276
+      },
+      {
+       "policy": "immer Bet 0.75",
+       "vsCheck": -1.55,
+       "se": 2.692
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 1",
+       "vsCheck": 0.153,
+       "se": 2.312
+      },
+      {
+       "policy": "immer Bet 1",
+       "vsCheck": -2.555,
+       "se": 2.824
+      },
+      {
+       "policy": "Modell entscheidet Bet/Check, Größe fest 1.5",
+       "vsCheck": 0.351,
+       "se": 2.462
+      },
+      {
+       "policy": "immer Bet 1.5",
+       "vsCheck": -3.678,
+       "se": 3.064
+      }
+     ]
+    }
+   },
+   "eqWhenCalled": [
+    {
+     "key": "St1 0.33",
+     "n": 47,
+     "predEqWhenCalled": 0.483,
+     "obsEqWhenCalled": 0.541,
+     "se": 0.044
+    },
+    {
+     "key": "St1 0.5",
+     "n": 44,
+     "predEqWhenCalled": 0.482,
+     "obsEqWhenCalled": 0.549,
+     "se": 0.045
+    },
+    {
+     "key": "St1 0.75",
+     "n": 44,
+     "predEqWhenCalled": 0.472,
+     "obsEqWhenCalled": 0.549,
+     "se": 0.045
+    },
+    {
+     "key": "St1 1",
+     "n": 43,
+     "predEqWhenCalled": 0.47,
+     "obsEqWhenCalled": 0.555,
+     "se": 0.046
+    },
+    {
+     "key": "St1 1.5",
+     "n": 41,
+     "predEqWhenCalled": 0.465,
+     "obsEqWhenCalled": 0.559,
+     "se": 0.047
+    },
+    {
+     "key": "St2 0.33",
+     "n": 40,
+     "predEqWhenCalled": 0.557,
+     "obsEqWhenCalled": 0.521,
+     "se": 0.061
+    },
+    {
+     "key": "St2 0.5",
+     "n": 39,
+     "predEqWhenCalled": 0.538,
+     "obsEqWhenCalled": 0.509,
+     "se": 0.061
+    },
+    {
+     "key": "St2 0.75",
+     "n": 38,
+     "predEqWhenCalled": 0.52,
+     "obsEqWhenCalled": 0.496,
+     "se": 0.061
+    },
+    {
+     "key": "St2 1",
+     "n": 37,
+     "predEqWhenCalled": 0.519,
+     "obsEqWhenCalled": 0.505,
+     "se": 0.062
+    },
+    {
+     "key": "St2 1.5",
+     "n": 37,
+     "predEqWhenCalled": 0.489,
+     "obsEqWhenCalled": 0.492,
+     "se": 0.063
+    },
+    {
+     "key": "St3 0.33",
+     "n": 31,
+     "predEqWhenCalled": 0.507,
+     "obsEqWhenCalled": 0.435,
+     "se": 0.089
+    },
+    {
+     "key": "St3 0.5",
+     "n": 27,
+     "predEqWhenCalled": 0.477,
+     "obsEqWhenCalled": 0.389,
+     "se": 0.094
+    },
+    {
+     "key": "St3 0.75",
+     "n": 26,
+     "predEqWhenCalled": 0.43,
+     "obsEqWhenCalled": 0.365,
+     "se": 0.094
+    },
+    {
+     "key": "St3 1",
+     "n": 23,
+     "predEqWhenCalled": 0.379,
+     "obsEqWhenCalled": 0.37,
+     "se": 0.1
+    },
+    {
+     "key": "St3 1.5",
+     "n": 20,
+     "predEqWhenCalled": 0.308,
+     "obsEqWhenCalled": 0.325,
+     "se": 0.104
+    }
+   ],
+   "facing": [
+    {
+     "key": "St1 call",
+     "n": 134,
+     "realVsFold": 21.348,
+     "se": 6.557,
+     "modelVsFold": 3.794
+    },
+    {
+     "key": "St1 fold",
+     "n": 134,
+     "realVsFold": 0,
+     "se": 0,
+     "modelVsFold": 0
+    },
+    {
+     "key": "St1 r2.5",
+     "n": 134,
+     "realVsFold": 27.57,
+     "se": 7.366,
+     "modelVsFold": 4.533
+    },
+    {
+     "key": "St1 r3.5",
+     "n": 112,
+     "realVsFold": 15.743,
+     "se": 7.431,
+     "modelVsFold": -2.441
+    },
+    {
+     "key": "St2 call",
+     "n": 41,
+     "realVsFold": 12.221,
+     "se": 11.279,
+     "modelVsFold": -0.021
+    },
+    {
+     "key": "St2 fold",
+     "n": 41,
+     "realVsFold": 0,
+     "se": 0,
+     "modelVsFold": 0
+    },
+    {
+     "key": "St2 r2.5",
+     "n": 41,
+     "realVsFold": 1.476,
+     "se": 11.698,
+     "modelVsFold": -7.148
+    },
+    {
+     "key": "St2 r3.5",
+     "n": 33,
+     "realVsFold": -20.542,
+     "se": 10.658,
+     "modelVsFold": -15.578
+    },
+    {
+     "key": "St3 call",
+     "n": 13,
+     "realVsFold": -0.897,
+     "se": 13.312,
+     "modelVsFold": -14.916
+    },
+    {
+     "key": "St3 fold",
+     "n": 13,
+     "realVsFold": 0,
+     "se": 0,
+     "modelVsFold": 0
+    },
+    {
+     "key": "St3 r2.5",
+     "n": 13,
+     "realVsFold": -24.315,
+     "se": 15.064,
+     "modelVsFold": -28.035
+    },
+    {
+     "key": "St3 r3.5",
+     "n": 9,
+     "realVsFold": -34.033,
+     "se": 11.717,
+     "modelVsFold": -25.814
+    }
+   ],
+   "modelChoice": {
+    "1": 19,
+    "check": 212,
+    "1.5": 101,
+    "0.33": 34,
+    "0.75": 26,
+    "0.5": 19
+   }
+  }
  }
 }
