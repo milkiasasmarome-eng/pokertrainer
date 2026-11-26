@@ -30,5 +30,31 @@
   "ok": true,
   "distinct": 4824,
   "ms": 12134
+ },
+ "sim": {
+  "hands": 1000000,
+  "actions": 8931953,
+  "errorCount": 0,
+  "errors": [],
+  "invalidRejected": 33947,
+  "botFallbacks": 0,
+  "showdowns": 261680,
+  "sidePots": 8996,
+  "splitPots": 9602,
+  "allIns": 122208,
+  "swaps": 41662,
+  "rebuys": 78415,
+  "maxActions": 31,
+  "configs": [
+   "{\"cfg\":{},\"heroMode\":null}",
+   "{\"cfg\":{},\"heroMode\":null}",
+   "{\"cfg\":{\"rebuyBelowBB\":0,\"topUp\":false},\"heroMode\":null}",
+   "{\"cfg\":{},\"heroMode\":\"random\"}",
+   "{\"cfg\":{\"rake\":{\"on\":true,\"pct\":0.05,\"capBB\":3,\"nfnd\":true}},\"heroMode\":null}",
+   "{\"cfg\":{\"startBB\":20,\"rebuyBelowBB\":5},\"heroMode\":\"random\"}",
+   "{\"cfg\":{\"startBB\":300},\"heroMode\":null}",
+   "{\"cfg\":{\"difficulty\":\"experte\",\"swapEvery\":10},\"heroMode\":\"random\"}"
+  ],
+  "ms": 186198
  }
 }

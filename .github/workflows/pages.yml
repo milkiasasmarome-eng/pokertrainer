@@ -1,5 +1,9 @@
 name: Tests und Veröffentlichung
 
+# Ablauf: Bei jedem Push auf main laufen Build-Prüfung und Regressionstests.
+# Nur wenn sie bestehen, wird die Website auf den Branch gh-pages kopiert; GitHub Pages veröffentlicht von dort.
+# Frühere Versionen bleiben in der Historie von main und gh-pages erhalten (Wiederherstellung: git revert auf main).
+
 on:
   push:
     branches: [main]
@@ -7,9 +11,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
 concurrency:
   group: pages
@@ -20,11 +22,11 @@ jobs:
     name: Regressionstests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
-      - name: Build prüfen (Service Worker und Offline-Datei aktuell)
+      - name: Build prüfen (Service Worker aktuell)
         run: |
           node tools/build.js
           git diff --exit-code -- sw.js || (echo "sw.js ist nicht aktuell: node tools/build.js ausführen und committen" && exit 1)
@@ -32,27 +34,31 @@ jobs:
         run: node tests/run.js --quick
 
   deploy:
-    name: GitHub Pages
+    name: Website veröffentlichen
     needs: test
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
-      - name: Seite zusammenstellen
-        run: |
-          node tools/build.js
-          mkdir -p _site
-          cp -r index.html manifest.webmanifest sw.js .nojekyll assets dist _site/
-          cp PRIVACY.md CHANGELOG.md _site/
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+      - name: Website bauen
+        run: node tools/build.js
+      - uses: actions/checkout@v5
         with:
+          ref: gh-pages
           path: _site
-      - id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Dateien übernehmen und veröffentlichen
+        run: |
+          cd _site
+          find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+          cd ..
+          cp -r index.html manifest.webmanifest sw.js .nojekyll assets dist PRIVACY.md CHANGELOG.md _site/
+          cd _site
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then echo "Keine Änderungen an der Website."; exit 0; fi
+          git commit -m "Website aus ${GITHUB_SHA::7} (Tests bestanden)"
+          git push origin gh-pages
