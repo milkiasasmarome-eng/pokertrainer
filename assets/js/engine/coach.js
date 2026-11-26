@@ -113,13 +113,26 @@ function analyze(input) {
   var L0 = Q.LEVELS[level] || Q.LEVELS.standard;
   var live = level === 'schnell' || level === 'standard';
   var maxSim = live ? Math.min(L0.maxIter, 5000) : L0.maxIter;
+  if (input.maxSim != null) maxSim = Math.max(0, Math.min(maxSim, input.maxSim));  // nur für Tests: erschöpftes Budget nachstellen
   var budget = { left: maxSim, used: 0, calls: [] };
   var rng = PT.makeRng(input.seed != null ? input.seed : 'coach');
   var deadline = t0 + (live ? Math.min(L0.ms, 1400) : L0.ms);
   var res = {}, scale = level === 'praezise' ? 4 : level === 'tief' ? 10 : 1;
   budget.scale = scale;
   var prep = prepare(input, v, L0, budget, rng);
-  ['exploit', 'gto'].forEach(function (mode) { res[mode] = analyzeMode(input, v, mode, level, L0, budget, rng, deadline, set, prep); });
+  // Faire Verteilung (Prüfbefund A1): Beide Modi teilen die gemeinsamen Zwischenergebnisse (Ranges, Equity je Kombination)
+  // und erhalten danach je die Hälfte des Restbudgets und der Restzeit sowie eigene, vom Modus abhängige Zufallsströme.
+  // Die Reihenfolge der Modi verändert die Ergebnisse dadurch nicht.
+  var seedBase = String(input.seed != null ? input.seed : 'coach'), rest = budget.left, tNow = U.now(), tRest = Math.max(0, deadline - tNow);
+  var order = input._order || ['exploit', 'gto'], shareB = {}, shareT = {};
+  shareB.exploit = Math.floor(rest / 2); shareB.gto = rest - shareB.exploit;
+  order.forEach(function (mode, i) {
+    var bm = { left: shareB[mode], used: 0, calls: budget.calls, scale: scale, seedBase: seedBase + '|' + mode };
+    var dl = U.now() + (i === 0 ? tRest / 2 : Math.max(0, deadline - U.now()));
+    res[mode] = analyzeMode(input, v, mode, level, L0, bm, PT.makeRng(seedBase + '|modus|' + mode), Math.min(deadline, dl), set, prep);
+    budget.used += bm.used; budget.left -= bm.used;
+    res[mode].budgetShare = { granted: shareB[mode], used: bm.used };
+  });
   var main = set.mode === 'gto' ? res.gto : res.exploit, other = set.mode === 'gto' ? res.exploit : res.gto;
   var out = main;
   out.mode = set.mode === 'gto' ? 'gto' : 'exploit';
@@ -130,6 +143,11 @@ function analyze(input) {
   out.learnerHint = learnerHint(out, input.learner);
   out.text = explain(out, set.depth || 'fortgeschritten');
   return out;
+}
+/** Zufallsstrom aus Seed und Inhalt (Ranges) statt aus dem Modus: gleiche Eingaben ergeben in beiden Modi dieselben Stichproben */
+function rngFor(budget, tag, ranges) {
+  var base = (budget.seedBase || 'coach').replace(/\|(exploit|gto)$/, '');
+  return PT.makeRng(base + '|' + tag + '|' + ranges.map(R.hash).join(','));
 }
 /** Ranges beider Modi und eine gemeinsame Equity je Kombination (Vereinigung der Träger) */
 function prepare(input, v, L0, budget, rng) {
@@ -195,14 +213,14 @@ function analyzeMode(input, v, mode, level, L0, budget, rng, deadline, set, prep
     var o0 = relevant[0];
     eqNow = o0 ? o0.eqHU : 1; eqSE = o0 ? (o0.eqInfo.se || 0) : 0; eqMethod = o0 ? o0.eqInfo.method : 'kein Gegner';
     if (street === 0 && o0 && budget.left > 300) {
-      var mc = Q.equity({ hero: v.cards, board: board, ranges: [o0.w], level: level, rng: rng, budget: { left: Math.min((gto ? 800 : 1000) * (budget.scale || 1), budget.left), used: 0, calls: budget.calls }, deadline: deadline });
+      var mc = Q.equity({ hero: v.cards, board: board, ranges: [o0.w], level: level, rng: rngFor(budget, 'pf', [o0.w]), budget: { left: Math.min(1000 * (budget.scale || 1), budget.left), used: 0, calls: budget.calls }, deadline: deadline });
       budget.left -= mc.iters || 0; budget.used += mc.iters || 0;
       if (mc.eq != null) { eqNow = mc.eq; eqSE = mc.se || 0; eqMethod = mc.method; ctx.kappaPF = o0.eqHU > 0 ? mc.eq / o0.eqHU : 1; }
     }
     ctx.kappa = 1;
   } else {
-    var share = Math.min(budget.left, level === 'schnell' ? 600 : (gto ? 900 : 1200) * (budget.scale || 1));
-    var j = share >= 100 ? Q.equity({ hero: v.cards, board: board, ranges: relevant.map(function (o) { return o.w; }), level: level, rng: rng, budget: { left: share, used: 0, calls: budget.calls }, deadline: deadline, minIter: Math.min(300, share) }) : { eq: null, iters: 0, method: 'Näherung' };
+    var share = Math.min(budget.left, level === 'schnell' ? 600 : 1200 * (budget.scale || 1));
+    var j = share >= 100 ? Q.equity({ hero: v.cards, board: board, ranges: relevant.map(function (o) { return o.w; }), level: level, rng: rngFor(budget, 'mw', relevant.map(function (o) { return o.w; })), budget: { left: share, used: 0, calls: budget.calls }, deadline: deadline, minIter: Math.min(300, share) }) : { eq: null, iters: 0, method: 'Näherung' };
     budget.left -= j.iters || 0; budget.used += j.iters || 0;
     var prodHU = relevant.reduce(function (p, o) { return p * (o.eqHU == null ? 0.5 : o.eqHU); }, 1);
     eqNow = j.eq != null ? j.eq : prodHU; eqSE = j.se || 0.02; eqMethod = j.method + ' (Mehrgegner)';
@@ -317,21 +335,60 @@ function preflopAnchor(v, ctx, pre, acts, gto) {
   var top = acts[0], wTop = chartWeight(hc, top, unopened);
   var info = { kind: hc.kind, raise: hc.raise, call: hc.call, fold: hc.fold, applied: false, w: wTop };
   if (wTop >= CHART_MIN) return info;
-  // Exploit nur, wenn die nötige Fold-Annahme durch genug eigene Beobachtungen belegt ist
-  var ev = 0, obsN = 0;
-  if (!gto && group(top) === 'aggr') {
-    if (unopened) obsN = ctx.opps.filter(function (o) { return o.pending && (o.p.pos === 'SB' || o.p.pos === 'BB'); }).reduce(function (m, o) { var r = o.raw && o.raw.foldToSteal; return Math.min(m, r ? r[1] : 0); }, Infinity);
-    else if (raiser) { var ro = ctx.opps.filter(function (o) { return o.seat === pre.lastRaiser; })[0], key = pre.rc === 1 ? 'foldTo3Bet' : 'foldTo4Bet'; obsN = ro && ro.raw && ro.raw[key] ? ro.raw[key][1] : 0; }
-    if (!isFinite(obsN)) obsN = 0;
-  }
   var alt = null;
   for (var i = 1; i < acts.length; i++) if (chartWeight(hc, acts[i], unopened) >= CHART_MIN) { alt = acts[i]; break; }
   if (!alt) return info;
   var gapM = top.ev - alt.ev;
-  if (!gto && group(top) === 'aggr' && obsN >= 20 && gapM >= Math.max(0.5 * ctx.bb, 1.5 * top.u)) { info.exploit = { obs: obsN, gap: gapM }; return info; }
+  // Exploit nur, wenn die nötige Fold-Annahme statistisch belegt ist (Prüfbefund A6): Bayes-Schätzung der Fold-Rate des
+  // entscheidenden Gegners (Beta-Prior aus dem Populationsmittel, Stärke wie bei der Glättung) und Wahrscheinlichkeit,
+  // dass die wahre Fold-Rate über der Break-even-Rate liegt, ab der die Abweichung vom Chart nichts mehr bringt.
+  var evd = !gto && group(top) === 'aggr' ? exploitEvidence(ctx, pre, top, alt, unopened, raiser) : null;
+  if (evd) info.evidence = evd;
+  if (evd && evd.p >= 0.9 && gapM >= Math.max(0.3 * ctx.bb, top.u)) { info.exploit = { obs: evd.n, gap: gapM, p: evd.p, fBe: evd.fBe, post: evd.mean }; return info; }
   acts.splice(acts.indexOf(alt), 1); acts.unshift(alt);
-  info.applied = true; info.w = chartWeight(hc, alt, unopened); info.modelBest = top.label; info.modelGap = gapM; info.obs = obsN;
+  info.applied = true; info.w = chartWeight(hc, alt, unopened); info.modelBest = top.label; info.modelGap = gapM; info.obs = evd ? evd.n : 0;
   return info;
+}
+/** Beleg für eine exploitative Preflop-Abweichung: P(wahre Fold-Rate > Break-even-Rate | Beobachtungen) */
+function exploitEvidence(ctx, pre, top, alt, unopened, raiser) {
+  var key, ro;
+  if (unopened) { key = 'foldToSteal'; ro = ctx.opps.filter(function (o) { return o.pending && o.p.pos === 'BB'; })[0]; }
+  else if (raiser) { key = pre.rc === 1 ? 'foldTo3Bet' : 'foldTo4Bet'; ro = ctx.opps.filter(function (o) { return o.seat === pre.lastRaiser; })[0]; }
+  if (!ro || !top.parts || !top.parts.folds) return null;
+  var fr = top.parts.folds.filter(function (r) { return r.name === ro.p.name; })[0];
+  if (!fr || !(fr.f > 0) || !(fr.f < 1)) return null;
+  var raw = ro.raw && ro.raw[key] ? ro.raw[key] : [0, 0], k = R.PRIOR_K[key] || 15, m = R.PRIOR[key] != null ? R.PRIOR[key] : 0.5;
+  var pAF = top.parts.pAllFold != null ? top.parts.pAllFold : fr.f, P = ctx.pot;
+  if (!(pAF > 0) || !(pAF < 1)) return null;
+  var C = (top.ev - pAF * P) / (1 - pAF), b = (P - C) * pAF / fr.f;  // ∂EV/∂f dieses Gegners (übrige Gegner fest)
+  if (!(b > 0)) return null;
+  var fBe = clamp(fr.f - (top.ev - alt.ev) / b, 0, 1);
+  var a = m * k + raw[0], bb = (1 - m) * k + (raw[1] - raw[0]);
+  return { key: key, n: raw[1], folds: raw[0], fBe: fBe, fModel: fr.f, mean: a / (a + bb), p: 1 - betaCdf(fBe, a, bb) };
+}
+/** Regularisierte unvollständige Betafunktion I_x(a, b) (Kettenbruch nach Lentz) */
+function betaCdf(x, a, b) {
+  if (x <= 0) return 0; if (x >= 1) return 1;
+  var lbeta = lgamma(a + b) - lgamma(a) - lgamma(b), front = Math.exp(Math.log(x) * a + Math.log(1 - x) * b + lbeta);
+  if (x > (a + 1) / (a + b + 2)) return 1 - betaCdf(1 - x, b, a);
+  var f = 1, c = 1, d = 0, i, m, num;
+  for (i = 0; i <= 300; i++) {
+    m = i >> 1;
+    num = i === 0 ? 1 : (i % 2 === 0 ? m * (b - m) * x / ((a + 2 * m - 1) * (a + 2 * m)) : -((a + m) * (a + b + m) * x) / ((a + 2 * m) * (a + 2 * m + 1)));
+    d = 1 + num * d; if (Math.abs(d) < 1e-30) d = 1e-30; d = 1 / d;
+    c = 1 + num / c; if (Math.abs(c) < 1e-30) c = 1e-30;
+    var cd = c * d; f *= cd;
+    if (Math.abs(1 - cd) < 1e-12) break;
+  }
+  return clamp(front * (f - 1) / a, 0, 1);
+}
+function lgamma(z) {
+  // Lanczos-Näherung (g = 7, n = 9)
+  var g = 7, cf = [0.99999999999980993, 676.5203681218851, -1259.1392167224028, 771.32342877765313, -176.61502916214059, 12.507343278686905, -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7];
+  if (z < 0.5) return Math.log(Math.PI / Math.sin(Math.PI * z)) - lgamma(1 - z);
+  z -= 1; var x = cf[0]; for (var i = 1; i < g + 2; i++) x += cf[i] / (z + i);
+  var t = z + g + 0.5;
+  return 0.5 * Math.log(2 * Math.PI) + (z + 0.5) * Math.log(t) - t + Math.log(x);
 }
 function prevCur(v) {
   var lastRaise = null, prev = 0;
@@ -469,7 +526,7 @@ function explain(a, depth) {
     core = actWord + ': ' + (value ? 'Mit etwa ' + pct(eq.eq) + ' Equity holst du Value von schwächeren Händen.' : 'Die Bet gewinnt den Pot geschätzt in etwa ' + pct(p.pAllFold || 0) + ' der Fälle sofort' + (a.hand.draw && a.hand.draw.strong ? ', und dein Draw hat Rückhalt.' : '.'));
   }
   if (a.street === 0 && a.chart && a.chart.applied) core += ' Preflop folgt der Coach hier dem Faustregel-Chart (' + a.chart.kind + '); das vereinfachte EV-Modell sähe ' + a.chart.modelBest + ' um ' + bbTxt(a.chart.modelGap, bb) + ' vorn, aber nur wegen Fold-Annahmen, die nicht durch Gegnerwerte belegt sind.';
-  else if (a.street === 0 && a.chart && a.chart.exploit) core += ' Das weicht vom Faustregel-Chart ab und stützt sich auf ' + a.chart.exploit.obs + ' beobachtete Situationen dieses Gegners.';
+  else if (a.street === 0 && a.chart && a.chart.exploit) core += ' Das weicht vom Faustregel-Chart ab: Nach ' + a.chart.exploit.obs + ' beobachteten Situationen liegt die geschätzte Fold-Rate dieses Gegners bei ' + pct(a.chart.exploit.post) + '; mit ' + pct(a.chart.exploit.p) + ' Wahrscheinlichkeit über der Break-even-Rate von ' + pct(a.chart.exploit.fBe) + '.';
   lines.einsteiger.push(core);
   if (a.street === 0 && a.actions.length) lines.einsteiger.push(a.hand.top <= 0.4 ? a.hand.cls + ' gehört zu den besten ' + (a.hand.top < 0.01 ? '1' : Math.round(a.hand.top * 100)) + ' % aller Starthände.' : a.hand.cls + ' liegt auf Rang ' + (H.CLS_RANK[H.nameToIdx(a.hand.cls)] + 1) + ' von 169 Starthandklassen.');
   // Fortgeschritten
@@ -540,7 +597,8 @@ function grade(a, chosen) {
   }
   var cats = GRADE_SCORE[g] <= 45 ? mistakeCats(a, pick, best) : [];
   var text = chartCap ? chartCapText(a, pick, best, loss) : gradeText(g, a, pick, best, loss);
-  return { grade: g, simple: GRADE_SIMPLE[g], score: GRADE_SCORE[g], loss: loss, lossBB: loss / bb, u: u, chosenLabel: pick.label, bestLabel: best.label, text: text, cats: cats, interpolated: !!pick.interpolated };
+  var tied = a.actions.some(function (x) { return x !== pick && group(x) !== group(pick) && Math.abs(pick.ev - x.ev) <= Math.max(0.1 * bb, Math.max(pick.u || 0, x.u || 0)); });
+  return { grade: g, simple: GRADE_SIMPLE[g], score: GRADE_SCORE[g], loss: loss, lossBB: loss / bb, u: u, chosenLabel: pick.label, bestLabel: best.label, text: text, cats: cats, interpolated: !!pick.interpolated, tied: tied };
 }
 function chartCapText(a, pick, best, loss) {
   var bb = a.bb, aggr = group(pick) === 'aggr';
@@ -551,7 +609,13 @@ function chartCapText(a, pick, best, loss) {
 }
 function gradeText(g, a, pick, best, loss) {
   var bb = a.bb;
-  if (g === 'Optimal') return 'Deine Aktion ist die beste nach dem Modell. ' + a.text.speech;
+  if (g === 'Optimal') {
+    // Nicht „eindeutig optimal“ nennen, wenn Alternativen innerhalb der Unsicherheit liegen (Auftrag 2.1, Abschnitt 10)
+    var near = a.actions.filter(function (x) { return x !== pick && group(x) !== group(pick) && Math.abs(pick.ev - x.ev) <= Math.max(0.1 * bb, Math.max(pick.u || 0, x.u || 0)); });
+    if (near.length) return 'Deine Aktion liegt nach dem Modell vorn, aber ' + near.slice(0, 2).map(function (x) { return x.label; }).join(' und ') + (near.length > 1 ? ' liegen' : ' liegt') + ' im Rahmen der Unsicherheit gleichauf. ' + a.text.speech;
+    if (a.chart && a.chart.applied && pick === best) return 'Deine Aktion folgt dem Faustregel-Chart (' + a.chart.kind + '). ' + a.text.speech;
+    return 'Deine Aktion ist die beste nach dem Modell. ' + a.text.speech;
+  }
   var s = 'Empfohlen war ' + best.label + '. Deine Aktion (' + pick.label + ') kostet geschätzt ' + bbTxt(loss, bb) + ' gegenüber der besten Aktion';
   var uu = Math.max(best.u, pick.u || 0);
   if (GRADE_SCORE[g] >= 65) s += loss <= uu && uu >= 0.05 * bb ? ', das liegt im Rahmen der Unsicherheit (± ' + bbTxt(uu, bb) + ').' : ', ein kleiner Unterschied.';
@@ -645,7 +709,7 @@ var GLOSSARY = {
   'Rake': 'Gebühr des Veranstalters, die vom Pot abgezogen wird. In dieser App optional und standardmäßig aus.'
 };
 
-PT.coach = { analyze: analyze, grade: grade, explain: explain, GRADES: GRADES, GRADE_SCORE: GRADE_SCORE, GRADE_SIMPLE: GRADE_SIMPLE, CLASS_TEXT: CLASS_TEXT,
+PT.coach = { betaCdf: betaCdf, analyze: analyze, grade: grade, explain: explain, GRADES: GRADES, GRADE_SCORE: GRADE_SCORE, GRADE_SIMPLE: GRADE_SIMPLE, CLASS_TEXT: CLASS_TEXT,
   MISTAKES: MISTAKES, SPOTS: SPOTS, GLOSSARY: GLOSSARY, lineOf: lineOf, preInfo: preInfo, LINE_TEXT: LINE_TEXT, composition: composition };
 PT.glossary = GLOSSARY;
 })(typeof globalThis !== 'undefined' ? globalThis : (typeof self !== 'undefined' ? self : this));
