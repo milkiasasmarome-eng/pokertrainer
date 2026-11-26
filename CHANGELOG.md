@@ -2,6 +2,15 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [2.1.0] – 2026-11-27 (Entwicklungsfassung auf Zweig `pai-schnittstelle`)
+
+### Neu
+- **PAI-Schnittstelle (freiwillig, Standard aus):** Einstellung „PAI-Schnittstelle“ sendet über den Browserkanal `pai-events-v1`
+  (nur dieselbe Website) Entscheidungssituationen, die gewählte Aktion und abgeschlossene Hände an eine geöffnete Seite von
+  Adaptive Poker Intelligence. Inhalt: eigene Karten, Board, öffentliche Aktionen, Stacks, aufgedeckte Karten. Nicht enthalten:
+  verdeckte Karten anderer Spieler, Seeds, Bot-Stile und -Parameter, Gegnerstatistiken, Tipps und Bewertungen des Coaches.
+  Einseitig: Der Trainer empfängt nichts. Test „PAI-Schnittstelle“ in `tests/run.js` prüft die Felder und schließt Kartenlecks aus.
+
 ## [2.0.1] – 2026-11-26
 
 Korrekturen nach zwei unabhängigen Prüfungen (Details: `docs/AUDIT.md`).

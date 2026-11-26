@@ -1,24 +1,24 @@
 {
- "app": "2.0.1",
- "date": "2026-11-26T18:44:20.764Z",
+ "app": "2.1.0",
+ "date": "2026-11-26T23:37:09.954Z",
  "node": "v22.23.5",
  "quick": true,
  "passed": 41,
- "failed": 0,
+ "failed": 1,
  "tests": [
   {
    "name": "Handbewertung: alle 2.598.960 Fünf-Karten-Hände (Kategorien, 7.462 Werte, Ordnung = Referenz)",
    "ok": true,
    "checks": 4,
    "notes": [],
-   "ms": 298
+   "ms": 607
   },
   {
    "name": "Handbewertung: 300.000 zufällige Sieben-Karten-Paare gegen Best-of-Five-Referenz",
    "ok": true,
    "checks": 2,
    "notes": [],
-   "ms": 1439
+   "ms": 1754
   },
   {
    "name": "Handbewertung: feste Testfälle (Kategorien und Vergleiche)",
@@ -39,7 +39,7 @@
    "ok": true,
    "checks": 11,
    "notes": [],
-   "ms": 1
+   "ms": 0
   },
   {
    "name": "Regeln: Wiedereröffnung nach vollem Raise, Re-Raise-Größen",
@@ -67,7 +67,7 @@
    "ok": true,
    "checks": 9,
    "notes": [],
-   "ms": 1
+   "ms": 4
   },
   {
    "name": "Regeln: kurzer Big Blind (All-in für weniger), Rake optional und konsistent",
@@ -81,16 +81,16 @@
    "ok": true,
    "checks": 2,
    "notes": [],
-   "ms": 192
+   "ms": 290
   },
   {
    "name": "Simulation: 10.000 Hände, Invarianten nach jeder Aktion, keine hängende Hand, Chipbilanz",
    "ok": true,
    "checks": 3,
    "notes": [
-    "{\"hands\":2000,\"actions\":17460,\"showdowns\":338,\"sidePots\":0,\"splitPots\":14,\"swaps\":66}"
+    "{\"hands\":2000,\"actions\":17309,\"showdowns\":310,\"sidePots\":1,\"splitPots\":14,\"swaps\":66}"
    ],
-   "ms": 601
+   "ms": 941
   },
   {
    "name": "Fuzz: zufällige und ungültige Eingaben, zufällige Stacks (1–400 BB)",
@@ -99,28 +99,28 @@
    "notes": [
     "1500 Hände mit zufälligen Stacks"
    ],
-   "ms": 513
+   "ms": 968
   },
   {
    "name": "Eigenschaft: gefoldete Spieler gewinnen nie, Gewinner sind berechtigt, keine Karte doppelt",
    "ok": true,
    "checks": 2,
    "notes": [],
-   "ms": 421
+   "ms": 721
   },
   {
    "name": "Zufall: getrennte Ströme; Coach an/aus ändert den Spielverlauf nicht",
    "ok": true,
    "checks": 3,
    "notes": [],
-   "ms": 922
+   "ms": 2340
   },
   {
    "name": "Fairness: Bots und Coach sehen keine verdeckten Karten",
    "ok": true,
    "checks": 12,
    "notes": [],
-   "ms": 1
+   "ms": 0
   },
   {
    "name": "Equity: exakte Enumeration bekannter Preflop-Duelle (je 1.712.304 Boards) gegen unabhängige Schleife und Literaturwerte",
@@ -129,7 +129,7 @@
    "notes": [
     "AhAd vs KsKc: 81.26 %"
    ],
-   "ms": 495
+   "ms": 839
   },
   {
    "name": "Equity: Monte-Carlo gegen exakte Enumeration (Fehler ≤ 4 Standardfehler)",
@@ -141,7 +141,7 @@
     "8h9h Th7h2c AcAd: exakt 56.26 %, MC 56.57 % (SE 0.50, n 9700)",
     "AhKd Ks8c3d : exakt 88.28 %, MC 88.34 % (SE 0.53, n 3440)"
    ],
-   "ms": 551
+   "ms": 961
   },
   {
    "name": "Equity: Mehrgegner-Simulation (AA gegen KK gegen QQ) gegen exakte Enumeration",
@@ -150,7 +150,7 @@
    "notes": [
     "AA 3-Wege: exakt 66.46 % (195822 Boards), MC 67.33 %"
    ],
-   "ms": 71
+   "ms": 120
   },
   {
    "name": "Pot Odds und Side-Pot-Berechtigung: nur erreichbare Pots zählen",
@@ -164,14 +164,14 @@
    "ok": true,
    "checks": 3,
    "notes": [],
-   "ms": 45
+   "ms": 48
   },
   {
    "name": "Kombinatorik und Blocker",
    "ok": true,
    "checks": 7,
    "notes": [],
-   "ms": 0
+   "ms": 2
   },
   {
    "name": "Statistik: Wilson-Intervall, Beta-Glättung, kleine Stichproben unbekannt statt 0",
@@ -187,37 +187,37 @@
    "notes": [
     "308 Zähler/Nenner-Paare verglichen"
    ],
-   "ms": 486
+   "ms": 914
   },
   {
    "name": "CFR+: analytisches River-Spiel (Bluff-Anteil b/(1+2b), Call-Häufigkeit 1/(1+b)), Exploitability ≈ 0",
    "ok": true,
    "checks": 13,
    "notes": [],
-   "ms": 62
+   "ms": 85
   },
   {
    "name": "Coach: Obergrenze von 5.000 Simulationen je Entscheidung, Antwortzeit, keine Ausnahme",
    "ok": true,
-   "checks": 277,
+   "checks": 288,
    "notes": [
-    "275 Analysen, max. 4060 Simulationen, max. 55 ms (Node, ein Kern)"
+    "286 Analysen, max. 4800 Simulationen, max. 169 ms (Node, ein Kern)"
    ],
-   "ms": 2015
+   "ms": 4048
   },
   {
    "name": "Coach: Bewertung nutzt nur Entscheidungsinformationen; sieben Stufen; Fehlerkategorien",
    "ok": true,
    "checks": 12,
    "notes": [],
-   "ms": 68
+   "ms": 93
   },
   {
    "name": "Training: alle 14 Kategorien erzeugen Situationen, reproduzierbar über Seeds",
    "ok": true,
    "checks": 28,
    "notes": [],
-   "ms": 93
+   "ms": 123
   },
   {
    "name": "Training: Quizfragen rechnen korrekt, Kompetenzprofil und Spaced Repetition",
@@ -231,21 +231,21 @@
    "ok": true,
    "checks": 6,
    "notes": [],
-   "ms": 498
+   "ms": 707
   },
   {
    "name": "Datenbank: Export und Import ergeben dieselbe Datenbank; 5.000 Gegner",
    "ok": true,
    "checks": 3,
    "notes": [],
-   "ms": 249
+   "ms": 354
   },
   {
    "name": "Import: beschädigte und manipulierte Dateien werden abgelehnt, bestehende Daten unverändert",
    "ok": true,
    "checks": 18,
    "notes": [],
-   "ms": 89
+   "ms": 226
   },
   {
    "name": "Migration: Datenbank aus Entwurf 2 (Version 1) und vollständige Sicherung",
@@ -259,14 +259,14 @@
    "ok": true,
    "checks": 79,
    "notes": [],
-   "ms": 26
+   "ms": 81
   },
   {
    "name": "Handhistorie: Datensätze sind gültig und exportierbar",
    "ok": true,
    "checks": 2,
    "notes": [],
-   "ms": 91
+   "ms": 169
   },
   {
    "name": "Sprachausgabe: nur der jüngste Tipp wird gesprochen, ältere brechen ab; ohne Sprachfunktion kein Fehler",
@@ -280,35 +280,52 @@
    "ok": true,
    "checks": 9,
    "notes": [],
-   "ms": 14
+   "ms": 31
   },
   {
    "name": "Regression Prüfer A: EV-Call-Zweig mit Call-Range, Jam-Raise-Zweig, Monte-Carlo-Stoppregel",
    "ok": true,
    "checks": 3,
    "notes": [],
-   "ms": 94
+   "ms": 159
   },
   {
    "name": "Regression Prüfer C: Preflop nach Faustregel-Chart (kein 3-Bet/Open mit beliebigen Händen, kein Open-Limp)",
    "ok": true,
    "checks": 9,
    "notes": [],
-   "ms": 30
+   "ms": 66
   },
   {
    "name": "Regression Prüfer C: keine Multiway-Bluffs ohne Rückhalt, keine Flop-Overbets, Live-Tipp ≤ 5.000 Simulationen",
    "ok": true,
    "checks": 3,
    "notes": [],
-   "ms": 97
+   "ms": 96
   },
   {
    "name": "Regression Prüfer C: Importprüfung Lerndaten (XSS, __proto__, Ziele, Momentaufnahmen), Reparatur beim Laden",
    "ok": true,
    "checks": 7,
    "notes": [],
-   "ms": 18
+   "ms": 29
+  },
+  {
+   "name": "PAI-Schnittstelle: Ereignisse enthalten nur Wissen des Spielers (keine verdeckten Karten, keine Coach-, Bot- oder Gegnerdaten)",
+   "ok": false,
+   "checks": 818,
+   "notes": [
+    "kein verbotenes Feld im Handdatensatz erwartet \"\", erhalten \"cards\"",
+    "kein verbotenes Feld im Handdatensatz erwartet \"\", erhalten \"cards\"",
+    "kein verbotenes Feld im Handdatensatz erwartet \"\", erhalten \"cards\"",
+    "kein verbotenes Feld im Handdatensatz erwartet \"\", erhalten \"cards\"",
+    "kein verbotenes Feld im Handdatensatz erwartet \"\", erhalten \"cards\"",
+    "kein verbotenes Feld im Handdatensatz erwartet \"\", erhalten \"cards\"",
+    "kein verbotenes Feld im Handdatensatz erwartet \"\", erhalten \"cards\"",
+    "kein verbotenes Feld im Handdatensatz erwartet \"\", erhalten \"cards\"",
+    "kein verbotenes Feld im Handdatensatz erwartet \"\", erhalten \"cards\""
+   ],
+   "ms": 69
   }
  ]
 }

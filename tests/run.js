@@ -649,6 +649,41 @@ test('Regression Prüfer C: Importprüfung Lerndaten (XSS, __proto__, Ziele, Mom
   eq(bad, 0, 'öffentliche Sicht besteht die Prüfung (' + n + ' Hände)');
 });
 
+test('PAI-Schnittstelle: Ereignisse enthalten nur Wissen des Spielers (keine verdeckten Karten, keine Coach-, Bot- oder Gegnerdaten)', () => {
+  const B = PT.paiBridge, sim = require('./sim-lib.js');
+  const DEC_KEYS = ['v', 'type', 'decisionId', 'handId', 'ts', 'heroSeat', 'heroCards', 'board', 'street', 'button', 'sb', 'bb', 'seats', 'actions'].sort().join();
+  const HAND_KEYS = ['v', 'type', 'handId', 'ts', 'record'].sort().join();
+  const REC_KEYS = ['v', 'id', 'ts', 'no', 'button', 'sb', 'bb', 'n', 'seats', 'actions', 'board', 'shown', 'won', 'returned', 'rake', 'showdown'].sort().join();
+  const FORBID = ['seed', 'typ', 'style', 'decisions', 'tags', 'training', 'grade', 'score', 'rec', 'evs', 'opps', 'hero', 'cards', 'P', 'skill', 'noise'];
+  const keysDeep = (o, acc) => { if (o && typeof o === 'object') Object.keys(o).forEach(k => { acc.add(k); keysDeep(o[k], acc); }); return acc; };
+  const forbidden = (o) => [...keysDeep(o, new Set())].filter(k => FORBID.includes(k));
+  let nd = 0, nh = 0, leaks = 0;
+  const hidden = (h, seat) => h.p.filter(q => q.seat !== seat).map(q => PT.cardsStr(q.cards));
+  sim.run({ hands: 60, seed: 4711, onDecision: (h) => {
+    const e = B.decisionEvent(h, h.toAct, { decisionId: 'd' + nd, handId: 'h1-' + h.no, ts: 1 }); nd++;
+    eq(Object.keys(e).sort().join(), DEC_KEYS, 'Felder Entscheidung');
+    const js = JSON.stringify(e);
+    eq(forbidden(e).join(), '', 'kein verbotenes Feld in der Entscheidung');
+    hidden(h, h.toAct).forEach(c => { if (js.includes(c)) leaks++; });
+    eq(e.heroCards, PT.cardsStr(h.p[h.toAct].cards), 'eigene Karten');
+    ok(e.seats.every(s => Object.keys(s).sort().join() === 'id,name,seat,start'), 'Platzfelder');
+    ok(e.actions.every(a => Object.keys(a).sort().join() === 'a,s,st,t'), 'Aktionsfelder');
+  }, onHand: (h) => {
+    const e = B.handEvent(h, { handId: 'h1-' + h.no, ts: 1 }); nh++;
+    eq(Object.keys(e).sort().join(), HAND_KEYS, 'Felder Hand');
+    eq(Object.keys(e.record).sort().join(), REC_KEYS, 'Felder Handdatensatz');
+    const shownSeats = h.result.shown.map(x => x.seat);
+    ok(e.record.shown.every(x => shownSeats.includes(x.seat)), 'nur aufgedeckte Karten');
+    const js = JSON.stringify(e.record.seats) + JSON.stringify(e.record.actions) + JSON.stringify(e.record.board);
+    h.p.forEach(q => { if (!shownSeats.includes(q.seat) && JSON.stringify(e).includes(PT.cardsStr(q.cards))) leaks++; });
+    eq(forbidden({ ...e, record: { ...e.record, shown: [] } }).join(), '', 'kein verbotenes Feld im Handdatensatz (aufgedeckte Karten separat geprüft)');
+    ok(js.length > 0, '');
+  } });
+  eq(leaks, 0, 'verdeckte Karten anderer Spieler in Ereignissen');
+  ok(nd > 30 && nh === 60, 'Ereignisse erzeugt (' + nd + ' Entscheidungen, ' + nh + ' Hände)');
+  const snd = new B.Sender(); ok(typeof snd.post === 'function', 'Sender vorhanden');
+});
+
 const out = { app: PT.VERSION, date: new Date().toISOString(), node: process.version, quick: QUICK, passed: results.filter(r => r.ok).length, failed: results.filter(r => !r.ok).length, tests: results };
 fs.mkdirSync(path.join(__dirname, 'results'), { recursive: true });
 fs.writeFileSync(path.join(__dirname, 'results', QUICK ? 'unit-quick.json' : 'unit.json'), JSON.stringify(out, null, 1));

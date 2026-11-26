@@ -407,7 +407,8 @@ views.einstellungen = function (el) {
     '<div class="row"><label for="cFc">Vierfarbiges Deck</label><input id="cFc" type="checkbox"' + (st.fourColor ? ' checked' : '') + '></div>' +
     '<div class="row"><label for="cSo">Sprachausgabe</label><input id="cSo" type="checkbox"' + (st.speech ? ' checked' : '') + '></div>' +
     '<div class="row"><label for="cSr">Sprechtempo</label><input id="cSr" type="range" min="0.7" max="1.5" step="0.05" value="' + st.speechRate + '"></div>' +
-    '<div class="row"><label for="cRh">Hände speichern</label><input id="cRh" type="checkbox"' + (st.recordHands ? ' checked' : '') + '></div></form></div></div>' +
+    '<div class="row"><label for="cRh">Hände speichern</label><input id="cRh" type="checkbox"' + (st.recordHands ? ' checked' : '') + '></div>' +
+    '<div class="row"><label for="cPai">PAI-Schnittstelle</label><input id="cPai" type="checkbox"' + (st.paiBridge ? ' checked' : '') + '><div class="hint">Sendet deine Entscheidungssituationen (nur eigene Karten und öffentliche Informationen) und abgeschlossene Hände an eine geöffnete PAI-Seite derselben Website. Keine Tipps, Bewertungen oder Gegnerdaten des Trainers. Standard: aus.</div></div></form></div></div>' +
     '<div class="panel"><h2>Daten</h2><p class="small">Alle Daten liegen nur in diesem Browser (' + (Store.mode() === 'idb' ? 'IndexedDB' : Store.mode() === 'ls' ? 'localStorage' : 'nur im Arbeitsspeicher') + '). Andere Browser oder Geräte haben eigene, getrennte Daten.</p>' +
     '<div class="btnrow"><button class="btn" type="button" id="dBk">Vollständige Sicherung exportieren</button><button class="btn" type="button" id="dIm">Sicherung importieren</button><button class="btn danger" type="button" id="dDel">Alle Daten löschen</button></div></div>';
   function onT(id, fn) { $(id).addEventListener('change', fn); }
@@ -422,6 +423,7 @@ views.einstellungen = function (el) {
   onT('cSo', function () { PTUI.setSetting('speech', $('cSo').checked); });
   onT('cSr', function () { PTUI.setSetting('speechRate', +$('cSr').value); });
   onT('cRh', function () { PTUI.setSetting('recordHands', $('cRh').checked); });
+  onT('cPai', function () { PTUI.setSetting('paiBridge', $('cPai').checked); });
   $('sApply').addEventListener('click', function () {
     if (S.hand && !S.hand.done) { H.toast('Bitte erst die laufende Hand beenden.'); return; }
     var bl = $('sBl').value.split('/').map(Number), cfg = PT.session.defaultConfig();

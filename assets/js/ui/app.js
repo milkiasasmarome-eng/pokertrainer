@@ -7,7 +7,7 @@ var $ = function (id) { return document.getElementById(id); }, esc = U.esc, fmt 
 var N = 6, MAX_HANDS = 3000;
 var SPEED = { langsam: 1100, normal: 650, schnell: 220, sehrschnell: 70 };
 var DEFAULTS = { tipMode: 'vorher', smode: 'exploit', depth: 'auto', level: 'standard', speech: true, speechRate: 1.05, speed: 'normal', theme: 'auto',
-  advanced: false, fourColor: false, recordHands: true, seed: null };
+  advanced: false, fourColor: false, recordHands: true, seed: null, paiBridge: false };
 var S = PTUI.S = {
   settings: U.deepClone(DEFAULTS), db: PT.stats.newDb(), heroRec: PT.stats.newRecord('hero', 'Du'), table: null, hand: null, finished: null,
   learning: PT.training.newLearning(), prof: null, decisionNo: 0, cur: null, analysis: null, verdict: null, handDecisions: [], pendingGrades: [],
@@ -454,6 +454,13 @@ function learnerSummary() {
   Object.keys(S.prof.spots).forEach(function (k) { var s = S.prof.spots[k]; spots[k] = { n: s.n, score: s.smooth == null ? 70 : s.smooth }; });
   return { spots: spots, cats: S.prof.cats };
 }
+// PAI-Schnittstelle (freiwillig, einseitig): nur Wissen des Spielers, keine Coach-Ausgaben, keine Gegnerdaten des Trainers.
+var paiSender = null;
+function paiHandId(h) { return 'h' + S.sessionId + '-' + h.no + '-' + (h.ts || 0); }
+function paiPost(build) {
+  if (!S.settings.paiBridge || !PT.paiBridge) return;
+  try { if (!paiSender) paiSender = new PT.paiBridge.Sender(); paiSender.post(build()); } catch (e) { console.warn('PAI-Schnittstelle', e); }
+}
 function coachSettings(level) { return { mode: S.settings.smode, level: level || S.settings.level, depth: depthOf() }; }
 function onHeroTurn() {
   var h = S.hand;
@@ -461,6 +468,7 @@ function onHeroTurn() {
   var id = S.decisionNo, view = PT.bots.publicView(h, 0), opps = snapshotOpps(h);
   var seed = PT.rng.hashStr((S.table ? S.table.seed : 0) + '|' + h.no + '|' + h.actions.length + '|' + (h.isTraining ? 'T' + S.training.seed : 'P'));
   S.cur = { id: id, view: view, opps: opps, seed: seed, t0: performance.now(), street: h.street, idx: h.actions.length, pos: h.p[0].pos, training: h.isTraining ? S.training.curCat : null, target: h.isTraining && S.training.target };
+  paiPost(function () { return PT.paiBridge.decisionEvent(h, 0, { decisionId: S.sessionId + '-' + id, handId: paiHandId(h), ts: Date.now() }); });
   if (h.isTraining) S.training.target = false;
   S.analysis = null; S.lastStreet = h.street;
   var L = h.legal(0);
@@ -499,6 +507,8 @@ function heroAct(a) {
   var L = h.legal(0), r = h.isTraining ? h.act(0, a) : PT.session.act(S.table, h, 0, a);
   if (!r.ok) { showMsg(r.error); return; }
   showMsg('');
+  var cur0 = S.cur;
+  paiPost(function () { return PT.paiBridge.actedEvent({ decisionId: S.sessionId + '-' + cur0.id, handId: paiHandId(h), ts: Date.now() }, r.action); });
   var cur = S.cur, chosen = { type: r.action.t, amount: r.action.a, label: actLabel({ type: r.action.t, amount: r.action.a }, L) };
   if (r.action.t === 'call') chosen.label = 'Call ' + fmt(r.action.a) + (r.action.ai ? ' (All-in)' : '');
   if ((r.action.t === 'bet' || r.action.t === 'raise') && r.action.ai) chosen.label += ' (All-in)';
@@ -554,6 +564,7 @@ function handEnded() {
     res.ev.rebuys.forEach(function (x) { notes.push(x.seat === 0 ? 'Du kaufst ' + fmt(x.amount) + ' Spielgeld nach.' : h.p[x.seat].name + ' kauft nach.'); });
     if (res.ev.swap) notes.push(res.ev.swap.leftName + ' verlässt den Tisch (Datensatz ins Archiv). Neu ab der nächsten Hand: ' + res.ev.swap.joinedName + '.');
   }
+  if (!h.isTraining) paiPost(function () { return PT.paiBridge.handEvent(h, { handId: paiHandId(h), ts: Date.now() }); });
   var decisionsP = Promise.all(S.pendingGrades);
   var types = {}; h.p.forEach(function (q) { if (!q.isHero) types[q.id] = PT.stats.playerType(S.db.opps[q.id]); });
   decisionsP.then(function () {
