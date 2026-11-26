@@ -25,7 +25,7 @@ sw.js (Service Worker): versionierter Cache aller Dateien, Offline-Betrieb, Upda
 | rules | Hand-Zustandsmaschine: Blinds, Legalität, Aktionen, Rückgabe, Pots, Rake, Invarianten, Replay | `PT.Hand`, `PT.rules.settle`, `replay` |
 | ranges | Charts (Open, Verteidigung, 3-/4-Bet, Push/Fold), Range-Inferenz, Bayes-Aktualisierung, Draws, Boardanalyse, Handmerkmale | `chart`, `preflopRange`, `narrowPostflop`, `analyzeBoard` |
 | equity | exakte Enumeration, Monte-Carlo, adaptive Stoppregel, Cache, Side-Pot-Anteile | `equity`, `exactHU`, `potShare` |
-| stats | HUD-Werte je Gelegenheit, Datenbank, Export/Import, Validierung, Migration | `handStats`, `dbApplyHand`, `dbImport` |
+| stats | HUD-Werte je Gelegenheit, Datenbank, Gegnergedächtnis (Kurzzeit, Veränderungserkennung), Export/Import, Validierung, Migration | `handStats`, `dbApplyHand`, `dbImport`, `profile`, `effectiveStats` |
 | bots | 100 Gegnerprofile, öffentliche Sicht, Entscheidungen | `publicView`, `decide` |
 | session | Tisch, Button, Nachkauf, Rotation, Schwierigkeit, Ströme, Wiederaufnahme | `newTable`, `startHand`, `finishHand`, `resumeHand` |
 | ev | Equity je Kombination, Reaktionsmodelle, EV je Aktion und Größe, Pot Odds | `comboEquities`, `respond`, `evaluateAction` |
@@ -49,7 +49,7 @@ Abhängigkeiten laufen nur in Ladereihenfolge (oben nach unten). Kein Modul grei
 
 IndexedDB `pokertrainer2` (Version 1) mit den Stores `meta` (Tisch, Einstellungen, eigene Werte), `opps` (Gegner), `hands` (bis 3.000 Hände), `learn` (Lerndaten), `backup` (automatische Sicherungen). Rückfall: localStorage, sonst nur Arbeitsspeicher mit Hinweis. Während einer Hand wird nach jeder Aktion das Aktionsprotokoll gespeichert; nach einem Neuladen spielt `session.resumeHand` die Hand mit gleichem Seed exakt nach. Mehrere Tabs: Web Locks (`pokertrainer-tisch`), Rückfall BroadcastChannel; weitere Tabs sind schreibgeschützt.
 
-Migration: Daten aus Entwurf 2 (`pokertrainer-v2` in IndexedDB oder `pokertrainer2.*` in localStorage desselben Ursprungs) werden erkannt, als Datei `Sicherung_PokerTrainer_JJJJ-MM-TT_Datenbank.json` gesichert und umgewandelt. Import akzeptiert Version 1 (Entwurf 2) und Version 2 sowie vollständige Sicherungen.
+Migration: Daten aus Entwurf 2 (`pokertrainer-v2` in IndexedDB oder `pokertrainer2.*` in localStorage desselben Ursprungs) werden erkannt, als Datei `Sicherung_PokerTrainer_JJJJ-MM-TT_Datenbank.json` gesichert und umgewandelt. Gegner-Datensätze im Format 2 (PokerTrainer 2.0.x) werden beim Start erkannt (`PT.stats.needsMigration`), unverändert als Datei `Sicherung_PokerTrainer_JJJJ-MM-TT_Datenbank.json` (Format 2) heruntergeladen und im Store `backup` abgelegt, erst danach ins Format 3 (Gegnergedächtnis) umgewandelt und gespeichert (`app.js: migrateStoredDb`). Import akzeptiert Version 1 (Entwurf 2), Version 2 und Version 3 sowie vollständige Sicherungen (Version 2 und 3). Details: [GEGNERGEDAECHTNIS.md](GEGNERGEDAECHTNIS.md).
 
 ## Website, PWA und Einzeldatei
 

@@ -193,7 +193,7 @@ async function playHand(page, policy) {
     await page.evaluate(() => { location.hash = '#gegner'; }); await page.waitForTimeout(300);
     const [dl] = await Promise.all([page.waitForEvent('download'), page.click('[data-g="export"]')]);
     exportPath = path.join(OUT, 'export-test.json'); await dl.saveAs(exportPath);
-    const txt = fs.readFileSync(exportPath, 'utf8'); ok(/"format":"PokerTrainer-DB","version":2/.test(txt), 'Exportformat Version 2');
+    const txt = fs.readFileSync(exportPath, 'utf8'); ok(/"format":"PokerTrainer-DB","version":3/.test(txt), 'Exportformat Version 3 (Gegnergedächtnis)');
     const before = await page.evaluate(() => JSON.stringify(window.PT.stats.dbList(window.PTUI.S.db)));
     const bad = path.join(OUT, 'kaputt.json'); fs.writeFileSync(bad, txt.slice(0, Math.floor(txt.length / 2)));
     await page.click('[data-g="import"]'); await page.setInputFiles('#fileIn', bad);

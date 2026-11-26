@@ -1,9 +1,9 @@
 {
  "app": "2.0.1",
- "date": "2026-11-26T19:01:37.584Z",
+ "date": "2026-11-26T20:48:28.262Z",
  "node": "v22.23.5",
  "quick": false,
- "passed": 41,
+ "passed": 59,
  "failed": 0,
  "tests": [
   {
@@ -11,21 +11,21 @@
    "ok": true,
    "checks": 4,
    "notes": [],
-   "ms": 363
+   "ms": 651
   },
   {
    "name": "Handbewertung: 300.000 zufällige Sieben-Karten-Paare gegen Best-of-Five-Referenz",
    "ok": true,
    "checks": 2,
    "notes": [],
-   "ms": 14613
+   "ms": 30459
   },
   {
    "name": "Handbewertung: feste Testfälle (Kategorien und Vergleiche)",
    "ok": true,
    "checks": 32,
    "notes": [],
-   "ms": 1
+   "ms": 0
   },
   {
    "name": "Regeln: Blinds, Reihenfolge, Mindest-Raise, BB-Option, Walk",
@@ -67,7 +67,7 @@
    "ok": true,
    "checks": 9,
    "notes": [],
-   "ms": 0
+   "ms": 1
   },
   {
    "name": "Regeln: kurzer Big Blind (All-in für weniger), Rake optional und konsistent",
@@ -81,7 +81,7 @@
    "ok": true,
    "checks": 2,
    "notes": [],
-   "ms": 951
+   "ms": 2122
   },
   {
    "name": "Simulation: 10.000 Hände, Invarianten nach jeder Aktion, keine hängende Hand, Chipbilanz",
@@ -90,7 +90,7 @@
    "notes": [
     "{\"hands\":10000,\"actions\":87099,\"showdowns\":1709,\"sidePots\":6,\"splitPots\":81,\"swaps\":333}"
    ],
-   "ms": 3291
+   "ms": 3705
   },
   {
    "name": "Fuzz: zufällige und ungültige Eingaben, zufällige Stacks (1–400 BB)",
@@ -99,28 +99,28 @@
    "notes": [
     "8000 Hände mit zufälligen Stacks"
    ],
-   "ms": 2094
+   "ms": 2235
   },
   {
    "name": "Eigenschaft: gefoldete Spieler gewinnen nie, Gewinner sind berechtigt, keine Karte doppelt",
    "ok": true,
    "checks": 2,
    "notes": [],
-   "ms": 1538
+   "ms": 1930
   },
   {
    "name": "Zufall: getrennte Ströme; Coach an/aus ändert den Spielverlauf nicht",
    "ok": true,
    "checks": 3,
    "notes": [],
-   "ms": 1149
+   "ms": 2740
   },
   {
    "name": "Fairness: Bots und Coach sehen keine verdeckten Karten",
    "ok": true,
    "checks": 12,
    "notes": [],
-   "ms": 0
+   "ms": 1
   },
   {
    "name": "Equity: exakte Enumeration bekannter Preflop-Duelle (je 1.712.304 Boards) gegen unabhängige Schleife und Literaturwerte",
@@ -132,28 +132,28 @@
     "AsKs vs QhQd: 46.21 %",
     "7c2d vs AhAs: 12.58 %"
    ],
-   "ms": 2431
+   "ms": 5357
   },
   {
    "name": "Equity: Monte-Carlo gegen exakte Enumeration (Fehler ≤ 4 Standardfehler)",
    "ok": true,
    "checks": 4,
    "notes": [
-    "AhAd  KsKc: exakt 81.26 %, MC 81.52 % (SE 0.49, n 6253)",
-    "AsKs  QhQd: exakt 46.21 %, MC 47.03 % (SE 0.50, n 9785)",
-    "8h9h Th7h2c AcAd: exakt 56.26 %, MC 56.57 % (SE 0.50, n 9700)",
-    "AhKd Ks8c3d : exakt 88.28 %, MC 88.34 % (SE 0.53, n 3440)"
+    "AhAd  KsKc: exakt 81.26 %, MC 81.44 % (SE 0.46, n 7476)",
+    "AsKs  QhQd: exakt 46.21 %, MC 46.29 % (SE 0.50, n 10256)",
+    "8h9h Th7h2c AcAd: exakt 56.26 %, MC 56.37 % (SE 0.50, n 10256)",
+    "AhKd Ks8c3d : exakt 88.28 %, MC 88.23 % (SE 0.38, n 7172)"
    ],
-   "ms": 584
+   "ms": 1664
   },
   {
    "name": "Equity: Mehrgegner-Simulation (AA gegen KK gegen QQ) gegen exakte Enumeration",
    "ok": true,
    "checks": 1,
    "notes": [
-    "AA 3-Wege: exakt 67.67 % (1370754 Boards), MC 67.33 %"
+    "AA 3-Wege: exakt 67.67 % (1370754 Boards), MC 67.25 %"
    ],
-   "ms": 324
+   "ms": 887
   },
   {
    "name": "Pot Odds und Side-Pot-Berechtigung: nur erreichbare Pots zählen",
@@ -167,14 +167,14 @@
    "ok": true,
    "checks": 3,
    "notes": [],
-   "ms": 53
+   "ms": 62
   },
   {
    "name": "Kombinatorik und Blocker",
    "ok": true,
    "checks": 7,
    "notes": [],
-   "ms": 0
+   "ms": 1
   },
   {
    "name": "Statistik: Wilson-Intervall, Beta-Glättung, kleine Stichproben unbekannt statt 0",
@@ -190,86 +190,86 @@
    "notes": [
     "623 Zähler/Nenner-Paare verglichen"
    ],
-   "ms": 1946
+   "ms": 2607
   },
   {
    "name": "CFR+: analytisches River-Spiel (Bluff-Anteil b/(1+2b), Call-Häufigkeit 1/(1+b)), Exploitability ≈ 0",
    "ok": true,
    "checks": 13,
    "notes": [],
-   "ms": 66
+   "ms": 82
   },
   {
    "name": "Coach: Obergrenze von 5.000 Simulationen je Entscheidung, Antwortzeit, keine Ausnahme",
    "ok": true,
-   "checks": 1146,
+   "checks": 1200,
    "notes": [
-    "1144 Analysen, max. 5000 Simulationen, max. 96 ms (Node, ein Kern)"
+    "1198 Analysen, max. 5000 Simulationen, max. 168 ms (Node, ein Kern)"
    ],
-   "ms": 11459
+   "ms": 14961
   },
   {
    "name": "Coach: Bewertung nutzt nur Entscheidungsinformationen; sieben Stufen; Fehlerkategorien",
    "ok": true,
    "checks": 12,
    "notes": [],
-   "ms": 90
+   "ms": 269
   },
   {
    "name": "Training: alle 14 Kategorien erzeugen Situationen, reproduzierbar über Seeds",
    "ok": true,
    "checks": 28,
    "notes": [],
-   "ms": 262
+   "ms": 1091
   },
   {
    "name": "Training: Quizfragen rechnen korrekt, Kompetenzprofil und Spaced Repetition",
    "ok": true,
    "checks": 405,
    "notes": [],
-   "ms": 3
+   "ms": 4
   },
   {
    "name": "Datenbank: Gegner verlassen den Tisch und kehren zurück, kein Doppeleintrag, 100er-Pool",
    "ok": true,
    "checks": 6,
    "notes": [],
-   "ms": 1991
+   "ms": 4377
   },
   {
    "name": "Datenbank: Export und Import ergeben dieselbe Datenbank; 5.000 Gegner",
    "ok": true,
    "checks": 3,
    "notes": [],
-   "ms": 703
+   "ms": 1265
   },
   {
    "name": "Import: beschädigte und manipulierte Dateien werden abgelehnt, bestehende Daten unverändert",
    "ok": true,
    "checks": 18,
    "notes": [],
-   "ms": 115
+   "ms": 166
   },
   {
    "name": "Migration: Datenbank aus Entwurf 2 (Version 1) und vollständige Sicherung",
    "ok": true,
    "checks": 9,
    "notes": [],
-   "ms": 2
+   "ms": 1
   },
   {
    "name": "Wiederaufnahme: laufende Hand wird nach Neuladen exakt wiederhergestellt",
    "ok": true,
    "checks": 79,
    "notes": [],
-   "ms": 34
+   "ms": 57
   },
   {
    "name": "Handhistorie: Datensätze sind gültig und exportierbar",
    "ok": true,
    "checks": 2,
    "notes": [],
-   "ms": 116
+   "ms": 266
   },
   {
    "name": "Sprachausgabe: nur der jüngste Tipp wird gesprochen, ältere brechen ab; ohne Sprachfunktion kein Fehler",
@@ -283,35 +283,161 @@
    "ok": true,
    "checks": 9,
    "notes": [],
-   "ms": 14
+   "ms": 41
   },
   {
    "name": "Regression Prüfer A: EV-Call-Zweig mit Call-Range, Jam-Raise-Zweig, Monte-Carlo-Stoppregel",
    "ok": true,
    "checks": 3,
    "notes": [],
-   "ms": 83
+   "ms": 211
   },
   {
    "name": "Regression Prüfer C: Preflop nach Faustregel-Chart (kein 3-Bet/Open mit beliebigen Händen, kein Open-Limp)",
    "ok": true,
    "checks": 9,
    "notes": [],
-   "ms": 35
+   "ms": 115
   },
   {
    "name": "Regression Prüfer C: keine Multiway-Bluffs ohne Rückhalt, keine Flop-Overbets, Live-Tipp ≤ 5.000 Simulationen",
    "ok": true,
    "checks": 3,
    "notes": [],
-   "ms": 106
+   "ms": 319
   },
   {
    "name": "Regression Prüfer C: Importprüfung Lerndaten (XSS, __proto__, Ziele, Momentaufnahmen), Reparatur beim Laden",
    "ok": true,
    "checks": 7,
    "notes": [],
-   "ms": 21
+   "ms": 35
+  },
+  {
+   "name": "A2 potShare: Range durch bekannte Karten vollständig entfernt → Fehlschlag statt Zufallszahl",
+   "ok": true,
+   "checks": 4,
+   "notes": [],
+   "ms": 1
+  },
+  {
+   "name": "A2 potShare: einzeln gültige Ranges ohne gemeinsame konfliktfreie Verteilung → Fehlschlag, kein stiller 0-Gewinn",
+   "ok": true,
+   "checks": 5,
+   "notes": [],
+   "ms": 87
+  },
+  {
+   "name": "A2 equity: leere Range und unmögliche Verteilung → {eq: null, failed, reason}; Budget wird nicht verbraucht",
+   "ok": true,
+   "checks": 11,
+   "notes": [],
+   "ms": 1
+  },
+  {
+   "name": "A2 evCall: Rückfall bei fehlgeschlagener Side-Pot-Rechnung, gekennzeichnet in parts",
+   "ok": true,
+   "checks": 4,
+   "notes": [],
+   "ms": 3
+  },
+  {
+   "name": "A3 Cache: erst kleines Budget, dann großes → neue Rechnung mit besserer Qualität",
+   "ok": true,
+   "checks": 3,
+   "notes": [],
+   "ms": 46
+  },
+  {
+   "name": "A3 Cache: Stufen, Zeitabbruch, Mindestanzahl, exakt vor Monte Carlo",
+   "ok": true,
+   "checks": 7,
+   "notes": [],
+   "ms": 29
+  },
+  {
+   "name": "A4 exactHU: sehr kleine Deadline → Abbruch, Monte-Carlo-Rückfall, nie „exakt“",
+   "ok": true,
+   "checks": 6,
+   "notes": [],
+   "ms": 422
+  },
+  {
+   "name": "A4 potShare und Monte Carlo halten die Deadline",
+   "ok": true,
+   "checks": 2,
+   "notes": [],
+   "ms": 7
+  },
+  {
+   "name": "A5 Range-Kennung: Unterschiede < 0,0005 ergeben verschiedene Kennungen",
+   "ok": true,
+   "checks": 4,
+   "notes": [],
+   "ms": 24
+  },
+  {
+   "name": "A5 Range-Kennung: gleiche Verteilung in anderer Skalierung → gleiche Kennung; Format",
+   "ok": true,
+   "checks": 5,
+   "notes": [],
+   "ms": 26
+  },
+  {
+   "name": "A5 Equity-Cache: verschiedene Verteilungen mit früher gleicher Kennung liefern ihre eigene Equity",
+   "ok": true,
+   "checks": 3,
+   "notes": [],
+   "ms": 7
+  },
+  {
+   "name": "Handbewertung Referenz: Klassen der unabhängigen Referenz, alle 2.598.960 Fünf-Karten-Hände einzeln",
+   "ok": true,
+   "checks": 7,
+   "notes": [],
+   "ms": 571
+  },
+  {
+   "name": "Handbewertung Referenz: geschichtete Sieben-, Sechs- und Fünf-Karten-Hände, Paarvergleiche, Invarianzen",
+   "ok": true,
+   "checks": 5,
+   "notes": [],
+   "ms": 2774
+  },
+  {
+   "name": "Handbewertung Referenz: die Prüfung erkennt eingebaute Fehler (Mutationsprobe)",
+   "ok": true,
+   "checks": 4,
+   "notes": [],
+   "ms": 149
+  },
+  {
+   "name": "MC: Intervall für beschränkte Größen (Ränder, Split-lastig, Binomial)",
+   "ok": true,
+   "checks": 6,
+   "notes": [],
+   "ms": 0
+  },
+  {
+   "name": "MC: Stichprobenumfang hängt nicht von den Werten ab (fester Umfang bei Budgetgrenze, Pilot nicht in der Schätzung)",
+   "ok": true,
+   "checks": 4,
+   "notes": [],
+   "ms": 17
+  },
+  {
+   "name": "MC: keine Randverzerrung (Regression 2.0.1: exakt 0,9886, MC-Mittel 0,9903 auf Präzise)",
+   "ok": true,
+   "checks": 2,
+   "notes": [],
+   "ms": 909
+  },
+  {
+   "name": "MC: Abdeckung der 95-%-Intervalle (Stichprobe der Referenzfälle, Stufe Schnell und Budget 1.000)",
+   "ok": true,
+   "checks": 6,
+   "notes": [],
+   "ms": 2210
   }
  ]
 }

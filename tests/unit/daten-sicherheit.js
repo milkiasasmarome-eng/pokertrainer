@@ -15,7 +15,8 @@ module.exports = function (T) {
     return DATA;
   }
   /** Datenbankdatei mit korrekter Prüfsumme aus (manipulierter) Gegnerliste */
-  function dbFile(list) { const body = JSON.stringify(list); return JSON.stringify({ format: 'PokerTrainer-DB', version: 2, app: PT.VERSION, exported: '', count: list.length, checksum: PT.util.fnv1a(body), opponents: list }); }
+  const DBVER = JSON.parse(PT.stats.dbExport(PT.stats.newDb(), '')).version;  // aktuelles Datenbankformat (seit Gegnergedächtnis 3)
+  function dbFile(list) { const body = JSON.stringify(list); return JSON.stringify({ format: 'PokerTrainer-DB', version: DBVER, app: PT.VERSION, exported: '', count: list.length, checksum: PT.util.fnv1a(body), opponents: list }); }
   function backupFile(p) { return PT.stats.backupExport(p, 'x'); }
 
   test('Import: manipulierte Datenbank mit gültiger Prüfsumme (Typen, NaN-Ersatz, 1e308, negative Zahlen, HTML, __proto__) wird abgelehnt', () => {

@@ -1,0 +1,1003 @@
+{
+ "date": "2026-11-26T20:39:14.510Z",
+ "node": {
+  "auto-tipp": [
+   {
+    "name": "HU Flop, BTN gegen breite BB-Verteidigung",
+    "street": 1,
+    "opps": 1,
+    "reps": 12,
+    "medianMs": 6,
+    "p90Ms": 24,
+    "maxMs": 32,
+    "maxIters": 1986
+   },
+   {
+    "name": "HU Flop, BB gegen BTN-Open (OOP)",
+    "street": 1,
+    "opps": 1,
+    "reps": 12,
+    "medianMs": 3,
+    "p90Ms": 19,
+    "maxMs": 32,
+    "maxIters": 2000
+   },
+   {
+    "name": "Multiway Flop, 5 Spieler im Limp-Pot",
+    "street": 1,
+    "opps": 5,
+    "reps": 12,
+    "medianMs": 11,
+    "p90Ms": 59,
+    "maxMs": 62,
+    "maxIters": 1557
+   },
+   {
+    "name": "Multiway Turn, 3 Spieler",
+    "street": 2,
+    "opps": 2,
+    "reps": 12,
+    "medianMs": 13,
+    "p90Ms": 46,
+    "maxMs": 53,
+    "maxIters": 1200
+   },
+   {
+    "name": "Multiway Turn, 4 Spieler nach Limp",
+    "street": 2,
+    "opps": 3,
+    "reps": 12,
+    "medianMs": 23,
+    "p90Ms": 26,
+    "maxMs": 33,
+    "maxIters": 1200
+   },
+   {
+    "name": "River HU (Modellspiel CFR+)",
+    "street": 3,
+    "opps": 1,
+    "reps": 12,
+    "medianMs": 78,
+    "p90Ms": 84,
+    "maxMs": 105,
+    "maxIters": 0
+   },
+   {
+    "name": "All-in-Call, 2 Gegner All-in (Side Pots)",
+    "street": 0,
+    "opps": 4,
+    "reps": 12,
+    "medianMs": 25,
+    "p90Ms": 35,
+    "maxMs": 37,
+    "maxIters": 4200
+   },
+   {
+    "name": "Preflop Squeeze-Spot, 3 Spieler",
+    "street": 0,
+    "opps": 4,
+    "reps": 12,
+    "medianMs": 5,
+    "p90Ms": 8,
+    "maxMs": 8,
+    "maxIters": 1200
+   }
+  ],
+  "praezise": [
+   {
+    "name": "HU Flop, BTN gegen breite BB-Verteidigung",
+    "street": 1,
+    "opps": 1,
+    "reps": 6,
+    "medianMs": 62,
+    "p90Ms": 95,
+    "maxMs": 95,
+    "maxIters": 0
+   },
+   {
+    "name": "HU Flop, BB gegen BTN-Open (OOP)",
+    "street": 1,
+    "opps": 1,
+    "reps": 6,
+    "medianMs": 107,
+    "p90Ms": 116,
+    "maxMs": 116,
+    "maxIters": 0
+   },
+   {
+    "name": "Multiway Flop, 5 Spieler im Limp-Pot",
+    "street": 1,
+    "opps": 5,
+    "reps": 6,
+    "medianMs": 82,
+    "p90Ms": 168,
+    "maxMs": 168,
+    "maxIters": 4800
+   },
+   {
+    "name": "Multiway Turn, 3 Spieler",
+    "street": 2,
+    "opps": 2,
+    "reps": 6,
+    "medianMs": 19,
+    "p90Ms": 31,
+    "maxMs": 31,
+    "maxIters": 4800
+   },
+   {
+    "name": "Multiway Turn, 4 Spieler nach Limp",
+    "street": 2,
+    "opps": 3,
+    "reps": 6,
+    "medianMs": 26,
+    "p90Ms": 46,
+    "maxMs": 46,
+    "maxIters": 4800
+   },
+   {
+    "name": "River HU (Modellspiel CFR+)",
+    "street": 3,
+    "opps": 1,
+    "reps": 6,
+    "medianMs": 84,
+    "p90Ms": 121,
+    "maxMs": 121,
+    "maxIters": 0
+   },
+   {
+    "name": "All-in-Call, 2 Gegner All-in (Side Pots)",
+    "street": 0,
+    "opps": 4,
+    "reps": 6,
+    "medianMs": 8,
+    "p90Ms": 10,
+    "maxMs": 10,
+    "maxIters": 7800
+   },
+   {
+    "name": "Preflop Squeeze-Spot, 3 Spieler",
+    "street": 0,
+    "opps": 4,
+    "reps": 6,
+    "medianMs": 6,
+    "p90Ms": 9,
+    "maxMs": 9,
+    "maxIters": 4800
+   }
+  ],
+  "tief": [
+   {
+    "name": "HU Flop, BTN gegen breite BB-Verteidigung",
+    "street": 1,
+    "opps": 1,
+    "reps": 4,
+    "medianMs": 47,
+    "p90Ms": 57,
+    "maxMs": 57,
+    "maxIters": 0
+   },
+   {
+    "name": "HU Flop, BB gegen BTN-Open (OOP)",
+    "street": 1,
+    "opps": 1,
+    "reps": 4,
+    "medianMs": 74,
+    "p90Ms": 95,
+    "maxMs": 95,
+    "maxIters": 0
+   },
+   {
+    "name": "Multiway Flop, 5 Spieler im Limp-Pot",
+    "street": 1,
+    "opps": 5,
+    "reps": 4,
+    "medianMs": 93,
+    "p90Ms": 100,
+    "maxMs": 100,
+    "maxIters": 12000
+   },
+   {
+    "name": "Multiway Turn, 3 Spieler",
+    "street": 2,
+    "opps": 2,
+    "reps": 4,
+    "medianMs": 12,
+    "p90Ms": 12,
+    "maxMs": 12,
+    "maxIters": 12000
+   },
+   {
+    "name": "Multiway Turn, 4 Spieler nach Limp",
+    "street": 2,
+    "opps": 3,
+    "reps": 4,
+    "medianMs": 29,
+    "p90Ms": 34,
+    "maxMs": 34,
+    "maxIters": 12000
+   },
+   {
+    "name": "River HU (Modellspiel CFR+)",
+    "street": 3,
+    "opps": 1,
+    "reps": 4,
+    "medianMs": 247,
+    "p90Ms": 321,
+    "maxMs": 321,
+    "maxIters": 0
+   },
+   {
+    "name": "All-in-Call, 2 Gegner All-in (Side Pots)",
+    "street": 0,
+    "opps": 4,
+    "reps": 4,
+    "medianMs": 14,
+    "p90Ms": 15,
+    "maxMs": 15,
+    "maxIters": 15000
+   },
+   {
+    "name": "Preflop Squeeze-Spot, 3 Spieler",
+    "street": 0,
+    "opps": 4,
+    "reps": 4,
+    "medianMs": 14,
+    "p90Ms": 14,
+    "maxMs": 14,
+    "maxIters": 12000
+   }
+  ]
+ },
+ "cpus": 2,
+ "cpuModel": "Intel(R) Xeon(R) Processor @ 2.10GHz",
+ "app": "2.0.1",
+ "browser": {
+  "version": "153.0.8010.12",
+  "rates": {
+   "1": {
+    "auto-tipp": [
+     {
+      "name": "HU Flop, BTN gegen breite BB-Verteidigung",
+      "street": 1,
+      "opps": 1,
+      "reps": 12,
+      "medianMs": 5,
+      "p90Ms": 6,
+      "maxMs": 7,
+      "maxIters": 1986
+     },
+     {
+      "name": "HU Flop, BB gegen BTN-Open (OOP)",
+      "street": 1,
+      "opps": 1,
+      "reps": 12,
+      "medianMs": 4,
+      "p90Ms": 5,
+      "maxMs": 6,
+      "maxIters": 2000
+     },
+     {
+      "name": "Multiway Flop, 5 Spieler im Limp-Pot",
+      "street": 1,
+      "opps": 5,
+      "reps": 12,
+      "medianMs": 14,
+      "p90Ms": 19,
+      "maxMs": 19,
+      "maxIters": 1557
+     },
+     {
+      "name": "Multiway Turn, 3 Spieler",
+      "street": 2,
+      "opps": 2,
+      "reps": 12,
+      "medianMs": 7,
+      "p90Ms": 10,
+      "maxMs": 10,
+      "maxIters": 1200
+     },
+     {
+      "name": "Multiway Turn, 4 Spieler nach Limp",
+      "street": 2,
+      "opps": 3,
+      "reps": 12,
+      "medianMs": 34,
+      "p90Ms": 45,
+      "maxMs": 52,
+      "maxIters": 1200
+     },
+     {
+      "name": "River HU (Modellspiel CFR+)",
+      "street": 3,
+      "opps": 1,
+      "reps": 12,
+      "medianMs": 91,
+      "p90Ms": 119,
+      "maxMs": 131,
+      "maxIters": 0
+     },
+     {
+      "name": "All-in-Call, 2 Gegner All-in (Side Pots)",
+      "street": 0,
+      "opps": 4,
+      "reps": 12,
+      "medianMs": 18,
+      "p90Ms": 39,
+      "maxMs": 51,
+      "maxIters": 4200
+     },
+     {
+      "name": "Preflop Squeeze-Spot, 3 Spieler",
+      "street": 0,
+      "opps": 4,
+      "reps": 12,
+      "medianMs": 9,
+      "p90Ms": 10,
+      "maxMs": 18,
+      "maxIters": 1200
+     }
+    ],
+    "praezise": [
+     {
+      "name": "HU Flop, BTN gegen breite BB-Verteidigung",
+      "street": 1,
+      "opps": 1,
+      "reps": 6,
+      "medianMs": 56,
+      "p90Ms": 64,
+      "maxMs": 64,
+      "maxIters": 0
+     },
+     {
+      "name": "HU Flop, BB gegen BTN-Open (OOP)",
+      "street": 1,
+      "opps": 1,
+      "reps": 6,
+      "medianMs": 87,
+      "p90Ms": 126,
+      "maxMs": 126,
+      "maxIters": 0
+     },
+     {
+      "name": "Multiway Flop, 5 Spieler im Limp-Pot",
+      "street": 1,
+      "opps": 5,
+      "reps": 6,
+      "medianMs": 87,
+      "p90Ms": 119,
+      "maxMs": 119,
+      "maxIters": 4800
+     },
+     {
+      "name": "Multiway Turn, 3 Spieler",
+      "street": 2,
+      "opps": 2,
+      "reps": 6,
+      "medianMs": 9,
+      "p90Ms": 9,
+      "maxMs": 9,
+      "maxIters": 4800
+     },
+     {
+      "name": "Multiway Turn, 4 Spieler nach Limp",
+      "street": 2,
+      "opps": 3,
+      "reps": 6,
+      "medianMs": 23,
+      "p90Ms": 59,
+      "maxMs": 59,
+      "maxIters": 4800
+     },
+     {
+      "name": "River HU (Modellspiel CFR+)",
+      "street": 3,
+      "opps": 1,
+      "reps": 6,
+      "medianMs": 80,
+      "p90Ms": 106,
+      "maxMs": 106,
+      "maxIters": 0
+     },
+     {
+      "name": "All-in-Call, 2 Gegner All-in (Side Pots)",
+      "street": 0,
+      "opps": 4,
+      "reps": 6,
+      "medianMs": 19,
+      "p90Ms": 31,
+      "maxMs": 31,
+      "maxIters": 7800
+     },
+     {
+      "name": "Preflop Squeeze-Spot, 3 Spieler",
+      "street": 0,
+      "opps": 4,
+      "reps": 6,
+      "medianMs": 9,
+      "p90Ms": 20,
+      "maxMs": 20,
+      "maxIters": 4800
+     }
+    ],
+    "tief": [
+     {
+      "name": "HU Flop, BTN gegen breite BB-Verteidigung",
+      "street": 1,
+      "opps": 1,
+      "reps": 4,
+      "medianMs": 53,
+      "p90Ms": 64,
+      "maxMs": 64,
+      "maxIters": 0
+     },
+     {
+      "name": "HU Flop, BB gegen BTN-Open (OOP)",
+      "street": 1,
+      "opps": 1,
+      "reps": 4,
+      "medianMs": 100,
+      "p90Ms": 160,
+      "maxMs": 160,
+      "maxIters": 0
+     },
+     {
+      "name": "Multiway Flop, 5 Spieler im Limp-Pot",
+      "street": 1,
+      "opps": 5,
+      "reps": 4,
+      "medianMs": 109,
+      "p90Ms": 124,
+      "maxMs": 124,
+      "maxIters": 12000
+     },
+     {
+      "name": "Multiway Turn, 3 Spieler",
+      "street": 2,
+      "opps": 2,
+      "reps": 4,
+      "medianMs": 14,
+      "p90Ms": 16,
+      "maxMs": 16,
+      "maxIters": 12000
+     },
+     {
+      "name": "Multiway Turn, 4 Spieler nach Limp",
+      "street": 2,
+      "opps": 3,
+      "reps": 4,
+      "medianMs": 30,
+      "p90Ms": 32,
+      "maxMs": 32,
+      "maxIters": 12000
+     },
+     {
+      "name": "River HU (Modellspiel CFR+)",
+      "street": 3,
+      "opps": 1,
+      "reps": 4,
+      "medianMs": 242,
+      "p90Ms": 270,
+      "maxMs": 270,
+      "maxIters": 0
+     },
+     {
+      "name": "All-in-Call, 2 Gegner All-in (Side Pots)",
+      "street": 0,
+      "opps": 4,
+      "reps": 4,
+      "medianMs": 16,
+      "p90Ms": 23,
+      "maxMs": 23,
+      "maxIters": 15000
+     },
+     {
+      "name": "Preflop Squeeze-Spot, 3 Spieler",
+      "street": 0,
+      "opps": 4,
+      "reps": 4,
+      "medianMs": 12,
+      "p90Ms": 14,
+      "maxMs": 14,
+      "maxIters": 12000
+     }
+    ]
+   },
+   "4": {
+    "auto-tipp": [
+     {
+      "name": "HU Flop, BTN gegen breite BB-Verteidigung",
+      "street": 1,
+      "opps": 1,
+      "reps": 12,
+      "medianMs": 22,
+      "p90Ms": 32,
+      "maxMs": 39,
+      "maxIters": 1986
+     },
+     {
+      "name": "HU Flop, BB gegen BTN-Open (OOP)",
+      "street": 1,
+      "opps": 1,
+      "reps": 12,
+      "medianMs": 17,
+      "p90Ms": 25,
+      "maxMs": 25,
+      "maxIters": 2000
+     },
+     {
+      "name": "Multiway Flop, 5 Spieler im Limp-Pot",
+      "street": 1,
+      "opps": 5,
+      "reps": 12,
+      "medianMs": 48,
+      "p90Ms": 93,
+      "maxMs": 113,
+      "maxIters": 1557
+     },
+     {
+      "name": "Multiway Turn, 3 Spieler",
+      "street": 2,
+      "opps": 2,
+      "reps": 12,
+      "medianMs": 41,
+      "p90Ms": 50,
+      "maxMs": 70,
+      "maxIters": 1200
+     },
+     {
+      "name": "Multiway Turn, 4 Spieler nach Limp",
+      "street": 2,
+      "opps": 3,
+      "reps": 12,
+      "medianMs": 151,
+      "p90Ms": 170,
+      "maxMs": 196,
+      "maxIters": 1200
+     },
+     {
+      "name": "River HU (Modellspiel CFR+)",
+      "street": 3,
+      "opps": 1,
+      "reps": 12,
+      "medianMs": 252,
+      "p90Ms": 396,
+      "maxMs": 406,
+      "maxIters": 0
+     },
+     {
+      "name": "All-in-Call, 2 Gegner All-in (Side Pots)",
+      "street": 0,
+      "opps": 4,
+      "reps": 12,
+      "medianMs": 62,
+      "p90Ms": 92,
+      "maxMs": 115,
+      "maxIters": 4200
+     },
+     {
+      "name": "Preflop Squeeze-Spot, 3 Spieler",
+      "street": 0,
+      "opps": 4,
+      "reps": 12,
+      "medianMs": 33,
+      "p90Ms": 43,
+      "maxMs": 46,
+      "maxIters": 1200
+     }
+    ],
+    "praezise": [
+     {
+      "name": "HU Flop, BTN gegen breite BB-Verteidigung",
+      "street": 1,
+      "opps": 1,
+      "reps": 6,
+      "medianMs": 266,
+      "p90Ms": 627,
+      "maxMs": 627,
+      "maxIters": 0
+     },
+     {
+      "name": "HU Flop, BB gegen BTN-Open (OOP)",
+      "street": 1,
+      "opps": 1,
+      "reps": 6,
+      "medianMs": 499,
+      "p90Ms": 607,
+      "maxMs": 607,
+      "maxIters": 0
+     },
+     {
+      "name": "Multiway Flop, 5 Spieler im Limp-Pot",
+      "street": 1,
+      "opps": 5,
+      "reps": 6,
+      "medianMs": 338,
+      "p90Ms": 522,
+      "maxMs": 522,
+      "maxIters": 4800
+     },
+     {
+      "name": "Multiway Turn, 3 Spieler",
+      "street": 2,
+      "opps": 2,
+      "reps": 6,
+      "medianMs": 69,
+      "p90Ms": 84,
+      "maxMs": 84,
+      "maxIters": 4800
+     },
+     {
+      "name": "Multiway Turn, 4 Spieler nach Limp",
+      "street": 2,
+      "opps": 3,
+      "reps": 6,
+      "medianMs": 160,
+      "p90Ms": 195,
+      "maxMs": 195,
+      "maxIters": 4800
+     },
+     {
+      "name": "River HU (Modellspiel CFR+)",
+      "street": 3,
+      "opps": 1,
+      "reps": 6,
+      "medianMs": 232,
+      "p90Ms": 416,
+      "maxMs": 416,
+      "maxIters": 0
+     },
+     {
+      "name": "All-in-Call, 2 Gegner All-in (Side Pots)",
+      "street": 0,
+      "opps": 4,
+      "reps": 6,
+      "medianMs": 79,
+      "p90Ms": 95,
+      "maxMs": 95,
+      "maxIters": 7800
+     },
+     {
+      "name": "Preflop Squeeze-Spot, 3 Spieler",
+      "street": 0,
+      "opps": 4,
+      "reps": 6,
+      "medianMs": 60,
+      "p90Ms": 177,
+      "maxMs": 177,
+      "maxIters": 4800
+     }
+    ],
+    "tief": [
+     {
+      "name": "HU Flop, BTN gegen breite BB-Verteidigung",
+      "street": 1,
+      "opps": 1,
+      "reps": 4,
+      "medianMs": 388,
+      "p90Ms": 694,
+      "maxMs": 694,
+      "maxIters": 0
+     },
+     {
+      "name": "HU Flop, BB gegen BTN-Open (OOP)",
+      "street": 1,
+      "opps": 1,
+      "reps": 4,
+      "medianMs": 608,
+      "p90Ms": 638,
+      "maxMs": 638,
+      "maxIters": 0
+     },
+     {
+      "name": "Multiway Flop, 5 Spieler im Limp-Pot",
+      "street": 1,
+      "opps": 5,
+      "reps": 4,
+      "medianMs": 672,
+      "p90Ms": 693,
+      "maxMs": 693,
+      "maxIters": 12000
+     },
+     {
+      "name": "Multiway Turn, 3 Spieler",
+      "street": 2,
+      "opps": 2,
+      "reps": 4,
+      "medianMs": 63,
+      "p90Ms": 64,
+      "maxMs": 64,
+      "maxIters": 12000
+     },
+     {
+      "name": "Multiway Turn, 4 Spieler nach Limp",
+      "street": 2,
+      "opps": 3,
+      "reps": 4,
+      "medianMs": 136,
+      "p90Ms": 152,
+      "maxMs": 152,
+      "maxIters": 12000
+     },
+     {
+      "name": "River HU (Modellspiel CFR+)",
+      "street": 3,
+      "opps": 1,
+      "reps": 4,
+      "medianMs": 938,
+      "p90Ms": 1048,
+      "maxMs": 1048,
+      "maxIters": 0
+     },
+     {
+      "name": "All-in-Call, 2 Gegner All-in (Side Pots)",
+      "street": 0,
+      "opps": 4,
+      "reps": 4,
+      "medianMs": 96,
+      "p90Ms": 100,
+      "maxMs": 100,
+      "maxIters": 15000
+     },
+     {
+      "name": "Preflop Squeeze-Spot, 3 Spieler",
+      "street": 0,
+      "opps": 4,
+      "reps": 4,
+      "medianMs": 83,
+      "p90Ms": 86,
+      "maxMs": 86,
+      "maxIters": 12000
+     }
+    ]
+   },
+   "6": {
+    "auto-tipp": [
+     {
+      "name": "HU Flop, BTN gegen breite BB-Verteidigung",
+      "street": 1,
+      "opps": 1,
+      "reps": 12,
+      "medianMs": 22,
+      "p90Ms": 35,
+      "maxMs": 40,
+      "maxIters": 1986
+     },
+     {
+      "name": "HU Flop, BB gegen BTN-Open (OOP)",
+      "street": 1,
+      "opps": 1,
+      "reps": 12,
+      "medianMs": 22,
+      "p90Ms": 28,
+      "maxMs": 32,
+      "maxIters": 2000
+     },
+     {
+      "name": "Multiway Flop, 5 Spieler im Limp-Pot",
+      "street": 1,
+      "opps": 5,
+      "reps": 12,
+      "medianMs": 123,
+      "p90Ms": 168,
+      "maxMs": 172,
+      "maxIters": 1557
+     },
+     {
+      "name": "Multiway Turn, 3 Spieler",
+      "street": 2,
+      "opps": 2,
+      "reps": 12,
+      "medianMs": 66,
+      "p90Ms": 90,
+      "maxMs": 95,
+      "maxIters": 1200
+     },
+     {
+      "name": "Multiway Turn, 4 Spieler nach Limp",
+      "street": 2,
+      "opps": 3,
+      "reps": 12,
+      "medianMs": 137,
+      "p90Ms": 178,
+      "maxMs": 185,
+      "maxIters": 1200
+     },
+     {
+      "name": "River HU (Modellspiel CFR+)",
+      "street": 3,
+      "opps": 1,
+      "reps": 12,
+      "medianMs": 467,
+      "p90Ms": 517,
+      "maxMs": 540,
+      "maxIters": 0
+     },
+     {
+      "name": "All-in-Call, 2 Gegner All-in (Side Pots)",
+      "street": 0,
+      "opps": 4,
+      "reps": 12,
+      "medianMs": 60,
+      "p90Ms": 130,
+      "maxMs": 155,
+      "maxIters": 4200
+     },
+     {
+      "name": "Preflop Squeeze-Spot, 3 Spieler",
+      "street": 0,
+      "opps": 4,
+      "reps": 12,
+      "medianMs": 35,
+      "p90Ms": 40,
+      "maxMs": 44,
+      "maxIters": 1200
+     }
+    ],
+    "praezise": [
+     {
+      "name": "HU Flop, BTN gegen breite BB-Verteidigung",
+      "street": 1,
+      "opps": 1,
+      "reps": 6,
+      "medianMs": 398,
+      "p90Ms": 456,
+      "maxMs": 456,
+      "maxIters": 0
+     },
+     {
+      "name": "HU Flop, BB gegen BTN-Open (OOP)",
+      "street": 1,
+      "opps": 1,
+      "reps": 6,
+      "medianMs": 599,
+      "p90Ms": 671,
+      "maxMs": 671,
+      "maxIters": 0
+     },
+     {
+      "name": "Multiway Flop, 5 Spieler im Limp-Pot",
+      "street": 1,
+      "opps": 5,
+      "reps": 6,
+      "medianMs": 595,
+      "p90Ms": 654,
+      "maxMs": 654,
+      "maxIters": 4800
+     },
+     {
+      "name": "Multiway Turn, 3 Spieler",
+      "street": 2,
+      "opps": 2,
+      "reps": 6,
+      "medianMs": 77,
+      "p90Ms": 82,
+      "maxMs": 82,
+      "maxIters": 4800
+     },
+     {
+      "name": "Multiway Turn, 4 Spieler nach Limp",
+      "street": 2,
+      "opps": 3,
+      "reps": 6,
+      "medianMs": 173,
+      "p90Ms": 188,
+      "maxMs": 188,
+      "maxIters": 4800
+     },
+     {
+      "name": "River HU (Modellspiel CFR+)",
+      "street": 3,
+      "opps": 1,
+      "reps": 6,
+      "medianMs": 436,
+      "p90Ms": 466,
+      "maxMs": 466,
+      "maxIters": 0
+     },
+     {
+      "name": "All-in-Call, 2 Gegner All-in (Side Pots)",
+      "street": 0,
+      "opps": 4,
+      "reps": 6,
+      "medianMs": 85,
+      "p90Ms": 92,
+      "maxMs": 92,
+      "maxIters": 7800
+     },
+     {
+      "name": "Preflop Squeeze-Spot, 3 Spieler",
+      "street": 0,
+      "opps": 4,
+      "reps": 6,
+      "medianMs": 78,
+      "p90Ms": 82,
+      "maxMs": 82,
+      "maxIters": 4800
+     }
+    ],
+    "tief": [
+     {
+      "name": "HU Flop, BTN gegen breite BB-Verteidigung",
+      "street": 1,
+      "opps": 1,
+      "reps": 4,
+      "medianMs": 404,
+      "p90Ms": 409,
+      "maxMs": 409,
+      "maxIters": 0
+     },
+     {
+      "name": "HU Flop, BB gegen BTN-Open (OOP)",
+      "street": 1,
+      "opps": 1,
+      "reps": 4,
+      "medianMs": 686,
+      "p90Ms": 1114,
+      "maxMs": 1114,
+      "maxIters": 0
+     },
+     {
+      "name": "Multiway Flop, 5 Spieler im Limp-Pot",
+      "street": 1,
+      "opps": 5,
+      "reps": 4,
+      "medianMs": 846,
+      "p90Ms": 859,
+      "maxMs": 859,
+      "maxIters": 12000
+     },
+     {
+      "name": "Multiway Turn, 3 Spieler",
+      "street": 2,
+      "opps": 2,
+      "reps": 4,
+      "medianMs": 105,
+      "p90Ms": 224,
+      "maxMs": 224,
+      "maxIters": 12000
+     },
+     {
+      "name": "Multiway Turn, 4 Spieler nach Limp",
+      "street": 2,
+      "opps": 3,
+      "reps": 4,
+      "medianMs": 218,
+      "p90Ms": 363,
+      "maxMs": 363,
+      "maxIters": 12000
+     },
+     {
+      "name": "River HU (Modellspiel CFR+)",
+      "street": 3,
+      "opps": 1,
+      "reps": 4,
+      "medianMs": 1581,
+      "p90Ms": 1753,
+      "maxMs": 1753,
+      "maxIters": 0
+     },
+     {
+      "name": "All-in-Call, 2 Gegner All-in (Side Pots)",
+      "street": 0,
+      "opps": 4,
+      "reps": 4,
+      "medianMs": 132,
+      "p90Ms": 141,
+      "maxMs": 141,
+      "maxIters": 15000
+     },
+     {
+      "name": "Preflop Squeeze-Spot, 3 Spieler",
+      "street": 0,
+      "opps": 4,
+      "reps": 4,
+      "medianMs": 135,
+      "p90Ms": 284,
+      "maxMs": 284,
+      "maxIters": 12000
+     }
+    ]
+   }
+  }
+ }
+}

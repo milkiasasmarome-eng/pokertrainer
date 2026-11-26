@@ -42,6 +42,13 @@ function arm(slowMs, failMs) {
 }
 arm(SLOW_MS, FAIL_MS);
 
+/** Ein bekannter, längerer Startschritt (z. B. Umstellung des Datenformats mit Sicherung): Anzeige und Zeitlimit verlängern. */
+R.busy = function (text, ms) {
+  if (R.state !== 'start') return;
+  var st = document.getElementById('status'); if (st && text) st.textContent = text;
+  clearTimeout(R._slow); clearTimeout(R._fail);
+  R._fail = setTimeout(function () { if (!isReady()) R.fail('timeout', text || ''); }, ms || 60000);
+};
 /** Vom Controller aufgerufen, sobald der Trainer bedienbar ist. */
 R.ready = function () {
   R.state = 'ready'; clearTimeout(R._slow); clearTimeout(R._fail);

@@ -18,17 +18,21 @@ function card(c) { return PT.cardStr(c); }
 function num(x, d) { if (typeof x !== 'number' || !isFinite(x)) return null; var f = Math.pow(10, d == null ? 4 : d); return Math.round(x * f) / f; }
 function intOrNull(x) { return isInt(x, -1e13, 1e13) ? x : null; }
 
-/** Gegnerwerte zum Entscheidungszeitpunkt ohne Zeitstempel. */
-function oppOut(r) {
-  var stats = {}; Object.keys(r.stats || {}).forEach(function (k) { stats[k] = [r.stats[k][0], r.stats[k][1]]; });
-  var pos = {}; Object.keys(r.pos || {}).forEach(function (p) { var x = r.pos[p]; pos[p] = { h: x.h, vpip: x.vpip.slice(), pfr: x.pfr.slice() }; });
-  return { id: r.id, name: r.name, hands: r.hands, stats: stats, agg: r.agg ? { bet: r.agg.bet, raise: r.agg.raise, call: r.agg.call, fold: r.agg.fold, check: r.agg.check } : null, pos: pos,
-    shown: (r.shown || []).map(function (s) { return { hand: s.hand, pos: s.pos, cards: s.cards, board: s.board, actions: s.actions.slice(), net: s.net }; }) };
+var TS_KEYS = ['ts', 'lastSeen', 'firstSeen'];
+function strip(x) {
+  if (Array.isArray(x)) return x.map(strip);
+  if (!x || typeof x !== 'object') return x;
+  var o = {}; Object.keys(x).forEach(function (k) { if (TS_KEYS.indexOf(k) < 0) o[k] = strip(x[k]); }); return o;
 }
-/** Rückweg für Nachrechnungen: Export-Gegner → Datenbank-Datensatz (Zeitstempel 0). */
+/** Gegnerwerte zum Entscheidungszeitpunkt (Langzeit, Kurzzeitgedächtnis, Kartenkenntnis) ohne Zeitstempel und ohne Tischstatus. */
+function oppOut(r) { var o = strip(r); delete o.status; return o; }
+/** Rückweg für Nachrechnungen: Export-Gegner → Datenbank-Datensatz (Zeitstempel 0, Status aktiv). */
 function oppIn(o) {
-  return { id: o.id, name: o.name, status: 'aktiv', hands: o.hands, stats: JSON.parse(JSON.stringify(o.stats)), agg: o.agg ? Object.assign({}, o.agg) : { bet: 0, raise: 0, call: 0, fold: 0, check: 0 },
-    pos: JSON.parse(JSON.stringify(o.pos)), shown: o.shown.map(function (s) { return { hand: s.hand, ts: 0, pos: s.pos, cards: s.cards, board: s.board, actions: s.actions.slice(), net: s.net }; }), lastSeen: 0, firstSeen: 0 };
+  var r = JSON.parse(JSON.stringify(o));
+  r.status = 'aktiv'; r.lastSeen = 0; r.firstSeen = 0;
+  (r.shown || []).forEach(function (s) { s.ts = 0; });
+  if (!Object.prototype.hasOwnProperty.call(o, 'agg')) delete r.firstSeen;   // Format 1 hatte weder agg noch firstSeen
+  return r;
 }
 function actOut(a) { return { street: STREETS[a.st], seat: a.s, type: a.t, amount: a.a, allIn: !!a.ai }; }
 
@@ -143,7 +147,7 @@ function rawToBackup(o) {
   var objs = st.opps.filter(function (r) { return r && typeof r === 'object' && !Array.isArray(r); });
   var db = S.dbFromList(objs); info.opps = Object.keys(db.opps).length; info.oppsSkipped = st.opps.length - info.opps;
   var meta = st.meta.filter(function (m) { return m && m.k === 'state'; })[0] || null, hero = null;
-  if (meta && meta.heroRec && !S.validRecord(meta.heroRec)) { hero = S.cloneRecord(meta.heroRec); info.hero = true; }
+  if (meta && meta.heroRec) { hero = S.loadRecord ? S.loadRecord(meta.heroRec) : (!S.validRecord(meta.heroRec) ? S.cloneRecord(meta.heroRec) : null); info.hero = !!hero; }
   var hands = st.hands.filter(function (h) { return !T.validHand(h); });
   info.handsSkipped = st.hands.length - hands.length;
   hands.sort(function (a, b) { return a.ts - b.ts; }); hands = hands.slice(-MAX_HANDS); info.hands = hands.length;
