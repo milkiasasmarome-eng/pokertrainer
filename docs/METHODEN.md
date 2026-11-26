@@ -56,7 +56,13 @@ Verlust L = EV(beste Aktion) − EV(gewählte Aktion mit tatsächlicher Größe)
 
 Sechs Stile mit Grundparametern (Open-Breite, Limp, Iso, Call-Breite, 3-/4-Bet, Bluffanteile, C-Bet, Barrel, River, Delayed C-Bet, Float, Check-Raise, Slowplay, Overbet, Sizing, „Stickiness“), individuelle Abweichung je Gegner (±10 %), Können (0–1) und Anpassungsfähigkeit. Postflop: Perzentil der eigenen Hand gegen alle Kombinationen auf dem Board (einmal je Board berechnet), Klassen Monster/stark/mittel/schwach/Luft, Draws, Textur, Rolle (Aggressor, Barrel, Delayed C-Bet, Donk, Float), SPR, Multiway-Abschlag. Anpassung nur an öffentliche Werte des Helden mit Mindeststichprobe und Schrumpfung n/(n + k).
 
+Anpassung an den Helden (nur dessen öffentliche Werte, Mindeststichprobe, Schrumpfung n/(n + k)): Fold gegen Steal → Steal-Breite; Fold gegen 3-Bet → 3-Bet-Bluffs, Umwandlung eines Teils der Calls in 3-Bets bzw. weniger Bluffs gegen Spieler, die 3-Bets halten (seit Format 3); 3-Bet-Häufigkeit → 4-Bet; WTSD → weniger Bluffs, mehr und dünnere Value-Bets mit mittleren Händen; Fold gegen C-Bet → C-Bet-Bluffs; AFq → Call-Schwelle. Messung mit synthetischen Heldenstrategien: [GEGNERGEDAECHTNIS.md](GEGNERGEDAECHTNIS.md), Abschnitt 6.
+
 Kalibrierung: 200.000 simulierte Hände, Werte je Stil gegen Zielbereiche (siehe Testbericht).
+
+## 7a. Gegnergedächtnis
+
+Je Gegner zusätzlich zu den Langzeitwerten ein Kurzzeitgedächtnis (exponentiell abklingende Zähler, Halbwertszeit 100 eigene Hände des Gegners), ein gewichteter Zwei-Anteile-Test „Kurzzeit gegen ältere Beobachtungen“ mit Hysterese zur Erkennung veränderter Spielweise und die getrennte Zählung beobachteter (Showdown) und unbekannt gebliebener Karten. Formeln, Parameter, Messwerte und Schnittstelle: [GEGNERGEDAECHTNIS.md](GEGNERGEDAECHTNIS.md).
 
 ## 8. Lernsystem
 

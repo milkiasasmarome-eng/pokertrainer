@@ -1,9 +1,9 @@
 {
  "app": "2.0.1",
- "date": "2026-11-26T19:57:11.245Z",
+ "date": "2026-11-26T20:49:54.058Z",
  "node": "v22.23.5",
  "quick": true,
- "passed": 43,
+ "passed": 50,
  "failed": 0,
  "tests": [
   {
@@ -11,14 +11,14 @@
    "ok": true,
    "checks": 4,
    "notes": [],
-   "ms": 306
+   "ms": 389
   },
   {
    "name": "Handbewertung: 300.000 zufällige Sieben-Karten-Paare gegen Best-of-Five-Referenz",
    "ok": true,
    "checks": 2,
    "notes": [],
-   "ms": 1319
+   "ms": 1767
   },
   {
    "name": "Handbewertung: feste Testfälle (Kategorien und Vergleiche)",
@@ -32,7 +32,7 @@
    "ok": true,
    "checks": 27,
    "notes": [],
-   "ms": 2
+   "ms": 3
   },
   {
    "name": "Regeln: unvollständiger All-in öffnet nicht, mehrere Short All-ins öffnen kumuliert, Mindest-Raise bleibt",
@@ -81,16 +81,16 @@
    "ok": true,
    "checks": 2,
    "notes": [],
-   "ms": 151
+   "ms": 356
   },
   {
    "name": "Simulation: 10.000 Hände, Invarianten nach jeder Aktion, keine hängende Hand, Chipbilanz",
    "ok": true,
    "checks": 3,
    "notes": [
-    "{\"hands\":2000,\"actions\":17309,\"showdowns\":310,\"sidePots\":1,\"splitPots\":14,\"swaps\":66}"
+    "{\"hands\":2000,\"actions\":17297,\"showdowns\":309,\"sidePots\":1,\"splitPots\":15,\"swaps\":66}"
    ],
-   "ms": 521
+   "ms": 1010
   },
   {
    "name": "Fuzz: zufällige und ungültige Eingaben, zufällige Stacks (1–400 BB)",
@@ -99,21 +99,21 @@
    "notes": [
     "1500 Hände mit zufälligen Stacks"
    ],
-   "ms": 495
+   "ms": 919
   },
   {
    "name": "Eigenschaft: gefoldete Spieler gewinnen nie, Gewinner sind berechtigt, keine Karte doppelt",
    "ok": true,
    "checks": 2,
    "notes": [],
-   "ms": 352
+   "ms": 734
   },
   {
    "name": "Zufall: getrennte Ströme; Coach an/aus ändert den Spielverlauf nicht",
    "ok": true,
    "checks": 3,
    "notes": [],
-   "ms": 1041
+   "ms": 1852
   },
   {
    "name": "Fairness: Bots und Coach sehen keine verdeckten Karten",
@@ -129,7 +129,7 @@
    "notes": [
     "AhAd vs KsKc: 81.26 %"
    ],
-   "ms": 493
+   "ms": 758
   },
   {
    "name": "Equity: Monte-Carlo gegen exakte Enumeration (Fehler ≤ 4 Standardfehler)",
@@ -141,7 +141,7 @@
     "8h9h Th7h2c AcAd: exakt 56.26 %, MC 56.57 % (SE 0.50, n 9700)",
     "AhKd Ks8c3d : exakt 88.28 %, MC 88.34 % (SE 0.53, n 3440)"
    ],
-   "ms": 612
+   "ms": 923
   },
   {
    "name": "Equity: Mehrgegner-Simulation (AA gegen KK gegen QQ) gegen exakte Enumeration",
@@ -150,35 +150,35 @@
    "notes": [
     "AA 3-Wege: exakt 66.46 % (195822 Boards), MC 67.33 %"
    ],
-   "ms": 74
+   "ms": 113
   },
   {
    "name": "Pot Odds und Side-Pot-Berechtigung: nur erreichbare Pots zählen",
    "ok": true,
    "checks": 6,
    "notes": [],
-   "ms": 0
+   "ms": 1
   },
   {
    "name": "EV-Referenz: River-Call mit exakter Equity entspricht eq·(Pot+Call) − Call",
    "ok": true,
    "checks": 3,
    "notes": [],
-   "ms": 44
+   "ms": 73
   },
   {
    "name": "Kombinatorik und Blocker",
    "ok": true,
    "checks": 7,
    "notes": [],
-   "ms": 1
+   "ms": 4
   },
   {
    "name": "Statistik: Wilson-Intervall, Beta-Glättung, kleine Stichproben unbekannt statt 0",
    "ok": true,
    "checks": 6,
    "notes": [],
-   "ms": 0
+   "ms": 1
   },
   {
    "name": "Statistik: Zähler stimmen mit unabhängiger Kontrollzählung überein (VPIP, PFR, 3-Bet, Fold gegen 3-Bet, C-Bet, Fold gegen C-Bet, WTSD)",
@@ -187,65 +187,65 @@
    "notes": [
     "308 Zähler/Nenner-Paare verglichen"
    ],
-   "ms": 465
+   "ms": 828
   },
   {
    "name": "CFR+: analytisches River-Spiel (Bluff-Anteil b/(1+2b), Call-Häufigkeit 1/(1+b)), Exploitability ≈ 0",
    "ok": true,
    "checks": 13,
    "notes": [],
-   "ms": 51
+   "ms": 83
   },
   {
    "name": "Coach: Obergrenze von 5.000 Simulationen je Entscheidung, Antwortzeit, keine Ausnahme",
    "ok": true,
-   "checks": 293,
+   "checks": 283,
    "notes": [
-    "291 Analysen, max. 5000 Simulationen, max. 70 ms (Node, ein Kern)"
+    "281 Analysen, max. 5000 Simulationen, max. 150 ms (Node, ein Kern)"
    ],
-   "ms": 2529
+   "ms": 4590
   },
   {
    "name": "Coach: Bewertung nutzt nur Entscheidungsinformationen; sieben Stufen; Fehlerkategorien",
    "ok": true,
    "checks": 12,
    "notes": [],
-   "ms": 70
+   "ms": 96
   },
   {
    "name": "Training: alle 14 Kategorien erzeugen Situationen, reproduzierbar über Seeds",
    "ok": true,
    "checks": 28,
    "notes": [],
-   "ms": 71
+   "ms": 151
   },
   {
    "name": "Training: Quizfragen rechnen korrekt, Kompetenzprofil und Spaced Repetition",
    "ok": true,
    "checks": 405,
    "notes": [],
-   "ms": 2
+   "ms": 3
   },
   {
    "name": "Datenbank: Gegner verlassen den Tisch und kehren zurück, kein Doppeleintrag, 100er-Pool",
    "ok": true,
    "checks": 6,
    "notes": [],
-   "ms": 415
+   "ms": 581
   },
   {
    "name": "Datenbank: Export und Import ergeben dieselbe Datenbank; 5.000 Gegner",
    "ok": true,
    "checks": 3,
    "notes": [],
-   "ms": 257
+   "ms": 564
   },
   {
    "name": "Import: beschädigte und manipulierte Dateien werden abgelehnt, bestehende Daten unverändert",
    "ok": true,
    "checks": 18,
    "notes": [],
-   "ms": 98
+   "ms": 191
   },
   {
    "name": "Migration: Datenbank aus Entwurf 2 (Version 1) und vollständige Sicherung",
@@ -259,14 +259,14 @@
    "ok": true,
    "checks": 79,
    "notes": [],
-   "ms": 31
+   "ms": 46
   },
   {
    "name": "Handhistorie: Datensätze sind gültig und exportierbar",
    "ok": true,
    "checks": 2,
    "notes": [],
-   "ms": 111
+   "ms": 145
   },
   {
    "name": "Sprachausgabe: nur der jüngste Tipp wird gesprochen, ältere brechen ab; ohne Sprachfunktion kein Fehler",
@@ -280,21 +280,21 @@
    "ok": true,
    "checks": 9,
    "notes": [],
-   "ms": 10
+   "ms": 17
   },
   {
    "name": "Regression Prüfer A: EV-Call-Zweig mit Call-Range, Jam-Raise-Zweig, Monte-Carlo-Stoppregel",
    "ok": true,
    "checks": 3,
    "notes": [],
-   "ms": 77
+   "ms": 101
   },
   {
    "name": "Regression Prüfer C: Preflop nach Faustregel-Chart (kein 3-Bet/Open mit beliebigen Händen, kein Open-Limp)",
    "ok": true,
    "checks": 9,
    "notes": [],
-   "ms": 30
+   "ms": 39
   },
   {
    "name": "Regression Prüfer C: keine Multiway-Bluffs ohne Rückhalt, keine Flop-Overbets, Live-Tipp ≤ 5.000 Simulationen",
@@ -308,14 +308,14 @@
    "ok": true,
    "checks": 7,
    "notes": [],
-   "ms": 19
+   "ms": 46
   },
   {
    "name": "A1: Ergebnisse beider Modi unabhängig von der Reihenfolge; faire Budgetverteilung; erschöpftes Budget ohne ungültige Werte",
    "ok": true,
    "checks": 3,
    "notes": [],
-   "ms": 967
+   "ms": 1109
   },
   {
    "name": "A6: Bayes-Beleg für Exploits (Beta-CDF, Monotonie in Stichprobe und Abweichung, kein Exploit ohne Beleg)",
@@ -323,6 +323,55 @@
    "checks": 6,
    "notes": [],
    "ms": 7
+  },
+  {
+   "name": "Gegnergedächtnis: Abklingen mit Halbwertszeit in Händen, gewichtete Zähler und Testvarianz exakt",
+   "ok": true,
+   "checks": 6,
+   "notes": [],
+   "ms": 65
+  },
+  {
+   "name": "Gegnergedächtnis: Erkennung veränderter Spielweise (Mindestzahl, Richtung, Hysterese, beste Schätzung, Coach-Schnittstelle)",
+   "ok": true,
+   "checks": 13,
+   "notes": [],
+   "ms": 3
+  },
+  {
+   "name": "Datenformat 3: Export → Import identisch, 5.000 Gegner, strenge Prüfung, Migration aus Format 2 und 1",
+   "ok": true,
+   "checks": 49,
+   "notes": [],
+   "ms": 1872
+  },
+  {
+   "name": "Rückkehrer: Langzeitwerte und Kurzzeitgedächtnis bleiben über Archiv und Rückkehr erhalten und laufen weiter",
+   "ok": true,
+   "checks": 6,
+   "notes": [],
+   "ms": 1149
+  },
+  {
+   "name": "Fairness: Gedächtnis, Profil und Coach-Schnittstelle nutzen nur Beobachtetes, nie den internen Stil",
+   "ok": true,
+   "checks": 5,
+   "notes": [],
+   "ms": 3
+  },
+  {
+   "name": "Gegner-KI: Anpassung an synthetische Heldenstrategien nur über beobachtbare Heldenwerte",
+   "ok": true,
+   "checks": 4,
+   "notes": [],
+   "ms": 6082
+  },
+  {
+   "name": "Gegnergedächtnis: synthetische Gegner wechseln mitten in der Session die Spielweise",
+   "ok": true,
+   "checks": 3,
+   "notes": [],
+   "ms": 1448
   }
  ]
 }

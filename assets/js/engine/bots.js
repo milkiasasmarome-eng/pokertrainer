@@ -159,8 +159,17 @@ function preflop(v, P, rng, ctx) {
   var openerPos = v.players[opener].pos, sizeBB = lastTo / v.bb;
   if (rc === 1) {
     var tbAdj = heroAgg ? 1 + P.adapt * Math.max(0, adaptFactor(hs, 'steal', 0.4, 30, 30)) * 2.5 : 1;
-    var ch = R.chart('vsOpen', { pos: pos, opener: openerPos, sizeBB: sizeBB, scale: P.tb * tbAdj, bluffScale: P.bl3 * tbAdj, callScale: P.call * tbAdj, squeeze: callers > 0 });
-    var a1 = chartAct(rowFor(ch));
+    // Fold gegen 3-Bet des Helden (beobachtbar): > 0 heißt, der Held gibt zu oft auf → mehr 3-Bet-Bluffs, Calls werden zu 3-Bets;
+    // < 0 (Held hält 3-Bets oft) → weniger Bluffs, etwas breiter für Value
+    var e3 = heroAgg ? P.adapt * adaptFactor(hs, 'foldTo3Bet', 0.55, 25, 20) : 0;
+    var ch = R.chart('vsOpen', { pos: pos, opener: openerPos, sizeBB: sizeBB, scale: P.tb * tbAdj * (1 + 1.5 * Math.max(0, -e3)), bluffScale: P.bl3 * tbAdj * clamp(1 + 6 * e3, 0.25, 4),
+      callScale: P.call * tbAdj, squeeze: callers > 0 });
+    var row1 = rowFor(ch);
+    if (e3 > 0) {
+      var conv = clamp(1.5 * e3, 0, 0.5), xb = x <= 0.5 ? clamp(0.5 * e3, 0, 0.12) : 0;
+      row1 = { raise: row1.raise + conv * row1.call + xb * row1.fold, call: row1.call * (1 - conv), fold: row1.fold * (1 - xb) };
+    }
+    var a1 = chartAct(row1);
     if (a1 === 'raise' && L.canRaise) {
       var ip = PT.POS_ORDER_POST[pos] > PT.POS_ORDER_POST[openerPos];
       return raiseTo(v, L, lastTo * (ip ? 3 : 3.8) + callers * lastTo);
@@ -224,12 +233,14 @@ function postflop(v, P, rng, ctx) {
   if (v.street === 3 && cls === 'weak') cls = p >= 0.62 ? 'weak' : 'air';
   var hsI = streetHistory(v), ip = isIP(v), spr = Math.min(me.stack, maxOppStack(v)) / Math.max(1, pot);
   var hs = ctx && ctx.heroStats, heroIn = v.players.some(function (q) { return q.hero && !q.folded; });
-  var bluffMul = 1, valueMul = 1;
+  var bluffMul = 1, valueMul = 1, thinMul = 1;
   if (heroIn && hs) {
+    // WTSD des Helden über dem Populationsmittel: weniger Bluffs, mehr und dünnere Value-Bets (mittlere Hände)
     var st = adaptFactor(hs, 'wtsd', 0.28, 30, 25);
-    bluffMul = clamp(1 - P.adapt * st * 3, 0.4, 1.6);
+    bluffMul = clamp(1 - P.adapt * st * 3, 0.15, 1.6);
     if (v.street === 1) bluffMul *= clamp(1 + P.adapt * adaptFactor(hs, 'foldToCbet', 0.45, 20, 15) * 2.2, 0.5, 1.8);
     valueMul = clamp(1 + P.adapt * st * 1.5, 0.8, 1.4);
+    thinMul = clamp(1 + P.adapt * st * 4, 0.7, 2.2);
   }
   var mw = nOpp > 1 ? Math.pow(0.6, nOpp - 1) : 1;
   if (L.toCall === 0) {
@@ -241,20 +252,20 @@ function postflop(v, P, rng, ctx) {
     var pB;
     if (cls === 'monster') pB = 1 - P.slow * (v.street < 3 ? 1 : 0.3);
     else if (cls === 'strong') pB = 0.8 * valueMul;
-    else if (cls === 'medium') pB = (v.street === 3 ? P.thin : P.thin * 0.9 + 0.1) * valueMul * mw;
+    else if (cls === 'medium') pB = (v.street === 3 ? P.thin : P.thin * 0.9 + 0.1) * thinMul * mw;
     else if (di.strong) pB = P.semi * mw;
     else if (cls === 'weak') pB = P.bluff * 0.6 * bluffMul * mw;
     else pB = P.bluff * bluffMul * mw;
     if (isPfa && first) {
       if (v.street === 1) {
         if (cls === 'air' || cls === 'weak') pB = clamp(P.cbet * texMod * bluffMul * 0.85, 0, 0.95) * mw;
-        else if (cls === 'medium') pB = Math.max(pB, P.cbet * 0.75 * mw);
+        else if (cls === 'medium') pB = Math.max(pB, P.cbet * 0.75 * Math.max(1, thinMul) * mw);
         else if (di.strong) pB = Math.max(pB, P.cbet * mw);
       } else if (hsI.iBetPrev) {
         var barrel = v.street === 2 ? P.barrel : P.river;
         var scare = P.skill > 0.55 && (v.board[v.board.length - 1] >> 2) > Math.max.apply(null, v.board.slice(0, v.board.length - 1).map(function (c) { return c >> 2; }));
         if (cls === 'air' || cls === 'weak') pB = barrel * bluffMul * (scare ? 1.3 : 0.75) * mw * (v.street === 3 && di.strong === false ? 0.9 : 1);
-        else if (cls === 'medium') pB = barrel * (v.street === 3 ? 0.45 : 0.6);
+        else if (cls === 'medium') pB = barrel * (v.street === 3 ? 0.45 : 0.6) * thinMul;
       }
     } else if (!isPfa && first) {
       var pfaSeat = v.pfa, pfaLive = pfaSeat >= 0 && !v.players[pfaSeat].folded;
