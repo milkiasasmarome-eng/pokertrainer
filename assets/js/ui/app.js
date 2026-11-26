@@ -370,7 +370,7 @@ function renderLog() {
 }
 function renderNotice() {
   var parts = [], el = $('notice');
-  ['readonly', 'storage', 'storageErr', 'speech', 'legacy', 'update', 'resume'].forEach(function (k) { if (S.notes[k]) parts.push(S.notes[k]); });
+  ['readonly', 'storage', 'storageErr', 'speech', 'legacy', 'migration', 'update', 'resume'].forEach(function (k) { if (S.notes[k]) parts.push(S.notes[k]); });
   el.hidden = !parts.length;
   el.innerHTML = parts.map(function (p) { return '<div class="row">' + (typeof p === 'string' ? '<span>' + esc(p) + '</span>' : p.html) + '</div>'; }).join('');
 }
@@ -580,36 +580,7 @@ function onRaise() {
 }
 
 // ---------- Gegnerdetails ----------
-function shownHtml(s) {
-  var names = ['Preflop', 'Flop', 'Turn', 'River'], acts = [];
-  s.actions.forEach(function (a, i) { if (a) acts.push('<b>' + names[i] + ':</b> ' + esc(a)); });
-  return '<li><div class="cards">' + cardsHtml(s.cards, 'sm') + '<span class="muted">&nbsp;' + esc(s.pos) + ' · Hand #' + s.hand + ' · ' + esc(dateTxt(s.ts)) + '</span></div>' +
-    (s.board ? '<div class="cards"><span class="muted">Board&nbsp;</span>' + cardsHtml(s.board, 'sm') + '</div>' : '') +
-    '<div>' + acts.join(' · ') + '</div><div class="muted">Ergebnis ' + U.fmtSigned(s.net) + '</div></li>';
-}
-function statRows(r) {
-  var ST = PT.stats;
-  return ST.STATS.map(function (k) {
-    var nd = r.stats[k], ci = ST.wilson(nd), sm = PT.ranges.smooth(r.stats)[k];
-    return '<tr><td><button type="button" class="term" data-help="' + k + '">' + esc(ST.STAT_LABEL[k]) + '</button></td><td class="n">' + (nd[1] ? ST.pctOf(nd) + ' %' : 'unbekannt') + '</td><td class="n">' + nd[0] + ' / ' + nd[1] +
-      '</td><td class="n">' + (ci ? Math.round(ci[0] * 100) + '–' + Math.round(ci[1] * 100) + ' %' : '–') + '</td><td class="n">' + Math.round(sm * 100) + ' %</td></tr>';
-  }).join('');
-}
-function showOpp(id) {
-  var r = S.db.opps[id]; if (!r) { toast('Noch keine Daten zu diesem Gegner.'); return; }
-  var ST = PT.stats, pr = ST.profile(r), seated = S.table && S.table.seats.some(function (s) { return s.id === id; });
-  var af = ST.af(r.agg);
-  var posRows = ST.POSITIONS.map(function (p) { var x = r.pos[p]; return '<tr><td>' + p + '</td><td class="n">' + x.h + '</td><td class="n">' + (x.vpip[1] ? ST.pctOf(x.vpip) + ' %' : 'unbekannt') + '</td><td class="n">' + (x.pfr[1] ? ST.pctOf(x.pfr) + ' %' : 'unbekannt') + '</td></tr>'; }).join('');
-  openModal(r.name,
-    '<div class="kv"><span>' + (seated ? 'am Tisch (aktiv)' : 'im Archiv') + '</span><span>Hände <b>' + r.hands + '</b></span><span>Belastbarkeit <b>' + esc(pr.bel) + '</b></span>' +
-    '<span>Spielertyp <b>' + esc(pr.typ) + '</b></span><span>AF <b>' + (af == null ? 'unbekannt' : af === Infinity ? '∞' : af.toFixed(1).replace('.', ',')) + '</b></span><span>zuletzt gesehen ' + esc(dateTxt(r.lastSeen)) + '</span></div>' +
-    '<div class="scroll"><table class="grid"><thead><tr><th>Wert</th><th class="n">Rohwert</th><th class="n">Zähler / Nenner</th><th class="n">95-%-Intervall</th><th class="n">geglättet</th></tr></thead><tbody>' + statRows(r) + '</tbody></table></div>' +
-    '<p class="small">„Geglättet“ mischt die eigenen Beobachtungen mit dem Durchschnitt der Population (Beta-Prior); so nutzt der Coach die Werte. Bei kleinen Stichproben ist das Intervall breit.</p>' +
-    '<h3>Nach Position</h3><div class="scroll"><table class="grid"><thead><tr><th>Position</th><th class="n">Hände</th><th class="n">VPIP</th><th class="n">PFR</th></tr></thead><tbody>' + posRows + '</tbody></table></div>' +
-    '<h3>Aufgedeckte Blätter (bis 10, neueste zuerst)</h3>' + (r.shown.length ? '<ul class="shown">' + r.shown.map(shownHtml).join('') + '</ul>' : '<p class="muted">Noch keine aufgedeckten Blätter.</p>') +
-    '<p class="muted">Alle Werte stammen nur aus dem, was am Tisch sichtbar war: Aktionen und aufgedeckte Blätter.</p>');
-}
-PTUI.showOpp = showOpp;
+// Der Gegnerdialog (Langzeit, Kurzzeit, Veränderung, Kartenkenntnis) liegt in views.js: PTUI.showOpp.
 
 // ---------- Einstellungen anwenden ----------
 function applyTheme() {
@@ -681,7 +652,7 @@ function bind() {
   $('bDeep').addEventListener('click', deepAnalysis);
   $('bView').addEventListener('click', function () { setSetting('advanced', !S.settings.advanced); });
   $('bTheme').addEventListener('click', function () { var order = ['auto', 'light', 'dark'], t = order[(order.indexOf(S.settings.theme) + 1) % 3]; setSetting('theme', t); toast('Darstellung: ' + ({ auto: 'automatisch', light: 'hell', dark: 'dunkel' })[t]); });
-  $('seats').addEventListener('click', function (e) { var b = e.target.closest('[data-opp]'); if (b) showOpp(b.getAttribute('data-opp')); });
+  $('seats').addEventListener('click', function (e) { var b = e.target.closest('[data-opp]'); if (b && PTUI.showOpp) PTUI.showOpp(b.getAttribute('data-opp')); });
   $('modalX').addEventListener('click', closeModal);
   $('modal').addEventListener('click', function (e) { if (e.target === $('modal')) closeModal(); });
   document.addEventListener('click', function (e) {
@@ -770,6 +741,32 @@ function legacyBackupText(list) {
   var body = JSON.stringify(list);
   return '{"format":"PokerTrainer-DB","version":1,"exported":' + JSON.stringify(new Date().toISOString()) + ',"count":' + list.length + ',"checksum":"' + U.fnv1a(body) + '","opponents":' + body + '}\n';
 }
+/**
+ * Datenbank im Speicher noch im Format 2 (oder 1): vor der Umwandlung die unveränderten alten Datensätze als Datei
+ * Sicherung_PokerTrainer_JJJJ-MM-TT_Datenbank.json sichern (Download und Store „backup“), danach die umgewandelte Datenbank speichern.
+ */
+function migrateStoredDb(opps, oldFmt) {
+  if (!oldFmt || S.readonly) return Promise.resolve();
+  var files = [], by = { 1: [], 2: [] };
+  opps.forEach(function (o) { var v = PT.stats.recordVersion(o); if (by[v]) by[v].push(o); });
+  [2, 1].forEach(function (v) {
+    if (!by[v].length) return;
+    files.push({ name: 'Sicherung_PokerTrainer_' + today() + (v === 1 ? '_Format1' : '') + '_Datenbank.json', text: PT.stats.rawExport(by[v], v, new Date().toISOString()) });
+  });
+  S.migBackup = files;
+  return Promise.all(files.map(function (f, i) { return Store.put('backup', { k: 'format3-' + today() + '-' + i, name: f.name, text: f.text, ts: Date.now() }); }))
+    .then(function () { return S.dlReady; })
+    .then(function () {
+      files.forEach(function (f) { download(f.name, f.text); });
+      S.notes.migration = { html: '<span>Gegnerdatenbank auf Format 3 (Gegnergedächtnis) umgestellt: ' + oldFmt + ' Gegner. Langzeitwerte bleiben unverändert, das Kurzzeitgedächtnis beginnt leer. Die alte Datenbank wurde vorher als Datei gesichert.</span><button class="btn" type="button" data-act="migdl">Sicherung erneut herunterladen</button>' };
+      // ohne vorheriges Leeren: nicht lesbare Einträge bleiben unangetastet (wie bisher übersprungen)
+      return Store.put('opps', PT.stats.dbList(S.db)).catch(storageError);
+    }, function (e) {
+      // Sicherung nicht möglich: umgewandelte Daten nur im Arbeitsspeicher nutzen, gespeicherte alte Daten bleiben unverändert
+      S.readonly = true;
+      S.notes.migration = 'Die Sicherung der alten Datenbank vor der Umwandlung ist fehlgeschlagen (' + ((e && (e.name || e.message)) || e) + '). Es wurde nichts überschrieben; dieser Tab speichert nicht.';
+    });
+}
 function boot() {
   S.dlReady = new Promise(function (res) {
     try {
@@ -789,17 +786,18 @@ function boot() {
     return Promise.all([Store.get('meta', 'state'), Store.all('opps'), Store.get('learn', 'learning')]);
   }).then(function (r) {
     var meta = r[0], opps = r[1] || [], learn = r[2];
+    var oldFmt = PT.stats.needsMigration(opps);
     S.db = PT.stats.dbFromList(opps);
     if (S.db.skipped) S.notes.storage = S.db.skipped + ' beschädigte Gegner-Einträge im Speicher wurden übersprungen.';
     if (meta && meta.settings) Object.keys(DEFAULTS).forEach(function (k) { if (meta.settings[k] !== undefined && typeof meta.settings[k] === typeof DEFAULTS[k] || (k === 'seed')) S.settings[k] = meta.settings[k]; });
-    if (meta && meta.heroRec && !PT.stats.validRecord(meta.heroRec)) S.heroRec = PT.stats.cloneRecord(meta.heroRec);
+    if (meta && meta.heroRec) { var hr = PT.stats.loadRecord(meta.heroRec); if (hr) S.heroRec = hr; }
     if (learn && learn.v) {
       if (!PT.training.validLearning(learn.v)) S.learning = learn.v;
       else { var rep = PT.training.repairLearning(learn.v); if (rep) { S.learning = rep.learning; console.warn('Lerndaten repariert, entfernte Einträge: ' + rep.removed); } }
     }
     S.prof = PT.training.profile(S.learning);
     if (meta && PT.session.validTable(meta.table)) S.table = meta.table;
-    return Store.findLegacy().then(function (legacy) {
+    return migrateStoredDb(opps, oldFmt).then(function () { return Store.findLegacy(); }).then(function (legacy) {
       if (legacy && !(meta && meta.legacyDone)) {
         var list = Array.isArray(legacy.opps) ? legacy.opps : [];
         var text = legacyBackupText(list), name = 'Sicherung_PokerTrainer_' + today() + '_Datenbank.json';

@@ -252,18 +252,18 @@ views.gegner = function (el) {
     '<div class="toolbar"><div class="seg" role="group" aria-label="Liste"><button type="button" data-gtab="aktiv" aria-pressed="' + (gstate.tab === 'aktiv') + '">Am Tisch</button><button type="button" data-gtab="archiv" aria-pressed="' + (gstate.tab === 'archiv') + '">Archiv</button><button type="button" data-gtab="alle" aria-pressed="' + (gstate.tab === 'alle') + '">Alle</button></div>' +
     '<input type="search" id="gq" placeholder="Name filtern" aria-label="Name filtern"><select id="gt" aria-label="Spielertyp"><option value="">alle Typen</option>' + ['unbekannt', 'sehr loose', 'loose-passiv', 'Nit', 'LAG', 'TAG'].map(function (x) { return '<option>' + x + '</option>'; }).join('') + '</select>' +
     '<select id="gs" aria-label="Sortierung"><option value="last">zuletzt gesehen</option><option value="hands">meiste Hände</option><option value="name">Name</option></select></div>' +
-    '<div class="toolbar"><button class="btn" type="button" data-g="export">Datenbank exportieren</button><button class="btn" type="button" data-g="import">Datenbank importieren</button><span class="small">Import akzeptiert Dateien aus Entwurf 2 (Version 1) und PokerTrainer 2.0 (Version 2).</span></div>' +
+    '<div class="toolbar"><button class="btn" type="button" data-g="export">Datenbank exportieren</button><button class="btn" type="button" data-g="import">Datenbank importieren</button><span class="small">Import akzeptiert Dateien aus Entwurf 2 (Version 1), PokerTrainer 2.0 (Version 2) und mit Gegnergedächtnis (Version 3). Ältere Formate werden umgewandelt.</span></div>' +
     '<div class="scroll" id="glist"></div></div>';
   $('gq').value = gstate.q; $('gt').value = gstate.typ; $('gs').value = gstate.sort;
   function draw() {
     var rows = (gstate.tab === 'aktiv' ? act : gstate.tab === 'archiv' ? arc : list).filter(function (r) { return (!gstate.q || r.name.toLowerCase().indexOf(gstate.q.toLowerCase()) >= 0) && (!gstate.typ || PT.stats.playerType(r) === gstate.typ); });
     rows.sort(function (a, b) { return gstate.sort === 'hands' ? b.hands - a.hands : gstate.sort === 'name' ? (a.name < b.name ? -1 : 1) : b.lastSeen - a.lastSeen; });
     var V = function (x) { return x == null ? 'unbekannt' : x + ' %'; };
-    $('glist').innerHTML = rows.length ? '<table class="grid"><thead><tr><th>Name</th><th class="n">Hände</th><th class="n">VPIP</th><th class="n">PFR</th><th class="n">3-Bet</th><th class="n">AF</th><th class="n">C-Bet</th><th class="n">WTSD</th><th>Typ</th><th>Belastbarkeit</th><th>zuletzt</th></tr></thead><tbody>' +
+    $('glist').innerHTML = rows.length ? '<table class="grid"><thead><tr><th>Name</th><th class="n">Hände</th><th class="n">VPIP</th><th class="n">PFR</th><th class="n">3-Bet</th><th class="n">AF</th><th class="n">C-Bet</th><th class="n">WTSD</th><th>Typ</th><th>Belastbarkeit</th><th>Veränderung</th><th>zuletzt</th></tr></thead><tbody>' +
       rows.slice(0, 400).map(function (r) {
         var p = PT.stats.profile(r), af = p.af;
         return '<tr class="click" tabindex="0" data-opp="' + esc(r.id) + '"><td>' + esc(r.name) + '</td><td class="n">' + r.hands + '</td><td class="n">' + V(p.vpip) + '</td><td class="n">' + V(p.pfr) + '</td><td class="n">' + V(p.threeBet) + '</td><td class="n">' + (af == null ? 'unbekannt' : af === Infinity ? '∞' : num(af)) +
-          '</td><td class="n">' + V(p.cbetFlop) + '</td><td class="n">' + V(p.wtsd) + '</td><td>' + esc(p.typ) + '</td><td>' + esc(p.bel) + '</td><td>' + esc(H.dateTxt(r.lastSeen)) + '</td></tr>';
+          '</td><td class="n">' + V(p.cbetFlop) + '</td><td class="n">' + V(p.wtsd) + '</td><td>' + esc(p.typ) + '</td><td>' + esc(p.bel) + '</td><td>' + changeShort(p.change) + '</td><td>' + esc(H.dateTxt(r.lastSeen)) + '</td></tr>';
       }).join('') + '</tbody></table>' + (rows.length > 400 ? '<p class="muted">' + (rows.length - 400) + ' weitere Einträge, bitte filtern.</p>' : '') : '<p class="muted">Keine Einträge.</p>';
   }
   draw();
@@ -279,6 +279,75 @@ views.gegner = function (el) {
   };
   el.onkeydown = function (e) { var r = e.target.closest('tr[data-opp]'); if (r && e.key === 'Enter') r.click(); };
 };
+// ---------- Gegnerdialog: Langzeit, Kurzzeit, Veränderung, beobachtet/geschätzt/unbekannt ----------
+// Alle Werte stammen nur aus am Tisch Sichtbarem (Aktionen, aufgedeckte Karten). Importierte Daten gelten als nicht vertrauenswürdig: jede Ausgabe über esc().
+function pc(x) { return x == null || !isFinite(x) ? 'unbekannt' : esc(String(Math.round(100 * x))) + ' %'; }
+function ciTxt(ci) { return ci ? esc(Math.round(ci[0] * 100) + '–' + Math.round(ci[1] * 100)) + ' %' : '–'; }
+function changeShort(ch) {
+  if (!ch || !ch.detected) return '–';
+  return ch.keys.map(function (x) { return '<span class="pill">' + (x.dir > 0 ? '↑ ' : '↓ ') + esc(x.label) + '</span>'; }).join('');
+}
+function oppShownHtml(s) {
+  var names = ['Preflop', 'Flop', 'Turn', 'River'], acts = [];
+  s.actions.forEach(function (a, i) { if (a) acts.push('<b>' + names[i] + ':</b> ' + esc(a)); });
+  return '<li><div class="cards">' + H.cardsHtml(s.cards, 'sm') + '<span class="muted">&nbsp;' + esc(s.pos) + ' · Hand #' + esc(String(s.hand)) + ' · ' + esc(H.dateTxt(s.ts)) + ' · beobachtet</span></div>' +
+    (s.board ? '<div class="cards"><span class="muted">Board&nbsp;</span>' + H.cardsHtml(s.board, 'sm') + '</div>' : '') +
+    '<div>' + acts.join(' · ') + '</div><div class="muted">Ergebnis ' + esc(U.fmtSigned(s.net)) + '</div></li>';
+}
+function oppStatRows(r, pr) {
+  var ST = PT.stats, sm = PT.ranges.smooth(r.stats), tested = pr.change.tested, td = '<td class="n" style="white-space:nowrap">';
+  return ST.STATS.map(function (k) {
+    var nd = r.stats[k], ci = ST.wilson(nd), rc = pr.recent.stats[k], ch = pr.change.keys.filter(function (x) { return x.key === k; })[0];
+    var status;
+    if (!nd[1]) status = 'unbekannt';
+    else if (ch) status = '<b>' + (ch.dir > 0 ? '↑ höher' : '↓ niedriger') + '</b> seit Hand ' + esc(String(ch.since)) + ' (z ' + esc(num(ch.z, 1)) + ')';
+    else if (tested.indexOf(k) >= 0) status = pr.change.z[k] == null ? 'zu wenig Daten für Vergleich' : 'unauffällig (z ' + esc(num(pr.change.z[k], 1)) + ')';
+    else status = '–';
+    return '<tr><td><button type="button" class="term" data-help="' + esc(k) + '">' + esc(ST.STAT_LABEL[k]) + '</button></td>' +
+      td + (nd[1] ? esc(String(ST.pctOf(nd))) + ' %' : 'unbekannt') + '</td>' + td + esc(nd[0] + '/' + nd[1]) + '</td>' + td + ciTxt(ci) + '</td>' + td + pc(sm[k]) + '</td>' +
+      td + (rc.rate == null ? 'unbekannt' : pc(rc.rate)) + '</td>' + td + esc(num(rc.neff, 0)) + '</td>' + td + ciTxt(rc.ci) + '</td><td>' + status + '</td></tr>';
+  }).join('');
+}
+function showOpp(id) {
+  var r = S.db.opps[id]; if (!r) { H.toast('Noch keine Daten zu diesem Gegner.'); return; }
+  var ST = PT.stats, pr = ST.profile(r), seated = S.table && S.table.seats.some(function (s) { return s.id === id; });
+  var af = ST.af(r.agg), ch = pr.change, M = ST.MEMORY, c = pr.cards;
+  var posRows = ST.POSITIONS.map(function (p) { var x = r.pos[p]; return '<tr><td>' + esc(p) + '</td><td class="n">' + esc(String(x.h)) + '</td><td class="n">' + (x.vpip[1] ? esc(String(ST.pctOf(x.vpip))) + ' %' : 'unbekannt') + '</td><td class="n">' + (x.pfr[1] ? esc(String(ST.pctOf(x.pfr))) + ' %' : 'unbekannt') + '</td></tr>'; }).join('');
+  var chHtml;
+  if (ch.detected) {
+    chHtml = '<div class="notice" role="status"><b>Veränderte Spielweise erkannt</b><ul>' + ch.keys.map(function (x) {
+      return '<li>' + esc(x.label) + ': zuletzt ' + pc(x.recent) + ', vorher ' + pc(x.older) + ' (Langzeit ' + pc(x.long) + ') · seit Hand ' + esc(String(x.since)) + ' des Datensatzes, vor ' + esc(String(x.ago)) + ' Händen · z = ' + esc(num(x.z, 1)) + '</li>';
+    }).join('') + '</ul><span class="small">Für diese Werte nutzt die beste Schätzung jetzt das Kurzzeitgedächtnis statt der Langzeitwerte.</span></div>';
+  } else {
+    var done = ch.tested.filter(function (k) { return ch.z[k] != null; });
+    chHtml = '<p class="small">' + (done.length ? 'Keine statistisch auffällige Veränderung der Spielweise (geprüft: ' + esc(done.map(function (k) { return ST.STAT_LABEL[k]; }).join(', ')) + ').'
+      : 'Für einen Vergleich von Kurzzeit- und Langzeitwerten fehlen noch Beobachtungen.') + '</p>';
+  }
+  var cardsTxt = c.counted ? '<span>Showdowns mit aufgedeckten Karten (beobachtet) <b>' + esc(String(c.observed)) + '</b></span><span>gespielte Hände mit verdeckt gebliebenen Karten (unbekannt) <b>' + esc(String(c.unknown)) + '</b></span>' +
+      (c.share != null ? '<span>beobachteter Anteil <b>' + pc(c.share) + '</b></span>' : '') + (c.from ? '<span class="muted">gezählt ab Hand ' + esc(String(c.from)) + ' des Datensatzes</span>' : '')
+    : '<span class="muted">Kartenkenntnis wird ab Format 3 gezählt.</span>';
+  H.openModal(r.name,
+    '<div class="kv"><span>' + (seated ? 'am Tisch (aktiv)' : 'im Archiv') + '</span><span>Hände <b>' + esc(String(r.hands)) + '</b></span><span>Belastbarkeit <b>' + esc(pr.bel) + '</b></span>' +
+    '<span>Spielertyp <b>' + esc(pr.typ) + '</b></span><span>AF <b>' + (af == null ? 'unbekannt' : af === Infinity ? '∞' : esc(num(af))) + '</b></span><span>zuletzt gesehen ' + esc(H.dateTxt(r.lastSeen)) + '</span></div>' +
+    '<h3>Veränderung der Spielweise</h3>' + chHtml +
+    '<h3>Geschätzt: Werte aus Aktionen</h3>' +
+    '<div class="scroll"><table class="grid" style="font-size:13px"><thead><tr><th rowspan="2">Wert</th><th class="n" colspan="4">Langzeit (alle Hände)</th><th class="n" colspan="3">Kurzzeit (Halbwertszeit ' + esc(String(M.HALF_LIFE)) + ' Hände)</th><th rowspan="2">Veränderung</th></tr>' +
+    '<tr><th class="n">Rohwert</th><th class="n">Z/N</th><th class="n">95 %</th><th class="n">geglättet</th><th class="n">Rohwert</th><th class="n" title="effektive Zahl der Gelegenheiten">eff. n</th><th class="n">95 %</th></tr></thead><tbody>' + oppStatRows(r, pr) + '</tbody></table></div>' +
+    '<p class="small">Z/N: Zähler/Nenner (Treffer/Gelegenheiten). 95 %: Wilson-Intervall. Unbekannt: noch keine Gelegenheit beobachtet.</p>' +
+    '<p class="small">„Geglättet“ mischt die eigenen Beobachtungen mit dem Durchschnitt der Population (Beta-Prior); so nutzt der Coach die Werte. Das Kurzzeitgedächtnis gewichtet jede Beobachtung mit 0,5^(Alter/' + esc(String(M.HALF_LIFE)) +
+    ') (Alter in eigenen Händen des Gegners; im Archiv altert es nicht). Kurzzeitgewicht zurzeit ≈ ' + esc(num(pr.recent.hands, 0)) + ' Hände. Eine Veränderung gilt als erkannt, wenn der gewichtete Zwei-Anteile-Test Kurzzeit gegen ältere Beobachtungen |z| ≥ ' + esc(num(ch.params.zOn, 2)) + ' ergibt.</p>' +
+    '<h3>Beobachtet: Karten am Showdown</h3><div class="kv">' + cardsTxt + '</div>' +
+    (r.shown.length ? '<ul class="shown">' + r.shown.map(oppShownHtml).join('') + '</ul>' : '<p class="muted">Noch keine aufgedeckten Blätter.</p>') +
+    '<p class="small">Unbekannt: In Händen ohne Showdown bleiben die Karten verdeckt; der Coach schätzt sie nur als Range.</p>' +
+    '<h3>Nach Position</h3><div class="scroll"><table class="grid"><thead><tr><th>Position</th><th class="n">Hände</th><th class="n">VPIP</th><th class="n">PFR</th></tr></thead><tbody>' + posRows + '</tbody></table></div>' +
+    '<p class="muted">Alle Werte stammen nur aus dem, was am Tisch sichtbar war: Aktionen und aufgedeckte Blätter.</p>');
+}
+PTUI.showOpp = showOpp;
+// Sicherung vor der Umwandlung der Datenbank erneut herunterladen (Hinweis beim Start)
+document.addEventListener('click', function (e) {
+  var b = e.target && e.target.closest && e.target.closest('[data-act="migdl"]');
+  if (b && S.migBackup) S.migBackup.forEach(function (f) { H.download(f.name, f.text); });
+});
 function pickFile(cb) {
   if (S.hand && !S.hand.done) { H.toast('Import ist nur zwischen zwei Händen möglich.'); return; }
   var f = $('fileIn'); f.value = '';

@@ -1,0 +1,1186 @@
+{
+ "app": "2.0.1",
+ "date": "2026-11-26T20:40:33.428Z",
+ "node": "v22.23.5",
+ "params": {
+  "halfLife": 100,
+  "change": {
+   "zOn": 3.75,
+   "zOff": 2,
+   "minRecent": 15,
+   "minOld": 40,
+   "minExp": 5,
+   "cc": 0.5
+  },
+  "keys": [
+   "vpip",
+   "pfr",
+   "threeBet",
+   "cbetFlop",
+   "foldToCbet",
+   "afq",
+   "wtsd"
+  ]
+ },
+ "null": {
+  "TAG": {
+   "opponents": 1000,
+   "hands": 1000,
+   "onsetsPer1000": 0.039,
+   "pAnyAlarm": 0.038,
+   "pAnyCI": [
+    0.0278,
+    0.0517
+   ],
+   "flaggedShare": 0.00265,
+   "byKey": {
+    "threeBet": 14,
+    "afq": 3,
+    "pfr": 13,
+    "vpip": 9
+   }
+  },
+  "Nit": {
+   "opponents": 1000,
+   "hands": 1000,
+   "onsetsPer1000": 0.021,
+   "pAnyAlarm": 0.021,
+   "pAnyCI": [
+    0.0138,
+    0.0319
+   ],
+   "flaggedShare": 0.00145,
+   "byKey": {
+    "pfr": 9,
+    "vpip": 10,
+    "wtsd": 1,
+    "threeBet": 1
+   }
+  },
+  "sehr loose": {
+   "opponents": 1000,
+   "hands": 1000,
+   "onsetsPer1000": 0.04,
+   "pAnyAlarm": 0.039,
+   "pAnyCI": [
+    0.0287,
+    0.0529
+   ],
+   "flaggedShare": 0.00306,
+   "byKey": {
+    "pfr": 11,
+    "vpip": 14,
+    "threeBet": 12,
+    "afq": 3
+   }
+  },
+  "zVpipTAG": {
+   "n": 2099,
+   "mean": -0.046,
+   "sd": 0.979,
+   "shareAbsOver2": 0.0505
+  },
+  "ms": 6903
+ },
+ "switch": {
+  "pre": 600,
+  "post": 400,
+  "reps": 32,
+  "horizon": 300,
+  "scenarios": [
+   {
+    "name": "TAG → LAG",
+    "runs": 32,
+    "detected": 17,
+    "rate": 0.531,
+    "rateCI": [
+     0.3645,
+     0.6913
+    ],
+    "delayMedian": 143,
+    "delayQ1": 113,
+    "delayQ3": 255,
+    "firstKeys": {
+     "pfr": 9,
+     "vpip": 8
+    },
+    "estimateError": {
+     "vpip@100": {
+      "truth": 0.306,
+      "maeMemory": 0.0725,
+      "maeLong": 0.0741
+     },
+     "vpip@200": {
+      "truth": 0.306,
+      "maeMemory": 0.0528,
+      "maeLong": 0.0642
+     },
+     "vpip@300": {
+      "truth": 0.306,
+      "maeMemory": 0.048,
+      "maeLong": 0.0565
+     },
+     "pfr@100": {
+      "truth": 0.253,
+      "maeMemory": 0.0635,
+      "maeLong": 0.0655
+     },
+     "pfr@200": {
+      "truth": 0.253,
+      "maeMemory": 0.0468,
+      "maeLong": 0.0564
+     },
+     "pfr@300": {
+      "truth": 0.253,
+      "maeMemory": 0.0419,
+      "maeLong": 0.0501
+     }
+    }
+   },
+   {
+    "name": "LAG → TAG",
+    "runs": 32,
+    "detected": 11,
+    "rate": 0.344,
+    "rateCI": [
+     0.2041,
+     0.5169
+    ],
+    "delayMedian": 211,
+    "delayQ1": 148,
+    "delayQ3": 260.5,
+    "firstKeys": {
+     "cbetFlop": 1,
+     "vpip": 6,
+     "pfr": 4
+    },
+    "estimateError": {
+     "vpip@100": {
+      "truth": 0.211,
+      "maeMemory": 0.0754,
+      "maeLong": 0.0754
+     },
+     "vpip@200": {
+      "truth": 0.211,
+      "maeMemory": 0.0593,
+      "maeLong": 0.0661
+     },
+     "vpip@300": {
+      "truth": 0.211,
+      "maeMemory": 0.045,
+      "maeLong": 0.0588
+     },
+     "pfr@100": {
+      "truth": 0.169,
+      "maeMemory": 0.068,
+      "maeLong": 0.068
+     },
+     "pfr@200": {
+      "truth": 0.169,
+      "maeMemory": 0.0521,
+      "maeLong": 0.0591
+     },
+     "pfr@300": {
+      "truth": 0.169,
+      "maeMemory": 0.0478,
+      "maeLong": 0.0523
+     }
+    }
+   },
+   {
+    "name": "Nit → sehr loose",
+    "runs": 32,
+    "detected": 32,
+    "rate": 1,
+    "rateCI": [
+     0.8928,
+     1
+    ],
+    "delayMedian": 39,
+    "delayQ1": 33,
+    "delayQ3": 44.5,
+    "firstKeys": {
+     "vpip": 28,
+     "threeBet": 2,
+     "pfr": 2
+    },
+    "estimateError": {
+     "vpip@100": {
+      "truth": 0.441,
+      "maeMemory": 0.1657,
+      "maeLong": 0.2764
+     },
+     "vpip@200": {
+      "truth": 0.441,
+      "maeMemory": 0.0926,
+      "maeLong": 0.2421
+     },
+     "vpip@300": {
+      "truth": 0.441,
+      "maeMemory": 0.0585,
+      "maeLong": 0.2157
+     },
+     "pfr@100": {
+      "truth": 0.249,
+      "maeMemory": 0.0864,
+      "maeLong": 0.1352
+     },
+     "pfr@200": {
+      "truth": 0.249,
+      "maeMemory": 0.045,
+      "maeLong": 0.1191
+     },
+     "pfr@300": {
+      "truth": 0.249,
+      "maeMemory": 0.0317,
+      "maeLong": 0.1066
+     }
+    }
+   },
+   {
+    "name": "TAG → Nit",
+    "runs": 32,
+    "detected": 14,
+    "rate": 0.438,
+    "rateCI": [
+     0.2817,
+     0.6067
+    ],
+    "delayMedian": 202,
+    "delayQ1": 168,
+    "delayQ3": 243.5,
+    "firstKeys": {
+     "vpip": 10,
+     "pfr": 5
+    },
+    "estimateError": {
+     "vpip@100": {
+      "truth": 0.115,
+      "maeMemory": 0.0847,
+      "maeLong": 0.0847
+     },
+     "vpip@200": {
+      "truth": 0.115,
+      "maeMemory": 0.0671,
+      "maeLong": 0.074
+     },
+     "vpip@300": {
+      "truth": 0.115,
+      "maeMemory": 0.0517,
+      "maeLong": 0.0661
+     },
+     "pfr@100": {
+      "truth": 0.084,
+      "maeMemory": 0.0755,
+      "maeLong": 0.0755
+     },
+     "pfr@200": {
+      "truth": 0.084,
+      "maeMemory": 0.0576,
+      "maeLong": 0.0667
+     },
+     "pfr@300": {
+      "truth": 0.084,
+      "maeMemory": 0.0496,
+      "maeLong": 0.0598
+     }
+    }
+   },
+   {
+    "name": "TAG → loose-passiv",
+    "runs": 32,
+    "detected": 28,
+    "rate": 0.875,
+    "rateCI": [
+     0.7193,
+     0.9503
+    ],
+    "delayMedian": 108,
+    "delayQ1": 74,
+    "delayQ3": 149.5,
+    "firstKeys": {
+     "afq": 7,
+     "vpip": 18,
+     "pfr": 3
+    },
+    "estimateError": {
+     "vpip@100": {
+      "truth": 0.334,
+      "maeMemory": 0.0816,
+      "maeLong": 0.1016
+     },
+     "vpip@200": {
+      "truth": 0.334,
+      "maeMemory": 0.0506,
+      "maeLong": 0.0884
+     },
+     "vpip@300": {
+      "truth": 0.334,
+      "maeMemory": 0.0432,
+      "maeLong": 0.0776
+     },
+     "pfr@100": {
+      "truth": 0.087,
+      "maeMemory": 0.0709,
+      "maeLong": 0.0709
+     },
+     "pfr@200": {
+      "truth": 0.087,
+      "maeMemory": 0.0544,
+      "maeLong": 0.0615
+     },
+     "pfr@300": {
+      "truth": 0.087,
+      "maeMemory": 0.0464,
+      "maeLong": 0.0554
+     }
+    }
+   },
+   {
+    "name": "loose-passiv → TAG",
+    "runs": 32,
+    "detected": 31,
+    "rate": 0.969,
+    "rateCI": [
+     0.8426,
+     0.9945
+    ],
+    "delayMedian": 151,
+    "delayQ1": 98,
+    "delayQ3": 175.5,
+    "firstKeys": {
+     "vpip": 12,
+     "afq": 9,
+     "pfr": 11
+    },
+    "estimateError": {
+     "vpip@100": {
+      "truth": 0.211,
+      "maeMemory": 0.1076,
+      "maeLong": 0.1102
+     },
+     "vpip@200": {
+      "truth": 0.211,
+      "maeMemory": 0.0695,
+      "maeLong": 0.0961
+     },
+     "vpip@300": {
+      "truth": 0.211,
+      "maeMemory": 0.0466,
+      "maeLong": 0.0875
+     },
+     "pfr@100": {
+      "truth": 0.169,
+      "maeMemory": 0.0573,
+      "maeLong": 0.0639
+     },
+     "pfr@200": {
+      "truth": 0.169,
+      "maeMemory": 0.0356,
+      "maeLong": 0.056
+     },
+     "pfr@300": {
+      "truth": 0.169,
+      "maeMemory": 0.0327,
+      "maeLong": 0.0485
+     }
+    }
+   },
+   {
+    "name": "ausgeglichen → LAG",
+    "runs": 32,
+    "detected": 10,
+    "rate": 0.313,
+    "rateCI": [
+     0.1795,
+     0.4857
+    ],
+    "delayMedian": 159,
+    "delayQ1": 113.25,
+    "delayQ3": 183.5,
+    "firstKeys": {
+     "pfr": 4,
+     "vpip": 7
+    },
+    "estimateError": {
+     "vpip@100": {
+      "truth": 0.306,
+      "maeMemory": 0.0603,
+      "maeLong": 0.0622
+     },
+     "vpip@200": {
+      "truth": 0.306,
+      "maeMemory": 0.0472,
+      "maeLong": 0.0534
+     },
+     "vpip@300": {
+      "truth": 0.306,
+      "maeMemory": 0.042,
+      "maeLong": 0.0473
+     },
+     "pfr@100": {
+      "truth": 0.253,
+      "maeMemory": 0.0575,
+      "maeLong": 0.0571
+     },
+     "pfr@200": {
+      "truth": 0.253,
+      "maeMemory": 0.0443,
+      "maeLong": 0.0486
+     },
+     "pfr@300": {
+      "truth": 0.253,
+      "maeMemory": 0.0398,
+      "maeLong": 0.0429
+     }
+    }
+   },
+   {
+    "name": "Kontrolle TAG → TAG",
+    "runs": 32,
+    "detected": 0,
+    "rate": 0,
+    "rateCI": [
+     0,
+     0.1072
+    ],
+    "delayMedian": null,
+    "delayQ1": null,
+    "delayQ3": null,
+    "firstKeys": {},
+    "estimateError": {
+     "vpip@100": {
+      "truth": 0.211,
+      "maeMemory": 0.0172,
+      "maeLong": 0.0172
+     },
+     "vpip@200": {
+      "truth": 0.211,
+      "maeMemory": 0.0178,
+      "maeLong": 0.0178
+     },
+     "vpip@300": {
+      "truth": 0.211,
+      "maeMemory": 0.0169,
+      "maeLong": 0.0169
+     },
+     "pfr@100": {
+      "truth": 0.169,
+      "maeMemory": 0.0175,
+      "maeLong": 0.0175
+     },
+     "pfr@200": {
+      "truth": 0.169,
+      "maeMemory": 0.0167,
+      "maeLong": 0.0167
+     },
+     "pfr@300": {
+      "truth": 0.169,
+      "maeMemory": 0.0172,
+      "maeLong": 0.0172
+     }
+    }
+   },
+   {
+    "name": "Kontrolle TAG → ausgeglichen",
+    "runs": 32,
+    "detected": 0,
+    "rate": 0,
+    "rateCI": [
+     0,
+     0.1072
+    ],
+    "delayMedian": null,
+    "delayQ1": null,
+    "delayQ3": null,
+    "firstKeys": {},
+    "estimateError": {
+     "vpip@100": {
+      "truth": 0.226,
+      "maeMemory": 0.0231,
+      "maeLong": 0.0231
+     },
+     "vpip@200": {
+      "truth": 0.226,
+      "maeMemory": 0.0231,
+      "maeLong": 0.0231
+     },
+     "vpip@300": {
+      "truth": 0.226,
+      "maeMemory": 0.0212,
+      "maeLong": 0.0212
+     },
+     "pfr@100": {
+      "truth": 0.18,
+      "maeMemory": 0.0221,
+      "maeLong": 0.0221
+     },
+     "pfr@200": {
+      "truth": 0.18,
+      "maeMemory": 0.0224,
+      "maeLong": 0.0224
+     },
+     "pfr@300": {
+      "truth": 0.18,
+      "maeMemory": 0.0218,
+      "maeLong": 0.0218
+     }
+    }
+   }
+  ],
+  "falseAlarmsSwitcherPre": {
+   "onsets": 1,
+   "hands": 172800,
+   "per1000": 0.006
+  },
+  "falseAlarmsStationary": {
+   "onsets": 46,
+   "hands": 1152000,
+   "per1000": 0.04,
+   "ciPer1000": [
+    0.03,
+    0.053
+   ]
+  },
+  "ms": 85358
+ },
+ "adapt": {
+  "handsPerSeed": 20000,
+  "seeds": [
+   8801,
+   8802
+  ],
+  "measuredAfterHand": 1500,
+  "heroStats": {
+   "base": [
+    {
+     "hands": 20000,
+     "vpip": 22,
+     "pfr": 18,
+     "foldTo3Bet": 65,
+     "foldToSteal": 74,
+     "foldToCbet": 49,
+     "wtsd": 36,
+     "afq": 56
+    },
+    {
+     "hands": 20000,
+     "vpip": 22,
+     "pfr": 18,
+     "foldTo3Bet": 64,
+     "foldToSteal": 74,
+     "foldToCbet": 59,
+     "wtsd": 36,
+     "afq": 58
+    }
+   ],
+   "f3b45": [
+    {
+     "hands": 20000,
+     "vpip": 22,
+     "pfr": 18,
+     "foldTo3Bet": 46,
+     "foldToSteal": 75,
+     "foldToCbet": 47,
+     "wtsd": 35,
+     "afq": 57
+    },
+    {
+     "hands": 20000,
+     "vpip": 22,
+     "pfr": 18,
+     "foldTo3Bet": 46,
+     "foldToSteal": 74,
+     "foldToCbet": 57,
+     "wtsd": 34,
+     "afq": 58
+    }
+   ],
+   "f3b90": [
+    {
+     "hands": 20000,
+     "vpip": 22,
+     "pfr": 18,
+     "foldTo3Bet": 89,
+     "foldToSteal": 75,
+     "foldToCbet": 49,
+     "wtsd": 37,
+     "afq": 58
+    },
+    {
+     "hands": 20000,
+     "vpip": 22,
+     "pfr": 18,
+     "foldTo3Bet": 91,
+     "foldToSteal": 74,
+     "foldToCbet": 58,
+     "wtsd": 37,
+     "afq": 57
+    }
+   ],
+   "station": [
+    {
+     "hands": 20000,
+     "vpip": 22,
+     "pfr": 18,
+     "foldTo3Bet": 65,
+     "foldToSteal": 75,
+     "foldToCbet": 0,
+     "wtsd": 100,
+     "afq": 0
+    },
+    {
+     "hands": 20000,
+     "vpip": 22,
+     "pfr": 18,
+     "foldTo3Bet": 64,
+     "foldToSteal": 75,
+     "foldToCbet": 0,
+     "wtsd": 100,
+     "afq": 0
+    }
+   ],
+   "steal45": [
+    {
+     "hands": 20000,
+     "vpip": 25,
+     "pfr": 17,
+     "foldTo3Bet": 65,
+     "foldToSteal": 46,
+     "foldToCbet": 58,
+     "wtsd": 33,
+     "afq": 49
+    },
+    {
+     "hands": 20000,
+     "vpip": 25,
+     "pfr": 17,
+     "foldTo3Bet": 65,
+     "foldToSteal": 45,
+     "foldToCbet": 64,
+     "wtsd": 32,
+     "afq": 49
+    }
+   ],
+   "steal90": [
+    {
+     "hands": 20000,
+     "vpip": 20,
+     "pfr": 17,
+     "foldTo3Bet": 64,
+     "foldToSteal": 91,
+     "foldToCbet": 49,
+     "wtsd": 37,
+     "afq": 59
+    },
+    {
+     "hands": 20000,
+     "vpip": 20,
+     "pfr": 16,
+     "foldTo3Bet": 64,
+     "foldToSteal": 90,
+     "foldToCbet": 57,
+     "wtsd": 37,
+     "afq": 59
+    }
+   ]
+  },
+  "effects": {
+   "Held foldet 90 % gegen 3-Bets: 3-Bet der Bots gegen Opens des Helden (vs. 45 %)": {
+    "p1": 0.1239,
+    "n1": 14757,
+    "p0": 0.0654,
+    "n0": 15859,
+    "diff": 0.0586,
+    "ci": [
+     0.052,
+     0.0651
+    ],
+    "rel": 0.895
+   },
+   "Held foldet 90 % gegen 3-Bets: Call der Bots gegen Opens des Helden (vs. 45 %)": {
+    "p1": 0.1403,
+    "n1": 14757,
+    "p0": 0.1697,
+    "n0": 15859,
+    "diff": -0.0294,
+    "ci": [
+     -0.0375,
+     -0.0213
+    ],
+    "rel": -0.173
+   },
+   "Held foldet 90 % gegen Steals: Steal-Versuche der Bots (vs. 45 %)": {
+    "p1": 0.4236,
+    "n1": 12478,
+    "p0": 0.3254,
+    "n0": 13584,
+    "diff": 0.0982,
+    "ci": [
+     0.0865,
+     0.11
+    ],
+    "rel": 0.302
+   },
+   "Calling Station: Bluff-Bets der Bots mit Luft, Heads-up gegen den Helden (vs. Grundstrategie)": {
+    "p1": 0.0611,
+    "n1": 4370,
+    "p0": 0.173,
+    "n0": 2260,
+    "diff": -0.1119,
+    "ci": [
+     -0.129,
+     -0.0948
+    ],
+    "rel": -0.647
+   },
+   "Calling Station: davon Flop": {
+    "p1": 0.0875,
+    "n1": 1154,
+    "p0": 0.2442,
+    "n0": 991,
+    "diff": -0.1567,
+    "ci": [
+     -0.188,
+     -0.1254
+    ],
+    "rel": -0.642
+   },
+   "Calling Station: davon Turn/River": {
+    "p1": 0.0516,
+    "n1": 3216,
+    "p0": 0.1174,
+    "n0": 1269,
+    "diff": -0.0658,
+    "ci": [
+     -0.0851,
+     -0.0465
+    ],
+    "rel": -0.56
+   },
+   "Calling Station: River-Bet mit mittlerer Hand (dünner Value)": {
+    "p1": 0.4061,
+    "n1": 847,
+    "p0": 0.2368,
+    "n0": 435,
+    "diff": 0.1694,
+    "ci": [
+     0.1175,
+     0.2212
+    ],
+    "rel": 0.715
+   },
+   "Calling Station: River-Bet mit starker Hand": {
+    "p1": 0.784,
+    "n1": 514,
+    "p0": 0.6126,
+    "n0": 222,
+    "diff": 0.1714,
+    "ci": [
+     0.0981,
+     0.2447
+    ],
+    "rel": 0.28
+   },
+   "Calling Station: C-Bet Flop Heads-up": {
+    "p1": 0.4464,
+    "n1": 1492,
+    "p0": 0.6202,
+    "n0": 1477,
+    "diff": -0.1738,
+    "ci": [
+     -0.2091,
+     -0.1385
+    ],
+    "rel": -0.28
+   }
+  },
+  "raw": {
+   "base": {
+    "tb": [
+     1308,
+     15483
+    ],
+    "tbCall": [
+     2504,
+     15483
+    ],
+    "steal": [
+     5015,
+     12862
+    ],
+    "cbet": [
+     916,
+     1477
+    ],
+    "bluff": [
+     391,
+     2260
+    ],
+    "bluffFlop": [
+     242,
+     991
+    ],
+    "bluffTR": [
+     149,
+     1269
+    ],
+    "thinRiver": [
+     103,
+     435
+    ],
+    "valueRiver": [
+     136,
+     222
+    ],
+    "strongBet": [
+     800,
+     1228
+    ],
+    "heroStats": [
+     {
+      "hands": 20000,
+      "vpip": 22,
+      "pfr": 18,
+      "foldTo3Bet": 65,
+      "foldToSteal": 74,
+      "foldToCbet": 49,
+      "wtsd": 36,
+      "afq": 56
+     },
+     {
+      "hands": 20000,
+      "vpip": 22,
+      "pfr": 18,
+      "foldTo3Bet": 64,
+      "foldToSteal": 74,
+      "foldToCbet": 59,
+      "wtsd": 36,
+      "afq": 58
+     }
+    ]
+   },
+   "f3b45": {
+    "tb": [
+     1037,
+     15859
+    ],
+    "tbCall": [
+     2691,
+     15859
+    ],
+    "steal": [
+     5012,
+     12862
+    ],
+    "cbet": [
+     1036,
+     1671
+    ],
+    "bluff": [
+     387,
+     2325
+    ],
+    "bluffFlop": [
+     228,
+     1022
+    ],
+    "bluffTR": [
+     159,
+     1303
+    ],
+    "thinRiver": [
+     119,
+     460
+    ],
+    "valueRiver": [
+     156,
+     232
+    ],
+    "strongBet": [
+     922,
+     1377
+    ],
+    "heroStats": [
+     {
+      "hands": 20000,
+      "vpip": 22,
+      "pfr": 18,
+      "foldTo3Bet": 46,
+      "foldToSteal": 75,
+      "foldToCbet": 47,
+      "wtsd": 35,
+      "afq": 57
+     },
+     {
+      "hands": 20000,
+      "vpip": 22,
+      "pfr": 18,
+      "foldTo3Bet": 46,
+      "foldToSteal": 74,
+      "foldToCbet": 57,
+      "wtsd": 34,
+      "afq": 58
+     }
+    ]
+   },
+   "f3b90": {
+    "tb": [
+     1829,
+     14757
+    ],
+    "tbCall": [
+     2070,
+     14757
+    ],
+    "steal": [
+     5005,
+     12866
+    ],
+    "cbet": [
+     800,
+     1321
+    ],
+    "bluff": [
+     352,
+     2029
+    ],
+    "bluffFlop": [
+     217,
+     874
+    ],
+    "bluffTR": [
+     135,
+     1155
+    ],
+    "thinRiver": [
+     89,
+     367
+    ],
+    "valueRiver": [
+     130,
+     192
+    ],
+    "strongBet": [
+     681,
+     1023
+    ],
+    "heroStats": [
+     {
+      "hands": 20000,
+      "vpip": 22,
+      "pfr": 18,
+      "foldTo3Bet": 89,
+      "foldToSteal": 75,
+      "foldToCbet": 49,
+      "wtsd": 37,
+      "afq": 58
+     },
+     {
+      "hands": 20000,
+      "vpip": 22,
+      "pfr": 18,
+      "foldTo3Bet": 91,
+      "foldToSteal": 74,
+      "foldToCbet": 58,
+      "wtsd": 37,
+      "afq": 57
+     }
+    ]
+   },
+   "station": {
+    "tb": [
+     1277,
+     15256
+    ],
+    "tbCall": [
+     2438,
+     15256
+    ],
+    "steal": [
+     5016,
+     12856
+    ],
+    "cbet": [
+     666,
+     1492
+    ],
+    "bluff": [
+     267,
+     4370
+    ],
+    "bluffFlop": [
+     101,
+     1154
+    ],
+    "bluffTR": [
+     166,
+     3216
+    ],
+    "thinRiver": [
+     344,
+     847
+    ],
+    "valueRiver": [
+     403,
+     514
+    ],
+    "strongBet": [
+     1501,
+     1908
+    ],
+    "heroStats": [
+     {
+      "hands": 20000,
+      "vpip": 22,
+      "pfr": 18,
+      "foldTo3Bet": 65,
+      "foldToSteal": 75,
+      "foldToCbet": 0,
+      "wtsd": 100,
+      "afq": 0
+     },
+     {
+      "hands": 20000,
+      "vpip": 22,
+      "pfr": 18,
+      "foldTo3Bet": 64,
+      "foldToSteal": 75,
+      "foldToCbet": 0,
+      "wtsd": 100,
+      "afq": 0
+     }
+    ]
+   },
+   "steal45": {
+    "tb": [
+     1356,
+     15536
+    ],
+    "tbCall": [
+     2556,
+     15536
+    ],
+    "steal": [
+     4420,
+     13584
+    ],
+    "cbet": [
+     1678,
+     2522
+    ],
+    "bluff": [
+     717,
+     2802
+    ],
+    "bluffFlop": [
+     457,
+     1285
+    ],
+    "bluffTR": [
+     260,
+     1517
+    ],
+    "thinRiver": [
+     146,
+     491
+    ],
+    "valueRiver": [
+     158,
+     242
+    ],
+    "strongBet": [
+     1023,
+     1492
+    ],
+    "heroStats": [
+     {
+      "hands": 20000,
+      "vpip": 25,
+      "pfr": 17,
+      "foldTo3Bet": 65,
+      "foldToSteal": 46,
+      "foldToCbet": 58,
+      "wtsd": 33,
+      "afq": 49
+     },
+     {
+      "hands": 20000,
+      "vpip": 25,
+      "pfr": 17,
+      "foldTo3Bet": 65,
+      "foldToSteal": 45,
+      "foldToCbet": 64,
+      "wtsd": 32,
+      "afq": 49
+     }
+    ]
+   },
+   "steal90": {
+    "tb": [
+     1276,
+     15463
+    ],
+    "tbCall": [
+     2472,
+     15463
+    ],
+    "steal": [
+     5286,
+     12478
+    ],
+    "cbet": [
+     739,
+     1197
+    ],
+    "bluff": [
+     353,
+     2068
+    ],
+    "bluffFlop": [
+     209,
+     905
+    ],
+    "bluffTR": [
+     144,
+     1163
+    ],
+    "thinRiver": [
+     97,
+     401
+    ],
+    "valueRiver": [
+     117,
+     188
+    ],
+    "strongBet": [
+     678,
+     1071
+    ],
+    "heroStats": [
+     {
+      "hands": 20000,
+      "vpip": 20,
+      "pfr": 17,
+      "foldTo3Bet": 64,
+      "foldToSteal": 91,
+      "foldToCbet": 49,
+      "wtsd": 37,
+      "afq": 59
+     },
+     {
+      "hands": 20000,
+      "vpip": 20,
+      "pfr": 16,
+      "foldTo3Bet": 64,
+      "foldToSteal": 90,
+      "foldToCbet": 57,
+      "wtsd": 37,
+      "afq": 59
+     }
+    ]
+   }
+  },
+  "ms": 123586
+ }
+}
