@@ -25,11 +25,40 @@ function classWeights(w) {
 }
 /** Anteil der Range an allen 1326 Kombinationen (ohne Kartenentfernung) */
 function widthOf(w) { return total(w) / NC; }
+/**
+ * Kennung einer Range für Caches (Equity, Equity je Kombination). Alle Nutzer hängen nur von den relativen Gewichten ab
+ * (Equity: gewichtete Ziehung bzw. Σ wₖ·eₖ / Σ wₖ; Equity je Kombination: nur vom Träger wₖ > 0). Deshalb wird normalisiert:
+ * rₖ = wₖ / Σ w, quantisiert auf 2⁻³⁶ (gleiche Verteilung in anderer Skalierung → gleiche Kennung, außer in seltenen Fällen
+ * von Rundungsgrenzen, die nur einen Cache-Fehlgriff kosten). Der Träger (jedes k mit wₖ > 0) geht immer ein, auch wenn rₖ
+ * auf 0 gerundet wird. Zwei unabhängige 32-Bit-Hashes (FNV-1a und Murmur3-Mischung) über (k, rₖ) ergeben 64 Bit.
+ * Verteilungen, deren normalisierte Gewichte sich irgendwo um mehr als 2⁻³⁶ ≈ 1,5·10⁻¹¹ unterscheiden, erhalten
+ * verschiedene Kennungen (bis auf 64-Bit-Kollisionen). Nicht-positive und NaN-Gewichte zählen wie 0 (wie bei allen Nutzern).
+ * Präfix „h2“ = Version des Kennungsverfahrens.
+ */
+var HASH_Q = 68719476736; // 2^36
 function hashRange(w) {
-  var h = 2166136261 >>> 0;
-  for (var k = 0; k < NC; k++) { var v = Math.round(w[k] * 1000); if (v) { h ^= (k * 1009 + v); h = Math.imul(h, 16777619) >>> 0; } }
-  return h.toString(36);
+  var tot = 0, k, x, inf = false;
+  for (k = 0; k < NC; k++) { x = w[k]; if (x > 0) { if (x === Infinity) inf = true; else tot += x; } }
+  if (inf || !isFinite(tot)) return 'h2inf';
+  if (!(tot > 0)) return 'h2leer';
+  HS[0] = 0x811c9dc5 | 0; HS[1] = 0x9747b28c | 0;
+  var n = 0;
+  for (k = 0; k < NC; k++) {
+    x = w[k]; if (!(x > 0)) continue;
+    var q = Math.round(x / tot * HASH_Q);
+    hashWord(k); hashWord((q % 4294967296) | 0); hashWord(Math.floor(q / 4294967296) | 0);
+    n++;
+  }
+  var a = fmix32(HS[0] ^ n), b = fmix32(HS[1] ^ n);
+  return 'h2' + ('0000000' + (a >>> 0).toString(16)).slice(-8) + ('0000000' + (b >>> 0).toString(16)).slice(-8);
 }
+var HS = new Int32Array(2);
+function hashWord(wd) {
+  HS[0] = Math.imul(HS[0] ^ wd, 0x01000193);
+  var m = Math.imul(wd, 0xcc9e2d51); m = (m << 15) | (m >>> 17); m = Math.imul(m, 0x1b873593);
+  var h = HS[1] ^ m; h = (h << 13) | (h >>> 19); HS[1] = (Math.imul(h, 5) + 0xe6546b64) | 0;
+}
+function fmix32(h) { h ^= h >>> 16; h = Math.imul(h, 0x85ebca6b); h ^= h >>> 13; h = Math.imul(h, 0xc2b2ae35); h ^= h >>> 16; return h; }
 
 // ---------- weiche Top-x-Bänder ----------
 /** Gewicht einer Klasse für das Band [lo, hi] (Anteil der stärksten Kombinationen) mit weichen Rändern */

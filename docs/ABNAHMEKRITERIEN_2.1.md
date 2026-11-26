@@ -1,0 +1,17 @@
+# Abnahmekriterien PokerTrainer 2.1.0
+
+Festgelegt am 26.11.2026 **vor** der Umsetzung. Eine Note wird nur vergeben, wenn die Kriterien des Bereichs durch tatsächlich ausgeführte Tests belegt sind. Zusätzliche Funktionen, größere Testmengen oder längere Dokumentation allein heben keine Note.
+
+| Bereich | Gewicht | Ziel | Kriterien für die Zielnote (alle müssen erfüllt sein) |
+|---|---:|---:|---|
+| Regelkorrektheit | 15 % | 10 | 1 Mio. simulierte Hände mit Invarianten nach jeder Aktion ohne Fehler; unabhängige Referenz-Zustandsmaschine (Prüfer) ohne Abweichung; alle bisherigen Regressionstests grün |
+| Mathematische Zuverlässigkeit | 15 % | 9,8 | Befunde A2–A5 geprüft, bestätigte behoben mit Regressionstest; Monte-Carlo: keine signifikante Verzerrung (|z| < 3 je Referenzfall) und 95-%-Intervalle mit Abdeckung innerhalb der vorab festgelegten Toleranz je Stufe; Handbewertung einzeln gegen eine unabhängige Referenz geprüft (alle 5-Karten-Hände, ≥ 10 Mio. 7-Karten-Hände, Tie-Breaker, Invarianzen) ohne Abweichung; Bericht trennt Häufigkeits- und Einzelprüfung |
+| Coach und Strategie | 20 % | 9,5 | Befunde A1 und A6 behoben mit Test; Größenwahl begründet und gegen die Population kalibriert, Übertragbarkeit gegen dem Coach unbekannte Strategien geprüft; Vergleich 2.1 gegen 2.0.1 auf identischen Bedingungen mit Block-Bootstrap: Konfidenzintervall der Differenz über 0; keine Verschlechterung (Intervall nicht unter 0) gegen unbekannte Strategien, Stackgrößen und Zusammensetzungen; 0 ungültige Empfehlungen; feste Regressions-Spots grün |
+| Gegner-KI | 10 % | 9,5 | Kalibrierung aller sechs Stile im Zielbereich; Anpassung an synthetische Helden-Strategien messbar in die richtige Richtung (Intervall schließt 0 aus); Gegnergedächtnis mit Kurz-/Langzeitwerten, Erkennung von Stilwechseln mit gemessener Fehlalarm- und Erkennungsrate; Rückkehrer korrekt fortgeschrieben; keine Nutzung interner Stile |
+| Lernsystem | 10 % | 9,5 | Bewertung unabhängig vom Handergebnis (Test); keine „eindeutig optimal“-Aussage bei gleichwertigen Alternativen; Bewertung frei gewählter Größen per Nachrechnung; Fehlerdatenbank und Training mit Regressionstests; Benchmark-Export je Entscheidung mit Trennung von Entscheidungs- und Showdown-Informationen |
+| Oberfläche und Barrierefreiheit | 10 % | 9,5 | axe-core ohne Verstöße der Stufen A/AA in allen Ansichten (hell/dunkel); Tastaturbedienung, Fokus, Dialoge, reduzierte Bewegung geprüft; kein dauerhaft hängender Ladezustand in allen Startfällen (Test je Fall); echter Screenreader-Test oder ehrlich dokumentierte Nichtdurchführbarkeit mit Ersatzprüfung |
+| Performance | 5 % | 9,8 | automatischer Tipp ≤ 2 s auch bei 4-facher CPU-Drosselung im Browser; LCP < 1 s lokal; keine Berechnung ohne Abbruchmöglichkeit (Deadline überall) |
+| Sicherheit und Datenschutz | 10 % | 9,8 | alle Import-Manipulationen abgelehnt ohne Datenänderung; keine Skriptausführung über Importdaten; Größenlimit; Migration mit Sicherung; Sicherung vor Import; keine externen Verbindungen (Netzwerkprotokoll); mehrere Tabs sicher |
+| Dokumentation, Tests, Deployment | 5 % | 9,8 | CI führt Pflicht-Regressionstests und kritische Browsertests vor jeder Veröffentlichung aus; Build reproduzierbar; Versionsgleichheit Website/PWA/Offline-Datei/Doku geprüft; Live-Smoke-Test nach Deployment; Testberichte automatisch aus Ergebnissen erzeugt |
+
+Gesamtziel: gewichtetes Mittel ≥ 9,5. Wird ein Kriterium nicht erfüllt, sinkt die Note des Bereichs entsprechend; das Ergebnis wird so berichtet, wie es ist.

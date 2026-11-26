@@ -52,8 +52,10 @@ var LINE_TEXT = { open: 'Open-Raise', iso: 'Iso-Raise', limp: 'Limp', call: 'Cal
 
 // ---------- Gegnerdaten ----------
 function oppStats(dbRec) {
-  var raw = dbRec ? dbRec.stats : S.emptyStats(), hands = dbRec ? dbRec.hands : 0;
-  return { raw: raw, hands: hands, sm: R.smooth(raw), typ: S.playerType(dbRec), bel: S.reliability(hands) };
+  // Datenformat 3: bei erkannter Änderung der Spielweise zählen die Kurzzeitwerte (PT.stats.effectiveStats), sonst die Langzeitwerte
+  var eff = dbRec && S.effectiveStats ? S.effectiveStats(dbRec) : null;
+  var raw = eff ? eff.stats : (dbRec ? dbRec.stats : S.emptyStats()), hands = eff ? eff.hands : (dbRec ? dbRec.hands : 0);
+  return { raw: raw, hands: hands, sm: R.smooth(raw), typ: S.playerType(dbRec), bel: S.reliability(hands), changed: eff ? eff.changed : [], longHands: eff ? eff.longHands : hands };
 }
 function buildRange(v, seat, st, gto, pfaSeat) {
   var line = lineOf(v, seat), sm = gto ? R.smooth(null) : st.sm, prof = R.profileOf(sm);
@@ -251,8 +253,12 @@ function analyzeMode(input, v, mode, level, L0, budget, rng, deadline, set, prep
       cands.push({ type: L.isBet ? 'bet' : 'raise', amount: amt, label: (L.isBet ? 'Bet ' : 'Raise auf ') + fmt(amt) + (amt === L.maxTo ? ' (All-in)' : ''), kind: null, extra: true, allin: amt === L.maxTo });
   });
   var acts = cands.map(function (c) {
-    var r = X.evaluateAction(ctx, c);
-    return { type: c.type, amount: c.amount || 0, label: c.label, kind: c.kind, allin: !!c.allin, extra: !!c.extra, ev: r.ev, evBB: r.ev / bb, u: r.u, uSim: r.uSim, uModel: r.uModel, parts: slimParts(r.parts) };
+    var r = X.evaluateAction(ctx, c), pp = r.parts || {};
+    // Näherung oder fehlgeschlagene Berechnung (Mathe 2.1): gekennzeichnet, nie als 0 gewertet; die Unsicherheit wird erweitert
+    var failed = !!pp.failed || !isFinite(r.ev), approx = !!pp.approx || failed, ev = isFinite(r.ev) ? r.ev : 0, u = isFinite(r.u) ? r.u : v.pot;
+    if (approx) u = Math.max(u, (failed ? 0.25 : 0.1) * Math.max(v.pot, bb));
+    return { type: c.type, amount: c.amount || 0, label: c.label, kind: c.kind, allin: !!c.allin, extra: !!c.extra, ev: ev, evBB: ev / bb, u: u, uSim: r.uSim, uModel: r.uModel, parts: slimParts(pp),
+      approx: approx, failed: failed, reason: pp.reason || (failed ? 'EV nicht berechenbar' : null) };
   });
   acts.sort(function (a, b) { return b.ev - a.ev; });
   // Preflop: Faustregel-Chart als Anker. Raises außerhalb des Charts und Open-Limps nur bei belegtem Exploit.
@@ -268,8 +274,9 @@ function analyzeMode(input, v, mode, level, L0, budget, rng, deadline, set, prep
   else if (gap >= 2 * u && gap >= 0.5 * bb) cls = 'klar';
   else if (gap >= 0.5 * u && gap >= 0.15 * bb) cls = 'knapp';
   else cls = 'mehrere';
-  var highU = u >= 0.4 * Math.max(v.pot, bb) && gap < u;
+  var highU = (u >= 0.4 * Math.max(v.pot, bb) && gap < u) || best.failed || (bestOther && bestOther.failed && gap < bestOther.u);
   if (highU && cls !== 'eindeutig') cls = cls === 'klar' ? 'klar' : 'unsicher';
+  if (best.failed || (bestOther && bestOther.failed && gap < bestOther.u)) cls = 'unsicher';
   if (chartInfo && chartInfo.applied) cls = chartInfo.w >= 0.85 ? 'klar' : 'knapp';
   var tol = Math.max(0.25 * bb, 0.5 * u), sizeNote = null;
   if (group(best) === 'aggr') {
@@ -400,7 +407,7 @@ function group(a) { return a.type === 'bet' || a.type === 'raise' ? 'aggr' : a.t
 function slimParts(p) {
   if (!p) return {};
   var o = {};
-  ['realization', 'equity', 'pot', 'potAfter', 'call', 'implied', 'pAllFold', 'pRaise', 'evRaised', 'expectedWin', 'winnable', 'allin', 'add', 'to'].forEach(function (k) { if (p[k] != null) o[k] = p[k]; });
+  ['realization', 'equity', 'pot', 'potAfter', 'call', 'implied', 'pAllFold', 'pRaise', 'evRaised', 'expectedWin', 'winnable', 'allin', 'add', 'to', 'approx', 'failed', 'reason', 'aborted', 'iters'].forEach(function (k) { if (p[k] != null) o[k] = p[k]; });
   if (p.folds) o.folds = p.folds;
   if (p.branches) o.branches = p.branches.slice(0, 5).map(function (b) { return { callers: b.callers, p: b.p, ev: b.ev, eq: b.eq }; });
   return o;

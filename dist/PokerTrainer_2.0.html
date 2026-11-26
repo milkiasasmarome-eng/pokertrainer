@@ -1177,11 +1177,40 @@ function classWeights(w) {
 }
 /** Anteil der Range an allen 1326 Kombinationen (ohne Kartenentfernung) */
 function widthOf(w) { return total(w) / NC; }
+/**
+ * Kennung einer Range für Caches (Equity, Equity je Kombination). Alle Nutzer hängen nur von den relativen Gewichten ab
+ * (Equity: gewichtete Ziehung bzw. Σ wₖ·eₖ / Σ wₖ; Equity je Kombination: nur vom Träger wₖ > 0). Deshalb wird normalisiert:
+ * rₖ = wₖ / Σ w, quantisiert auf 2⁻³⁶ (gleiche Verteilung in anderer Skalierung → gleiche Kennung, außer in seltenen Fällen
+ * von Rundungsgrenzen, die nur einen Cache-Fehlgriff kosten). Der Träger (jedes k mit wₖ > 0) geht immer ein, auch wenn rₖ
+ * auf 0 gerundet wird. Zwei unabhängige 32-Bit-Hashes (FNV-1a und Murmur3-Mischung) über (k, rₖ) ergeben 64 Bit.
+ * Verteilungen, deren normalisierte Gewichte sich irgendwo um mehr als 2⁻³⁶ ≈ 1,5·10⁻¹¹ unterscheiden, erhalten
+ * verschiedene Kennungen (bis auf 64-Bit-Kollisionen). Nicht-positive und NaN-Gewichte zählen wie 0 (wie bei allen Nutzern).
+ * Präfix „h2“ = Version des Kennungsverfahrens.
+ */
+var HASH_Q = 68719476736; // 2^36
 function hashRange(w) {
-  var h = 2166136261 >>> 0;
-  for (var k = 0; k < NC; k++) { var v = Math.round(w[k] * 1000); if (v) { h ^= (k * 1009 + v); h = Math.imul(h, 16777619) >>> 0; } }
-  return h.toString(36);
+  var tot = 0, k, x, inf = false;
+  for (k = 0; k < NC; k++) { x = w[k]; if (x > 0) { if (x === Infinity) inf = true; else tot += x; } }
+  if (inf || !isFinite(tot)) return 'h2inf';
+  if (!(tot > 0)) return 'h2leer';
+  HS[0] = 0x811c9dc5 | 0; HS[1] = 0x9747b28c | 0;
+  var n = 0;
+  for (k = 0; k < NC; k++) {
+    x = w[k]; if (!(x > 0)) continue;
+    var q = Math.round(x / tot * HASH_Q);
+    hashWord(k); hashWord((q % 4294967296) | 0); hashWord(Math.floor(q / 4294967296) | 0);
+    n++;
+  }
+  var a = fmix32(HS[0] ^ n), b = fmix32(HS[1] ^ n);
+  return 'h2' + ('0000000' + (a >>> 0).toString(16)).slice(-8) + ('0000000' + (b >>> 0).toString(16)).slice(-8);
 }
+var HS = new Int32Array(2);
+function hashWord(wd) {
+  HS[0] = Math.imul(HS[0] ^ wd, 0x01000193);
+  var m = Math.imul(wd, 0xcc9e2d51); m = (m << 15) | (m >>> 17); m = Math.imul(m, 0x1b873593);
+  var h = HS[1] ^ m; h = (h << 13) | (h >>> 19); HS[1] = (Math.imul(h, 5) + 0xe6546b64) | 0;
+}
+function fmix32(h) { h ^= h >>> 16; h = Math.imul(h, 0x85ebca6b); h ^= h >>> 13; h = Math.imul(h, 0xc2b2ae35); h ^= h >>> 16; return h; }
 
 // ---------- weiche Top-x-Bänder ----------
 /** Gewicht einer Klasse für das Band [lo, hi] (Anteil der stärksten Kombinationen) mit weichen Rändern */
@@ -1535,12 +1564,14 @@ PT.ranges = { empty: empty, full: full, band: band, bandClass: bandClass, fromCl
 
 /* assets/js/engine/equity.js */
 /* PokerTrainer 2.0 – Equity-Engine.
-   Exakte Enumeration (Heads-up gegen Range auf Flop/Turn/River, wenn der Aufwand es erlaubt),
-   sonst Monte-Carlo mit gewichteten Ranges, Kartenentfernung, adaptiver Stoppregel,
-   Standardfehler und 95-%-Konfidenzintervall. Side-Pot-genaue Potanteile für All-in-Situationen. */
+   Exakte Enumeration (Heads-up gegen Range auf Flop/Turn/River, wenn der Aufwand es erlaubt und die Zeit reicht),
+   sonst Monte-Carlo mit gewichteten Ranges, Kartenentfernung, unabhängigen Stichproben, erwartungstreuer Planung
+   des Stichprobenumfangs, Standardfehler und Wilson-artigem 95-%-Intervall für beschränkte Größen.
+   Side-Pot-genaue Potanteile für All-in-Situationen. Fehlschläge (leere Range, keine konfliktfreie Verteilung,
+   kein Budget) werden gekennzeichnet zurückgegeben (failed, reason), nie als Zahl. */
 (function (G) {
 'use strict';
-var PT = G.PT, H = PT.hands, E = PT.eval, U = PT.util, clamp = U.clamp;
+var PT = G.PT, H = PT.hands, E = PT.eval, U = PT.util;
 var NC = H.NC, C1 = H.C1, C2 = H.C2, evaluate = E.evaluate;
 
 // Genauigkeitsstufen: Ziel-Standardfehler, Höchstzahl Simulationen, Zeitbudget, Grenze exakter Auswertungen
@@ -1550,38 +1581,112 @@ var LEVELS = {
   praezise: { name: 'Präzise',        se: 0.005,  maxIter: 20000, ms: 2500, exactMax: 2500000 },
   tief:     { name: 'Tiefenanalyse',  se: 0.0025, maxIter: 60000, ms: 6000, exactMax: 6000000 }
 };
-var PHI = 0.6180339887498949;
+var Z95 = 1.959963984540054, Z99 = 2.5758293035489;
+var PILOT = 256;          // Pilotstichprobe (nur zur Planung, fließt nicht in die Schätzung ein)
+var NO_VALID_ABORT = 64;  // Mehrgegner: so viele Versuche (je bis zu 50 Ziehungen) ohne gültige Verteilung → Fehlschlag
 
-// ---------- Cache ----------
+// ---------- Statistik einer Stichprobe x ∈ [0,1] ----------
+/**
+ * Schätzer, Standardfehler und Wilson-artiges Intervall für den Mittelwert einer beschränkten Größe X ∈ [0,1]
+ * (Potanteil mit Split Pots: 0, 1/k, 1 – keine reine Binomialgröße). Für X ∈ [0,1] gilt Var X ≤ μ(1−μ); der
+ * Varianzfaktor φ = s²/(m(1−m)) ∈ (0,1] macht daraus eine effektive Binomial-Stichprobe nₑ = n/φ, auf die das
+ * Wilson-Score-Intervall angewendet wird. s² enthält je eine Pseudo-Beobachtung bei 0 und 1 (Untergrenze für nie
+ * beobachtete Ausgänge, z. B. lauter Split Pots); am Rand (m = 0 oder 1) gilt φ = 1 (reines Binomial-Wilson).
+ */
+function summarize(n, sum, sum2, z) {
+  if (!(n > 0)) return null;
+  z = z || Z95;
+  var m = sum / n; if (m < 0) m = 0; else if (m > 1) m = 1;
+  var S = Math.max(0, sum2 - sum * m), Sps = m * m + (1 - m) * (1 - m);
+  var v = (S + Sps) / (n + 1), pq = m * (1 - m);
+  var phi = pq > 0 ? Math.min(1, v / pq) : 1, ne = n / phi, z2 = z * z, den = 1 + z2 / ne;
+  var center = (m + z2 / (2 * ne)) / den, hw = z / den * Math.sqrt(pq / ne + z2 / (4 * ne * ne));
+  var lo = Math.max(0, Math.min(m, center - hw)), hi = Math.min(1, Math.max(m, center + hw));
+  if (m === 0) lo = 0; if (m === 1) hi = 1;
+  return { m: m, se: Math.sqrt(Math.min(v, 0.25) / n), lo: lo, hi: hi, phi: phi, n: n, v: v };
+}
+/** Nötiger Umfang für den Ziel-Standardfehler T aus einer Pilotstichprobe: obere 99-%-Schranke der Varianz je Stichprobe */
+function planSize(n0, sum, sum2, T) {
+  var s = summarize(n0, sum, sum2, Z99);
+  var mu = s.lo > 0.5 ? s.lo : s.hi < 0.5 ? s.hi : 0.5;
+  var phiU = Math.min(1, s.phi * (1 + Z99 * Math.sqrt(2 / Math.max(1, n0 - 1))));
+  return Math.ceil(phiU * mu * (1 - mu) / (T * T));
+}
+
+// ---------- Cache mit Qualitätsangabe ----------
+// Schlüssel ohne Stufe; jeder Eintrag trägt seine erreichte Qualität (exact, se, n, iters, aborted). Ein Eintrag wird
+// nur genutzt, wenn er die angeforderte Qualität erfüllt (siehe usable); ein besserer Eintrag wird nie durch einen
+// schlechteren ersetzt.
 var cache = new Map(), CACHE_MAX = 300;
 function cacheGet(k) { if (!cache.has(k)) return null; var v = cache.get(k); cache.delete(k); cache.set(k, v); return v; }
-function cachePut(k, v) { cache.set(k, v); if (cache.size > CACHE_MAX) cache.delete(cache.keys().next().value); }
+function better(a, b) { // ist a mindestens so gut wie b?
+  if (a.exact) return true;
+  if (b.exact) return false;
+  return a.se < b.se || (a.se === b.se && a.n >= b.n);
+}
+function cachePut(k, v) {
+  var old = cache.get(k);
+  if (old && !better(v, old)) return;
+  cache.delete(k); cache.set(k, v);
+  if (cache.size > CACHE_MAX) cache.delete(cache.keys().next().value);
+}
 function cacheClear() { cache.clear(); }
+/**
+ * req: {seT (Ziel-SE der Stufe), minN (Mindestanzahl), nMax (höchstens mögliche Stichproben der Anfrage), exactPossible}
+ * Nutzbar: exakt; oder (Anfrage würde nicht exakt rechnen) und n ≥ minN und
+ *   (nicht abgebrochen und se ≤ Ziel-SE)  oder  (n ≥ nMax: die Anfrage könnte selbst nicht mehr Stichproben ziehen).
+ */
+function usable(e, req) {
+  if (e.eq == null) return false;
+  if (e.exact) return true;
+  if (req.exactPossible) return false;
+  if (e.n < req.minN) return false;
+  if (!e.aborted && e.se <= req.seT) return true;
+  return e.n >= req.nMax;
+}
 
 function prepRange(w, deadMask) {
-  var idx = [], cum = [], tot = 0;
+  var idx = [], cum = [], tot = 0, bad = false;
   for (var k = 0; k < NC; k++) {
     var x = w[k];
-    if (x > 0 && !deadMask[C1[k]] && !deadMask[C2[k]]) { tot += x; idx.push(k); cum.push(tot); }
+    if (x > 0 && !deadMask[C1[k]] && !deadMask[C2[k]]) { if (x === Infinity) bad = true; tot += x; idx.push(k); cum.push(tot); }
   }
-  return { idx: idx, cum: cum, tot: tot };
+  return { idx: idx, cum: cum, tot: tot, ok: !bad && isFinite(tot) && tot > 0 };
 }
 function bsearch(cum, x) { var lo = 0, hi = cum.length - 1; while (lo < hi) { var mid = (lo + hi) >> 1; if (cum[mid] > x) hi = mid; else lo = mid + 1; } return lo; }
+function failed(reason, extra) { return Object.assign({ eq: null, win: null, se: null, lo: null, hi: null, iters: 0, n: 0, failed: true, reason: reason, method: 'nicht berechenbar', exact: false }, extra || {}); }
+function rangeProblem(R) {
+  for (var j = 0; j < R.length; j++) if (!R[j].ok) return 'leere Range (Gegner ' + (j + 1) + '): keine Kombination mit Gewicht > 0 verträglich mit den bekannten Karten';
+  return null;
+}
+function choose(n, k) { if (k < 0 || k > n) return 0; var r = 1; for (var i = 1; i <= k; i++) r = r * (n - k + i) / i; return Math.round(r); }
 
-/** Exakte Heads-up-Equity gegen eine Range (Board mit 3–5 Karten, oder 0 Karten gegen wenige Kombos) */
-function exactHU(hero, board, R, deadMask, limit) {
+/** Aufwand der exakten Heads-up-Enumeration (Kombinationen × Runouts) oder -1, wenn nicht aufzählbar */
+function exactCost(board, R, deadMask) {
+  var need = 5 - board.length;
+  if (need !== 0 && need !== 1 && need !== 2 && need !== 5) return -1;
+  var avail = 0; for (var c = 0; c < 52; c++) if (!deadMask[c]) avail++;
+  return R.idx.length * choose(avail - 2, need);
+}
+/**
+ * Exakte Heads-up-Equity gegen eine Range (Board mit 3–5 Karten, oder 0 Karten gegen wenige Kombos).
+ * deadline (optional): Nach je 8 Kombinationen wird die Restzeit aus dem jüngsten Tempo hochgerechnet; reicht sie nicht,
+ * bricht die Aufzählung ab und liefert {aborted: true, done, of} (nie ein als exakt gekennzeichnetes Teilergebnis).
+ */
+function exactHU(hero, board, R, deadMask, limit, deadline) {
   var need = 5 - board.length, rest = [], c, i, j;
-  var nCombos = R.idx.length;
-  var runouts = need === 0 ? 1 : need === 1 ? 46 - board.length + 1 : need === 2 ? 0 : -1;
-  // Anzahl Runouts genau bestimmen
-  var avail = 0; for (c = 0; c < 52; c++) if (!deadMask[c]) avail++;
-  avail -= 2; // Gegnerkarten
-  runouts = need === 0 ? 1 : need === 1 ? avail : need === 2 ? avail * (avail - 1) / 2 : need === 5 ? 1712304 : -1;
-  if (runouts < 0 || nCombos * runouts > limit) return null;
+  var nCombos = R.idx.length, cost = exactCost(board, R, deadMask);
+  if (cost < 0 || cost > limit || !nCombos) return null;
   var hArr = hero.concat(board), oArr = [0, 0].concat(board), hb = hArr.length;
   for (i = 0; i < need; i++) { hArr.push(0); oArr.push(0); }
-  var sumW = 0, sumEq = 0, win = 0, tie = 0, evals = 0;
+  var sumW = 0, sumEq = 0, win = 0, tie = 0, evals = 0, hasDl = deadline != null && isFinite(deadline);
+  var tLast = hasDl ? U.now() : 0, tStart = tLast;
   for (var t = 0; t < nCombos; t++) {
+    if (hasDl && t > 0 && (t & 7) === 0) {
+      var now = U.now(), rate = (now - tLast) / 8;
+      if (now > deadline || now + rate * (nCombos - t) > deadline) return { aborted: true, done: t, of: nCombos, evals: evals, ms: now - tStart };
+      tLast = now;
+    }
     var k = R.idx[t], w = R.cum[t] - (t ? R.cum[t - 1] : 0), a = C1[k], b = C2[k];
     oArr[0] = a; oArr[1] = b;
     rest.length = 0;
@@ -1594,100 +1699,142 @@ function exactHU(hero, board, R, deadMask, limit) {
     } else if (need === 2) {
       for (i = 0; i < rest.length; i++) { hArr[hb] = oArr[hb] = rest[i];
         for (j = i + 1; j < rest.length; j++) { hArr[hb + 1] = oArr[hb + 1] = rest[j]; var h2 = evaluate(hArr), o2 = evaluate(oArr); n++; if (h2 > o2) { s += 1; wn++; } else if (h2 === o2) { s += 0.5; tn++; } } }
-    } else if (need === 5) {
+    } else {
       var L = rest.length;
-      for (var x1 = 0; x1 < L; x1++) for (var x2 = x1 + 1; x2 < L; x2++) for (var x3 = x2 + 1; x3 < L; x3++) for (var x4 = x3 + 1; x4 < L; x4++) for (var x5 = x4 + 1; x5 < L; x5++) {
-        hArr[2] = oArr[2] = rest[x1]; hArr[3] = oArr[3] = rest[x2]; hArr[4] = oArr[4] = rest[x3]; hArr[5] = oArr[5] = rest[x4]; hArr[6] = oArr[6] = rest[x5];
-        var h5 = evaluate(hArr), o5 = evaluate(oArr); n++; if (h5 > o5) { s += 1; wn++; } else if (h5 === o5) { s += 0.5; tn++; }
+      for (var x1 = 0; x1 < L; x1++) {
+        if (hasDl && (x1 & 3) === 0 && U.now() > deadline) return { aborted: true, done: t, of: nCombos, evals: evals, ms: U.now() - tStart };
+        for (var x2 = x1 + 1; x2 < L; x2++) for (var x3 = x2 + 1; x3 < L; x3++) for (var x4 = x3 + 1; x4 < L; x4++) for (var x5 = x4 + 1; x5 < L; x5++) {
+          hArr[2] = oArr[2] = rest[x1]; hArr[3] = oArr[3] = rest[x2]; hArr[4] = oArr[4] = rest[x3]; hArr[5] = oArr[5] = rest[x4]; hArr[6] = oArr[6] = rest[x5];
+          var h5 = evaluate(hArr), o5 = evaluate(oArr); n++; if (h5 > o5) { s += 1; wn++; } else if (h5 === o5) { s += 0.5; tn++; }
+        }
       }
     }
     evals += 2 * n;
     sumW += w; sumEq += w * s / n; win += w * wn / n; tie += w * tn / n;
   }
   if (!(sumW > 0)) return null;
-  return { eq: sumEq / sumW, win: win / sumW, tie: tie / sumW, se: 0, lo: sumEq / sumW, hi: sumEq / sumW, iters: 0, evals: evals, method: 'exakt', exact: true };
+  var eq = sumEq / sumW;
+  return { eq: eq, win: win / sumW, tie: tie / sumW, se: 0, lo: eq, hi: eq, iters: 0, n: nCombos, evals: evals, method: 'exakt', exact: true, aborted: null };
 }
 
 /**
- * equity({hero, board, ranges, level, rng, budget, deadline, exact})
- * budget: {left, used} – gemeinsame Obergrenze der Simulationen einer Entscheidung
+ * equity({hero, board, ranges, level, rng, budget, deadline, exact, minIter, dead, cache})
+ * budget: {left, used, calls} – gemeinsame Obergrenze der Simulationen einer Entscheidung (gezählt werden Versuche)
+ * Rückgabe: {eq, se, lo, hi, win, tie, iters, n, method, exact, aborted ('zeit'|'budget'|null), seTarget, planned, ...}
+ *           oder bei Fehlschlag {eq: null, failed: true, reason}.
  */
 function equity(o) {
   var hero = o.hero, board = o.board || [], ranges = o.ranges || [], L = LEVELS[o.level || 'standard'] || LEVELS.standard;
   var rng = o.rng || PT.makeRng(), t0 = U.now(), deadline = o.deadline || (t0 + L.ms);
   var dead = hero.concat(board).concat(o.dead || []), deadMask = H.deadMaskOf(dead);
-  var key = o.cache === false ? null : ['eq', PT.cardsStr(hero), PT.cardsStr(board), PT.cardsStr(o.dead || []), ranges.map(PT.ranges.hash).join(','), o.level || 'standard'].join('|');
-  if (key) { var hit = cacheGet(key); if (hit) { var cp = Object.assign({}, hit); cp.cached = true; cp.iters = 0; return cp; } }
-  if (!ranges.length) return { eq: 1, se: 0, lo: 1, hi: 1, iters: 0, method: 'kein Gegner', exact: true };
+  if (!ranges.length) return { eq: 1, se: 0, lo: 1, hi: 1, iters: 0, n: 0, method: 'kein Gegner', exact: true };
   var R = ranges.map(function (w) { return prepRange(w, deadMask); });
-  if (R.some(function (r) { return !(r.tot > 0); })) return { eq: null, se: null, iters: 0, method: 'leere Range', exact: false };
-  var res = null;
+  var prob = rangeProblem(R);
+  if (prob) return failed(prob, { method: 'leere Range' });
+  var exactPossible = false;
   if (R.length === 1 && o.exact !== false && (board.length >= 3 || (board.length === 0 && R[0].idx.length <= 2 && L.exactMax >= 3000000))) {
-    res = exactHU(hero, board, R[0], deadMask, L.exactMax);
+    var cost = exactCost(board, R[0], deadMask); exactPossible = cost >= 0 && cost <= L.exactMax;
+  }
+  var nMax = Math.min(L.maxIter, o.budget ? Math.max(0, o.budget.left) : L.maxIter);
+  var req = { seT: L.se, minN: o.minIter || 0, nMax: nMax, exactPossible: exactPossible };
+  var key = o.cache === false ? null : ['eq', PT.cardsStr(hero), PT.cardsStr(board), PT.cardsStr(o.dead || []), ranges.map(PT.ranges.hash).join(',')].join('|');
+  if (key) {
+    var hit = cacheGet(key);
+    if (hit && usable(hit, req)) { var cp = Object.assign({}, hit); cp.cached = true; cp.iters = 0; return cp; }
+  }
+  var res = null, exAb = null;
+  if (exactPossible) {
+    res = exactHU(hero, board, R[0], deadMask, L.exactMax, deadline);
+    if (res && res.aborted) { exAb = res; res = null; }
   }
   if (!res) res = monteCarlo(hero, board, R, deadMask, L, rng, o.budget, deadline, o.minIter);
+  if (exAb) { res.exactAborted = exAb; res.method += ' (exakte Aufzählung wegen Zeitgrenze abgebrochen)'; }
   res.ms = Math.round(U.now() - t0);
-  if (key && res.eq != null && (res.exact || res.iters >= 200)) cachePut(key, res);
+  if (key && res.eq != null) cachePut(key, Object.assign({}, res));
   return res;
 }
+
+/**
+ * Monte-Carlo-Equity mit unabhängigen Stichproben (Gegnerkombinationen nach Gewicht, Rejection bei Kartenkonflikten,
+ * Restboard ohne Zurücklegen). Stichprobenumfang (gültige Stichproben):
+ *  - Reicht die Obergrenze nicht für Pilot + ungünstigsten Fall (nWC = ⌈0,25/T²⌉, denn Var X ≤ 1/4), oder lohnt kein Pilot:
+ *    fester Umfang N = min(nWC, Obergrenze) – unabhängig von den Werten, damit erwartungstreu.
+ *  - Sonst Zwei-Stufen-Verfahren: Pilot (256) nur zur Planung von N₂ aus einer oberen Varianzschranke, die Schätzung
+ *    stammt allein aus der unabhängigen zweiten Stichprobe (bedingt auf N₂ erwartungstreu; die frühere Variante mit
+ *    Pilotproben in der Schätzung war zu den Rändern hin verzerrt).
+ *  - Zeitabbruch: Stichprobenzahl hängt dann nur von der Zeit ab (nicht von den Werten). Bricht die zweite Stufe vor
+ *    100 Stichproben ab, zählen Pilot und zweite Stufe zusammen (Ereignis hängt nur von der Zeit ab).
+ */
 function monteCarlo(hero, board, R, deadMask, L, rng, budget, deadline, minIter) {
-  var maxIter = Math.min(L.maxIter, budget ? Math.max(0, budget.left) : L.maxIter);
+  var cap = Math.min(L.maxIter, budget ? Math.max(0, budget.left) : L.maxIter);
+  var T = L.se, nWC = Math.ceil(0.25 / (T * T)), minN = Math.max(0, minIter || 0);
   var need = 5 - board.length, deck = [], c, j, k;
   for (c = 0; c < 52; c++) if (!deadMask[c]) deck.push(c);
   var hArr = hero.concat(board), oArr = [];
   for (k = 0; k < need; k++) hArr.push(0);
   for (j = 0; j < R.length; j++) oArr.push([0, 0].concat(hArr.slice(2)));
-  var mark = new Int32Array(52), stamp = 0, sum = 0, sum2 = 0, valid = 0, it = 0, rejected = 0, wins = 0, ties = 0;
-  var hu = R.length === 1, off = rng(), minN = minIter || 300, D = deck.length, nTarget = 0;
-  var tmp = new Array(D);
-  while (it < maxIter) {
+  var mark = new Int32Array(52), stamp = 0, it = 0, rejected = 0, D = deck.length, tmp = new Array(D), nR = R.length, nb = board.length;
+  var usePilot = cap >= nWC + PILOT && nWC >= 4 * PILOT;
+  // planned: Umfang, der für das Ziel nötig ist (fester Weg: ungünstigster Fall); target: tatsächlich angestrebter Umfang
+  var phase = usePilot ? 0 : 1, planned = usePilot ? 0 : Math.max(nWC, minN), target = usePilot ? PILOT : Math.min(planned, cap);
+  var aborted = null, timeOut = false;
+  var s = [0, 0], s2 = [0, 0], cnt = [0, 0], wins = [0, 0], ties = [0, 0];
+  while (true) {
+    if (cnt[phase] >= target) {
+      if (phase === 0) { phase = 1; planned = Math.max(minN, Math.min(nWC, Math.max(100, planSize(cnt[0], s[0], s2[0], T)))); target = planned; continue; }
+      break;
+    }
+    if (it >= cap) { aborted = 'budget'; break; }
+    if (cnt[0] + cnt[1] === 0 && it >= NO_VALID_ABORT) break;
     it++;
-    if ((it & 127) === 0 && U.now() > deadline) break;
-    stamp++;
+    if ((it & 127) === 0 && U.now() > deadline) { aborted = 'zeit'; timeOut = true; break; }
     var ok = false;
     for (var tr = 0; tr < 50 && !ok; tr++) {
       stamp++; ok = true;
-      for (j = 0; j < R.length; j++) {
-        var r = R[j], u = hu ? ((off + it * PHI) % 1) : rng();
-        if (hu && tr > 0) u = rng();
-        var kk = r.idx[bsearch(r.cum, u * r.tot)];
+      for (j = 0; j < nR; j++) {
+        var r = R[j], kk = r.idx[bsearch(r.cum, rng() * r.tot)];
         if (mark[C1[kk]] === stamp || mark[C2[kk]] === stamp) { ok = false; break; }
         mark[C1[kk]] = stamp; mark[C2[kk]] = stamp; oArr[j][0] = C1[kk]; oArr[j][1] = C2[kk];
       }
     }
     if (!ok) { rejected++; continue; }
-    // Restliche Boardkarten ohne Zurücklegen ziehen
     var nT = 0;
     for (var d = 0; d < D; d++) { var cc = deck[d]; if (mark[cc] !== stamp) tmp[nT++] = cc; }
     for (var b = 0; b < need; b++) {
       var pick = b + Math.floor(rng() * (nT - b)), t = tmp[b]; tmp[b] = tmp[pick]; tmp[pick] = t;
-      var pos = 2 + board.length + b; hArr[pos] = tmp[b];
-      for (j = 0; j < oArr.length; j++) oArr[j][pos] = tmp[b];
+      var pos = 2 + nb + b; hArr[pos] = tmp[b];
+      for (j = 0; j < nR; j++) oArr[j][pos] = tmp[b];
     }
     var hs = evaluate(hArr), lose = false, tc = 0;
-    for (j = 0; j < oArr.length; j++) { var os = evaluate(oArr[j]); if (os > hs) { lose = true; break; } if (os === hs) tc++; }
+    for (j = 0; j < nR; j++) { var os = evaluate(oArr[j]); if (os > hs) { lose = true; break; } if (os === hs) tc++; }
     var share = lose ? 0 : 1 / (1 + tc);
-    if (!lose) { if (tc) ties++; else wins++; }
-    sum += share; sum2 += share * share; valid++;
-    // Zweistufige Stoppregel: Aus einer Pilotstichprobe (minN) wird die nötige Anzahl einmal festgelegt und dann ohne
-    // weitere Zwischenprüfung erreicht. Ein laufendes „Stoppen, sobald der Fehler klein genug ist“ verzerrt die Schätzung zu den Rändern.
-    if (nTarget === 0 && valid >= minN) {
-      var pS = (sum + 1) / (valid + 2), varS = Math.max(pS * (1 - pS) * 0.5, sum2 / valid - (sum / valid) * (sum / valid));
-      nTarget = Math.max(minN, Math.ceil(varS / (L.se * L.se)));
-    }
-    if (nTarget > 0 && valid >= nTarget) break;
+    if (!lose) { if (tc) ties[phase]++; else wins[phase]++; }
+    s[phase] += share; s2[phase] += share * share; cnt[phase]++;
   }
   if (budget) { budget.left -= it; budget.used += it; if (budget.calls) budget.calls.push(it); }
-  if (!valid) return { eq: null, se: null, iters: it, method: 'Monte Carlo', exact: false, rejected: rejected };
-  var m = sum / valid, vr = Math.max(0, sum2 / valid - m * m), pL = (sum + 1) / (valid + 2), se = Math.sqrt(Math.max(vr, pL * (1 - pL) * 0.25) / valid);  // Untergrenze für kleine Stichproben am Rand
-  return { eq: m, se: se, lo: clamp(m - 1.96 * se, 0, 1), hi: clamp(m + 1.96 * se, 0, 1), win: wins / valid, tie: ties / valid,
-    iters: it, valid: valid, rejected: rejected, method: 'Monte Carlo', exact: false };
+  var nAll = cnt[0] + cnt[1];
+  if (!nAll) {
+    if (it >= NO_VALID_ABORT && rejected === it) return failed('keine konfliktfreie Verteilung der Gegnerkarten gefunden (' + (it * 50) + ' Ziehungen verworfen)', { iters: it, rejected: rejected, method: 'Monte Carlo' });
+    return failed(timeOut ? 'Zeitgrenze vor der ersten Stichprobe erreicht' : 'kein Simulationsbudget', { iters: it, rejected: rejected, method: 'Monte Carlo', aborted: aborted });
+  }
+  // Schätzung: zweite Stufe allein; nur wenn sie wegen der Zeit unter 100 Stichproben blieb, zusammen mit dem Pilot
+  // (Abbruch durch Budget in der Pilotphase: nur der Pilot liegt vor; die Zahl angenommener Ziehungen hängt bei Rejection
+  // Sampling nicht von den Werten ab, daher ebenfalls erwartungstreu.)
+  var useBoth = usePilot && cnt[1] < 100 && timeOut, pilotOnly = usePilot && !useBoth && cnt[1] === 0;
+  var n = useBoth ? nAll : pilotOnly ? cnt[0] : cnt[1], sum = useBoth ? s[0] + s[1] : pilotOnly ? s[0] : s[1], sum2 = useBoth ? s2[0] + s2[1] : pilotOnly ? s2[0] : s2[1];
+  var wn = useBoth ? wins[0] + wins[1] : pilotOnly ? wins[0] : wins[1], tn = useBoth ? ties[0] + ties[1] : pilotOnly ? ties[0] : ties[1];
+  var st = summarize(n, sum, sum2, Z95);
+  if (!aborted && n < planned) aborted = 'budget';
+  return { eq: st.m, se: st.se, lo: st.lo, hi: st.hi, phi: st.phi, win: wn / n, tie: tn / n,
+    iters: it, n: n, valid: nAll, rejected: rejected, pilot: usePilot ? cnt[0] : 0, planned: planned, seTarget: T, aborted: aborted,
+    method: 'Monte Carlo', exact: false };
 }
 
 /**
  * Erwarteter Gewinn aus festen Beiträgen (All-in, Side Pots). Nur Pots, für die der Held berechtigt ist, zählen.
- * o: {hero, heroTotal, board, opps:[{w, total, folded}], dead, rng, iters, budget}
- * Gibt {win (erwartete Chips), se, iters, pots} zurück.
+ * o: {hero, heroTotal, board, opps:[{w, total, folded}], dead, dead_, deadMoney, rng, iters, budget, deadline}
+ * Gibt {win (erwartete Chips), se, iters, n, pots, refund} zurück; bei Fehlschlag {win: null, failed: true, reason}.
+ * Fester Stichprobenumfang (iters, durch Budget begrenzt), Abbruch an der Zeitgrenze.
  */
 function potShare(o) {
   var entries = [{ seat: 0, total: o.heroTotal, folded: false }];
@@ -1699,7 +1846,6 @@ function potShare(o) {
   var live = entries.filter(function (e) { return !e.folded; }), levels = [], pots = [], prev = 0;
   live.forEach(function (e) { if (levels.indexOf(e.total) < 0) levels.push(e.total); });
   levels.sort(function (a, b) { return a - b; });
-  var maxTop = 0; entries.forEach(function (e) { if (e.total > maxTop) maxTop = e.total; });
   levels.forEach(function (Lv, li) {
     var amt = 0;
     entries.forEach(function (e) { var hi2 = li === levels.length - 1 ? e.total : Math.min(e.total, Lv); amt += Math.max(0, hi2 - Math.min(e.total, prev)); });
@@ -1716,16 +1862,21 @@ function potShare(o) {
   var liveOpps = o.opps.map(function (x, i) { return { w: x.w, seat: i + 1, folded: x.folded }; }).filter(function (x) { return !x.folded; });
   var board = o.board || [], dead = o.hero.concat(board).concat(o.dead || []), deadMask = H.deadMaskOf(dead);
   var R = liveOpps.map(function (x) { return prepRange(x.w, deadMask); });
+  var prob = rangeProblem(R);
+  if (prob) return { win: null, se: null, iters: 0, n: 0, pots: pots, refund: refund, failed: true, reason: prob };
   var rng = o.rng || PT.makeRng(), maxIt = Math.min(o.iters || 3000, o.budget ? Math.max(0, o.budget.left) : 1e9);
+  var deadline = o.deadline != null ? o.deadline : Infinity;
   var need = 5 - board.length, deck = [], c, j;
   for (c = 0; c < 52; c++) if (!deadMask[c]) deck.push(c);
   var hArr = o.hero.concat(board), oArr = [];
   for (j = 0; j < need; j++) hArr.push(0);
   for (j = 0; j < R.length; j++) oArr.push([0, 0].concat(hArr.slice(2)));
-  var mark = new Int32Array(52), stamp = 0, sum = 0, sum2 = 0, n = 0, it = 0, tmp = new Array(deck.length);
+  var mark = new Int32Array(52), stamp = 0, sum = 0, sum2 = 0, n = 0, it = 0, tmp = new Array(deck.length), rejected = 0, aborted = null;
   var scores = new Array(entries.length);
   while (it < maxIt) {
-    it++; stamp++;
+    if (n === 0 && it >= NO_VALID_ABORT) break;
+    it++;
+    if ((it & 127) === 0 && U.now() > deadline) { aborted = 'zeit'; break; }
     var ok = true;
     for (var tr = 0; tr < 50; tr++) {
       stamp++; ok = true;
@@ -1736,7 +1887,7 @@ function potShare(o) {
       }
       if (ok) break;
     }
-    if (!ok) continue;
+    if (!ok) { rejected++; continue; }
     var nT = 0; for (var d = 0; d < deck.length; d++) if (mark[deck[d]] !== stamp) tmp[nT++] = deck[d];
     for (var b = 0; b < need; b++) {
       var pick = b + Math.floor(rng() * (nT - b)), t = tmp[b]; tmp[b] = tmp[pick]; tmp[pick] = t;
@@ -1754,12 +1905,16 @@ function potShare(o) {
     sum += won; sum2 += won * won; n++;
   }
   if (o.budget) { o.budget.left -= it; o.budget.used += it; if (o.budget.calls) o.budget.calls.push(it); }
-  var m = n ? sum / n : 0, vr = n ? Math.max(0, sum2 / n - m * m) : 0;
-  return { win: m, se: n ? Math.sqrt(vr / n) : null, iters: it, pots: pots, refund: refund };
+  if (!n) {
+    var why = it === 0 ? 'kein Simulationsbudget' : rejected === it ? 'keine konfliktfreie Verteilung der Gegnerkarten gefunden' : 'Zeitgrenze vor der ersten Stichprobe erreicht';
+    return { win: null, se: null, iters: it, n: 0, rejected: rejected, pots: pots, refund: refund, failed: true, reason: why, aborted: aborted };
+  }
+  var m = sum / n, vr = n > 1 ? Math.max(0, (sum2 - sum * m) / (n - 1)) : 0;
+  return { win: m, se: Math.sqrt(vr / n), iters: it, n: n, rejected: rejected, pots: pots, refund: refund, aborted: aborted };
 }
 
-PT.equity = { LEVELS: LEVELS, equity: equity, exactHU: exactHU, potShare: potShare, prepRange: prepRange, cacheClear: cacheClear,
-  cacheSize: function () { return cache.size; } };
+PT.equity = { LEVELS: LEVELS, equity: equity, exactHU: exactHU, exactCost: exactCost, potShare: potShare, prepRange: prepRange, summarize: summarize,
+  planSize: planSize, usable: usable, cacheClear: cacheClear, cacheSize: function () { return cache.size; } };
 })(typeof globalThis !== 'undefined' ? globalThis : (typeof self !== 'undefined' ? self : this));
 
 /* assets/js/engine/stats.js */
@@ -1856,10 +2011,68 @@ function handStats(rec) {
   return S;
 }
 
+// ---------- Kurzzeitgedächtnis (Format 3) ----------
+/* Je Wert zusätzlich exponentiell abklingende Zähler. Alter wird in eigenen Händen des Gegners gemessen:
+   nach jeder Hand, die er am Tisch spielt, werden alle Kurzzeitzähler mit λ = 0,5^(1/HALF_LIFE) multipliziert,
+   danach kommen die Zähler dieser Hand mit Gewicht 1 hinzu. Ohne neue Hände (Archiv) bleibt das Gedächtnis unverändert.
+   Je Wert gespeichert: [a, s1, s2] = [Σ w·Treffer, Σ w, Σ w²] über alle Gelegenheiten. */
+var HALF_LIFE = 100, LAMBDA = Math.pow(0.5, 1 / HALF_LIFE), H_MAX = 1 / (1 - LAMBDA), RND = 1e4, EPS = 0.01;  // EPS: Rundungstoleranz der Prüfung
+/* Erkennung veränderter Spielweise: gewichteter Zwei-Anteile-Test „Kurzzeit gegen älter“ (siehe docs/GEGNERGEDAECHTNIS.md).
+   Alarm ab |z| ≥ Z_ON, Ende unter Z_OFF (Hysterese), nur mit Mindestzahl gewichteter Gelegenheiten. */
+var CHANGE_KEYS = ['vpip', 'pfr', 'threeBet', 'cbetFlop', 'foldToCbet', 'afq', 'wtsd'];
+var CHANGE = { zOn: 3.75, zOff: 2.0, minRecent: 15, minOld: 40, minExp: 5, cc: 0.5 };
+function rnd(x) { return Math.round(x * RND) / RND; }
+/** Nur für Messreihen (tests/gedaechtnis-eval.js): Parameter des Gedächtnisses setzen. Die App nutzt die Standardwerte. */
+function setMemoryParams(o) {
+  if (o.halfLife) { HALF_LIFE = o.halfLife; LAMBDA = Math.pow(0.5, 1 / HALF_LIFE); H_MAX = 1 / (1 - LAMBDA); }
+  ['zOn', 'zOff', 'minRecent', 'minOld', 'minExp', 'cc'].forEach(function (k) { if (o[k] != null) CHANGE[k] = o[k]; });
+  if (o.keys) CHANGE_KEYS = o.keys.slice();
+  PT.stats.MEMORY.HALF_LIFE = HALF_LIFE; PT.stats.MEMORY.LAMBDA = LAMBDA; PT.stats.MEMORY.H_MAX = H_MAX; PT.stats.MEMORY.CHANGE_KEYS = CHANGE_KEYS;
+}
+function emptyRecent() { var o = {}; STATS.forEach(function (k) { o[k] = [0, 0, 0]; }); return { h: 0, stats: o }; }
+function emptyCards(from) { return { sd: 0, hid: 0, from: from || 0 }; }
+/** Altert das Kurzzeitgedächtnis um eine Hand und fügt die Zähler der Hand hinzu */
+function addRecent(rc, I) {
+  var l = LAMBDA, l2 = l * l;
+  rc.h = rnd(rc.h * l + 1);
+  for (var i = 0; i < STATS.length; i++) {
+    var k = STATS[i], x = rc.stats[k], inc = I.stats[k];
+    x[0] = rnd(x[0] * l + inc[0]); x[1] = rnd(x[1] * l + inc[1]); x[2] = rnd(x[2] * l2 + inc[1]);
+  }
+}
+/**
+ * Gewichteter Zwei-Anteile-Test: Kurzzeit (Gewichte w) gegen den älteren Teil (Gewichte 1 − w) derselben Beobachtungen.
+ * nd = [n, d] Langzeit, rc = [a, s1, s2] Kurzzeit. Varianz der Differenz unter H0 (gleicher Anteil p) exakt:
+ * p(1−p)·Σ(wᵢ/s1 − (1−wᵢ)/w2)² = p(1−p)·[s2/s1² − 2(s1−s2)/(s1·w2) + (d − 2s1 + s2)/w2²].
+ */
+function changeTest(nd, rc) {
+  if (!nd || !rc) return null;
+  var n = nd[0], d = nd[1], a = Math.min(rc[0], n), s1 = Math.min(rc[1], d), s2 = Math.min(rc[2], s1), w2 = d - s1;
+  if (!(s1 >= CHANGE.minRecent) || !(w2 >= CHANGE.minOld) || !(s2 > 0)) return null;
+  var pr = Math.min(1, Math.max(0, a / s1)), po = Math.min(1, Math.max(0, (n - a) / w2)), pb = (n + 0.5) / (d + 1), neff = s1 * s1 / s2;
+  // Mindestzahl erwarteter Treffer und Nicht-Treffer im Kurzzeitfenster (Normalnäherung erst dann brauchbar)
+  if (Math.min(pb, 1 - pb) * neff < CHANGE.minExp) return null;
+  var V = s2 / (s1 * s1) - 2 * (s1 - s2) / (s1 * w2) + (d - 2 * s1 + s2) / (w2 * w2);
+  if (!(V > 1e-12)) return null;
+  var diff = pr - po, adj = Math.max(0, Math.abs(diff) - CHANGE.cc / neff);  // Stetigkeitskorrektur
+  var z = (diff < 0 ? -adj : adj) / Math.sqrt(pb * (1 - pb) * V);
+  return { z: z, recent: pr, older: po, long: n / d, s1: s1, neff: neff, old: w2 };
+}
+/** Hysterese der Veränderungsanzeige; r.chg[k] = [Hand des Alarmbeginns, Richtung ±1] */
+function updateChange(r) {
+  for (var i = 0; i < CHANGE_KEYS.length; i++) {
+    var k = CHANGE_KEYS[i], t = changeTest(r.stats[k], r.recent.stats[k]), cur = r.chg[k];
+    if (cur && (!t || Math.abs(t.z) < CHANGE.zOff || (t.z > 0 ? 1 : -1) !== cur[1])) { delete r.chg[k]; cur = null; }
+    if (!cur && t && Math.abs(t.z) >= CHANGE.zOn) r.chg[k] = [r.hands, t.z > 0 ? 1 : -1];
+  }
+}
+
 // ---------- Datenbank ----------
-function newDb() { return { v: 2, opps: {} }; }
+var DB_VERSION = 3;
+function newDb() { return { v: DB_VERSION, opps: {} }; }
 function newRecord(id, name) {
-  return { id: id, name: name, status: 'archiv', hands: 0, stats: emptyStats(), agg: emptyAgg(), pos: emptyPos(), shown: [], lastSeen: 0, firstSeen: 0 };
+  return { id: id, name: name, status: 'archiv', hands: 0, stats: emptyStats(), agg: emptyAgg(), pos: emptyPos(), shown: [], lastSeen: 0, firstSeen: 0,
+    recent: emptyRecent(), cards: emptyCards(0), chg: {} };
 }
 function dbEnsure(db, id, name) { var r = db.opps[id]; if (!r) r = db.opps[id] = newRecord(id, name || (PT.bots ? PT.bots.nameOf(id) : id)); return r; }
 function shownEntry(rec, seat, cards) {
@@ -1873,15 +2086,23 @@ function applyToRecord(r, I, ts) {
   Object.keys(r.agg).forEach(function (k) { r.agg[k] += I.agg[k]; });
   var p = r.pos[I.pos];
   if (p) { p.h += 1; p.vpip[0] += I.stats.vpip[0]; p.vpip[1] += I.stats.vpip[1]; p.pfr[0] += I.stats.pfr[0]; p.pfr[1] += I.stats.pfr[1]; }
+  if (r.recent) { addRecent(r.recent, I); updateChange(r); }
+}
+/** Karten: am Showdown beobachtet oder unbekannt geblieben (nur gespielte Hände: VPIP oder Flop gesehen) */
+function applyCards(r, rec, seat, I, shown) {
+  if (!r.cards) return;
+  if (shown) r.cards.sd += 1;
+  else if (I.stats.vpip[0] > 0 || (rec.sawFlop || []).indexOf(seat) >= 0) r.cards.hid += 1;
 }
 function dbApplyHand(db, rec, heroRec) {
   var inc = handStats(rec), changed = [];
   rec.seats.forEach(function (st) {
-    if (st.hero) { if (heroRec) applyToRecord(heroRec, inc[st.seat], rec.ts); return; }
+    var sh = rec.shown.filter(function (x) { return x.seat === st.seat; })[0];
+    if (st.hero) { if (heroRec) { applyToRecord(heroRec, inc[st.seat], rec.ts); applyCards(heroRec, rec, st.seat, inc[st.seat], !!sh); } return; }
     var r = dbEnsure(db, st.id, st.name), I = inc[st.seat];
     r.status = 'aktiv';
     applyToRecord(r, I, rec.ts);
-    var sh = rec.shown.filter(function (x) { return x.seat === st.seat; })[0];
+    applyCards(r, rec, st.seat, I, !!sh);
     if (sh) { r.shown.unshift(shownEntry(rec, st.seat, sh.cards)); if (r.shown.length > SHOWN_MAX) r.shown.length = SHOWN_MAX; }
     changed.push(r.id);
   });
@@ -1913,31 +2134,90 @@ function playerType(r) {
   if (v >= 28) return 'LAG';
   return 'TAG';
 }
+/** Wilson-Intervall für einen gewichteten Anteil mit effektiver Stichprobe neff */
+function wilsonP(p, neff) {
+  if (!(neff > 0) || p == null) return null;
+  var z = 1.96, z2 = z * z, den = 1 + z2 / neff, c = (p + z2 / (2 * neff)) / den, h = z * Math.sqrt(p * (1 - p) / neff + z2 / (4 * neff * neff)) / den;
+  return [Math.max(0, c - h), Math.min(1, c + h)];
+}
+function priorOf(k) { var R = PT.ranges; return R && R.PRIOR[k] != null ? [R.PRIOR[k], R.PRIOR_K[k]] : [0.5, 10]; }
+/** Kurzzeitwerte je Wert: Rohanteil, gewichtete Gelegenheiten, effektive Stichprobe, Intervall, geglättet */
+function recentProfile(r) {
+  var rc = r && r.recent, o = { hands: rc ? rc.h : 0, halfLife: HALF_LIFE, stats: {} };
+  STATS.forEach(function (k) {
+    var x = rc ? rc.stats[k] : [0, 0, 0], pk = priorOf(k), rate0 = x[1] > 1e-9 ? Math.min(1, x[0] / x[1]) : null, neff = x[2] > 1e-9 ? x[1] * x[1] / x[2] : 0;
+    o.stats[k] = { rate: rate0, pct: rate0 == null ? null : Math.round(100 * rate0), n: x[0], d: x[1], neff: neff, ci: wilsonP(rate0, neff),
+      sm: (x[0] + pk[0] * pk[1]) / (x[1] + pk[1]), quality: x[1] > 1e-9 ? 'geschätzt' : 'unbekannt' };
+  });
+  return o;
+}
+/** Ergebnis der Veränderungsprüfung (Zustand aus r.chg, Kennzahlen neu berechnet) */
+function changeProfile(r) {
+  var o = { detected: false, keys: [], tested: CHANGE_KEYS.slice(), z: {}, params: { halfLife: HALF_LIFE, zOn: CHANGE.zOn, zOff: CHANGE.zOff, minRecent: CHANGE.minRecent, minOld: CHANGE.minOld } };
+  if (!r || !r.recent) return o;
+  CHANGE_KEYS.forEach(function (k) {
+    var t = changeTest(r.stats[k], r.recent.stats[k]); o.z[k] = t ? t.z : null;
+    var c = r.chg && r.chg[k];
+    if (c && t) o.keys.push({ key: k, label: STAT_LABEL[k], dir: c[1], z: t.z, recent: t.recent, older: t.older, long: t.long, since: c[0], ago: r.hands - c[0], neff: t.neff });
+  });
+  o.detected = o.keys.length > 0;
+  return o;
+}
+/**
+ * Werte für Coach und Gegnermodell: je Wert [Zähler, Nenner] wie in r.stats, bei erkannter Veränderung die Kurzzeitzähler.
+ * Direkt mit PT.ranges.smooth nutzbar. Nur aus Beobachtungen am Tisch.
+ */
+function effectiveStats(r) {
+  var st = r ? r.stats : emptyStats(), out = {}, changed = [], ch = r && r.recent && r.chg ? r.chg : {};
+  STATS.forEach(function (k) {
+    if (Object.prototype.hasOwnProperty.call(ch, k) && changeTest(st[k], r.recent.stats[k])) { out[k] = [r.recent.stats[k][0], r.recent.stats[k][1]]; changed.push(k); }  // wie profile().est
+    else out[k] = [st[k][0], st[k][1]];
+  });
+  return { stats: out, changed: changed, hands: r ? (changed.length ? Math.min(r.hands, Math.round(r.recent.h)) : r.hands) : 0, longHands: r ? r.hands : 0 };
+}
 function profile(r) {
   var o = { hands: r ? r.hands : 0 }, st = r ? r.stats : emptyStats();
   STATS.forEach(function (k) { o[k] = pctOf(st[k]); });
   o.af = r ? af(r.agg) : null;
   o.bel = reliability(o.hands); o.typ = playerType(r);
+  // Erweiterung Format 3: Kurzzeit, Veränderung, Kartenkenntnis, beste Schätzung
+  o.recent = recentProfile(r);
+  o.change = changeProfile(r);
+  var c = r && r.cards ? r.cards : null;
+  o.cards = { observed: c ? c.sd : (r ? r.shown.length : 0), unknown: c ? c.hid : null, from: c ? c.from : null, counted: !!c,
+    share: c && c.sd + c.hid > 0 ? c.sd / (c.sd + c.hid) : null };
+  o.est = {}; o.estSrc = {}; o.quality = {};
+  STATS.forEach(function (k) {
+    var pk = priorOf(k), useR = o.change.keys.some(function (x) { return x.key === k; }), nd = useR ? [r.recent.stats[k][0], r.recent.stats[k][1]] : st[k];
+    o.est[k] = (nd[0] + pk[0] * pk[1]) / (nd[1] + pk[1]);
+    o.estSrc[k] = useR ? 'kurzzeit' : st[k][1] > 0 ? 'langzeit' : 'prior';
+    o.quality[k] = st[k][1] > 0 ? 'geschätzt' : 'unbekannt';
+  });
   return o;
 }
 
 // ---------- Export / Import ----------
-var FORMAT_DB = 'PokerTrainer-DB', FORMAT_BACKUP = 'PokerTrainer-Backup';
-function dbExport(db, stamp) {
-  var list = dbList(db), body = JSON.stringify(list);
-  return '{"format":"' + FORMAT_DB + '","version":2,"app":"' + PT.VERSION + '","exported":' + JSON.stringify(stamp || '') + ',"count":' + list.length +
-    ',"checksum":"' + U.fnv1a(body) + '","opponents":[' +
+var FORMAT_DB = 'PokerTrainer-DB', FORMAT_BACKUP = 'PokerTrainer-Backup', BACKUP_VERSION = 3;
+/** Datenbankdatei aus einer Liste von Datensätzen (version: 1, 2 oder 3; für Sicherungen alter Formate unverändert) */
+function rawExport(list, version, stamp) {
+  var body = JSON.stringify(list);
+  return '{"format":"' + FORMAT_DB + '","version":' + version + ',"app":"' + PT.VERSION + '","exported":' + JSON.stringify(stamp || '') +
+    (version >= 3 ? ',"halfLife":' + HALF_LIFE : '') + ',"count":' + list.length + ',"checksum":"' + U.fnv1a(body) + '","opponents":[' +
     (list.length ? '\n' + list.map(function (r) { return JSON.stringify(r); }).join(',\n') + '\n' : '') + ']}\n';
 }
+function dbExport(db, stamp) { return rawExport(dbList(db), DB_VERSION, stamp); }
 function backupExport(payload, stamp) {
   var body = JSON.stringify(payload);
-  return JSON.stringify({ format: FORMAT_BACKUP, version: 2, app: PT.VERSION, exported: stamp || '', checksum: U.fnv1a(body), payload: payload });
+  return JSON.stringify({ format: FORMAT_BACKUP, version: BACKUP_VERSION, app: PT.VERSION, exported: stamp || '', halfLife: HALF_LIFE, checksum: U.fnv1a(body), payload: payload });
 }
 function onlyKeys(o, keys) { var k = Object.keys(o); for (var i = 0; i < k.length; i++) if (keys.indexOf(k[i]) < 0) return k[i]; return null; }
-var REC_KEYS = ['id', 'name', 'status', 'hands', 'stats', 'agg', 'pos', 'shown', 'lastSeen', 'firstSeen'];
+var REC_KEYS_V2 = ['id', 'name', 'status', 'hands', 'stats', 'agg', 'pos', 'shown', 'lastSeen', 'firstSeen'];
+var REC_KEYS = REC_KEYS_V2.concat(['recent', 'cards', 'chg']);
 var REC_KEYS_V1 = ['id', 'name', 'status', 'hands', 'stats', 'shown', 'lastSeen'];
 var SHOWN_KEYS = ['hand', 'ts', 'pos', 'cards', 'board', 'actions', 'net'];
 var NAME_RE = /^[A-Za-zÀ-ÖØ-öø-ÿ0-9 .'\-]{1,40}$/;
+function isObj(o) { return !!o && typeof o === 'object' && !Array.isArray(o); }
+function isNum(x, lo, hi) { return typeof x === 'number' && isFinite(x) && x >= lo && x <= hi; }
 function validNd(nd, max) { return Array.isArray(nd) && nd.length === 2 && isInt(nd[0], 0, 1e9) && isInt(nd[1], 0, 1e9) && nd[0] <= nd[1] && (max == null || nd[1] <= max); }
 function validShown(s, j) {
   if (!s || typeof s !== 'object' || Array.isArray(s) || onlyKeys(s, SHOWN_KEYS)) return 'aufgedecktes Blatt ' + (j + 1) + ' ungültig';
@@ -1949,9 +2229,38 @@ function validShown(s, j) {
   if (!isInt(s.net, -1e12, 1e12)) return 'Ergebnis in Blatt ' + (j + 1) + ' ungültig';
   return null;
 }
-function validRecord(r, v1) {
+/** Kurzzeitgedächtnis, Kartenkenntnis und Veränderungszustand (Format 3) */
+function validMemory(r) {
+  var rc = r.recent;
+  if (!isObj(rc) || onlyKeys(rc, ['h', 'stats']) || Object.keys(rc).length !== 2) return 'Kurzzeitwerte ungültig';
+  if (!isNum(rc.h, 0, Math.min(r.hands, H_MAX) + EPS)) return 'Kurzzeit-Handgewicht ungültig';
+  if (!isObj(rc.stats) || onlyKeys(rc.stats, STATS) || Object.keys(rc.stats).length !== STATS.length) return 'Kurzzeitwerte unvollständig';
+  for (var i = 0; i < STATS.length; i++) {
+    var k = STATS[i], x = rc.stats[k], L = r.stats[k];
+    if (!Array.isArray(x) || x.length !== 3 || !isNum(x[0], 0, 1e9) || !isNum(x[1], 0, 1e9) || !isNum(x[2], 0, 1e9)) return 'Kurzzeitwert ' + (STAT_LABEL[k] || k) + ' ungültig';
+    // Gewichte liegen in (0, 1]: a ≤ s1, s2 ≤ s1, Kurzzeit ≤ Langzeit (Treffer und Nicht-Treffer)
+    if (x[0] > x[1] + EPS || x[2] > x[1] + EPS || x[1] > L[1] + EPS || x[0] > L[0] + EPS || x[1] - x[0] > L[1] - L[0] + EPS) return 'Kurzzeitwert ' + (STAT_LABEL[k] || k) + ' ungültig';
+  }
+  var c = r.cards;
+  if (!isObj(c) || onlyKeys(c, ['sd', 'hid', 'from']) || Object.keys(c).length !== 3) return 'Kartenzähler ungültig';
+  if (!isInt(c.from, 0, r.hands) || !isInt(c.sd, 0, r.hands) || !isInt(c.hid, 0, r.hands) || c.sd + c.hid > r.hands - c.from) return 'Kartenzähler ungültig';
+  if (!isObj(r.chg) || onlyKeys(r.chg, CHANGE_KEYS)) return 'Veränderungsanzeige ungültig';
+  for (var key in r.chg) {
+    if (!Object.prototype.hasOwnProperty.call(r.chg, key)) continue;
+    var v = r.chg[key];
+    if (!Array.isArray(v) || v.length !== 2 || !isInt(v[0], 1, r.hands) || (v[1] !== 1 && v[1] !== -1)) return 'Veränderungsanzeige ungültig';
+  }
+  return null;
+}
+/**
+ * Prüft einen Datensatz. fmt: true oder 1 = Format 1 (Entwurf 2), 2 = Format 2, 3 = Format 3,
+ * sonst (false/undefined) Format 2 oder 3 (erkannt am Feld „recent“), z. B. für Momentaufnahmen in Lerndaten.
+ */
+function validRecord(r, fmt) {
   if (!r || typeof r !== 'object' || Array.isArray(r)) return 'kein Datensatz';
-  var extra = onlyKeys(r, v1 ? REC_KEYS_V1 : REC_KEYS); if (extra) return 'unbekanntes Feld „' + String(extra).slice(0, 20) + '“';
+  var v1 = fmt === true || fmt === 1, ver = v1 ? 1 : fmt === 2 || fmt === 3 ? fmt : (Object.prototype.hasOwnProperty.call(r, 'recent') ? 3 : 2);
+  var extra = onlyKeys(r, ver === 1 ? REC_KEYS_V1 : ver === 2 ? REC_KEYS_V2 : REC_KEYS); if (extra) return 'unbekanntes Feld „' + String(extra).slice(0, 20) + '“';
+  if (ver === 3) for (var q = 0; q < REC_KEYS.length; q++) if (!Object.prototype.hasOwnProperty.call(r, REC_KEYS[q])) return 'Feld „' + REC_KEYS[q] + '“ fehlt';
   if (typeof r.id !== 'string' || !/^[A-Za-z0-9_-]{1,40}$/.test(r.id)) return 'ungültige ID';
   if (typeof r.name !== 'string' || !NAME_RE.test(r.name)) return 'ungültiger Name';
   if (r.status !== 'aktiv' && r.status !== 'archiv') return 'ungültiger Status';
@@ -1976,16 +2285,28 @@ function validRecord(r, v1) {
   if (!Array.isArray(r.shown) || r.shown.length > SHOWN_MAX) return 'aufgedeckte Blätter ungültig';
   for (var j = 0; j < r.shown.length; j++) { var e = validShown(r.shown[j], j); if (e) return e; }
   if (typeof r.lastSeen !== 'number' || !(r.lastSeen >= 0)) return 'zuletzt gesehen ungültig';
+  if (ver === 3) { var em = validMemory(r); if (em) return em; }
   return null;
 }
+function recordVersion(r) { return !validRecord(r, 3) ? 3 : !validRecord(r, 2) ? 2 : !validRecord(r, 1) ? 1 : 0; }
 function cloneRecord(r) {
   var st = {}; STATS.forEach(function (k) { st[k] = [r.stats[k][0], r.stats[k][1]]; });
   var pos = {}; POSITIONS.forEach(function (p) { var x = r.pos[p]; pos[p] = { h: x.h, vpip: [x.vpip[0], x.vpip[1]], pfr: [x.pfr[0], x.pfr[1]] }; });
-  return { id: r.id, name: r.name, status: r.status, hands: r.hands, stats: st,
+  var o = { id: r.id, name: r.name, status: r.status, hands: r.hands, stats: st,
     agg: { bet: r.agg.bet, raise: r.agg.raise, call: r.agg.call, fold: r.agg.fold, check: r.agg.check }, pos: pos,
     shown: r.shown.map(function (s) { return { hand: s.hand, ts: s.ts, pos: s.pos, cards: s.cards, board: s.board, actions: s.actions.slice(), net: s.net }; }),
     lastSeen: r.lastSeen, firstSeen: r.firstSeen };
+  if (r.recent) {
+    var rs = {}; STATS.forEach(function (k) { var x = r.recent.stats[k]; rs[k] = [x[0], x[1], x[2]]; });
+    o.recent = { h: r.recent.h, stats: rs };
+    o.cards = { sd: r.cards.sd, hid: r.cards.hid, from: r.cards.from };
+    o.chg = {}; Object.keys(r.chg).forEach(function (k) { if (CHANGE_KEYS.indexOf(k) >= 0) o.chg[k] = [r.chg[k][0], r.chg[k][1]]; });  // Reihenfolge wie im Original (kanonischer Vergleich)
+  } else { o.recent = emptyRecent(); o.cards = emptyCards(r.hands); o.chg = {}; }
+  return o;
 }
+/** Migration Format 2 → 3: Langzeitwerte bleiben exakt; das Kurzzeitgedächtnis beginnt leer (alle alten Beobachtungen zählen als „älter“),
+    die Kartenzählung beginnt mit der aktuellen Handzahl (from), weil frühere Hände nicht gezählt wurden. */
+function migrateV2(r) { var o = cloneRecord(r); o.recent = emptyRecent(); o.cards = emptyCards(r.hands); o.chg = {}; return o; }
 /** Migration eines v1-Datensatzes (Entwurf 2): fehlende Werte bleiben unbekannt (0/0), nicht 0 %. */
 function migrateV1(r) {
   var n = newRecord(r.id, r.name);
@@ -1994,7 +2315,15 @@ function migrateV1(r) {
   n.stats.foldTo3Bet = r.stats.foldTo3Bet.slice(); n.stats.cbetFlop = r.stats.cbet.slice(); n.stats.foldToCbet = r.stats.foldToCbet.slice();
   n.stats.wtsd = r.stats.wtsd.slice();
   n.shown = r.shown.map(function (s) { return { hand: s.hand, ts: s.ts, pos: s.pos, cards: s.cards, board: s.board, actions: s.actions.slice(), net: s.net }; });
+  n.cards = emptyCards(r.hands);
   return n;
+}
+/** Datensatz beliebigen bekannten Formats einlesen: gültig im aktuellen Format → Kopie, Format 2/1 → umgewandelt, sonst null */
+function loadRecord(r) {
+  if (!validRecord(r, 3)) return cloneRecord(r);
+  if (!validRecord(r, 2)) return migrateV2(r);
+  if (!validRecord(r, 1)) return migrateV1(r);
+  return null;
 }
 var MAX_IMPORT = 60 * 1024 * 1024;
 function dbImport(text) {
@@ -2006,38 +2335,44 @@ function dbImport(text) {
   if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return fail('Die Datei ist keine PokerTrainer-Datei.');
   if (obj.format === FORMAT_BACKUP) return backupImport(obj);
   if (obj.format !== FORMAT_DB) return fail('Die Datei ist keine PokerTrainer-Datenbank.');
-  if (obj.version !== 1 && obj.version !== 2) return fail('Unbekannte Version der Datenbank (' + String(obj.version).slice(0, 10) + ').');
+  if (obj.version !== 1 && obj.version !== 2 && obj.version !== 3) return fail('Unbekannte Version der Datenbank (' + String(obj.version).slice(0, 10) + ').');
   if (!Array.isArray(obj.opponents)) return fail('Die Gegnerliste fehlt.');
   if (obj.count !== obj.opponents.length) return fail('Die Zahl der Gegner stimmt nicht mit der Datei überein.');
   if (U.fnv1a(JSON.stringify(obj.opponents)) !== obj.checksum) return fail('Die Prüfsumme stimmt nicht, die Datei wurde verändert oder ist beschädigt.');
   if (obj.opponents.length > 100000) return fail('Zu viele Einträge.');
-  var db = newDb(), v1 = obj.version === 1;
+  if (obj.version === 3 && obj.halfLife !== undefined && !isNum(obj.halfLife, 1, 100000)) return fail('Ungültige Halbwertszeit in der Datei.');
+  var resetRecent = obj.version === 3 && obj.halfLife !== undefined && obj.halfLife !== HALF_LIFE;
+  var db = newDb(), ver = obj.version;
   for (var i = 0; i < obj.opponents.length; i++) {
-    var e = validRecord(obj.opponents[i], v1);
+    var e = validRecord(obj.opponents[i], ver);
     if (e) return fail('Eintrag ' + (i + 1) + ': ' + e + '.');
     var r = obj.opponents[i];
-    if (db.opps[r.id]) return fail('Doppelter Eintrag für ' + r.name + '.');
-    db.opps[r.id] = v1 ? migrateV1(r) : cloneRecord(r);
+    if (Object.prototype.hasOwnProperty.call(db.opps, r.id)) return fail('Doppelter Eintrag für ' + r.name + '.');
+    db.opps[r.id] = ver === 1 ? migrateV1(r) : ver === 2 || resetRecent ? migrateV2(r) : cloneRecord(r);
   }
-  return { ok: true, kind: 'db', db: db, count: obj.opponents.length, migrated: v1, version: obj.version };
+  return { ok: true, kind: 'db', db: db, count: obj.opponents.length, migrated: ver < DB_VERSION || resetRecent, version: ver, recentReset: resetRecent };
 }
 function backupImport(obj) {
   function fail(m) { return { ok: false, error: m }; }
-  if (obj.version !== 2) return fail('Unbekannte Version der Sicherung.');
+  if (obj.version !== 2 && obj.version !== 3) return fail('Unbekannte Version der Sicherung.');
   if (!obj.payload || typeof obj.payload !== 'object' || Array.isArray(obj.payload)) return fail('Die Sicherung enthält keine Daten.');
   if (U.fnv1a(JSON.stringify(obj.payload)) !== obj.checksum) return fail('Die Prüfsumme stimmt nicht, die Sicherung wurde verändert oder ist beschädigt.');
+  if (obj.version === 3 && obj.halfLife !== undefined && !isNum(obj.halfLife, 1, 100000)) return fail('Ungültige Halbwertszeit in der Sicherung.');
+  var ver = obj.version, resetRecent = ver === 3 && obj.halfLife !== undefined && obj.halfLife !== HALF_LIFE;
+  var conv = function (r) { return ver === 2 || resetRecent ? migrateV2(r) : cloneRecord(r); };
   var P = obj.payload, extra = onlyKeys(P, ['opponents', 'hero', 'hands', 'learning', 'settings', 'table']);
   if (extra) return fail('Unbekannter Bereich in der Sicherung.');
   if (!Array.isArray(P.opponents)) return fail('Die Gegnerliste fehlt.');
+  if (P.opponents.length > 100000) return fail('Zu viele Einträge.');
   var db = newDb();
   for (var i = 0; i < P.opponents.length; i++) {
-    var e = validRecord(P.opponents[i], false);
+    var e = validRecord(P.opponents[i], ver);
     if (e) return fail('Gegner ' + (i + 1) + ': ' + e + '.');
-    if (db.opps[P.opponents[i].id]) return fail('Doppelter Gegner.');
-    db.opps[P.opponents[i].id] = cloneRecord(P.opponents[i]);
+    if (Object.prototype.hasOwnProperty.call(db.opps, P.opponents[i].id)) return fail('Doppelter Gegner.');
+    db.opps[P.opponents[i].id] = conv(P.opponents[i]);
   }
   var hero = null;
-  if (P.hero != null) { var eh = validRecord(P.hero, false); if (eh) return fail('Eigene Werte: ' + eh + '.'); hero = cloneRecord(P.hero); }
+  if (P.hero != null) { var eh = validRecord(P.hero, ver); if (eh) return fail('Eigene Werte: ' + eh + '.'); hero = conv(P.hero); }
   var hands = [];
   if (P.hands != null) {
     if (!Array.isArray(P.hands) || P.hands.length > 200000) return fail('Handhistorie ungültig.');
@@ -2045,25 +2380,33 @@ function backupImport(obj) {
   }
   var learning = null;
   if (P.learning != null) { var el = PT.training ? PT.training.validLearning(P.learning) : 'unbekannt'; if (el) return fail('Lerndaten: ' + el + '.'); learning = P.learning; }
-  return { ok: true, kind: 'backup', db: db, hero: hero, hands: hands, learning: learning, settings: P.settings || null, table: P.table || null, count: P.opponents.length };
+  return { ok: true, kind: 'backup', db: db, hero: hero, hands: hands, learning: learning, settings: P.settings || null, table: P.table || null, count: P.opponents.length,
+    migrated: ver < BACKUP_VERSION || resetRecent, version: ver };
 }
 function dbCanon(db) { return JSON.stringify(dbList(db)); }
+/** Datenbank aus gespeicherter Liste (IndexedDB/localStorage): aktuelles Format übernehmen, ältere Formate umwandeln, Ungültiges überspringen */
 function dbFromList(list) {
-  var db = newDb(), skipped = 0;
+  var db = newDb(), skipped = 0, migrated = 0;
   (list || []).forEach(function (r) {
-    if (!validRecord(r, false) && !db.opps[r.id]) db.opps[r.id] = cloneRecord(r);
-    else if (!validRecord(r, true) && !db.opps[r.id]) db.opps[r.id] = migrateV1(r);
-    else skipped++;
+    var x = r && typeof r.id === 'string' && !Object.prototype.hasOwnProperty.call(db.opps, r.id) ? loadRecord(r) : null;
+    if (x) { db.opps[x.id] = x; if (!r.recent) migrated++; } else skipped++;
   });
-  db.skipped = skipped;
+  db.skipped = skipped; db.migrated = migrated;
   return db;
 }
+/** Anzahl der Datensätze einer gespeicherten Liste, die noch nicht im aktuellen Format sind (Anlass für Sicherung vor Umwandlung) */
+function needsMigration(list) { var n = 0; (list || []).forEach(function (r) { if (validRecord(r, 3) && (!validRecord(r, 2) || !validRecord(r, 1))) n++; }); return n; }
 
 PT.stats = { STATS: STATS, STAT_LABEL: STAT_LABEL, STAT_HELP: STAT_HELP, POSITIONS: POSITIONS, SHOWN_MAX: SHOWN_MAX,
   emptyStats: emptyStats, emptyAgg: emptyAgg, emptyPos: emptyPos, handStats: handStats, newDb: newDb, newRecord: newRecord,
   dbEnsure: dbEnsure, dbApplyHand: dbApplyHand, applyToRecord: applyToRecord, dbList: dbList, rate: rate, pctOf: pctOf, wilson: wilson, af: af,
   reliability: reliability, playerType: playerType, profile: profile, dbExport: dbExport, backupExport: backupExport, dbImport: dbImport,
-  validRecord: validRecord, cloneRecord: cloneRecord, migrateV1: migrateV1, dbCanon: dbCanon, dbFromList: dbFromList, FORMAT_DB: FORMAT_DB };
+  validRecord: validRecord, cloneRecord: cloneRecord, migrateV1: migrateV1, dbCanon: dbCanon, dbFromList: dbFromList, FORMAT_DB: FORMAT_DB,
+  // Format 3: Gegnergedächtnis
+  DB_VERSION: DB_VERSION, BACKUP_VERSION: BACKUP_VERSION, MEMORY: { HALF_LIFE: HALF_LIFE, LAMBDA: LAMBDA, H_MAX: H_MAX, CHANGE_KEYS: CHANGE_KEYS, CHANGE: CHANGE },
+  emptyRecent: emptyRecent, addRecent: addRecent, changeTest: changeTest, updateChange: updateChange, recentProfile: recentProfile, changeProfile: changeProfile,
+  effectiveStats: effectiveStats, wilsonP: wilsonP, migrateV2: migrateV2, loadRecord: loadRecord, recordVersion: recordVersion, rawExport: rawExport,
+  needsMigration: needsMigration, setMemoryParams: setMemoryParams };
 })(typeof globalThis !== 'undefined' ? globalThis : (typeof self !== 'undefined' ? self : this));
 
 /* assets/js/engine/bots.js */
@@ -2228,8 +2571,17 @@ function preflop(v, P, rng, ctx) {
   var openerPos = v.players[opener].pos, sizeBB = lastTo / v.bb;
   if (rc === 1) {
     var tbAdj = heroAgg ? 1 + P.adapt * Math.max(0, adaptFactor(hs, 'steal', 0.4, 30, 30)) * 2.5 : 1;
-    var ch = R.chart('vsOpen', { pos: pos, opener: openerPos, sizeBB: sizeBB, scale: P.tb * tbAdj, bluffScale: P.bl3 * tbAdj, callScale: P.call * tbAdj, squeeze: callers > 0 });
-    var a1 = chartAct(rowFor(ch));
+    // Fold gegen 3-Bet des Helden (beobachtbar): > 0 heißt, der Held gibt zu oft auf → mehr 3-Bet-Bluffs, Calls werden zu 3-Bets;
+    // < 0 (Held hält 3-Bets oft) → weniger Bluffs, etwas breiter für Value
+    var e3 = heroAgg ? P.adapt * adaptFactor(hs, 'foldTo3Bet', 0.55, 25, 20) : 0;
+    var ch = R.chart('vsOpen', { pos: pos, opener: openerPos, sizeBB: sizeBB, scale: P.tb * tbAdj * (1 + 1.5 * Math.max(0, -e3)), bluffScale: P.bl3 * tbAdj * clamp(1 + 6 * e3, 0.25, 4),
+      callScale: P.call * tbAdj, squeeze: callers > 0 });
+    var row1 = rowFor(ch);
+    if (e3 > 0) {
+      var conv = clamp(1.5 * e3, 0, 0.5), xb = x <= 0.5 ? clamp(0.5 * e3, 0, 0.12) : 0;
+      row1 = { raise: row1.raise + conv * row1.call + xb * row1.fold, call: row1.call * (1 - conv), fold: row1.fold * (1 - xb) };
+    }
+    var a1 = chartAct(row1);
     if (a1 === 'raise' && L.canRaise) {
       var ip = PT.POS_ORDER_POST[pos] > PT.POS_ORDER_POST[openerPos];
       return raiseTo(v, L, lastTo * (ip ? 3 : 3.8) + callers * lastTo);
@@ -2293,12 +2645,14 @@ function postflop(v, P, rng, ctx) {
   if (v.street === 3 && cls === 'weak') cls = p >= 0.62 ? 'weak' : 'air';
   var hsI = streetHistory(v), ip = isIP(v), spr = Math.min(me.stack, maxOppStack(v)) / Math.max(1, pot);
   var hs = ctx && ctx.heroStats, heroIn = v.players.some(function (q) { return q.hero && !q.folded; });
-  var bluffMul = 1, valueMul = 1;
+  var bluffMul = 1, valueMul = 1, thinMul = 1;
   if (heroIn && hs) {
+    // WTSD des Helden über dem Populationsmittel: weniger Bluffs, mehr und dünnere Value-Bets (mittlere Hände)
     var st = adaptFactor(hs, 'wtsd', 0.28, 30, 25);
-    bluffMul = clamp(1 - P.adapt * st * 3, 0.4, 1.6);
+    bluffMul = clamp(1 - P.adapt * st * 3, 0.15, 1.6);
     if (v.street === 1) bluffMul *= clamp(1 + P.adapt * adaptFactor(hs, 'foldToCbet', 0.45, 20, 15) * 2.2, 0.5, 1.8);
     valueMul = clamp(1 + P.adapt * st * 1.5, 0.8, 1.4);
+    thinMul = clamp(1 + P.adapt * st * 4, 0.7, 2.2);
   }
   var mw = nOpp > 1 ? Math.pow(0.6, nOpp - 1) : 1;
   if (L.toCall === 0) {
@@ -2310,20 +2664,20 @@ function postflop(v, P, rng, ctx) {
     var pB;
     if (cls === 'monster') pB = 1 - P.slow * (v.street < 3 ? 1 : 0.3);
     else if (cls === 'strong') pB = 0.8 * valueMul;
-    else if (cls === 'medium') pB = (v.street === 3 ? P.thin : P.thin * 0.9 + 0.1) * valueMul * mw;
+    else if (cls === 'medium') pB = (v.street === 3 ? P.thin : P.thin * 0.9 + 0.1) * thinMul * mw;
     else if (di.strong) pB = P.semi * mw;
     else if (cls === 'weak') pB = P.bluff * 0.6 * bluffMul * mw;
     else pB = P.bluff * bluffMul * mw;
     if (isPfa && first) {
       if (v.street === 1) {
         if (cls === 'air' || cls === 'weak') pB = clamp(P.cbet * texMod * bluffMul * 0.85, 0, 0.95) * mw;
-        else if (cls === 'medium') pB = Math.max(pB, P.cbet * 0.75 * mw);
+        else if (cls === 'medium') pB = Math.max(pB, P.cbet * 0.75 * Math.max(1, thinMul) * mw);
         else if (di.strong) pB = Math.max(pB, P.cbet * mw);
       } else if (hsI.iBetPrev) {
         var barrel = v.street === 2 ? P.barrel : P.river;
         var scare = P.skill > 0.55 && (v.board[v.board.length - 1] >> 2) > Math.max.apply(null, v.board.slice(0, v.board.length - 1).map(function (c) { return c >> 2; }));
         if (cls === 'air' || cls === 'weak') pB = barrel * bluffMul * (scare ? 1.3 : 0.75) * mw * (v.street === 3 && di.strong === false ? 0.9 : 1);
-        else if (cls === 'medium') pB = barrel * (v.street === 3 ? 0.45 : 0.6);
+        else if (cls === 'medium') pB = barrel * (v.street === 3 ? 0.45 : 0.6) * thinMul;
       }
     } else if (!isPfa && first) {
       var pfaSeat = v.pfa, pfaLive = pfaSeat >= 0 && !v.players[pfaSeat].folded;
@@ -2912,11 +3266,17 @@ function evCall(ctx) {
   if (heroAllIn || others.length === 0) {
     // keine weiteren Setzrunden: Side-Pot-genaue Abrechnung
     var heroFinal = me.total + c;
-    if (ctx.budget.left < 200) return { ev: ctx.eqNow * (po ? po.winnable : ctx.pot + c) - c, dEdq: po ? po.winnable : ctx.pot, parts: { allin: true, approx: true, call: c, winnable: po ? po.winnable : null } };
-    var share = Q.potShare({ hero: ctx.v.cards, heroTotal: heroFinal, board: ctx.board, rng: ctx.rng, budget: ctx.budget, iters: Math.min(1500, ctx.budget.left),
+    // Näherung über die aktuelle Equity, gekennzeichnet (approx, Grund); Equity unbekannt → 0,5 als neutraler Wert
+    var approx = function (reason, failed) {
+      var eqA = ctx.eqNow != null && isFinite(ctx.eqNow) ? ctx.eqNow : 0.5;
+      return { ev: eqA * (po ? po.winnable : ctx.pot + c) - c, dEdq: po ? po.winnable : ctx.pot, parts: { allin: true, approx: true, failed: !!failed, reason: reason, call: c, winnable: po ? po.winnable : null } };
+    };
+    if (ctx.budget.left < 200) return approx('Simulationsbudget erschöpft', false);
+    var share = Q.potShare({ hero: ctx.v.cards, heroTotal: heroFinal, board: ctx.board, rng: ctx.rng, budget: ctx.budget, iters: Math.min(1500, ctx.budget.left), deadline: ctx.deadline,
       opps: ctx.opps.map(function (o) { return { w: o.w, total: Math.min(o.p.total, heroFinal + 1e12), folded: false }; }),
       dead_: ctx.deadList || null, deadMoney: ctx.deadList ? 0 : ctx.deadMoney });
-    return { ev: share.win - c, dEdq: po ? po.winnable : ctx.pot, se: share.se, parts: { allin: true, expectedWin: share.win, call: c, winnable: po ? po.winnable : null } };
+    if (share.failed || share.win == null || !isFinite(share.win)) return approx(share.reason || 'Side-Pot-Berechnung nicht möglich', true);
+    return { ev: share.win - c, dEdq: po ? po.winnable : ctx.pot, se: share.se, parts: { allin: true, expectedWin: share.win, call: c, winnable: po ? po.winnable : null, iters: share.n, aborted: share.aborted || null } };
   }
   var Rz = realization(ctx, 'call'), potAfter = ctx.pot + c;
   var implied = 0, f = ctx.feat;
@@ -3311,8 +3671,10 @@ var LINE_TEXT = { open: 'Open-Raise', iso: 'Iso-Raise', limp: 'Limp', call: 'Cal
 
 // ---------- Gegnerdaten ----------
 function oppStats(dbRec) {
-  var raw = dbRec ? dbRec.stats : S.emptyStats(), hands = dbRec ? dbRec.hands : 0;
-  return { raw: raw, hands: hands, sm: R.smooth(raw), typ: S.playerType(dbRec), bel: S.reliability(hands) };
+  // Datenformat 3: bei erkannter Änderung der Spielweise zählen die Kurzzeitwerte (PT.stats.effectiveStats), sonst die Langzeitwerte
+  var eff = dbRec && S.effectiveStats ? S.effectiveStats(dbRec) : null;
+  var raw = eff ? eff.stats : (dbRec ? dbRec.stats : S.emptyStats()), hands = eff ? eff.hands : (dbRec ? dbRec.hands : 0);
+  return { raw: raw, hands: hands, sm: R.smooth(raw), typ: S.playerType(dbRec), bel: S.reliability(hands), changed: eff ? eff.changed : [], longHands: eff ? eff.longHands : hands };
 }
 function buildRange(v, seat, st, gto, pfaSeat) {
   var line = lineOf(v, seat), sm = gto ? R.smooth(null) : st.sm, prof = R.profileOf(sm);
@@ -3510,8 +3872,12 @@ function analyzeMode(input, v, mode, level, L0, budget, rng, deadline, set, prep
       cands.push({ type: L.isBet ? 'bet' : 'raise', amount: amt, label: (L.isBet ? 'Bet ' : 'Raise auf ') + fmt(amt) + (amt === L.maxTo ? ' (All-in)' : ''), kind: null, extra: true, allin: amt === L.maxTo });
   });
   var acts = cands.map(function (c) {
-    var r = X.evaluateAction(ctx, c);
-    return { type: c.type, amount: c.amount || 0, label: c.label, kind: c.kind, allin: !!c.allin, extra: !!c.extra, ev: r.ev, evBB: r.ev / bb, u: r.u, uSim: r.uSim, uModel: r.uModel, parts: slimParts(r.parts) };
+    var r = X.evaluateAction(ctx, c), pp = r.parts || {};
+    // Näherung oder fehlgeschlagene Berechnung (Mathe 2.1): gekennzeichnet, nie als 0 gewertet; die Unsicherheit wird erweitert
+    var failed = !!pp.failed || !isFinite(r.ev), approx = !!pp.approx || failed, ev = isFinite(r.ev) ? r.ev : 0, u = isFinite(r.u) ? r.u : v.pot;
+    if (approx) u = Math.max(u, (failed ? 0.25 : 0.1) * Math.max(v.pot, bb));
+    return { type: c.type, amount: c.amount || 0, label: c.label, kind: c.kind, allin: !!c.allin, extra: !!c.extra, ev: ev, evBB: ev / bb, u: u, uSim: r.uSim, uModel: r.uModel, parts: slimParts(pp),
+      approx: approx, failed: failed, reason: pp.reason || (failed ? 'EV nicht berechenbar' : null) };
   });
   acts.sort(function (a, b) { return b.ev - a.ev; });
   // Preflop: Faustregel-Chart als Anker. Raises außerhalb des Charts und Open-Limps nur bei belegtem Exploit.
@@ -3527,8 +3893,9 @@ function analyzeMode(input, v, mode, level, L0, budget, rng, deadline, set, prep
   else if (gap >= 2 * u && gap >= 0.5 * bb) cls = 'klar';
   else if (gap >= 0.5 * u && gap >= 0.15 * bb) cls = 'knapp';
   else cls = 'mehrere';
-  var highU = u >= 0.4 * Math.max(v.pot, bb) && gap < u;
+  var highU = (u >= 0.4 * Math.max(v.pot, bb) && gap < u) || best.failed || (bestOther && bestOther.failed && gap < bestOther.u);
   if (highU && cls !== 'eindeutig') cls = cls === 'klar' ? 'klar' : 'unsicher';
+  if (best.failed || (bestOther && bestOther.failed && gap < bestOther.u)) cls = 'unsicher';
   if (chartInfo && chartInfo.applied) cls = chartInfo.w >= 0.85 ? 'klar' : 'knapp';
   var tol = Math.max(0.25 * bb, 0.5 * u), sizeNote = null;
   if (group(best) === 'aggr') {
@@ -3659,7 +4026,7 @@ function group(a) { return a.type === 'bet' || a.type === 'raise' ? 'aggr' : a.t
 function slimParts(p) {
   if (!p) return {};
   var o = {};
-  ['realization', 'equity', 'pot', 'potAfter', 'call', 'implied', 'pAllFold', 'pRaise', 'evRaised', 'expectedWin', 'winnable', 'allin', 'add', 'to'].forEach(function (k) { if (p[k] != null) o[k] = p[k]; });
+  ['realization', 'equity', 'pot', 'potAfter', 'call', 'implied', 'pAllFold', 'pRaise', 'evRaised', 'expectedWin', 'winnable', 'allin', 'add', 'to', 'approx', 'failed', 'reason', 'aborted', 'iters'].forEach(function (k) { if (p[k] != null) o[k] = p[k]; });
   if (p.folds) o.folds = p.folds;
   if (p.branches) o.branches = p.branches.slice(0, 5).map(function (b) { return { callers: b.callers, p: b.p, ev: b.ev, eq: b.eq }; });
   return o;
@@ -5034,7 +5401,7 @@ function renderLog() {
 }
 function renderNotice() {
   var parts = [], el = $('notice');
-  ['readonly', 'storage', 'storageErr', 'speech', 'legacy', 'update', 'resume'].forEach(function (k) { if (S.notes[k]) parts.push(S.notes[k]); });
+  ['readonly', 'storage', 'storageErr', 'speech', 'legacy', 'migration', 'update', 'resume'].forEach(function (k) { if (S.notes[k]) parts.push(S.notes[k]); });
   el.hidden = !parts.length;
   el.innerHTML = parts.map(function (p) { return '<div class="row">' + (typeof p === 'string' ? '<span>' + esc(p) + '</span>' : p.html) + '</div>'; }).join('');
 }
@@ -5244,36 +5611,7 @@ function onRaise() {
 }
 
 // ---------- Gegnerdetails ----------
-function shownHtml(s) {
-  var names = ['Preflop', 'Flop', 'Turn', 'River'], acts = [];
-  s.actions.forEach(function (a, i) { if (a) acts.push('<b>' + names[i] + ':</b> ' + esc(a)); });
-  return '<li><div class="cards">' + cardsHtml(s.cards, 'sm') + '<span class="muted">&nbsp;' + esc(s.pos) + ' · Hand #' + s.hand + ' · ' + esc(dateTxt(s.ts)) + '</span></div>' +
-    (s.board ? '<div class="cards"><span class="muted">Board&nbsp;</span>' + cardsHtml(s.board, 'sm') + '</div>' : '') +
-    '<div>' + acts.join(' · ') + '</div><div class="muted">Ergebnis ' + U.fmtSigned(s.net) + '</div></li>';
-}
-function statRows(r) {
-  var ST = PT.stats;
-  return ST.STATS.map(function (k) {
-    var nd = r.stats[k], ci = ST.wilson(nd), sm = PT.ranges.smooth(r.stats)[k];
-    return '<tr><td><button type="button" class="term" data-help="' + k + '">' + esc(ST.STAT_LABEL[k]) + '</button></td><td class="n">' + (nd[1] ? ST.pctOf(nd) + ' %' : 'unbekannt') + '</td><td class="n">' + nd[0] + ' / ' + nd[1] +
-      '</td><td class="n">' + (ci ? Math.round(ci[0] * 100) + '–' + Math.round(ci[1] * 100) + ' %' : '–') + '</td><td class="n">' + Math.round(sm * 100) + ' %</td></tr>';
-  }).join('');
-}
-function showOpp(id) {
-  var r = S.db.opps[id]; if (!r) { toast('Noch keine Daten zu diesem Gegner.'); return; }
-  var ST = PT.stats, pr = ST.profile(r), seated = S.table && S.table.seats.some(function (s) { return s.id === id; });
-  var af = ST.af(r.agg);
-  var posRows = ST.POSITIONS.map(function (p) { var x = r.pos[p]; return '<tr><td>' + p + '</td><td class="n">' + x.h + '</td><td class="n">' + (x.vpip[1] ? ST.pctOf(x.vpip) + ' %' : 'unbekannt') + '</td><td class="n">' + (x.pfr[1] ? ST.pctOf(x.pfr) + ' %' : 'unbekannt') + '</td></tr>'; }).join('');
-  openModal(r.name,
-    '<div class="kv"><span>' + (seated ? 'am Tisch (aktiv)' : 'im Archiv') + '</span><span>Hände <b>' + r.hands + '</b></span><span>Belastbarkeit <b>' + esc(pr.bel) + '</b></span>' +
-    '<span>Spielertyp <b>' + esc(pr.typ) + '</b></span><span>AF <b>' + (af == null ? 'unbekannt' : af === Infinity ? '∞' : af.toFixed(1).replace('.', ',')) + '</b></span><span>zuletzt gesehen ' + esc(dateTxt(r.lastSeen)) + '</span></div>' +
-    '<div class="scroll"><table class="grid"><thead><tr><th>Wert</th><th class="n">Rohwert</th><th class="n">Zähler / Nenner</th><th class="n">95-%-Intervall</th><th class="n">geglättet</th></tr></thead><tbody>' + statRows(r) + '</tbody></table></div>' +
-    '<p class="small">„Geglättet“ mischt die eigenen Beobachtungen mit dem Durchschnitt der Population (Beta-Prior); so nutzt der Coach die Werte. Bei kleinen Stichproben ist das Intervall breit.</p>' +
-    '<h3>Nach Position</h3><div class="scroll"><table class="grid"><thead><tr><th>Position</th><th class="n">Hände</th><th class="n">VPIP</th><th class="n">PFR</th></tr></thead><tbody>' + posRows + '</tbody></table></div>' +
-    '<h3>Aufgedeckte Blätter (bis 10, neueste zuerst)</h3>' + (r.shown.length ? '<ul class="shown">' + r.shown.map(shownHtml).join('') + '</ul>' : '<p class="muted">Noch keine aufgedeckten Blätter.</p>') +
-    '<p class="muted">Alle Werte stammen nur aus dem, was am Tisch sichtbar war: Aktionen und aufgedeckte Blätter.</p>');
-}
-PTUI.showOpp = showOpp;
+// Der Gegnerdialog (Langzeit, Kurzzeit, Veränderung, Kartenkenntnis) liegt in views.js: PTUI.showOpp.
 
 // ---------- Einstellungen anwenden ----------
 function applyTheme() {
@@ -5345,7 +5683,7 @@ function bind() {
   $('bDeep').addEventListener('click', deepAnalysis);
   $('bView').addEventListener('click', function () { setSetting('advanced', !S.settings.advanced); });
   $('bTheme').addEventListener('click', function () { var order = ['auto', 'light', 'dark'], t = order[(order.indexOf(S.settings.theme) + 1) % 3]; setSetting('theme', t); toast('Darstellung: ' + ({ auto: 'automatisch', light: 'hell', dark: 'dunkel' })[t]); });
-  $('seats').addEventListener('click', function (e) { var b = e.target.closest('[data-opp]'); if (b) showOpp(b.getAttribute('data-opp')); });
+  $('seats').addEventListener('click', function (e) { var b = e.target.closest('[data-opp]'); if (b && PTUI.showOpp) PTUI.showOpp(b.getAttribute('data-opp')); });
   $('modalX').addEventListener('click', closeModal);
   $('modal').addEventListener('click', function (e) { if (e.target === $('modal')) closeModal(); });
   document.addEventListener('click', function (e) {
@@ -5434,6 +5772,32 @@ function legacyBackupText(list) {
   var body = JSON.stringify(list);
   return '{"format":"PokerTrainer-DB","version":1,"exported":' + JSON.stringify(new Date().toISOString()) + ',"count":' + list.length + ',"checksum":"' + U.fnv1a(body) + '","opponents":' + body + '}\n';
 }
+/**
+ * Datenbank im Speicher noch im Format 2 (oder 1): vor der Umwandlung die unveränderten alten Datensätze als Datei
+ * Sicherung_PokerTrainer_JJJJ-MM-TT_Datenbank.json sichern (Download und Store „backup“), danach die umgewandelte Datenbank speichern.
+ */
+function migrateStoredDb(opps, oldFmt) {
+  if (!oldFmt || S.readonly) return Promise.resolve();
+  var files = [], by = { 1: [], 2: [] };
+  opps.forEach(function (o) { var v = PT.stats.recordVersion(o); if (by[v]) by[v].push(o); });
+  [2, 1].forEach(function (v) {
+    if (!by[v].length) return;
+    files.push({ name: 'Sicherung_PokerTrainer_' + today() + (v === 1 ? '_Format1' : '') + '_Datenbank.json', text: PT.stats.rawExport(by[v], v, new Date().toISOString()) });
+  });
+  S.migBackup = files;
+  return Promise.all(files.map(function (f, i) { return Store.put('backup', { k: 'format3-' + today() + '-' + i, name: f.name, text: f.text, ts: Date.now() }); }))
+    .then(function () { return S.dlReady; })
+    .then(function () {
+      files.forEach(function (f) { download(f.name, f.text); });
+      S.notes.migration = { html: '<span>Gegnerdatenbank auf Format 3 (Gegnergedächtnis) umgestellt: ' + oldFmt + ' Gegner. Langzeitwerte bleiben unverändert, das Kurzzeitgedächtnis beginnt leer. Die alte Datenbank wurde vorher als Datei gesichert.</span><button class="btn" type="button" data-act="migdl">Sicherung erneut herunterladen</button>' };
+      // ohne vorheriges Leeren: nicht lesbare Einträge bleiben unangetastet (wie bisher übersprungen)
+      return Store.put('opps', PT.stats.dbList(S.db)).catch(storageError);
+    }, function (e) {
+      // Sicherung nicht möglich: umgewandelte Daten nur im Arbeitsspeicher nutzen, gespeicherte alte Daten bleiben unverändert
+      S.readonly = true;
+      S.notes.migration = 'Die Sicherung der alten Datenbank vor der Umwandlung ist fehlgeschlagen (' + ((e && (e.name || e.message)) || e) + '). Es wurde nichts überschrieben; dieser Tab speichert nicht.';
+    });
+}
 function boot() {
   S.dlReady = new Promise(function (res) {
     try {
@@ -5453,17 +5817,18 @@ function boot() {
     return Promise.all([Store.get('meta', 'state'), Store.all('opps'), Store.get('learn', 'learning')]);
   }).then(function (r) {
     var meta = r[0], opps = r[1] || [], learn = r[2];
+    var oldFmt = PT.stats.needsMigration(opps);
     S.db = PT.stats.dbFromList(opps);
     if (S.db.skipped) S.notes.storage = S.db.skipped + ' beschädigte Gegner-Einträge im Speicher wurden übersprungen.';
     if (meta && meta.settings) Object.keys(DEFAULTS).forEach(function (k) { if (meta.settings[k] !== undefined && typeof meta.settings[k] === typeof DEFAULTS[k] || (k === 'seed')) S.settings[k] = meta.settings[k]; });
-    if (meta && meta.heroRec && !PT.stats.validRecord(meta.heroRec)) S.heroRec = PT.stats.cloneRecord(meta.heroRec);
+    if (meta && meta.heroRec) { var hr = PT.stats.loadRecord(meta.heroRec); if (hr) S.heroRec = hr; }
     if (learn && learn.v) {
       if (!PT.training.validLearning(learn.v)) S.learning = learn.v;
       else { var rep = PT.training.repairLearning(learn.v); if (rep) { S.learning = rep.learning; console.warn('Lerndaten repariert, entfernte Einträge: ' + rep.removed); } }
     }
     S.prof = PT.training.profile(S.learning);
     if (meta && PT.session.validTable(meta.table)) S.table = meta.table;
-    return Store.findLegacy().then(function (legacy) {
+    return migrateStoredDb(opps, oldFmt).then(function () { return Store.findLegacy(); }).then(function (legacy) {
       if (legacy && !(meta && meta.legacyDone)) {
         var list = Array.isArray(legacy.opps) ? legacy.opps : [];
         var text = legacyBackupText(list), name = 'Sicherung_PokerTrainer_' + today() + '_Datenbank.json';
@@ -5765,18 +6130,18 @@ views.gegner = function (el) {
     '<div class="toolbar"><div class="seg" role="group" aria-label="Liste"><button type="button" data-gtab="aktiv" aria-pressed="' + (gstate.tab === 'aktiv') + '">Am Tisch</button><button type="button" data-gtab="archiv" aria-pressed="' + (gstate.tab === 'archiv') + '">Archiv</button><button type="button" data-gtab="alle" aria-pressed="' + (gstate.tab === 'alle') + '">Alle</button></div>' +
     '<input type="search" id="gq" placeholder="Name filtern" aria-label="Name filtern"><select id="gt" aria-label="Spielertyp"><option value="">alle Typen</option>' + ['unbekannt', 'sehr loose', 'loose-passiv', 'Nit', 'LAG', 'TAG'].map(function (x) { return '<option>' + x + '</option>'; }).join('') + '</select>' +
     '<select id="gs" aria-label="Sortierung"><option value="last">zuletzt gesehen</option><option value="hands">meiste Hände</option><option value="name">Name</option></select></div>' +
-    '<div class="toolbar"><button class="btn" type="button" data-g="export">Datenbank exportieren</button><button class="btn" type="button" data-g="import">Datenbank importieren</button><span class="small">Import akzeptiert Dateien aus Entwurf 2 (Version 1) und PokerTrainer 2.0 (Version 2).</span></div>' +
+    '<div class="toolbar"><button class="btn" type="button" data-g="export">Datenbank exportieren</button><button class="btn" type="button" data-g="import">Datenbank importieren</button><span class="small">Import akzeptiert Dateien aus Entwurf 2 (Version 1), PokerTrainer 2.0 (Version 2) und mit Gegnergedächtnis (Version 3). Ältere Formate werden umgewandelt.</span></div>' +
     '<div class="scroll" id="glist"></div></div>';
   $('gq').value = gstate.q; $('gt').value = gstate.typ; $('gs').value = gstate.sort;
   function draw() {
     var rows = (gstate.tab === 'aktiv' ? act : gstate.tab === 'archiv' ? arc : list).filter(function (r) { return (!gstate.q || r.name.toLowerCase().indexOf(gstate.q.toLowerCase()) >= 0) && (!gstate.typ || PT.stats.playerType(r) === gstate.typ); });
     rows.sort(function (a, b) { return gstate.sort === 'hands' ? b.hands - a.hands : gstate.sort === 'name' ? (a.name < b.name ? -1 : 1) : b.lastSeen - a.lastSeen; });
     var V = function (x) { return x == null ? 'unbekannt' : x + ' %'; };
-    $('glist').innerHTML = rows.length ? '<table class="grid"><thead><tr><th>Name</th><th class="n">Hände</th><th class="n">VPIP</th><th class="n">PFR</th><th class="n">3-Bet</th><th class="n">AF</th><th class="n">C-Bet</th><th class="n">WTSD</th><th>Typ</th><th>Belastbarkeit</th><th>zuletzt</th></tr></thead><tbody>' +
+    $('glist').innerHTML = rows.length ? '<table class="grid"><thead><tr><th>Name</th><th class="n">Hände</th><th class="n">VPIP</th><th class="n">PFR</th><th class="n">3-Bet</th><th class="n">AF</th><th class="n">C-Bet</th><th class="n">WTSD</th><th>Typ</th><th>Belastbarkeit</th><th>Veränderung</th><th>zuletzt</th></tr></thead><tbody>' +
       rows.slice(0, 400).map(function (r) {
         var p = PT.stats.profile(r), af = p.af;
         return '<tr class="click" tabindex="0" data-opp="' + esc(r.id) + '"><td>' + esc(r.name) + '</td><td class="n">' + r.hands + '</td><td class="n">' + V(p.vpip) + '</td><td class="n">' + V(p.pfr) + '</td><td class="n">' + V(p.threeBet) + '</td><td class="n">' + (af == null ? 'unbekannt' : af === Infinity ? '∞' : num(af)) +
-          '</td><td class="n">' + V(p.cbetFlop) + '</td><td class="n">' + V(p.wtsd) + '</td><td>' + esc(p.typ) + '</td><td>' + esc(p.bel) + '</td><td>' + esc(H.dateTxt(r.lastSeen)) + '</td></tr>';
+          '</td><td class="n">' + V(p.cbetFlop) + '</td><td class="n">' + V(p.wtsd) + '</td><td>' + esc(p.typ) + '</td><td>' + esc(p.bel) + '</td><td>' + changeShort(p.change) + '</td><td>' + esc(H.dateTxt(r.lastSeen)) + '</td></tr>';
       }).join('') + '</tbody></table>' + (rows.length > 400 ? '<p class="muted">' + (rows.length - 400) + ' weitere Einträge, bitte filtern.</p>' : '') : '<p class="muted">Keine Einträge.</p>';
   }
   draw();
@@ -5792,6 +6157,75 @@ views.gegner = function (el) {
   };
   el.onkeydown = function (e) { var r = e.target.closest('tr[data-opp]'); if (r && e.key === 'Enter') r.click(); };
 };
+// ---------- Gegnerdialog: Langzeit, Kurzzeit, Veränderung, beobachtet/geschätzt/unbekannt ----------
+// Alle Werte stammen nur aus am Tisch Sichtbarem (Aktionen, aufgedeckte Karten). Importierte Daten gelten als nicht vertrauenswürdig: jede Ausgabe über esc().
+function pc(x) { return x == null || !isFinite(x) ? 'unbekannt' : esc(String(Math.round(100 * x))) + ' %'; }
+function ciTxt(ci) { return ci ? esc(Math.round(ci[0] * 100) + '–' + Math.round(ci[1] * 100)) + ' %' : '–'; }
+function changeShort(ch) {
+  if (!ch || !ch.detected) return '–';
+  return ch.keys.map(function (x) { return '<span class="pill">' + (x.dir > 0 ? '↑ ' : '↓ ') + esc(x.label) + '</span>'; }).join('');
+}
+function oppShownHtml(s) {
+  var names = ['Preflop', 'Flop', 'Turn', 'River'], acts = [];
+  s.actions.forEach(function (a, i) { if (a) acts.push('<b>' + names[i] + ':</b> ' + esc(a)); });
+  return '<li><div class="cards">' + H.cardsHtml(s.cards, 'sm') + '<span class="muted">&nbsp;' + esc(s.pos) + ' · Hand #' + esc(String(s.hand)) + ' · ' + esc(H.dateTxt(s.ts)) + ' · beobachtet</span></div>' +
+    (s.board ? '<div class="cards"><span class="muted">Board&nbsp;</span>' + H.cardsHtml(s.board, 'sm') + '</div>' : '') +
+    '<div>' + acts.join(' · ') + '</div><div class="muted">Ergebnis ' + esc(U.fmtSigned(s.net)) + '</div></li>';
+}
+function oppStatRows(r, pr) {
+  var ST = PT.stats, sm = PT.ranges.smooth(r.stats), tested = pr.change.tested, td = '<td class="n" style="white-space:nowrap">';
+  return ST.STATS.map(function (k) {
+    var nd = r.stats[k], ci = ST.wilson(nd), rc = pr.recent.stats[k], ch = pr.change.keys.filter(function (x) { return x.key === k; })[0];
+    var status;
+    if (!nd[1]) status = 'unbekannt';
+    else if (ch) status = '<b>' + (ch.dir > 0 ? '↑ höher' : '↓ niedriger') + '</b> seit Hand ' + esc(String(ch.since)) + ' (z ' + esc(num(ch.z, 1)) + ')';
+    else if (tested.indexOf(k) >= 0) status = pr.change.z[k] == null ? 'zu wenig Daten für Vergleich' : 'unauffällig (z ' + esc(num(pr.change.z[k], 1)) + ')';
+    else status = '–';
+    return '<tr><td><button type="button" class="term" data-help="' + esc(k) + '">' + esc(ST.STAT_LABEL[k]) + '</button></td>' +
+      td + (nd[1] ? esc(String(ST.pctOf(nd))) + ' %' : 'unbekannt') + '</td>' + td + esc(nd[0] + '/' + nd[1]) + '</td>' + td + ciTxt(ci) + '</td>' + td + pc(sm[k]) + '</td>' +
+      td + (rc.rate == null ? 'unbekannt' : pc(rc.rate)) + '</td>' + td + esc(num(rc.neff, 0)) + '</td>' + td + ciTxt(rc.ci) + '</td><td>' + status + '</td></tr>';
+  }).join('');
+}
+function showOpp(id) {
+  var r = S.db.opps[id]; if (!r) { H.toast('Noch keine Daten zu diesem Gegner.'); return; }
+  var ST = PT.stats, pr = ST.profile(r), seated = S.table && S.table.seats.some(function (s) { return s.id === id; });
+  var af = ST.af(r.agg), ch = pr.change, M = ST.MEMORY, c = pr.cards;
+  var posRows = ST.POSITIONS.map(function (p) { var x = r.pos[p]; return '<tr><td>' + esc(p) + '</td><td class="n">' + esc(String(x.h)) + '</td><td class="n">' + (x.vpip[1] ? esc(String(ST.pctOf(x.vpip))) + ' %' : 'unbekannt') + '</td><td class="n">' + (x.pfr[1] ? esc(String(ST.pctOf(x.pfr))) + ' %' : 'unbekannt') + '</td></tr>'; }).join('');
+  var chHtml;
+  if (ch.detected) {
+    chHtml = '<div class="notice" role="status"><b>Veränderte Spielweise erkannt</b><ul>' + ch.keys.map(function (x) {
+      return '<li>' + esc(x.label) + ': zuletzt ' + pc(x.recent) + ', vorher ' + pc(x.older) + ' (Langzeit ' + pc(x.long) + ') · seit Hand ' + esc(String(x.since)) + ' des Datensatzes, vor ' + esc(String(x.ago)) + ' Händen · z = ' + esc(num(x.z, 1)) + '</li>';
+    }).join('') + '</ul><span class="small">Für diese Werte nutzt die beste Schätzung jetzt das Kurzzeitgedächtnis statt der Langzeitwerte.</span></div>';
+  } else {
+    var done = ch.tested.filter(function (k) { return ch.z[k] != null; });
+    chHtml = '<p class="small">' + (done.length ? 'Keine statistisch auffällige Veränderung der Spielweise (geprüft: ' + esc(done.map(function (k) { return ST.STAT_LABEL[k]; }).join(', ')) + ').'
+      : 'Für einen Vergleich von Kurzzeit- und Langzeitwerten fehlen noch Beobachtungen.') + '</p>';
+  }
+  var cardsTxt = c.counted ? '<span>Showdowns mit aufgedeckten Karten (beobachtet) <b>' + esc(String(c.observed)) + '</b></span><span>gespielte Hände mit verdeckt gebliebenen Karten (unbekannt) <b>' + esc(String(c.unknown)) + '</b></span>' +
+      (c.share != null ? '<span>beobachteter Anteil <b>' + pc(c.share) + '</b></span>' : '') + (c.from ? '<span class="muted">gezählt ab Hand ' + esc(String(c.from)) + ' des Datensatzes</span>' : '')
+    : '<span class="muted">Kartenkenntnis wird ab Format 3 gezählt.</span>';
+  H.openModal(r.name,
+    '<div class="kv"><span>' + (seated ? 'am Tisch (aktiv)' : 'im Archiv') + '</span><span>Hände <b>' + esc(String(r.hands)) + '</b></span><span>Belastbarkeit <b>' + esc(pr.bel) + '</b></span>' +
+    '<span>Spielertyp <b>' + esc(pr.typ) + '</b></span><span>AF <b>' + (af == null ? 'unbekannt' : af === Infinity ? '∞' : esc(num(af))) + '</b></span><span>zuletzt gesehen ' + esc(H.dateTxt(r.lastSeen)) + '</span></div>' +
+    '<h3>Veränderung der Spielweise</h3>' + chHtml +
+    '<h3>Geschätzt: Werte aus Aktionen</h3>' +
+    '<div class="scroll"><table class="grid" style="font-size:13px"><thead><tr><th rowspan="2">Wert</th><th class="n" colspan="4">Langzeit (alle Hände)</th><th class="n" colspan="3">Kurzzeit (Halbwertszeit ' + esc(String(M.HALF_LIFE)) + ' Hände)</th><th rowspan="2">Veränderung</th></tr>' +
+    '<tr><th class="n">Rohwert</th><th class="n">Z/N</th><th class="n">95 %</th><th class="n">geglättet</th><th class="n">Rohwert</th><th class="n" title="effektive Zahl der Gelegenheiten">eff. n</th><th class="n">95 %</th></tr></thead><tbody>' + oppStatRows(r, pr) + '</tbody></table></div>' +
+    '<p class="small">Z/N: Zähler/Nenner (Treffer/Gelegenheiten). 95 %: Wilson-Intervall. Unbekannt: noch keine Gelegenheit beobachtet.</p>' +
+    '<p class="small">„Geglättet“ mischt die eigenen Beobachtungen mit dem Durchschnitt der Population (Beta-Prior); so nutzt der Coach die Werte. Das Kurzzeitgedächtnis gewichtet jede Beobachtung mit 0,5^(Alter/' + esc(String(M.HALF_LIFE)) +
+    ') (Alter in eigenen Händen des Gegners; im Archiv altert es nicht). Kurzzeitgewicht zurzeit ≈ ' + esc(num(pr.recent.hands, 0)) + ' Hände. Eine Veränderung gilt als erkannt, wenn der gewichtete Zwei-Anteile-Test Kurzzeit gegen ältere Beobachtungen |z| ≥ ' + esc(num(ch.params.zOn, 2)) + ' ergibt.</p>' +
+    '<h3>Beobachtet: Karten am Showdown</h3><div class="kv">' + cardsTxt + '</div>' +
+    (r.shown.length ? '<ul class="shown">' + r.shown.map(oppShownHtml).join('') + '</ul>' : '<p class="muted">Noch keine aufgedeckten Blätter.</p>') +
+    '<p class="small">Unbekannt: In Händen ohne Showdown bleiben die Karten verdeckt; der Coach schätzt sie nur als Range.</p>' +
+    '<h3>Nach Position</h3><div class="scroll"><table class="grid"><thead><tr><th>Position</th><th class="n">Hände</th><th class="n">VPIP</th><th class="n">PFR</th></tr></thead><tbody>' + posRows + '</tbody></table></div>' +
+    '<p class="muted">Alle Werte stammen nur aus dem, was am Tisch sichtbar war: Aktionen und aufgedeckte Blätter.</p>');
+}
+PTUI.showOpp = showOpp;
+// Sicherung vor der Umwandlung der Datenbank erneut herunterladen (Hinweis beim Start)
+document.addEventListener('click', function (e) {
+  var b = e.target && e.target.closest && e.target.closest('[data-act="migdl"]');
+  if (b && S.migBackup) S.migBackup.forEach(function (f) { H.download(f.name, f.text); });
+});
 function pickFile(cb) {
   if (S.hand && !S.hand.done) { H.toast('Import ist nur zwischen zwei Händen möglich.'); return; }
   var f = $('fileIn'); f.value = '';

@@ -342,11 +342,17 @@ function evCall(ctx) {
   if (heroAllIn || others.length === 0) {
     // keine weiteren Setzrunden: Side-Pot-genaue Abrechnung
     var heroFinal = me.total + c;
-    if (ctx.budget.left < 200) return { ev: ctx.eqNow * (po ? po.winnable : ctx.pot + c) - c, dEdq: po ? po.winnable : ctx.pot, parts: { allin: true, approx: true, call: c, winnable: po ? po.winnable : null } };
-    var share = Q.potShare({ hero: ctx.v.cards, heroTotal: heroFinal, board: ctx.board, rng: ctx.rng, budget: ctx.budget, iters: Math.min(1500, ctx.budget.left),
+    // Näherung über die aktuelle Equity, gekennzeichnet (approx, Grund); Equity unbekannt → 0,5 als neutraler Wert
+    var approx = function (reason, failed) {
+      var eqA = ctx.eqNow != null && isFinite(ctx.eqNow) ? ctx.eqNow : 0.5;
+      return { ev: eqA * (po ? po.winnable : ctx.pot + c) - c, dEdq: po ? po.winnable : ctx.pot, parts: { allin: true, approx: true, failed: !!failed, reason: reason, call: c, winnable: po ? po.winnable : null } };
+    };
+    if (ctx.budget.left < 200) return approx('Simulationsbudget erschöpft', false);
+    var share = Q.potShare({ hero: ctx.v.cards, heroTotal: heroFinal, board: ctx.board, rng: ctx.rng, budget: ctx.budget, iters: Math.min(1500, ctx.budget.left), deadline: ctx.deadline,
       opps: ctx.opps.map(function (o) { return { w: o.w, total: Math.min(o.p.total, heroFinal + 1e12), folded: false }; }),
       dead_: ctx.deadList || null, deadMoney: ctx.deadList ? 0 : ctx.deadMoney });
-    return { ev: share.win - c, dEdq: po ? po.winnable : ctx.pot, se: share.se, parts: { allin: true, expectedWin: share.win, call: c, winnable: po ? po.winnable : null } };
+    if (share.failed || share.win == null || !isFinite(share.win)) return approx(share.reason || 'Side-Pot-Berechnung nicht möglich', true);
+    return { ev: share.win - c, dEdq: po ? po.winnable : ctx.pot, se: share.se, parts: { allin: true, expectedWin: share.win, call: c, winnable: po ? po.winnable : null, iters: share.n, aborted: share.aborted || null } };
   }
   var Rz = realization(ctx, 'call'), potAfter = ctx.pot + c;
   var implied = 0, f = ctx.feat;

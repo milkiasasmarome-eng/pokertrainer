@@ -1,0 +1,29 @@
+{
+ "base": "http://127.0.0.1:8765/",
+ "date": "2026-11-26T20:45:01.086Z",
+ "passed": 3,
+ "failed": 0,
+ "tests": [
+  {
+   "name": "Migration Format 2 → 3: Sicherung der alten Datenbank vor der Umwandlung, Langzeitwerte unverändert",
+   "ok": true,
+   "checks": 10,
+   "notes": [],
+   "ms": 2987
+  },
+  {
+   "name": "Gegnerdialog: Kurzzeit- und Langzeitwerte, erkannte Veränderung, beobachtet/geschätzt/unbekannt, Maskierung",
+   "ok": true,
+   "checks": 5,
+   "notes": [],
+   "ms": 743
+  },
+  {
+   "name": "Konsole: keine JavaScript-Fehler",
+   "ok": true,
+   "checks": 1,
+   "notes": [],
+   "ms": 0
+  }
+ ]
+}

@@ -37,4 +37,14 @@ module.exports = function (T) {
     }
     ok(bad === 0, '„eindeutig“ nur bei Abstand ≥ 3u (' + bad + ' von ' + n + ' Entscheidungen verletzt)');
   });
+  test('Bewertung 2.1: Genäherte oder fehlgeschlagene EV-Werte werden gekennzeichnet, nicht als 0 gewertet, Unsicherheit erweitert', () => {
+    const h = T.spot('BB', 'AhQd', '', [['BTN', 'raise', 100]]);   // All-in des Buttons, Held im Big Blind
+    const v = PT.bots.publicView(h, 0);
+    const a = PT.coach.analyze({ view: v, opps: {}, settings: { mode: 'exploit', level: 'standard' }, seed: 5, live: true, maxSim: 0 });
+    const c = a.actions.filter(x => x.type === 'call')[0];
+    ok(c && c.approx && c.parts.approx, 'Call gegen All-in ohne Budget: als Näherung gekennzeichnet (' + (c ? c.reason : '-') + ')');
+    ok(c && isFinite(c.ev) && Math.abs(c.ev) > 0, 'EV der Näherung endlich und nicht pauschal 0 (' + (c ? c.ev : '-') + ')');
+    ok(c && c.u >= 0.1 * v.pot - 1e-9, 'Unsicherheit der Näherung erweitert');
+    ok(!a.actions.some(x => !isFinite(x.ev) || !isFinite(x.u)), 'alle Werte endlich');
+  });
 };
