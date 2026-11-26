@@ -1,0 +1,150 @@
+{
+ "base": "http://127.0.0.1:8765/",
+ "date": "2026-11-26T18:15:04.753Z",
+ "passed": 18,
+ "failed": 0,
+ "perf": {
+  "loadMs": 335,
+  "readyMs": 613,
+  "lcp": 144,
+  "cls": 0.005710923486108164,
+  "dcl": 270.6000000005588,
+  "transfer": 412172,
+  "tipMaxMs": 152,
+  "tipAvgMs": 24
+ },
+ "tests": [
+  {
+   "name": "Laden: keine Fehler, Leistungswerte (LCP, CLS, Ladezeit)",
+   "ok": true,
+   "checks": 3,
+   "notes": [
+    "Ladezeit 335 ms, bereit nach 613 ms, LCP 144 ms, CLS 0.006"
+   ],
+   "ms": 1432
+  },
+  {
+   "name": "Hand spielen: Tipp „vorher“ erscheint binnen 2 Sekunden, keine neue Hand ohne „Nächste Hand“",
+   "ok": true,
+   "checks": 15,
+   "notes": [
+    "64 Tipps, Ø 24 ms, max. 152 ms"
+   ],
+   "ms": 23549
+  },
+  {
+   "name": "Ungültiger Betrag, Tastatursteuerung, Tipp-Modi „nachher“ und „aus“",
+   "ok": true,
+   "checks": 10,
+   "notes": [],
+   "ms": 4591
+  },
+  {
+   "name": "Live-Anzeige und Gegnerdetails, Dialog mit Esc schließen",
+   "ok": true,
+   "checks": 3,
+   "notes": [],
+   "ms": 88
+  },
+  {
+   "name": "Alle Bereiche öffnen; Range-Matrix, Gegnerliste, Fortschritt, Hilfe",
+   "ok": true,
+   "checks": 13,
+   "notes": [],
+   "ms": 4832
+  },
+  {
+   "name": "Export und Import der Datenbank, beschädigte Datei wird abgelehnt",
+   "ok": true,
+   "checks": 5,
+   "notes": [],
+   "ms": 1091
+  },
+  {
+   "name": "Handhistorie und Replayer: vor, zurück, damals/später bekannt, Entscheidung erneut treffen",
+   "ok": true,
+   "checks": 5,
+   "notes": [],
+   "ms": 4831
+  },
+  {
+   "name": "Training: Kategorie starten, Situation bewerten, Quiz",
+   "ok": true,
+   "checks": 5,
+   "notes": [],
+   "ms": 1488
+  },
+  {
+   "name": "Einstellungen: Darstellung, neue Session mit Seed",
+   "ok": true,
+   "checks": 3,
+   "notes": [],
+   "ms": 30940
+  },
+  {
+   "name": "Neuladen während einer laufenden Hand: exakte Wiederaufnahme",
+   "ok": true,
+   "checks": 3,
+   "notes": [],
+   "ms": 3181
+  },
+  {
+   "name": "Mehrere Tabs: zweiter Tab ist schreibgeschützt",
+   "ok": true,
+   "checks": 3,
+   "notes": [],
+   "ms": 391
+  },
+  {
+   "name": "Daten bleiben nach Neustart erhalten",
+   "ok": true,
+   "checks": 1,
+   "notes": [],
+   "ms": 483
+  },
+  {
+   "name": "Offline: Service Worker installiert, Seite lädt und spielt ohne Netz",
+   "ok": true,
+   "checks": 3,
+   "notes": [],
+   "ms": 3666
+  },
+  {
+   "name": "Browser ohne Sprachfunktion: Meldung, Trainer läuft weiter",
+   "ok": true,
+   "checks": 2,
+   "notes": [],
+   "ms": 6264
+  },
+  {
+   "name": "Darstellung auf Smartphone, Tablet und Desktop (kein horizontales Scrollen)",
+   "ok": true,
+   "checks": 32,
+   "notes": [],
+   "ms": 23006
+  },
+  {
+   "name": "Barrierefreiheit: Namen für Bedienelemente, Bilder mit Alt, Fokusreihenfolge, Kontrast",
+   "ok": true,
+   "checks": 7,
+   "notes": [
+    "Kontrast Nebentext 6.48:1, Text 17.07:1"
+   ],
+   "ms": 509
+  },
+  {
+   "name": "Portable Einzeldatei (file://): lädt, spielt, Coach per Blob-Worker",
+   "ok": true,
+   "checks": 2,
+   "notes": [],
+   "ms": 6556
+  },
+  {
+   "name": "Konsole: keine JavaScript-Fehler, keine 404",
+   "ok": true,
+   "checks": 1,
+   "notes": [],
+   "ms": 0
+  }
+ ]
+}

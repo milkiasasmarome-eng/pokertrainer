@@ -4048,7 +4048,9 @@ var SPEAK_RANK = { A: 'Ass', K: 'König', Q: 'Dame', J: 'Bube', T: 'Zehn', 9: 'N
 var SPEAK_POS = { UTG: 'Under the Gun', HJ: 'Hijack', CO: 'Cutoff', BTN: 'Button', SB: 'Small Blind', BB: 'Big Blind' };
 function toSpeech(text) {
   return String(text)
-    .replace(/\b([AKQJT2-9])([AKQJT2-9])([so])?\b/g, function (m, a, b, s) {
+    .replace(/\b([AKQJT2-9])([AKQJT2-9])([so])?\b(?!\s?(?:%|Prozent|BB|Hände|Kombinationen|Entscheidungen))(?![,.]\d)/g, function (m, a, b, s) {
+      // reine Zahlen (z. B. „25“) nicht als Hand lesen: nur mit Suffix, mit Bildkarte/Zehn oder als Paar
+      if (!s && /^\d\d$/.test(a + b) && a !== b) return m;
       if (a === b) return 'Paar ' + SPEAK_RANK[a];
       return SPEAK_RANK[a] + ' ' + SPEAK_RANK[b] + (s === 's' ? ' suited' : s === 'o' ? ' offsuit' : '');
     })
@@ -4723,6 +4725,7 @@ function gradeDecision(cur, chosen) {
     if (cur.training && S.training && cur.target) {
       S.training.scores.push(g.score);
       if (S.training.review) PT.training.srsReview(S.learning, S.training.review, g.score, Date.now());
+      renderTrainbar();
     }
     if (g.score <= 45) PT.training.srsAdd(S.learning, { key: 'd' + cur.seed, cat: cur.training || (a.spotTags[0] || 'preflop-open'), seed: cur.seed, view: { view: cur.view, opps: cur.opps }, label: a.situation }, Date.now());
     S.prof = PT.training.profile(S.learning);
@@ -4884,7 +4887,7 @@ function bind() {
     if (act === 'trainstop') PTUI.stopTraining();
     else if (act === 'showrange' && S.analysis) { PTUI.lastRange = S.analysis.a; location.hash = '#ranges/aktuell'; }
     else if (act === 'legacydl' && S.legacyBackup) download(S.legacyBackup.name, S.legacyBackup.text);
-    else if (act === 'swupdate' && S.swWaiting) { if (S.hand && !S.hand.done) { toast('Das Update wird nach dieser Hand eingespielt.'); S.updateAfterHand = true; return; } S.swWaiting.postMessage({ type: 'SKIP_WAITING' }); }
+    else if (act === 'swupdate' && S.swWaiting) { if (S.hand && !S.hand.done) { toast('Bitte erst die laufende Hand beenden, dann aktualisieren.'); return; } S.swUpdating = true; S.swWaiting.postMessage({ type: 'SKIP_WAITING' }); }
     else if (act === 'dismiss') { S.notes[b.getAttribute('data-note')] = ''; renderNotice(); }
   });
   window.addEventListener('hashchange', route);
@@ -4937,6 +4940,7 @@ function registerSW() {
   navigator.serviceWorker.register('sw.js', { scope: './' }).then(function (reg) {
     function waiting(w) { S.swWaiting = w; S.notes.update = { html: '<span>Eine neue Version des PokerTrainers ist bereit.</span><button class="btn" type="button" data-act="swupdate">Jetzt aktualisieren</button>' }; renderNotice(); }
     if (reg.waiting && navigator.serviceWorker.controller) waiting(reg.waiting);
+    S.hadController = !!navigator.serviceWorker.controller;
     reg.addEventListener('updatefound', function () {
       var nw = reg.installing; if (!nw) return;
       nw.addEventListener('statechange', function () { if (nw.state === 'installed' && navigator.serviceWorker.controller) waiting(nw); });
@@ -4944,7 +4948,8 @@ function registerSW() {
     setInterval(function () { reg.update().catch(function () {}); }, 60 * 60 * 1000);
   }).catch(function () { /* offline-fähig nur ohne SW */ });
   var reloading = false;
-  navigator.serviceWorker.addEventListener('controllerchange', function () { if (reloading) return; reloading = true; persist([]).then(function () { location.reload(); }); });
+  // Neu laden nur bei einem vom Nutzer bestätigten Update, nicht bei der ersten Installation
+  navigator.serviceWorker.addEventListener('controllerchange', function () { if (reloading || !S.swUpdating) return; reloading = true; persist([]).then(function () { location.reload(); }); });
 }
 
 // ---------- Start ----------

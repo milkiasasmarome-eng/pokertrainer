@@ -542,6 +542,21 @@ test('Handhistorie: Datensätze sind gültig und exportierbar', () => {
   eq(bad, 0, 'ungültige Datensätze'); ok(n === 300, 'Datensätze erzeugt');
 });
 
+test('Sprachausgabe: nur der jüngste Tipp wird gesprochen, ältere brechen ab; ohne Sprachfunktion kein Fehler', () => {
+  const spoken = [], timers = []; let cancels = 0;
+  function Utter(t) { this.text = t; }
+  const synth = { speak(u) { spoken.push(u.text); if (u.onstart) u.onstart(); }, cancel() { cancels++; } };
+  const sp = new PT.Speech({ synth, Utter, setTimeout: (f) => { timers.push(f); return timers.length; }, clearTimeout: (id) => { timers[id - 1] = null; } });
+  sp.voice = { lang: 'de-DE', name: 'Test' };
+  const states = []; sp.onstatus = (st, id) => states.push(st + ':' + id);
+  sp.speak('Tipp eins', 1); sp.speak('Tipp zwei', 2); sp.speak('Tipp drei', 3);
+  timers.forEach(f => f && f());
+  eq(spoken.join('|'), 'Tipp drei', 'nur der jüngste Tipp gesprochen');
+  ok(states.includes('abgebrochen:1') && states.includes('abgebrochen:2'), 'ältere Tipps abgebrochen'); ok(cancels >= 3, 'laufende Ausgabe beendet');
+  const none = new PT.Speech({}); ok(!none.available && none.speak('x', 1) === false, 'ohne Sprachfunktion: kein Fehler');
+  ok(PT.toSpeech('AKs vom BTN, 25 %') === 'Ass König suited vom Button, 25 Prozent', 'Aussprache: ' + PT.toSpeech('AKs vom BTN, 25 %'));
+});
+
 const out = { app: PT.VERSION, date: new Date().toISOString(), node: process.version, quick: QUICK, passed: results.filter(r => r.ok).length, failed: results.filter(r => !r.ok).length, tests: results };
 fs.mkdirSync(path.join(__dirname, 'results'), { recursive: true });
 fs.writeFileSync(path.join(__dirname, 'results', QUICK ? 'unit-quick.json' : 'unit.json'), JSON.stringify(out, null, 1));
