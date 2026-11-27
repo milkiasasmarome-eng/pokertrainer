@@ -5818,6 +5818,9 @@ function showMsg(text, info) { var m = $('msg'); m.textContent = text || ''; m.c
 /** Neuer Worker mit der Engine (Website: worker.js, Einzeldatei: Blob aus dem eingebetteten Code). Wirft, wenn nicht möglich. */
 function newWorker() {
   if (typeof Worker !== 'function') throw new Error('Web Worker nicht verfügbar');
+  // Ein anderer Tab hat einen neuen Programmstand aktiviert: worker.js käme aus dem neuen Cache (gleiche URL, anderer Inhalt).
+  // Dieser Tab rechnet deshalb mit seiner eigenen Engine im Hauptthread weiter (keine gemischten Versionen, Prüfung C16).
+  if (S.staleCode) throw new Error('Programmstand veraltet');
   if (window.PT_INLINE) {
     var src = document.getElementById('pt-engine').textContent + '\n' + document.getElementById('pt-worker').textContent;
     return new Worker(URL.createObjectURL(new Blob([src], { type: 'text/javascript' })));
@@ -6542,17 +6545,43 @@ function bind() {
 function bcCheck() {
   return new Promise(function (res) {
     try {
-      var bc = new BroadcastChannel('pokertrainer'), other = false;
-      bc.onmessage = function (ev) { if (ev.data === 'wer' && !S.readonly) bc.postMessage('ich'); else if (ev.data === 'ich') other = true; };
+      var bc = new BroadcastChannel('pokertrainer'), other = false, decided = false;
+      bc.onmessage = function (ev) {
+        if (ev.data === 'wer' && !S.readonly) bc.postMessage('ich');
+        else if (ev.data === 'ich') { other = true; if (decided && !S.readonly) demote(); }  // späte Antwort eines beschäftigten Schreibers (Prüfung C15)
+      };
       S.bc = bc;
       bc.postMessage('wer');
-      setTimeout(function () { res(!other); }, 250);
+      setTimeout(function () { decided = true; res(!other); }, 250);
     } catch (e2) { res(true); }
   });
 }
-/** Schreibender Tab beantwortet Anfragen neuer Tabs auch über BroadcastChannel (Rückfall ohne Web Locks). */
+var READONLY_NOTE = 'Der PokerTrainer ist bereits in einem anderen Tab oder App-Fenster geöffnet. Dieser Tab ist schreibgeschützt, damit keine Daten überschrieben werden.';
+/** Ohne Web Locks: Antwortet der schreibende Tab erst nach der Wartezeit (Hauptthread beschäftigt), gibt dieser neue Tab das Schreiben ab. */
+function demote() {
+  S.readonly = true; S.notes.readonly = READONLY_NOTE;
+  render(); announce('Der PokerTrainer ist bereits in einem anderen Tab geöffnet. Dieser Tab ist jetzt schreibgeschützt.');
+}
+/** Antworten auf „wer schreibt?“: schreibender Tab „ich“, Tab, der die Sperre nur zum Übernehmen hält, „passiv“. */
 function bcRespond() {
-  try { if (S.bc) return; var bc = S.bc = new BroadcastChannel('pokertrainer'); bc.onmessage = function (ev) { if (ev.data === 'wer' && !S.readonly) bc.postMessage('ich'); }; } catch (e) { /* leer */ }
+  try { if (S.bc) return; var bc = S.bc = new BroadcastChannel('pokertrainer'); bc.onmessage = function (ev) { if (ev.data !== 'wer') return; if (S.lockPassive) bc.postMessage('passiv'); else if (!S.readonly) bc.postMessage('ich'); }; } catch (e) { /* leer */ }
+}
+/**
+ * Sperre belegt: Hält sie nur ein schreibgeschützter Tab, der auf die Übernahme wartet (z. B. während der schreibende Tab für ein
+ * Update neu lädt), übernimmt dieser neue Tab die Sperre (steal). Antwortet ein schreibender Tab oder niemand, bleibt er schreibgeschützt.
+ */
+function probeTakeover() {
+  return new Promise(function (res) {
+    var bc; try { bc = new BroadcastChannel('pokertrainer'); } catch (e) { res(false); return; }
+    var writer = false, passive = false;
+    bc.onmessage = function (ev) { if (ev.data === 'ich') writer = true; else if (ev.data === 'passiv') passive = true; };
+    bc.postMessage('wer');
+    setTimeout(function () {
+      try { bc.close(); } catch (e) { /* leer */ }
+      if (writer || !passive) { res(false); return; }
+      try { navigator.locks.request('pokertrainer-tisch', { steal: true }, function () { res(true); return new Promise(function () { /* halten */ }); }).catch(function () { res(false); }); } catch (e) { res(false); }
+    }, 400);
+  });
 }
 function acquireLock() {
   if (Store.safeMode()) return Promise.resolve(true);  // abgesicherter Start schreibt nie in den Speicher
@@ -6560,7 +6589,7 @@ function acquireLock() {
     try {
       if (navigator.locks && navigator.locks.request) {
         navigator.locks.request('pokertrainer-tisch', { ifAvailable: true }, function (lock) {
-          if (!lock) { res(false); return Promise.resolve(); }
+          if (!lock) { probeTakeover().then(res); return Promise.resolve(); }
           res(true); return new Promise(function () { /* bis zum Schließen halten */ });
         }).catch(function () { bcCheck().then(res); });
         return;
@@ -6575,10 +6604,16 @@ function waitForTakeover() {
   try {
     if (!(navigator.locks && navigator.locks.request)) return;
     navigator.locks.request('pokertrainer-tisch', function () {
+      S.lockPassive = true; bcRespond();
       S.notes.readonly = { html: '<span>Der andere Tab bzw. das App-Fenster mit dem PokerTrainer wurde geschlossen.</span><button class="btn" type="button" data-act="takeover">Hier weiterspielen (neu laden)</button>' };
       renderNotice(); announce('Der andere Tab wurde geschlossen. Du kannst hier weiterspielen.');
       return new Promise(function () { /* Sperre halten, bis neu geladen wird */ });
-    }).catch(function () { /* leer */ });
+    }).catch(function () {
+      // Ein neu gestarteter Tab hat die Sperre übernommen (z. B. der schreibende Tab nach einem Update, Prüfung C16): wieder warten
+      if (!S.lockPassive) return;
+      S.lockPassive = false; S.notes.readonly = READONLY_NOTE; renderNotice();
+      waitForTakeover();
+    });
   } catch (e) { /* leer */ }
 }
 
@@ -6604,7 +6639,7 @@ function registerSW() {
     if (reloading) return;
     if (!S.swUpdating) {
       // Update wurde in einem anderen Tab bestätigt: dieser Tab läuft noch mit dem alten Programmstand
-      if (S.hadController) { S.notes.update = { html: '<span>In einem anderen Tab wurde eine neue Version aktiviert. Bitte nach dieser Hand neu laden.</span><button class="btn" type="button" data-act="reload">Neu laden</button>' }; renderNotice(); }
+      if (S.hadController) { S.staleCode = true; S.notes.update = { html: '<span>In einem anderen Tab wurde eine neue Version aktiviert. Bitte nach dieser Hand neu laden.</span><button class="btn" type="button" data-act="reload">Neu laden</button>' }; renderNotice(); }
       S.hadController = true;
       return;
     }
@@ -6728,7 +6763,7 @@ function boot() {
   acquireLock().then(function (ok) {
     S.readonly = !ok;
     if (ok) bcRespond();
-    if (!ok) { S.notes.readonly = 'Der PokerTrainer ist bereits in einem anderen Tab oder App-Fenster geöffnet. Dieser Tab ist schreibgeschützt, damit keine Daten überschrieben werden.'; waitForTakeover(); }
+    if (!ok) { S.notes.readonly = READONLY_NOTE; waitForTakeover(); }
     stage = 'Speicher öffnen';
     return Store.init();
   }).then(function () {

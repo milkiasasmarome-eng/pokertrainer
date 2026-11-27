@@ -70,6 +70,37 @@ module.exports = async function (H) {
     await c.close();
   });
 
+  await test('Prüfung C15: ohne Web Locks – neuer Tab gibt das Schreiben ab, wenn der beschäftigte schreibende Tab verspätet antwortet', async () => {
+    const noLocks = () => { try { Object.defineProperty(navigator, 'locks', { get() { return undefined; }, configurable: true }); } catch (e) { /* */ } };
+    const c = await browser.newContext({ serviceWorkers: 'block' });
+    const a = await c.newPage(); await a.addInitScript(noLocks); await a.goto(BASE + 'index.html#tisch'); await ready(a);
+    const b = await c.newPage(); await b.addInitScript(noLocks);
+    a.evaluate(() => setTimeout(() => { const t = performance.now(); while (performance.now() - t < 1500) { /* belegt */ } }, 0));
+    await a.waitForTimeout(50);
+    await b.goto(BASE + 'index.html#tisch'); await ready(b); await b.waitForTimeout(2500);
+    const w = [await a.evaluate(() => !window.PTUI.S.readonly), await b.evaluate(() => !window.PTUI.S.readonly)];
+    ok(w[0] === true && w[1] === false, 'genau ein schreibender Tab (der zuerst geöffnete): ' + JSON.stringify(w));
+    ok(/schreibgeschützt/.test(await b.textContent('#notice')) && await b.locator('#bNext').isDisabled(), 'zweiter Tab mit Hinweis, „Nächste Hand“ gesperrt');
+    await c.close();
+  });
+
+  await test('Prüfung C16: Neu geladener schreibender Tab (Update) übernimmt die Sperre vom wartenden Tab; alter Programmstand startet keinen neuen Worker', async () => {
+    const c = await browser.newContext({ serviceWorkers: 'block' });
+    const a = await c.newPage(); await a.goto(BASE + 'index.html#tisch'); await ready(a);
+    const b = await c.newPage(); await b.goto(BASE + 'index.html#tisch'); await ready(b);
+    ok(!(await a.evaluate(() => window.PTUI.S.readonly)) && await b.evaluate(() => window.PTUI.S.readonly), 'vorher: A schreibt, B schreibgeschützt');
+    await a.reload(); await ready(a); await a.waitForTimeout(600);
+    ok(!(await a.evaluate(() => window.PTUI.S.readonly)), 'A schreibt nach dem Neuladen weiter');
+    ok(await b.evaluate(() => window.PTUI.S.readonly && !window.PTUI.S.lockPassive) && !(await b.locator('#notice [data-act="takeover"]').count()), 'B wieder schreibgeschützt und wartend (kein veraltetes „Hier weiterspielen“)');
+    await a.close(); await b.waitForSelector('#notice [data-act="takeover"]', { timeout: 8000 });
+    ok(true, 'B bietet die Übernahme an, sobald A geschlossen ist');
+    // gemischte Programmstände: Nach Aktivierung eines neuen Stands in einem anderen Tab keine neuen Worker im alten Tab
+    await b.evaluate(() => { window.__w = 0; const W = window.Worker; window.Worker = function (u) { window.__w++; return new W(u); }; window.PTUI.S.hadController = true; navigator.serviceWorker.dispatchEvent(new Event('controllerchange')); });
+    const r = await b.evaluate(() => window.PTUI.offThread('import', { text: '{}' }, 5000).then(x => x && x.ok === false, e => 'Fehler ' + e.message));
+    ok(r === true && await b.evaluate(() => window.__w) === 0 && /neue Version aktiviert/.test(await b.textContent('#notice')), 'Importprüfung im Hauptthread, kein Worker aus dem neuen Stand (' + r + ')');
+    await c.close();
+  });
+
   await test('Prüfung C3: Rohsicherung ohne lesbare IndexedDB gilt als unvollständig – Zurücksetzen nur nach ausdrücklicher Bestätigung; Fokus nach „Weiter warten“ (D t12)', async () => {
     const { c, p } = await fresh();
     await p.goto(BASE + 'index.html#tisch'); await ready(p); for (let i = 0; i < 2; i++) await playOne(p); await p.waitForTimeout(500);
