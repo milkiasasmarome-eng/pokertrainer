@@ -2,7 +2,7 @@
 
 Nach der Projektanweisung „Poker“ ist der Final Acceptance Test die Abnahme vor einer Freigabe. Er wird gemeinsam im Chat durchgegangen: Fall für Fall, Antwort je Fall „passt“ oder Fehlerbeschreibung. Ein Fehler wird sofort behoben, der Fall wiederholt und im Lernprotokoll vermerkt. Nach dem letzten bestandenen Fall und dem Wort „Freigabe“ entstehen PokerTrainer_Freigabe und Abschluss_PokerTrainer.
 
-Prüfgegenstand: Website https://milkiasasmarome-eng.github.io/pokertrainer/ und Offline-Datei `dist/PokerTrainer_2.2.html`, beide Version 2.2.0 (Fußzeile). Bis zur Freigabe liegt 2.2.0 auf dem Zweig `entwicklung-2.2`; für den Test die Offline-Datei aus diesem Zweig öffnen oder die Vorschau-Website nutzen, die nach „Freigabe“ veröffentlicht wird.
+Prüfgegenstand: Website https://milkiasasmarome-eng.github.io/pokertrainer/ und Offline-Datei `dist/PokerTrainer_2.2.html`, beide Version 2.2.0 (Fußzeile). Bis zur Freigabe liegt 2.2.0 auf dem Zweig `entwicklung-2.2` (Pull Request #2, nicht gemergt); die Website zeigt bis dahin 2.1.0. Für die Fälle 1–14 und 16–30 die Offline-Datei `dist/PokerTrainer_2.2.html` oder das Artefakt PokerTrainer_Entwurf öffnen. Fälle 15 und 31 hängen an Website und Service Worker und laufen nach „Freigabe“ als Abnahme der Veröffentlichung; bei Fehler Rückweg über den Zweig `sicherung-2.1.0`.
 
 ## Normalweg je Funktion
 
