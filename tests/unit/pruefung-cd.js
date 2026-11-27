@@ -49,6 +49,14 @@ module.exports = function (T) {
     ok(!r.ok && !/zu groß/.test(r.error), '61 MB: Formatprüfung statt Größenablehnung (' + r.error + ')');
   });
 
+  test('Prüfung C2: Archivfassung 2.0.1 (gleiche IndexedDB) wird nicht im selben Ursprung veröffentlicht', () => {
+    const yml = fs.readFileSync(path.join(ROOT, '.github/workflows/pages.yml'), 'utf8');
+    const cp = yml.split('\n').filter(l => /^\s*cp -r .*_site\/\s*$/.test(l));
+    ok(cp.length >= 1 && cp.every(l => !/\barchiv\b/.test(l)), 'Kopierliste ohne archiv/: ' + cp.map(l => l.trim()).join(' | '));
+    const arch = fs.readFileSync(path.join(ROOT, 'archiv/PokerTrainer_2.0.1.html'), 'utf8');
+    ok(/'pokertrainer2'/.test(arch), 'Begründung weiterhin gültig: Archiv nutzt die IndexedDB „pokertrainer2“ (Datei unverändert)');
+  });
+
   test('Prüfung C6: Trainingskategorie „constructor“ (aus Object.prototype) erzeugt keine Ausnahme', () => {
     ok(!PT.training.hasScen('constructor') && !PT.training.hasScen('__proto__') && !PT.training.hasScen(5) && PT.training.hasScen('preflop-open'), 'hasScen prüft nur eigene Kategorien');
     let g = null, err = null;
