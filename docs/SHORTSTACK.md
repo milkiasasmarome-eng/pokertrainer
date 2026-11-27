@@ -31,3 +31,14 @@ und All-in-Entscheidungen, Pot Commitment, Postflop-Spielraum (SPR), Implied Odd
 - 16–25 BB: Minraise/Fold- und Jam-Strategien wären im Modellspiel zu vergleichen; dafür fehlt ein Modell mit Minraise. Der Coach rechnet hier mit den
   Open-Charts und dem EV-Modell.
 - Antes und Mehrspieler-All-ins sind nicht modelliert.
+
+## 5. Abgrenzung (2.3)
+
+Das gelöste Push/Fold-Modellspiel ist **keine vollständige No-Limit-Hold'em-Strategie**. Es kennt vor dem Flop nur zwei Aktionen – All-in oder Fold
+für den Eröffner, Call oder Fold für die Spieler dahinter – und spielt jede Hand danach ohne weitere Entscheidung bis zum River aus. Kleine Opens,
+Limps, 3-Bets ohne All-in, alle Entscheidungen nach dem Flop und Unterschiede zwischen den Gegnern kommen darin nicht vor. Die Exploitability
+(≤ 0,0031 BB je Hand) misst nur den Abstand zum Gleichgewicht **dieses vereinfachten Spiels**.
+
+Im Trainer bestimmt das Modellspiel bis 15 BB effektiv nur die Handauswahl; ob All-in oder kleines Open, entscheidet das EV-Modell. Der Tipp nennt
+das ausdrücklich („Handauswahl nach Push/Fold-Modellspiel …, Größe nach EV“), die erweiterte Ansicht erklärt die Vereinfachung. Ergebnisse 2.3
+für 15 und 25 BB: `docs/TESTBERICHT_2.3.md` (S5, S6).

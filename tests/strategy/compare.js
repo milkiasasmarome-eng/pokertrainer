@@ -46,6 +46,15 @@ const HEROES = {
   'varB': { kind: 'coach', root: ROOT, mode: 'exploit', abl: {}, name: 'Variante B: adaptives Modell' },
   'varC': { kind: 'coach', root: ROOT, mode: 'exploit', abl: { hybrid: true }, name: 'Variante C: kontrolliertes hybrides Modell' },
   'varS': { kind: 'coach', root: ROOT, mode: 'exploit', abl: { respLegacy: true }, name: 'Variante S: Tabellen-Range, Reaktionsmodell 2.1 (aus der Ablation)' },
+  'varC3': { kind: 'coach', root: path.join(ROOT, '..', 'wt-c3'), mode: 'exploit', abl: { hybrid: true, respPrior0: true }, name: 'Variante C3: hybrid, Reaktion mit robustem Vorwissen' },
+  't-C': { kind: 'coach', root: path.join(ROOT, '..', 'wt-c4'), mode: 'exploit', abl: { hybrid: true }, name: 'Abstimmung: C (Standard)' },
+  't-w0': { kind: 'coach', root: path.join(ROOT, '..', 'wt-c4'), mode: 'exploit', abl: { hybrid: true, fit: { w0: 0.5 } }, name: 'Abstimmung: C, Vorwissen 0,5' },
+  't-z': { kind: 'coach', root: path.join(ROOT, '..', 'wt-c4'), mode: 'exploit', abl: { hybrid: true, fit: { zHi: 0, zLo: -2 } }, name: 'Abstimmung: C, empfindlichere Schwellen' },
+  't-zr': { kind: 'coach', root: path.join(ROOT, '..', 'wt-c4'), mode: 'exploit', abl: { hybrid: true, respPrior0: true, fit: { zHi: 0, zLo: -2, w0: 0.5 } }, name: 'Abstimmung: C, empfindlich, Vorwissen 0,5, Reaktion robust vorab' },
+  'varC5': { kind: 'coach', root: path.join(ROOT, '..', 'wt-c5'), mode: 'exploit', abl: { hybrid: true, maximin: true }, name: 'Variante C5: hybrid mit robuster Entscheidungsregel' },
+  'varCz': { kind: 'coach', root: path.join(ROOT, '..', 'wt-c4'), mode: 'exploit', abl: { hybrid: true, fit: { zHi: 0, zLo: -2 } }, name: 'Variante C (abgestimmt auf Tr23): hybrid, empfindlichere Schwellen' },
+  't-zsq': { kind: 'coach', root: path.join(ROOT, '..', 'wt-c6'), mode: 'exploit', abl: { hybrid: true, respSq: true, fit: { zHi: 0, zLo: -2 } }, name: 'Abstimmung: C empfindlich, Reaktion quadratisch' },
+  't-z1': { kind: 'coach', root: path.join(ROOT, '..', 'wt-c6'), mode: 'exploit', abl: { hybrid: true, fit: { zHi: 1, zLo: -1 } }, name: 'Abstimmung: C sehr empfindlich' },
   'varC2': { kind: 'coach', root: ROOT, mode: 'exploit', abl: { hybrid: true, respLegacy: true }, name: 'Variante C2: hybride Range, Reaktionsmodell 2.1' },
   // 2.3 Ablation (Arbeitspaket 1): Coach 2.2 mit einzelnen Komponenten im Stand 2.1
   'abl-R': { kind: 'coach', root: ROOT, mode: 'exploit', abl: { rangeLegacy: true }, name: 'Ablation: Range-Eingrenzung 2.1' },
@@ -86,10 +95,17 @@ function plan(name) {
     ['polar', 'sizetell', 'trapper', 'ipaggro', 'nitlag', 'minraiser'].forEach((k, i) => G('sReg', ['coach23', 'coach210'], { comp: 'final:' + k }, [23951 + i]));
     [15, 25].forEach((sb, i) => G('sKurz', ['coach23', 'coach210'].concat(sb === 15 ? ['pushfold'] : []), { comp: 'bots', startBB: sb }, range(23971 + 10 * i, 4)));
   }
+  if (name === 'tune23') {
+    // 2.3 Abstimmung freier Parameter des Modells C nur auf Trainingsgruppen (Tr23 und Gegner-KI E)
+    const G = (group, heroes, cond, seeds) => seeds.forEach(sd => heroes.forEach(hk => jobs.push({ group, hero: hk, comp: cond.comp, difficulty: 'gemischt', startBB: 100, seed: sd, hands: 2500, env: 'neu', pool: cond.pool || null })));
+    const HS = ['t-C', 't-w0', 't-z', 't-zr', 'coach210', 't-zsq', 't-z1'];
+    G('tuTr', HS, { comp: 'p23:Tr' }, [23231, 23232, 23233, 23234, 23235]);
+    G('tuE', HS, { comp: 'bots', pool: 'E' }, [23241, 23242, 23243]);
+  }
   if (name === 'sel23') {
     // 2.3 Modellwahl (docs/ABNAHMEKRITERIEN_2.3.md): Validierungsgruppen Va23 (unbekannte Strategien) und Gegner-KI V; dazu beschreibend das Regressionsset.
     const G = (group, heroes, cond, seeds) => seeds.forEach(sd => heroes.forEach(hk => jobs.push({ group, hero: hk, comp: cond.comp, difficulty: 'gemischt', startBB: 100, seed: sd, hands: 2500, env: 'neu', pool: cond.pool || null })));
-    const HS = ['varA', 'varB', 'varC', 'coach210', 'varS', 'varC2'];
+    const HS = ['varA', 'varB', 'varC', 'coach210', 'varS', 'varC2', 'varC3', 'varC5', 'varCz'];
     G('selVa', HS, { comp: 'p23:Va' }, [23201, 23202, 23203, 23204, 23205, 23206]);
     G('selV', HS, { comp: 'bots', pool: 'V' }, [23211, 23212, 23213, 23214]);
     ['polar', 'trapper', 'ipaggro'].forEach((k, i) => G('selReg', HS, { comp: 'final:' + k }, [23221 + i]));
@@ -101,7 +117,7 @@ function plan(name) {
     ['polar', 'sizetell', 'trapper', 'ipaggro', 'nitlag', 'minraiser'].forEach((k, i) => G('a1final', HS, { comp: 'final:' + k }, [23001 + i]));
     G('a1V', HS, { comp: 'bots', pool: 'V' }, [23101, 23102, 23103, 23104]);
   }
-  if (name === 'v23' || name === 'sel23' || name === 'abl23') { /* Pläne 2.3 oben */ } else if (name === 'v22') {
+  if (name === 'v23' || name === 'sel23' || name === 'abl23' || name === 'tune23') { /* Pläne 2.3 oben */ } else if (name === 'v22') {
     // 2.2: Plan vor den Läufen festgelegt (docs/ABNAHMEKRITERIEN_2.2.md). Seeds 22001 ff. kommen in keiner Entwicklung vor.
     const G = (group, heroes, cond, seeds, env) => seeds.forEach(sd => heroes.forEach(hk => jobs.push({ group, hero: hk, comp: cond.comp, difficulty: cond.difficulty, startBB: cond.startBB, seed: sd, hands: 2500, env: env || 'neu', pool: cond.pool || null })));
     const range = (a, n) => Array.from({ length: n }, (_, i) => a + i);
@@ -152,7 +168,7 @@ async function main() {
   if (fs.existsSync(path.join(V220, 'assets'))) hashes[V220] = hashFiles(V220, COACH_MODULES);
   const envHashOf = j => j.env === 'ref' ? 'ref-' + hashFiles(V210, ENV_MODULES) : envHash;
   const jobs = plan(planName).filter(j => !only || jobId(j).indexOf(only) >= 0);
-  const keyOf = j => { const H = HEROES[j.hero]; return { env: envHashOf(j), coach: H.kind === 'coach' ? hashes[H.root] + (H.abl ? '|' + JSON.stringify(H.abl) : '') : null }; };
+  const keyOf = j => { const H = HEROES[j.hero]; return { env: envHashOf(j), coach: H.kind === 'coach' ? (hashes[H.root] || (hashes[H.root] = hashFiles(H.root, COACH_MODULES))) + (H.abl ? '|' + JSON.stringify(H.abl) : '') : null }; };
   const fileOf = j => path.join(RUNS, jobId(j) + '.json');
   const cached = j => { try { const r = JSON.parse(fs.readFileSync(fileOf(j), 'utf8')), k = keyOf(j); return r.key && r.key.env === k.env && r.key.coach === k.coach ? r : null; } catch (e) { return null; } };
   const todo = args.includes('--aggregate') ? [] : jobs.filter(j => !cached(j));
@@ -234,8 +250,9 @@ function aggregate(planName, runs, h) {
     compare('S5', 'S5: Coach 2.3 gegen 2.1.0, 15 und 25 BB', 'sKurz', 'coach23', 'coach210', ['stack']);
     compare('S6', 'S6: Coach 2.3 gegen Push/Fold-Referenz, 15 BB', 'sKurz', 'coach23', 'pushfold', []);
   }
+  if (planName === 'tune23') ['t-C', 't-w0', 't-z', 't-zr', 't-zsq', 't-z1'].forEach(a => { compare('tuTr-' + a, 'Abstimmung Tr23: ' + HEROES[a].name + ' gegen 2.1.0', 'tuTr', a, 'coach210', []); compare('tuE-' + a, 'Abstimmung Gegner-KI E: ' + HEROES[a].name + ' gegen 2.1.0', 'tuE', a, 'coach210', []); });
   if (planName === 'sel23') {
-    [['varA', 'coach210'], ['varB', 'coach210'], ['varC', 'coach210'], ['varS', 'coach210'], ['varC2', 'coach210'], ['varC', 'varB'], ['varC', 'varA'], ['varB', 'varA'], ['varS', 'varB'], ['varC2', 'varB']].forEach(([a, b]) => {
+    [['varA', 'coach210'], ['varB', 'coach210'], ['varC', 'coach210'], ['varS', 'coach210'], ['varC2', 'coach210'], ['varC', 'varB'], ['varC', 'varA'], ['varB', 'varA'], ['varS', 'varB'], ['varC2', 'varB'], ['varC3', 'coach210'], ['varC3', 'varB'], ['varC5', 'coach210'], ['varC5', 'varB'], ['varC5', 'varC'], ['varCz', 'coach210'], ['varCz', 'varB'], ['varCz', 'varA']].forEach(([a, b]) => {
       compare('selVa-' + a + '-' + b, 'Modellwahl Va23: ' + HEROES[a].name + ' gegen ' + HEROES[b].name, 'selVa', a, b, []);
       compare('selV-' + a + '-' + b, 'Modellwahl Gegner-KI V: ' + HEROES[a].name + ' gegen ' + HEROES[b].name, 'selV', a, b, []);
       compare('selReg-' + a + '-' + b, 'Regressionsset: ' + HEROES[a].name + ' gegen ' + HEROES[b].name, 'selReg', a, b, ['comp']);
