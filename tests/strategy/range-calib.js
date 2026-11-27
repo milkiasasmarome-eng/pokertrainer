@@ -13,7 +13,8 @@ const B = PT.bots;
 
 function run(seed, hands, group, root, gto, filter) {
   const C = HS.loadEngine(root || path.join(__dirname, '..', '..'));
-  const comp = /^(synth|final|mixed)/.test(group) ? group : 'bots';
+  if (process.env.PT_ABL && C.ranges.ABL) Object.assign(C.ranges.ABL, JSON.parse(process.env.PT_ABL));   // 2.3: Variante A/B/C
+  const comp = /^(synth|final|mixed|p23|f23)/.test(group) ? group : 'bots';
   const cfg = Object.assign(PT.session.defaultConfig(), /^[EVT]$/.test(group) ? { pool: GROUPS[group] } : {});
   const db = PT.stats.newDb(), t = PT.session.newTable(cfg, db, seed), heroRec = PT.stats.newRecord('hero', 'Du');
   const rng = PT.makeRng('rcal|' + seed), recs = [];
@@ -30,6 +31,8 @@ function run(seed, hands, group, root, gto, filter) {
       if (want) {
         const q = live[0], rec = q.isHero ? heroRec : db.opps[q.id];
         const st = C.coach._intern.oppStats(rec ? JSON.parse(JSON.stringify(rec)) : null);
+        if (C.ranges.ABL && C.ranges.ABL.hybrid && C.coach.__hybridFit) { const om = {}; h.p.forEach(x => { if (x.seat !== s && !x.isHero && db.opps[x.id]) om[x.id] = db.opps[x.id]; }); if (q.isHero) om[q.id] = heroRec;
+          const fit = C.coach.__hybridFit({ opps: om }); st.wTab = fit[q.id] ? fit[q.id].w : (fit.__pool.w == null ? 1 : fit.__pool.w); }
         const vv = HS.clone(v), rg = C.coach._intern.buildRange(vv, q.seat, st, !!gto, vv.pfa);
         const ref = rangeEq(C, v.cards, v.board, rg.w, rng);
         const dead = []; h.p.forEach(x => x.cards.forEach(c => dead.push(c)));
