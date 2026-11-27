@@ -55,7 +55,7 @@ Migration: Daten aus Entwurf 2 (`pokertrainer-v2` in IndexedDB oder `pokertraine
 
 - `index.html` lädt alle Module mit `?v=VERSION`. CSP erlaubt nur eigene Dateien.
 - `sw.js` (erzeugt von `tools/build.js`): Cache `pokertrainer-VERSION`, Vorabladen aller Dateien, Cache-first, alte Caches werden beim Aktivieren gelöscht; neue Version wartet, bis der Nutzer „Jetzt aktualisieren“ wählt (zwischen zwei Händen).
-- `dist/PokerTrainer_2.0.html`: dieselben Quellen inline; der Worker entsteht als Blob aus dem eingebetteten Engine-Code. CSP ohne Netzwerkzugriff.
+- `dist/PokerTrainer_2.1.html`: dieselben Quellen inline; der Worker entsteht als Blob aus dem eingebetteten Engine-Code. CSP ohne Netzwerkzugriff.
 - Pfade sind relativ, daher funktioniert alles im Unterverzeichnis `/pokertrainer/` von GitHub Pages.
 
 ## Veröffentlichung

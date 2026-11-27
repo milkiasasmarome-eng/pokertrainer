@@ -1,4 +1,4 @@
-/* PokerTrainer 2.0 – Ansichten: Training, Handhistorie mit Replayer, Range-Matrix, Gegnerdatenbank,
+/* PokerTrainer 2.1 – Ansichten: Training, Handhistorie mit Replayer, Range-Matrix, Gegnerdatenbank,
    Lernfortschritt, Einstellungen, Hilfe. */
 (function () {
 'use strict';

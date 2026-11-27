@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' blob:; style-src 'unsafe-inline'; img-src data:; worker-src blob:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
-<title>PokerTrainer 2.0 (Offline-Datei) – No-Limit Hold'em Trainer mit Coach</title>
+<title>PokerTrainer 2.1 – No-Limit Hold'em Trainer mit Coach</title>
 <meta name="description" content="Kostenloser No-Limit-Hold'em-Trainer im Browser: 6-max Cash Game mit Spielgeld, 100 Computergegnern, Echtzeit-Coach mit Equity und EV, Hand-Replayer, Range-Matrix und Lernfortschritt. Ohne Konto, läuft offline.">
 <meta name="theme-color" content="#0f5a4a">
 <meta name="color-scheme" content="light dark">
@@ -582,7 +582,7 @@ R.fail = function (reason, detail, opts) {
   <header class="top">
     <div class="brand">
       <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgcm9sZT0iaW1nIiBhcmlhLWxhYmVsPSJQb2tlclRyYWluZXIiPgogIDxkZWZzPjxyYWRpYWxHcmFkaWVudCBpZD0iZyIgY3g9IjUwJSIgY3k9IjM4JSIgcj0iNzAlIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiMxZjhhNzEiLz48c3RvcCBvZmZzZXQ9Ii42IiBzdG9wLWNvbG9yPSIjMTE2MDRmIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMGE0NDM4Ii8+PC9yYWRpYWxHcmFkaWVudD48L2RlZnM+CiAgPHJlY3QgeD0iMiIgeT0iMiIgd2lkdGg9IjYwIiBoZWlnaHQ9IjYwIiByeD0iMTQiIGZpbGw9InVybCgjZykiLz4KICA8cmVjdCB4PSIyIiB5PSIyIiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHJ4PSIxNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjM2IyZDI0IiBzdHJva2Utd2lkdGg9IjMiLz4KICA8cGF0aCBkPSJNMzIgMTJjLTMuMiA0LjYtMTQgMTEuMi0xNCAxOS4yIDAgNSAzLjkgOC4yIDguMiA4LjIgMi40IDAgNC4yLTEgNS4yLTIuNC0uNiA0LjItMi4zIDcuNC01LjIgOS40aDExLjZjLTIuOS0yLTQuNi01LjItNS4yLTkuNCAxIDEuNCAyLjggMi40IDUuMiAyLjQgNC4zIDAgOC4yLTMuMiA4LjItOC4yQzQ2IDIzLjIgMzUuMiAxNi42IDMyIDEyeiIgZmlsbD0iI2ZiZjhmMCIvPgogIDxjaXJjbGUgY3g9IjQ3IiBjeT0iNDciIHI9IjkiIGZpbGw9IiNjZjNmMmMiIHN0cm9rZT0iI2ZiZjhmMCIgc3Ryb2tlLXdpZHRoPSIyLjUiLz4KICA8Y2lyY2xlIGN4PSI0NyIgY3k9IjQ3IiByPSI0LjIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZiZjhmMCIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1kYXNoYXJyYXk9IjIuMiAyLjIiLz4KPC9zdmc+Cg==" alt="" width="30" height="30">
-      <div><h1>PokerTrainer <span class="ver">2.0</span></h1>
+      <div><h1>PokerTrainer <span class="ver">2.1</span></h1>
       <span class="sub">No-Limit Hold'em · 6-max · Spielgeld</span></div>
     </div>
     <div class="status" id="status">Lade …</div>
@@ -685,7 +685,7 @@ R.fail = function (reason, detail, opts) {
     <section class="view" id="view-hilfe" hidden></section>
   </main>
   <footer class="foot">
-    <span>PokerTrainer <span id="verText">2.0.1</span> · nur Spielgeld, kein Glücksspiel · Daten bleiben in deinem Browser</span>
+    <span>PokerTrainer <span id="verText">2.1.0</span> · nur Spielgeld, kein Glücksspiel · Daten bleiben in deinem Browser</span>
     <a href="#hilfe/datenschutz">Datenschutz &amp; Rechtliches</a>
   </footer>
 </div>
@@ -706,8 +706,8 @@ R.fail = function (reason, detail, opts) {
 (function (G) {
 'use strict';
 var PT = G.PT || (G.PT = {});
-PT.VERSION = '2.0.1';
-PT.BUILD = '2026-11-26';
+PT.VERSION = '2.1.0';
+PT.BUILD = '2026-11-27';
 
 // ---------- Hilfen ----------
 function clamp(x, a, b) { return x < a ? a : x > b ? b : x; }
@@ -5680,12 +5680,12 @@ PT.Speech = Speech; PT.toSpeech = toSpeech; PT.pickVoice = pickVoice;
 
 </script>
 <script id="pt-worker" type="text/plain">
-/* PokerTrainer 2.0 – Web Worker für Coach-Analysen und Importprüfung (hält die Oberfläche bedienbar). */
+/* PokerTrainer 2.1 – Web Worker für Coach-Analysen und Importprüfung (hält die Oberfläche bedienbar). */
 /* global importScripts, self */
 (function () {
 'use strict';
 if (typeof importScripts === 'function' && !self.PT) {
-  var v = '?v=2.0.1';
+  var v = '?v=2.1.0';
   importScripts('engine/core.js' + v, 'engine/evaluator.js' + v, 'engine/preflop-data.js' + v, 'engine/rules.js' + v, 'engine/ranges.js' + v, 'engine/equity.js' + v,
     'engine/stats.js' + v, 'engine/bots.js' + v, 'engine/session.js' + v, 'engine/ev.js' + v, 'engine/cfr.js' + v, 'engine/coach.js' + v, 'engine/training.js' + v, 'engine/export.js' + v);
 }
@@ -5705,7 +5705,7 @@ self.onmessage = function (e) {
 </script>
 <script>
 /* assets/js/ui/store.js */
-/* PokerTrainer 2.0 – Persistenz: IndexedDB (Rückfall localStorage, sonst nur Sitzung), Migration aus Entwurf 2.
+/* PokerTrainer 2.1 – Persistenz: IndexedDB (Rückfall localStorage, sonst nur Sitzung), Migration aus Entwurf 2.
    Seit 2.1: Zeitlimits für alle Startzugriffe (kein dauerhaft hängender Ladezustand), abgesicherter Start (?start=sicher),
    Speicherfehler werden als abgelehnte Promise gemeldet statt synchron zu werfen. */
 (function () {
@@ -5903,7 +5903,7 @@ PTUI.Store = Store;
 })();
 
 /* assets/js/ui/app.js */
-/* PokerTrainer 2.0 – UI-Controller: Tisch, Ablauf einer Hand, Coach-Anzeige, Analyse-Dienst (Web Worker),
+/* PokerTrainer 2.1 – UI-Controller: Tisch, Ablauf einer Hand, Coach-Anzeige, Analyse-Dienst (Web Worker),
    Speicherung, Mehrfach-Tab-Schutz, Service-Worker-Updates. Nutzt nur window.PT (Engine) und Browserfunktionen. */
 (function () {
 'use strict';
@@ -7074,7 +7074,7 @@ if (document.readyState === 'loading') document.addEventListener('DOMContentLoad
 })();
 
 /* assets/js/ui/views.js */
-/* PokerTrainer 2.0 – Ansichten: Training, Handhistorie mit Replayer, Range-Matrix, Gegnerdatenbank,
+/* PokerTrainer 2.1 – Ansichten: Training, Handhistorie mit Replayer, Range-Matrix, Gegnerdatenbank,
    Lernfortschritt, Einstellungen, Hilfe. */
 (function () {
 'use strict';

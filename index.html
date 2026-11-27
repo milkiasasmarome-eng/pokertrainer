@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; worker-src 'self'; connect-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
-<title>PokerTrainer 2.0 – No-Limit Hold'em Trainer mit Coach</title>
+<title>PokerTrainer 2.1 – No-Limit Hold'em Trainer mit Coach</title>
 <meta name="description" content="Kostenloser No-Limit-Hold'em-Trainer im Browser: 6-max Cash Game mit Spielgeld, 100 Computergegnern, Echtzeit-Coach mit Equity und EV, Hand-Replayer, Range-Matrix und Lernfortschritt. Ohne Konto, läuft offline.">
 <meta name="theme-color" content="#0f5a4a">
 <meta name="color-scheme" content="light dark">
@@ -16,16 +16,16 @@
 <meta property="og:type" content="website">
 <meta property="og:locale" content="de_DE">
 <meta property="og:site_name" content="PokerTrainer">
-<meta property="og:title" content="PokerTrainer 2.0 – No-Limit Hold'em Trainer mit Coach">
+<meta property="og:title" content="PokerTrainer 2.1 – No-Limit Hold'em Trainer mit Coach">
 <meta property="og:description" content="Trainiere 6-max Cash Game gegen 100 Computergegner. Coach mit Equity, Pot Odds und EV, Replayer, Range-Matrix, Lernfortschritt. Spielgeld, kostenlos, ohne Konto.">
 <meta property="og:url" content="https://milkiasasmarome-eng.github.io/pokertrainer/">
 <meta property="og:image" content="https://milkiasasmarome-eng.github.io/pokertrainer/assets/images/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="PokerTrainer 2.0: grüner Pokertisch mit Karten und Coach-Hinweis">
+<meta property="og:image:alt" content="PokerTrainer 2.1: grüner Pokertisch mit Karten und Coach-Hinweis">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="stylesheet" href="assets/css/app.css?v=2.0.1">
-<script src="assets/js/recovery.js?v=2.0.1"></script>
+<link rel="stylesheet" href="assets/css/app.css?v=2.1.0">
+<script src="assets/js/recovery.js?v=2.1.0"></script>
 </head>
 <body>
 <a class="skip" href="#main" data-goto="main">Zum Inhalt springen</a>
@@ -34,7 +34,7 @@
   <header class="top">
     <div class="brand">
       <img src="assets/icons/favicon.svg" alt="" width="30" height="30">
-      <div><h1>PokerTrainer <span class="ver">2.0</span></h1>
+      <div><h1>PokerTrainer <span class="ver">2.1</span></h1>
       <span class="sub">No-Limit Hold'em · 6-max · Spielgeld</span></div>
     </div>
     <div class="status" id="status">Lade …</div>
@@ -137,7 +137,7 @@
     <section class="view" id="view-hilfe" hidden></section>
   </main>
   <footer class="foot">
-    <span>PokerTrainer <span id="verText">2.0.1</span> · nur Spielgeld, kein Glücksspiel · Daten bleiben in deinem Browser</span>
+    <span>PokerTrainer <span id="verText">2.1.0</span> · nur Spielgeld, kein Glücksspiel · Daten bleiben in deinem Browser</span>
     <a href="#hilfe/datenschutz">Datenschutz &amp; Rechtliches</a>
   </footer>
 </div>
@@ -151,26 +151,26 @@
 <div class="sr" id="announce" role="status" aria-live="polite" aria-atomic="true"></div>
 <input type="file" id="fileIn" accept=".json,application/json,text/plain" hidden>
 <!--ENGINE-->
-<script src="assets/js/engine/core.js?v=2.0.1"></script>
-<script src="assets/js/engine/evaluator.js?v=2.0.1"></script>
-<script src="assets/js/engine/preflop-data.js?v=2.0.1"></script>
-<script src="assets/js/engine/rules.js?v=2.0.1"></script>
-<script src="assets/js/engine/ranges.js?v=2.0.1"></script>
-<script src="assets/js/engine/equity.js?v=2.0.1"></script>
-<script src="assets/js/engine/stats.js?v=2.0.1"></script>
-<script src="assets/js/engine/bots.js?v=2.0.1"></script>
-<script src="assets/js/engine/session.js?v=2.0.1"></script>
-<script src="assets/js/engine/ev.js?v=2.0.1"></script>
-<script src="assets/js/engine/cfr.js?v=2.0.1"></script>
-<script src="assets/js/engine/coach.js?v=2.0.1"></script>
-<script src="assets/js/engine/training.js?v=2.0.1"></script>
-<script src="assets/js/engine/export.js?v=2.0.1"></script>
-<script src="assets/js/engine/speech.js?v=2.0.1"></script>
+<script src="assets/js/engine/core.js?v=2.1.0"></script>
+<script src="assets/js/engine/evaluator.js?v=2.1.0"></script>
+<script src="assets/js/engine/preflop-data.js?v=2.1.0"></script>
+<script src="assets/js/engine/rules.js?v=2.1.0"></script>
+<script src="assets/js/engine/ranges.js?v=2.1.0"></script>
+<script src="assets/js/engine/equity.js?v=2.1.0"></script>
+<script src="assets/js/engine/stats.js?v=2.1.0"></script>
+<script src="assets/js/engine/bots.js?v=2.1.0"></script>
+<script src="assets/js/engine/session.js?v=2.1.0"></script>
+<script src="assets/js/engine/ev.js?v=2.1.0"></script>
+<script src="assets/js/engine/cfr.js?v=2.1.0"></script>
+<script src="assets/js/engine/coach.js?v=2.1.0"></script>
+<script src="assets/js/engine/training.js?v=2.1.0"></script>
+<script src="assets/js/engine/export.js?v=2.1.0"></script>
+<script src="assets/js/engine/speech.js?v=2.1.0"></script>
 <!--/ENGINE-->
 <!--UI-->
-<script src="assets/js/ui/store.js?v=2.0.1"></script>
-<script src="assets/js/ui/app.js?v=2.0.1"></script>
-<script src="assets/js/ui/views.js?v=2.0.1"></script>
+<script src="assets/js/ui/store.js?v=2.1.0"></script>
+<script src="assets/js/ui/app.js?v=2.1.0"></script>
+<script src="assets/js/ui/views.js?v=2.1.0"></script>
 <!--/UI-->
 </body>
 </html>

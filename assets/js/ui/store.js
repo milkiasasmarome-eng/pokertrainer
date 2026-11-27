@@ -1,4 +1,4 @@
-/* PokerTrainer 2.0 – Persistenz: IndexedDB (Rückfall localStorage, sonst nur Sitzung), Migration aus Entwurf 2.
+/* PokerTrainer 2.1 – Persistenz: IndexedDB (Rückfall localStorage, sonst nur Sitzung), Migration aus Entwurf 2.
    Seit 2.1: Zeitlimits für alle Startzugriffe (kein dauerhaft hängender Ladezustand), abgesicherter Start (?start=sicher),
    Speicherfehler werden als abgelehnte Promise gemeldet statt synchron zu werfen. */
 (function () {

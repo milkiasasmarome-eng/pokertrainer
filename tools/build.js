@@ -1,4 +1,4 @@
-/* Build: erzeugt sw.js (versionierte Cache-Liste) und die portable Einzeldatei dist/PokerTrainer_2.0.html.
+/* Build: erzeugt sw.js (versionierte Cache-Liste) und die portable Einzeldatei dist/PokerTrainer_2.1.html.
    Website und Einzeldatei nutzen dieselben Quelldateien. */
 'use strict';
 const fs = require('fs'), path = require('path');

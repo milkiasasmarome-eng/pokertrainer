@@ -41,7 +41,7 @@ Rechtsgrundlage für die Bereitstellung der Website ist das berechtigte Interess
 
 Bei installierbarer Nutzung (Progressive Web App) speichert ein Service Worker die Dateien der App im Browser-Cache, damit sie auch ohne Internet funktioniert. Dabei werden keine personenbezogenen Daten übertragen.
 
-Die portable Datei `PokerTrainer_2.0.html` läuft vollständig ohne Internetverbindung.
+Die portable Datei `PokerTrainer_2.1.html` läuft vollständig ohne Internetverbindung.
 
 ## 5. Deine Rechte
 

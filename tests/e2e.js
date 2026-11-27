@@ -385,7 +385,7 @@ async function playHand(page, policy) {
   });
 
   await test('Portable Einzeldatei (file://): lädt, spielt, Coach per Blob-Worker', async () => {
-    const file = 'file://' + path.join(__dirname, '..', 'dist', 'PokerTrainer_2.0.html');
+    const file = 'file://' + path.join(__dirname, '..', 'dist', 'PokerTrainer_2.1.html');
     const c = await browser.newContext(), p = await c.newPage(); watch(p, 'einzeldatei');
     await p.goto(file + '#tisch'); await p.waitForFunction(() => window.PTUI && window.PTUI.S.ready, null, { timeout: 15000 });
     await p.click('#bNext');

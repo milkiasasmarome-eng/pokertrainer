@@ -2,7 +2,27 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
-## [Unveröffentlicht] – Zweig ui-2.1
+## [2.1.0] – 2026-11-27
+
+Folgeaudit mit Überprüfung der externen Befunde A1–A6, vier unabhängigen Prüfagenten (A Mathematik, B Strategie, C Architektur/Sicherheit/Datenbank, D Oberfläche/Barrierefreiheit/PWA), statistisch abgesicherten Strategievergleichen und neuem Gegnergedächtnis. Details: `docs/AUDIT.md`, `docs/TESTBERICHT.md`, `docs/VALIDIERUNG_MATHE.md`, `docs/STRATEGIE.md`, `docs/audit-2.1/`.
+
+### Mathematik (Befunde A2–A5, Prüfer A)
+- **A2** Leere oder unvereinbare Ranges in Side-Pot- und Equity-Rechnungen: gekennzeichneter Fehlschlag statt stiller 0 oder NaN, bis in EV-Engine und Coach verfolgt.
+- **A3/A5** Equity-Cache berücksichtigt Methode, erreichte Genauigkeit, Zufallsstrom und Umfang; Range-Kennung ohne Informationsverlust (exakte Gewichte statt Rundung auf 1/1000).
+- **A4** Zeitgrenze überall: exakte Enumeration, Side-Pot-Simulation, Equity je Kombination und River-Modellspiel brechen ab und kennzeichnen das Ergebnis; ein abgebrochenes exaktes Ergebnis gilt nie als exakt.
+- **Monte Carlo:** Stoppregel ohne Verzerrung, Intervall passend zu Equity-Werten mit geteilten Pots; Abdeckung je Analysestufe gegen exakte Enumeration geprüft.
+- **Handbewertung:** unabhängige Best-of-Five-Referenz, individuelle Prüfung jeder Fünf-Karten-Hand, Kicker, Gleichstände, Board spielt, Permutations- und Farbinvarianz; Häufigkeits- und Individualprüfung im Bericht getrennt.
+
+### Coach und Strategie (Befunde A1, A6, Prüfer B)
+- **A1** Beide Analysemodi teilen gemeinsame Zwischenergebnisse und erhalten gleiche Budget- und Zeitanteile mit eigenen Zufallsströmen; Ergebnis unabhängig von Reihenfolge und Cache-Zustand.
+- **A6** Exploits nur mit Bayes-Beleg auf der tatsächlich verwendeten Fold-Rate und mindestens einer eigenen Beobachtung statt starrer 20 Beobachtungen; Kurz- und Langzeitwerte auf gemeinsamer Zeitskala.
+- Postflop-Reaktionsmodell an der Gegnerpopulation kalibriert (Log-Loss auf Prüfdaten 0,771 gegen 0,894 in 2.0.1); Callrange mit scharfem Schnitt; Leads nach absoluter Stärke eingegrenzt.
+- Preflop: Fold wird wie jede Aktion am Chart gemessen; Short Stack ohne Nicht-All-in-Raises ab einem Drittel des Stacks.
+- Bewertung frei gewählter Größen mit begrenzter Modellunsicherheit; reine Bluffs im gleichgewichtsnahen Modus EV-neutral statt systematisch negativ.
+- Gegner-KI: Calls hängen von Einsatzgröße und Stil ab (vorher callten starke Hände jede Größe).
+
+### Gegnergedächtnis
+- Datenformat 3 mit Langzeit- und Kurzzeitwerten, Showdowns getrennt von Schätzungen, Erkennung von Stilwechseln; Migration aus Format 2 mit Sicherung.
 
 ### Neu
 - **Startüberwachung und Wiederherstellung** (`assets/js/recovery.js`): Zeitlimits für alle Startschritte (IndexedDB, Tab-Sperre, Daten lesen, Migrationssuche), Hinweis nach 4 s, Fehleranzeige spätestens nach 20 s oder sofort bei fehlender Programmdatei. Wiederherstellung: „Neu laden“, abgesicherter Start (`?start=sicher`, gespeicherte Daten bleiben unberührt), Rohsicherung aller lokalen Daten und erst danach „Lokale Daten zurücksetzen“. Rohsicherungen lassen sich importieren; gültige Einträge werden übernommen.

@@ -1,4 +1,4 @@
-/* PokerTrainer 2.0 – UI-Controller: Tisch, Ablauf einer Hand, Coach-Anzeige, Analyse-Dienst (Web Worker),
+/* PokerTrainer 2.1 – UI-Controller: Tisch, Ablauf einer Hand, Coach-Anzeige, Analyse-Dienst (Web Worker),
    Speicherung, Mehrfach-Tab-Schutz, Service-Worker-Updates. Nutzt nur window.PT (Engine) und Browserfunktionen. */
 (function () {
 'use strict';

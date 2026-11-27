@@ -1,6 +1,6 @@
 # Hinweise für KI-Assistenten und Mitwirkende
 
-Dieses Repository enthält den PokerTrainer 2.0: einen eigenständigen No-Limit-Hold'em-Trainer (6-max Cash Game, Spielgeld), der vollständig im Browser läuft und über GitHub Pages veröffentlicht wird.
+Dieses Repository enthält den PokerTrainer 2.1: einen eigenständigen No-Limit-Hold'em-Trainer (6-max Cash Game, Spielgeld), der vollständig im Browser läuft und über GitHub Pages veröffentlicht wird.
 
 ## Grundsätze (nicht verhandelbar)
 
