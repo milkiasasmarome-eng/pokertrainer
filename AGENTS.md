@@ -63,3 +63,5 @@ node tests/e2e.js                                  # Browser-Tests (Playwright +
 - Vergleiche mit veränderter Gegner-KI immer zusätzlich in der Referenzumgebung (`env: 'ref'` im Plan, unveränderte Gegner-KI aus `sicherung-2.1.0`).
 - Kriterien vor den Läufen festlegen (`docs/ABNAHMEKRITERIEN_2.2.md`), Berichte nur aus Rohdaten (`node tools/report-22.js`).
 - Ereignisstrom für unabhängige Engines: `PT.events` (export.js). Der Kanal `pai` wird vom Trainer nie gefüllt.
+- Bekannte Schwäche 2.2 (H4 in `docs/TESTBERICHT_2.2.md`): gegen unbekannte Strategien (Polarisierer, Fallensteller) schwächer als 2.1.0. Änderungen an
+  Reaktionsmodell oder Range-Tabelle zusätzlich gegen `FINAL` prüfen, nicht nur gegen V und T.

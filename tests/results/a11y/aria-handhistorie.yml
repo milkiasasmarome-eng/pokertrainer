@@ -19,6 +19,7 @@
 - button "Export JSON"
 - button "Export Text"
 - button "Export Benchmark"
+- button "Export Ereignisse (PAI)"
 - paragraph: 2 Hände
 - table:
   - rowgroup:
@@ -31,57 +32,58 @@
       - columnheader "Ergebnis"
       - columnheader "Bewertung"
   - rowgroup:
-    - 'row "Hand #2 vom 27.11.26, 10:59 öffnen #2 HJ Neun Kreuz Neun Pik Ass Kreuz Vier Kreuz Bube Karo König Pik Vier Karo +1,50 Ungenau (vertretbar)"':
-      - 'cell "Hand #2 vom 27.11.26, 10:59 öffnen"':
-        - 'button "Hand #2 vom 27.11.26, 10:59 öffnen"': 27.11.26, 10:59
+    - 'row "Hand #2 vom 27.11.26, 16:05 öffnen #2 BB Ass Kreuz Zwei Kreuz Sechs Karo Neun Pik Fünf Kreuz Fünf Karo Sechs Kreuz +1,50 Vertretbar (vertretbar)"':
+      - 'cell "Hand #2 vom 27.11.26, 16:05 öffnen"':
+        - 'button "Hand #2 vom 27.11.26, 16:05 öffnen"': 27.11.26, 16:05
       - cell "#2"
-      - cell "HJ"
-      - cell "Neun Kreuz Neun Pik":
-        - img "Neun Kreuz"
-        - img "Neun Pik"
-      - cell "Ass Kreuz Vier Kreuz Bube Karo König Pik Vier Karo":
+      - cell "BB"
+      - cell "Ass Kreuz Zwei Kreuz":
         - img "Ass Kreuz"
-        - img "Vier Kreuz"
-        - img "Bube Karo"
-        - img "König Pik"
-        - img "Vier Karo"
-      - cell "+1,50"
-      - cell "Ungenau (vertretbar)"
-    - 'row "Hand #1 vom 27.11.26, 10:59 öffnen #1 CO Zehn Kreuz Sieben Karo Sechs Karo Ass Herz Zehn Pik König Pik Acht Karo −14,00 Fehler"':
-      - 'cell "Hand #1 vom 27.11.26, 10:59 öffnen"':
-        - 'button "Hand #1 vom 27.11.26, 10:59 öffnen"': 27.11.26, 10:59
-      - cell "#1"
-      - cell "CO"
-      - cell "Zehn Kreuz Sieben Karo":
-        - img "Zehn Kreuz"
-        - img "Sieben Karo"
-      - cell "Sechs Karo Ass Herz Zehn Pik König Pik Acht Karo":
+        - img "Zwei Kreuz"
+      - cell "Sechs Karo Neun Pik Fünf Kreuz Fünf Karo Sechs Kreuz":
         - img "Sechs Karo"
-        - img "Ass Herz"
-        - img "Zehn Pik"
+        - img "Neun Pik"
+        - img "Fünf Kreuz"
+        - img "Fünf Karo"
+        - img "Sechs Kreuz"
+      - cell "+1,50"
+      - cell "Vertretbar (vertretbar)"
+    - 'row "Hand #1 vom 27.11.26, 16:05 öffnen #1 UTG Neun Kreuz König Pik Fünf Kreuz Vier Karo Sieben Pik Drei Pik Ass Herz −5,50 Schwerer Fehler (Fehler)"':
+      - 'cell "Hand #1 vom 27.11.26, 16:05 öffnen"':
+        - 'button "Hand #1 vom 27.11.26, 16:05 öffnen"': 27.11.26, 16:05
+      - cell "#1"
+      - cell "UTG"
+      - cell "Neun Kreuz König Pik":
+        - img "Neun Kreuz"
         - img "König Pik"
-        - img "Acht Karo"
-      - cell "−14,00"
-      - cell "Fehler"
-- 'heading "Replayer – Hand #2 (27.11.26, 10:59)" [level=2]'
-- text: Pot 1,50 Du HJ 86,00
-- img "Neun Kreuz"
-- img "Neun Pik"
-- text: Ivo CO 100,00
+      - cell "Fünf Kreuz Vier Karo Sieben Pik Drei Pik Ass Herz":
+        - img "Fünf Kreuz"
+        - img "Vier Karo"
+        - img "Sieben Pik"
+        - img "Drei Pik"
+        - img "Ass Herz"
+      - cell "−5,50"
+      - cell "Schwerer Fehler (Fehler)"
+- 'heading "Replayer – Hand #2 (27.11.26, 16:05)" [level=2]'
+- text: Pot 1,50 Du BB 93,50
+- img "Ass Kreuz"
+- img "Zwei Kreuz"
+- text: 1,00 Gero UTG 99,00
 - img "verdeckte Karte"
 - img "verdeckte Karte"
-- text: Frieda BTN 99,50
+- text: Eva HJ 100,00
 - img "verdeckte Karte"
 - img "verdeckte Karte"
-- text: D Lina SB 98,50
+- text: Wolf CO 108,00
 - img "verdeckte Karte"
 - img "verdeckte Karte"
-- text: 0,50 Ines BB 114,50
+- text: Petra BTN 99,50
 - img "verdeckte Karte"
 - img "verdeckte Karte"
-- text: 1,00 Finn UTG 100,00
+- text: D Kira SB 98,50
 - img "verdeckte Karte"
 - img "verdeckte Karte"
+- text: 0,50
 - button "Zum Anfang": ⏮
 - button "Schritt zurück": ◀
 - button "Abspielen": ▶︎ Abspielen
@@ -92,7 +94,7 @@
 - button "Später bekannte Infos einblenden"
 - heading "Damals bekannt" [level=3]
 - paragraph: Deine Karten, Board bis hier, alle Aktionen bis hier.
-- paragraph: "Nächste Aktion: Finn"
+- paragraph: "Nächste Aktion: Gero"
 - heading "Später bekannt" [level=3]
 - paragraph: Ausgeblendet, damit du die Entscheidung ohne Kenntnis des Ausgangs prüfen kannst.
 - group: Handverlauf als Text

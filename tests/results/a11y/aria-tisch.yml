@@ -1,8 +1,8 @@
 - link "Zum Inhalt springen":
   - /url: "#main"
 - banner:
-  - heading "PokerTrainer 2.1" [level=1]
-  - text: No-Limit Hold'em · 6-max · Spielgeld Hand 2 Gegnerwechsel in 29 Händen Ergebnis −14,00 0,50/1,00
+  - heading "PokerTrainer 2.2" [level=1]
+  - text: No-Limit Hold'em · 6-max · Spielgeld Hand 2 Gegnerwechsel in 29 Händen Ergebnis −5,50 0,50/1,00
   - button "Erweitert"
   - button "Darstellung wechseln"
 - navigation "Bereiche":
@@ -24,43 +24,32 @@
     - /url: "#hilfe"
 - main:
   - region "Pokertisch":
-    - text: PokerTrainer Pot 1,50
+    - text: PokerTrainer Pot 2,50
     - group "Board"
     - group "Dein Platz":
-      - text: Du , HJ , Stack 86,00 86 BB Session −14,00 ,
-      - img "Neun Kreuz"
-      - img "Neun Pik"
-    - button "Ivo , CO , Stack 100,00 100 BB , VPIP 0 %, PFR 0 %, 3-Bet 0 % , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt , verdeckte Karte verdeckte Karte , alle Werte anzeigen":
-      - text: Ivo , CO , Stack 100,00 100 BB , VPIP 0 %, PFR 0 %, 3-Bet 0 % , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt ,
+      - text: Du , BB , Stack 93,50 94 BB Session −5,50 ,
+      - img "Ass Kreuz"
+      - img "Zwei Kreuz"
+      - text: ", letzte Aktion BB"
+    - button "Gero , UTG , Stack 99,00 99 BB , VPIP 100 %, PFR 0 %, 3-Bet 0 % , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt , letzte Aktion Fold , alle Werte anzeigen"
+    - button "Eva , HJ , Stack 100,00 100 BB , VPIP 0 %, PFR 0 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt , letzte Aktion Fold , alle Werte anzeigen"
+    - button "Wolf , CO , Stack 108,00 108 BB , VPIP 100 %, PFR 100 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt , letzte Aktion Fold , alle Werte anzeigen"
+    - button "Petra , BTN , Stack 98,50 99 BB , VPIP 0 %, PFR 0 %, 3-Bet 0 % , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt , verdeckte Karte verdeckte Karte , Dealer-Button , letzte Aktion Call , alle Werte anzeigen":
+      - text: Petra , BTN , Stack 98,50 99 BB , VPIP 0 %, PFR 0 %, 3-Bet 0 % , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt ,
       - img "verdeckte Karte"
       - img "verdeckte Karte"
-      - text: ", alle Werte anzeigen"
-    - button "Frieda , BTN , Stack 99,50 100 BB , VPIP 0 %, PFR 0 %, 3-Bet 0 % , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt , verdeckte Karte verdeckte Karte , Dealer-Button , alle Werte anzeigen":
-      - text: Frieda , BTN , Stack 99,50 100 BB , VPIP 0 %, PFR 0 %, 3-Bet 0 % , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt ,
-      - img "verdeckte Karte"
-      - img "verdeckte Karte"
-      - text: ", Dealer-Button , alle Werte anzeigen"
-    - button "Lina , SB , Stack 98,50 99 BB , VPIP 0 %, PFR 0 %, 3-Bet 0 % , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt , verdeckte Karte verdeckte Karte , letzte Aktion SB , alle Werte anzeigen":
-      - text: Lina , SB , Stack 98,50 99 BB , VPIP 0 %, PFR 0 %, 3-Bet 0 % , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt ,
-      - img "verdeckte Karte"
-      - img "verdeckte Karte"
-      - text: ", letzte Aktion SB , alle Werte anzeigen"
-    - button "Ines , BB , Stack 114,50 115 BB , VPIP 100 %, PFR 100 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt , verdeckte Karte verdeckte Karte , letzte Aktion BB , alle Werte anzeigen":
-      - text: Ines , BB , Stack 114,50 115 BB , VPIP 100 %, PFR 100 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt ,
-      - img "verdeckte Karte"
-      - img "verdeckte Karte"
-      - text: ", letzte Aktion BB , alle Werte anzeigen"
-    - button "Finn , UTG , Stack 100,00 100 BB , VPIP 0 %, PFR 0 %, 3-Bet 0 % , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt , letzte Aktion Fold , alle Werte anzeigen"
-    - text: 0,50 1,00
+      - text: ", Dealer-Button , letzte Aktion Call , alle Werte anzeigen"
+    - button "Kira , SB , Stack 98,50 99 BB , VPIP 0 %, PFR 0 %, 3-Bet 0 % , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt , letzte Aktion Fold , alle Werte anzeigen"
+    - text: 1,00 1,00 0,50
     - group "Aktionen":
-      - button "Fold"
-      - button "Call 1,00"
+      - button "Fold" [disabled]
+      - button "Check"
       - button "Raise auf"
       - button "Min (2,00)"
-      - button "2 BB (2,00)"
-      - button "2,5 BB (2,50)"
-      - button "3 BB (3,00)"
-      - button "All-in (86,00)"
+      - button "2 BB (3,00)"
+      - button "2,5 BB (3,50)"
+      - button "3 BB (4,00)"
+      - button "All-in (94,50)"
       - slider "Betrag wählen": "0"
       - text: Betrag
       - textbox "Betrag (Raise auf)": 2,00
@@ -82,12 +71,12 @@
           - option "Einsteiger"
           - option "Fortgeschritten"
           - option "Experte"
-        - text: "Empfehlung: Open 2,5 BB Knappe Entscheidung"
+        - text: "Empfehlung: Check Klar bevorzugt"
         - paragraph:
-          - text: "Open 2,5 BB: Mit etwa 59 %"
+          - text: "Check: Eine Bet bringt hier geschätzt nicht mehr als ein Check ("
           - button "Equity"
-          - text: holst du Value von schwächeren Händen. 99 gehört zu den besten 2 % aller Starthände.
-        - text: "Equity 59 % ± 3,0 % Pot 1,50 Eff. Stack 86 BB Die Aktion ist knapp, die Größe ist offen: Open 2,5 BB, Open 3 BB, Open 2 BB liegen im Rahmen der Unsicherheit nahe beieinander."
+          - text: etwa 46 %). Preflop folgt der Coach hier dem Faustregel-Chart (Chart gegen Limper (BB)); das vereinfachte EV-Modell sähe Iso-Raise auf 3 BB um 0,3 BB vorn, aber nur wegen Fold-Annahmen, die nicht durch Gegnerwerte belegt sind. A2s gehört zu den besten 22 % aller Starthände.
+        - text: Equity 46 % ± 3,0 % Pot 2,50 Eff. Stack 95 BB
         - group: EV-Vergleich und Annahmen
         - paragraph: Faustregel, kein Solver-Ergebnis
         - checkbox "Sprachausgabe" [checked]
@@ -98,13 +87,17 @@
       - region "Handverlauf":
         - heading "Handverlauf" [level=2]
         - list "Handverlauf":
-          - listitem: "Hand #2 · Button: Frieda"
-          - listitem: Lina postet Small Blind 0,50
-          - listitem: Ines postet Big Blind 1,00
-          - listitem: "Finn: Fold"
+          - listitem: "Hand #2 · Button: Petra"
+          - listitem: Kira postet Small Blind 0,50
+          - listitem: Du postet Big Blind 1,00
+          - listitem: "Gero: Fold"
+          - listitem: "Eva: Fold"
+          - listitem: "Wolf: Fold"
+          - listitem: "Petra: Call 1,00"
+          - listitem: "Kira: Fold"
 - contentinfo:
-  - text: PokerTrainer 2.1.0 · nur Spielgeld, kein Glücksspiel · Daten bleiben in deinem Browser
+  - text: PokerTrainer 2.2.0 · nur Spielgeld, kein Glücksspiel · Daten bleiben in deinem Browser
   - link "Datenschutz & Rechtliches":
     - /url: "#hilfe/datenschutz"
 - status
-- status
+- status: "Du bist am Zug, Preflop. Deine Karten: Ass Kreuz, Zwei Kreuz. Kira Small Blind, Gero Fold, Eva Fold, Wolf Fold, Petra Call, Kira Fold. Pot 2,50. Check möglich. Coach empfiehlt Check (Klar bevorzugt)."

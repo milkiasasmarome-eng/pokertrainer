@@ -18,7 +18,7 @@ Ergebnisse: `docs/ERGEBNISSE_2.2.md` (automatisch), Bewertung: `docs/TESTBERICHT
   Likelihood relativ zur bereits verengten Range.
 - **Reaktionsmodell:** Fold/Call/Raise je Kombination aus derselben Tabelle, gemittelt mit dem 2.1-Modell; Fold-Raten je Größe auf Validierungs- und
   Testgruppe kalibriert. Keine erzwungenen Größenhäufigkeiten.
-- **Short Stack:** gelöstes Push/Fold-Modellspiel (6–25 BB, Exploitability ≤ 0,0042 BB je Hand) für Push-Charts, Jam-Ranges der Gegner und Calls gegen Jams.
+- **Short Stack:** gelöstes Push/Fold-Modellspiel (3–25 BB, Exploitability ≤ 0,0031 BB je Hand) für Push-Charts, Jam-Ranges der Gegner und Calls gegen Jams.
 - **Datenlage nach Gelegenheiten** statt nach Händen in der Unsicherheit des Coaches.
 
 ### Gegner-KI
@@ -34,6 +34,12 @@ Ergebnisse: `docs/ERGEBNISSE_2.2.md` (automatisch), Bewertung: `docs/TESTBERICHT
 ### Integration
 - Ereignisstrom „PokerTrainer-Ereignisse“ (Schema 1) mit getrennten Empfehlungskanälen für PokerTrainer-Coach und PAI, Prüfung auf Beobachtbarkeit;
   gemeinsame Integrationstests mit PAI 0.1.0 (Hand-Datensätze, Kennzahlen, Equity übereinstimmend; Sicherungsversion 3 von PAI noch nicht unterstützt).
+
+### Ergebnisse und bekannte Einschränkungen
+- Coach 2.2 gegen 2.1.0: +25,5 BB/100 [21,2; 29,9] (100.000 Hände), in der unveränderten Gegner-KI 2.1 +37,2 [26,0; 48,6].
+- **Regression:** gegen sechs abschließend unbekannte Strategien belegt schlechter als 2.1.0 (−16,8 [−30,4; −4,7]) und 2.0.1 (−21,8 [−35,8; −7,1]).
+- Gleichgewichtsnaher Modus nicht belegt schlechter als 2.0.1 (−0,9 [−13,6; 10,9]); Name bleibt „Gleichgewichtsnah“.
+- Qualitätsbewertung 9,42 (2.1.0: 9,47), Ziel 9,5 nicht erreicht (`docs/TESTBERICHT_2.2.md`).
 
 ### Vergleiche und Berichte
 - Plan `v22` (154 Läufe, Hauptvergleich 100.000 Hände je Held), Referenzumgebung, Testgruppe, unbekannte Strategien, Stacktiefen, gleichgewichtsnaher Modus.

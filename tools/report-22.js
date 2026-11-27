@@ -62,10 +62,16 @@ function pushfoldSection() {
   return t;
 }
 function testsSection() {
-  const U = rd('unit.json'), P = rd('pai-integration.json'), perf = rd('perf-coach.json'); let t = '';
+  const U = rd('unit.json'), P = rd('pai-integration.json'), perf = rd('perf-22.json'), E = rd('e2e.json'), G = rd('e2e-gedaechtnis.json'), L = rd('long.json'); let t = '';
   if (U) t += '- Node-Tests (`node tests/run.js`): ' + U.passed + ' bestanden, ' + U.failed + ' fehlgeschlagen (App ' + U.app + ').\n';
+  if (E) t += '- Browsertests (`node tests/e2e.js`, ' + E.date.slice(0, 10) + '): ' + E.passed + ' bestanden, ' + E.failed + ' fehlgeschlagen; LCP ' + n0(E.perf.lcp) + ' ms, CLS ' + f3(E.perf.cls) + ', Tipp Mittel ' + n0(E.perf.tipAvgMs) + ' ms, Maximum ' + n0(E.perf.tipMaxMs) + ' ms.\n';
+  if (G) t += '- Gedächtnis-Browsertests (`node tests/e2e-gedaechtnis.js`): ' + G.passed + ' bestanden, ' + G.failed + ' fehlgeschlagen.\n';
+  if (L) { if (L.sim) t += '- Regel-Langlauf (`node tests/long.js`, App ' + L.app + '): ' + n0(L.sim.hands) + ' Hände, ' + L.sim.errorCount + ' Fehler, ' + n0(L.sim.sidePots) + ' Side Pots, ' + n0(L.sim.splitPots) + ' Split Pots.\n';
+    if (L.eval7) t += '- Sieben-Karten-Häufigkeiten: ' + (L.eval7.ok ? 'gleich den Literaturwerten' : 'ABWEICHUNG') + ' (' + n0(L.eval7.total) + ' Hände).\n';
+    if (L.calib) t += '- Stil-Kalibrierung der Gegner-KI (200.000 Hände): ' + (L.calib.ok ? 'alle Stile im Zielbereich' : 'nicht alle Stile im Zielbereich') + '.\n';
+    if (L.mccov) t += '- Monte-Carlo-Abdeckung: ' + (L.mccov.ok ? 'im vorab festgelegten Toleranzband' : 'außerhalb des Toleranzbands') + ' (' + (L.mccov.configs || []).length + ' Stufen, je ' + L.mccov.runsPerConfig + ' Läufe).\n'; }
   if (P) t += '- PAI-Integration (`tests/pai-integration.mjs`, PAI ' + P.pai + '): ' + P.results.filter(r => r.ok).length + ' von ' + P.results.length + ' bestanden' + (P.results.some(r => !r.ok) ? '; offen: ' + P.results.filter(r => !r.ok).map(r => r.name).join('; ') : '') + '.\n';
-  if (perf) t += '- Rechenzeit (`tests/perf-coach.js`): ' + JSON.stringify(perf.summary || perf).slice(0, 400) + '\n';
+  if (perf) Object.keys(perf.versions).forEach(v => { const x = perf.versions[v]; t += '- Rechenzeit Tipp (`tests/perf-22.js`, ' + perf.hands + ' Hände, Node) ' + v + ': ' + x.decisions + ' Entscheidungen, Median ' + f1(x.medianMs) + ' ms, 95. Perzentil ' + f1(x.p95Ms) + ' ms, Maximum ' + f1(x.maxMs) + ' ms, über 1 s: ' + x.over1000 + '.\n'; });
   return t || '_Keine Testergebnisse._\n';
 }
 function build() {

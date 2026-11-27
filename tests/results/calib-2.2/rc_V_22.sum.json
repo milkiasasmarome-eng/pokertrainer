@@ -1,0 +1,1368 @@
+{
+ "files": [
+  "tests/results/calib-2.2/rc_V_22.json"
+ ],
+ "total": {
+  "n": 11714,
+  "est": 0.46578521427352154,
+  "true": 0.4789365801604922,
+  "bias": -0.013151365886972867,
+  "biasCI": [
+   -0.019845850340996854,
+   -0.006456881432948878
+  ],
+  "nRef": 0,
+  "mathErr": null,
+  "mathAbs": null,
+  "rangeErr": null,
+  "rangeCI": [
+   null,
+   null
+  ],
+  "brier": 0.07881767399095091
+ },
+ "groups": {
+  "Straße": {
+   "Flop": {
+    "n": 5664,
+    "est": 0.4605347104519777,
+    "true": 0.47744516242937857,
+    "bias": -0.01691045197740111,
+    "biasCI": [
+     -0.02302097172735528,
+     -0.010799932227446943
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.05501965703036703
+   },
+   "River": {
+    "n": 2464,
+    "est": 0.4663240665584415,
+    "true": 0.4815340909090909,
+    "bias": -0.015210024350649338,
+    "biasCI": [
+     -0.028423380422128466,
+     -0.0019966682791702113
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.1333718017654224
+   },
+   "Turn": {
+    "n": 3586,
+    "est": 0.4737080033463466,
+    "true": 0.47950744562186315,
+    "bias": -0.005799442275515882,
+    "biasCI": [
+     -0.014790937332576411,
+     0.0031920527815446466
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.07892101956497509
+   }
+  },
+  "Straße × Gegneraktion": {
+   "Flop · Bet 41–70 %": {
+    "n": 934,
+    "est": 0.38441241970021395,
+    "true": 0.3810664882226978,
+    "bias": 0.0033459314775160635,
+    "biasCI": [
+     -0.011508259028431484,
+     0.018200121983463612
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.05359918677730195
+   },
+   "Flop · Bet 71–110 %": {
+    "n": 363,
+    "est": 0.4548314049586781,
+    "true": 0.488192561983471,
+    "bias": -0.03336115702479344,
+    "biasCI": [
+     -0.059667963899800495,
+     -0.007054350149786386
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.06632574476584024
+   },
+   "Flop · Bet >110 %": {
+    "n": 3,
+    "est": 0.40293333333333337,
+    "true": 0.5566,
+    "bias": -0.15366666666666665,
+    "biasCI": [
+     -0.270288606519814,
+     -0.03704472681351931
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.03069418
+   },
+   "Flop · Bet ≤40 %": {
+    "n": 311,
+    "est": 0.40454533762057865,
+    "true": 0.4504479099678455,
+    "bias": -0.045902572347266905,
+    "biasCI": [
+     -0.07263681190047497,
+     -0.019168332794058843
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.0597817298713826
+   },
+   "Flop · Lead 41–70 %": {
+    "n": 52,
+    "est": 0.3458711538461539,
+    "true": 0.3274615384615384,
+    "bias": 0.018409615384615382,
+    "biasCI": [
+     -0.043241968862254204,
+     0.08006119963148496
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.050798829038461515
+   },
+   "Flop · Lead 71–110 %": {
+    "n": 35,
+    "est": 0.5041342857142858,
+    "true": 0.5740257142857143,
+    "bias": -0.06989142857142858,
+    "biasCI": [
+     -0.1558752303514492,
+     0.016092373208592053
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.07031829828571429
+   },
+   "Flop · Raise 41–70 %": {
+    "n": 56,
+    "est": 0.40486607142857134,
+    "true": 0.3875214285714287,
+    "bias": 0.017344642857142847,
+    "biasCI": [
+     -0.052275152176081585,
+     0.08696443789036729
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.06969389482142857
+   },
+   "Flop · Raise 71–110 %": {
+    "n": 22,
+    "est": 0.40684090909090903,
+    "true": 0.359090909090909,
+    "bias": 0.04775,
+    "biasCI": [
+     -0.06584773943813559,
+     0.16134773943813557
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.07282186136363636
+   },
+   "Flop · Raise >110 %": {
+    "n": 10,
+    "est": 0.34303000000000006,
+    "true": 0.24202999999999997,
+    "bias": 0.10100000000000002,
+    "biasCI": [
+     0.016282898740179602,
+     0.18571710125982044
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.027015057999999998
+   },
+   "Flop · kein Einsatz offen": {
+    "n": 3878,
+    "est": 0.48649249613202555,
+    "true": 0.5054718669417216,
+    "bias": -0.01897937080969573,
+    "biasCI": [
+     -0.025269923765837636,
+     -0.012688817853553823
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.05361822637957717
+   },
+   "River · Bet 41–70 %": {
+    "n": 163,
+    "est": 0.24001411042944773,
+    "true": 0.1687116564417178,
+    "bias": 0.07130245398773011,
+    "biasCI": [
+     0.03281151020146506,
+     0.10979339777399516
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.06756101466257669
+   },
+   "River · Bet 71–110 %": {
+    "n": 232,
+    "est": 0.4468810344827588,
+    "true": 0.49137931034482757,
+    "bias": -0.044498275862068976,
+    "biasCI": [
+     -0.09625768629519943,
+     0.007261134571061485
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.16307376775862087
+   },
+   "River · Bet >110 %": {
+    "n": 43,
+    "est": 0.32745116279069764,
+    "true": 0.5232558139534884,
+    "bias": -0.19580465116279067,
+    "biasCI": [
+     -0.33115348807124323,
+     -0.06045581425433813
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.23862343720930232
+   },
+   "River · Bet ≤40 %": {
+    "n": 1,
+    "est": 0.0276,
+    "true": 0,
+    "bias": 0.0276,
+    "biasCI": [
+     null,
+     null
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.00076176
+   },
+   "River · Lead 41–70 %": {
+    "n": 28,
+    "est": 0.3343892857142857,
+    "true": 0.32142857142857145,
+    "bias": 0.012960714285714289,
+    "biasCI": [
+     -0.0913040317286718,
+     0.11722546030010036
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.07657382821428571
+   },
+   "River · Lead 71–110 %": {
+    "n": 25,
+    "est": 0.29158400000000007,
+    "true": 0.38,
+    "bias": -0.08841600000000001,
+    "biasCI": [
+     -0.2598419952201229,
+     0.08300999522012291
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.1914088416
+   },
+   "River · Lead >110 %": {
+    "n": 4,
+    "est": 0.7129500000000001,
+    "true": 0.75,
+    "bias": -0.037049999999999965,
+    "biasCI": [
+     -0.0693190949981557,
+     -0.004780905001844242
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.0021858749999999964
+   },
+   "River · Raise 41–70 %": {
+    "n": 10,
+    "est": 0.28924,
+    "true": 0.3,
+    "bias": -0.010760000000000002,
+    "biasCI": [
+     -0.30655505760799245,
+     0.28503505760799247
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.20509611
+   },
+   "River · Raise 71–110 %": {
+    "n": 7,
+    "est": 0.17300000000000001,
+    "true": 0.14285714285714285,
+    "bias": 0.03014285714285714,
+    "biasCI": [
+     -0.022387752245067023,
+     0.08267346653078131
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.005218460000000001
+   },
+   "River · kein Einsatz offen": {
+    "n": 1951,
+    "est": 0.49641624807790935,
+    "true": 0.5110199897488468,
+    "bias": -0.014603741670938,
+    "biasCI": [
+     -0.027696321847053756,
+     -0.001511161494822241
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.1335189484520758
+   },
+   "Turn · Bet 41–70 %": {
+    "n": 532,
+    "est": 0.3733874060150377,
+    "true": 0.3597295112781949,
+    "bias": 0.013657894736842105,
+    "biasCI": [
+     -0.00992711636838433,
+     0.03724290584206854
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.0770738271428572
+   },
+   "Turn · Bet 71–110 %": {
+    "n": 236,
+    "est": 0.4863639830508476,
+    "true": 0.48104915254237296,
+    "bias": 0.005314830508474584,
+    "biasCI": [
+     -0.03444436650816258,
+     0.04507402752511174
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.09672923936440679
+   },
+   "Turn · Bet >110 %": {
+    "n": 42,
+    "est": 0.4496119047619047,
+    "true": 0.5291047619047619,
+    "bias": -0.07949285714285714,
+    "biasCI": [
+     -0.19280513711759406,
+     0.03381942283187979
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.14335227357142855
+   },
+   "Turn · Lead 41–70 %": {
+    "n": 47,
+    "est": 0.3949702127659574,
+    "true": 0.41873191489361705,
+    "bias": -0.023761702127659566,
+    "biasCI": [
+     -0.09604908263259881,
+     0.048525678377279675
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.06313526808510636
+   },
+   "Turn · Lead 71–110 %": {
+    "n": 12,
+    "est": 0.4020583333333334,
+    "true": 0.4953666666666667,
+    "bias": -0.09330833333333333,
+    "biasCI": [
+     -0.23409617873541194,
+     0.04747951206874529
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.06546232583333332
+   },
+   "Turn · Lead >110 %": {
+    "n": 6,
+    "est": 0.3901333333333334,
+    "true": 0.2685166666666667,
+    "bias": 0.12161666666666665,
+    "biasCI": [
+     -0.21421818307852847,
+     0.45745151641186177
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.16158497833333332
+   },
+   "Turn · Raise 41–70 %": {
+    "n": 33,
+    "est": 0.4846212121212122,
+    "true": 0.516409090909091,
+    "bias": -0.03178787878787879,
+    "biasCI": [
+     -0.13449293825821176,
+     0.0709171806824542
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.08881287454545456
+   },
+   "Turn · Raise 71–110 %": {
+    "n": 14,
+    "est": 0.5033071428571428,
+    "true": 0.49205714285714286,
+    "bias": 0.011249999999999998,
+    "biasCI": [
+     -0.12658279111132614,
+     0.14908279111132616
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.0644155092857143
+   },
+   "Turn · Raise >110 %": {
+    "n": 11,
+    "est": 0.3455545454545455,
+    "true": 0.27146363636363635,
+    "bias": 0.07409090909090908,
+    "biasCI": [
+     -0.06896971770574396,
+     0.21715153588756214
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.05876503272727274
+   },
+   "Turn · Raise ≤40 %": {
+    "n": 1,
+    "est": 0.1919,
+    "true": 0.0278,
+    "bias": 0.1641,
+    "biasCI": [
+     null,
+     null
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.026928809999999997
+   },
+   "Turn · kein Einsatz offen": {
+    "n": 2652,
+    "est": 0.4953424962292607,
+    "true": 0.504603129713424,
+    "bias": -0.009260633484162874,
+    "biasCI": [
+     -0.018154280614034006,
+     -0.00036698635429173974
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.07689675814479642
+   }
+  },
+  "Straße × Gegnerzahl": {
+   "Flop · Heads-up": {
+    "n": 5664,
+    "est": 0.4605347104519777,
+    "true": 0.47744516242937857,
+    "bias": -0.01691045197740111,
+    "biasCI": [
+     -0.02302097172735528,
+     -0.010799932227446943
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.05501965703036703
+   },
+   "River · Heads-up": {
+    "n": 2464,
+    "est": 0.4663240665584415,
+    "true": 0.4815340909090909,
+    "bias": -0.015210024350649338,
+    "biasCI": [
+     -0.028423380422128466,
+     -0.0019966682791702113
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.1333718017654224
+   },
+   "Turn · Heads-up": {
+    "n": 3586,
+    "est": 0.4737080033463466,
+    "true": 0.47950744562186315,
+    "bias": -0.005799442275515882,
+    "biasCI": [
+     -0.014790937332576411,
+     0.0031920527815446466
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.07892101956497509
+   }
+  },
+  "Einsatz offen × Stil des Setzenden": {
+   "Flop · bal": {
+    "n": 134,
+    "est": 0.4191805970149255,
+    "true": 0.41774402985074616,
+    "bias": 0.0014365671641790995,
+    "biasCI": [
+     -0.04112280105282731,
+     0.043995935381185514
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.06341370485074624
+   },
+   "Flop · held": {
+    "n": 320,
+    "est": 0.39082843750000007,
+    "true": 0.39971437499999996,
+    "bias": -0.008885937499999993,
+    "biasCI": [
+     -0.033735047400621415,
+     0.01596317240062143
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.05135331584374998
+   },
+   "Flop · lag": {
+    "n": 420,
+    "est": 0.4310578571428574,
+    "true": 0.4516926190476191,
+    "bias": -0.020634761904761906,
+    "biasCI": [
+     -0.04355014743427206,
+     0.0022806236247482486
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.05789164814285713
+   },
+   "Flop · lp": {
+    "n": 176,
+    "est": 0.32401874999999997,
+    "true": 0.30374261363636357,
+    "bias": 0.020276136363636368,
+    "biasCI": [
+     -0.0090183158077039,
+     0.04957058853497663
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.04156285272727272
+   },
+   "Flop · nit": {
+    "n": 97,
+    "est": 0.3177876288659794,
+    "true": 0.32349690721649493,
+    "bias": -0.005709278350515467,
+    "biasCI": [
+     -0.0504454180033753,
+     0.03902686130234436
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.050902540000000045
+   },
+   "Flop · tag": {
+    "n": 263,
+    "est": 0.3953931558935361,
+    "true": 0.4075087452471485,
+    "bias": -0.012115589353612174,
+    "biasCI": [
+     -0.04222521766213329,
+     0.017994038954908937
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.061976885855513295
+   },
+   "Flop · vl": {
+    "n": 376,
+    "est": 0.4460904255319151,
+    "true": 0.4745202127659579,
+    "bias": -0.028429787234042544,
+    "biasCI": [
+     -0.05482383666982654,
+     -0.002035737798258549
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.06888919239361697
+   },
+   "River · bal": {
+    "n": 31,
+    "est": 0.38866451612903236,
+    "true": 0.3709677419354839,
+    "bias": 0.0176967741935484,
+    "biasCI": [
+     -0.10962718509990108,
+     0.14502073348699787
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.12691191548387096
+   },
+   "River · held": {
+    "n": 92,
+    "est": 0.35530217391304353,
+    "true": 0.34782608695652173,
+    "bias": 0.00747608695652174,
+    "biasCI": [
+     -0.06759372036549581,
+     0.0825458942785393
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.1335493095652174
+   },
+   "River · lag": {
+    "n": 103,
+    "est": 0.4232990291262135,
+    "true": 0.47572815533980584,
+    "bias": -0.052429126213592206,
+    "biasCI": [
+     -0.12355048367987918,
+     0.01869223125269477
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.13696183223300973
+   },
+   "River · lp": {
+    "n": 78,
+    "est": 0.23410512820512822,
+    "true": 0.12179487179487179,
+    "bias": 0.1123102564102564,
+    "biasCI": [
+     0.047713599614742794,
+     0.17690691320577
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.09625063589743592
+   },
+   "River · nit": {
+    "n": 25,
+    "est": 0.163156,
+    "true": 0.08,
+    "bias": 0.08315600000000002,
+    "biasCI": [
+     -0.007838176013509765,
+     0.1741501760135098
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.058642992399999996
+   },
+   "River · tag": {
+    "n": 67,
+    "est": 0.32042388059701504,
+    "true": 0.373134328358209,
+    "bias": -0.052710447761194046,
+    "biasCI": [
+     -0.13585028172452468,
+     0.030429386202136574
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.12153289761194032
+   },
+   "River · vl": {
+    "n": 117,
+    "est": 0.4134247863247865,
+    "true": 0.5170940170940171,
+    "bias": -0.10366923076923075,
+    "biasCI": [
+     -0.17792116947987435,
+     -0.02941729205858716
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.17682434179487183
+   },
+   "Turn · bal": {
+    "n": 73,
+    "est": 0.41805205479452046,
+    "true": 0.36758219178082197,
+    "bias": 0.05046986301369863,
+    "biasCI": [
+     -0.023932473100715168,
+     0.12487219912811243
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.09938435630136987
+   },
+   "Turn · held": {
+    "n": 174,
+    "est": 0.42667586206896524,
+    "true": 0.4251298850574711,
+    "bias": 0.001545977011494258,
+    "biasCI": [
+     -0.039334758425760626,
+     0.04242671244874915
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.07526362850574712
+   },
+   "Turn · lag": {
+    "n": 189,
+    "est": 0.458221164021164,
+    "true": 0.4844952380952379,
+    "bias": -0.02627407407407409,
+    "biasCI": [
+     -0.066085920978711,
+     0.013537772830562816
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.0780081247619048
+   },
+   "Turn · lp": {
+    "n": 119,
+    "est": 0.2820512605042016,
+    "true": 0.2577058823529411,
+    "bias": 0.024345378151260505,
+    "biasCI": [
+     -0.027629104216040652,
+     0.07631986051856166
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.08357243336134457
+   },
+   "Turn · nit": {
+    "n": 31,
+    "est": 0.2917612903225807,
+    "true": 0.29659354838709684,
+    "bias": -0.004832258064516117,
+    "biasCI": [
+     -0.09680880916173418,
+     0.08714429303270194
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.0660871206451613
+   },
+   "Turn · tag": {
+    "n": 153,
+    "est": 0.4393738562091506,
+    "true": 0.3898882352941176,
+    "bias": 0.04948562091503267,
+    "biasCI": [
+     -0.0008444115620480017,
+     0.09981565339211335
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.10259163483660134
+   },
+   "Turn · vl": {
+    "n": 195,
+    "est": 0.4301153846153847,
+    "true": 0.4585446153846155,
+    "bias": -0.028429230769230766,
+    "biasCI": [
+     -0.06895981776010382,
+     0.012101356221642292
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.08356804189743591
+   }
+  },
+  "Schätzung (Klassen)": {
+   "est 0.0–0.1": {
+    "n": 784,
+    "est": 0.0453645408163265,
+    "true": 0.05441198979591834,
+    "bias": -0.009047448979591827,
+    "biasCI": [
+     -0.023159199935126024,
+     0.005064301975942369
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.02969490892857148
+   },
+   "est 0.1–0.2": {
+    "n": 1263,
+    "est": 0.1551160728424386,
+    "true": 0.17247735550277102,
+    "bias": -0.01736128266033258,
+    "biasCI": [
+     -0.03077319328965724,
+     -0.00394937203100792
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.04601625299287413
+   },
+   "est 0.2–0.3": {
+    "n": 1565,
+    "est": 0.2494128434504792,
+    "true": 0.26244121405750825,
+    "bias": -0.013028370607028748,
+    "biasCI": [
+     -0.027311858762468215,
+     0.001255117548410718
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.06540574368051126
+   },
+   "est 0.3–0.4": {
+    "n": 1500,
+    "est": 0.34902313333333396,
+    "true": 0.35575739999999983,
+    "bias": -0.006734266666666666,
+    "biasCI": [
+     -0.024374664103786917,
+     0.010906130770453586
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.09209087583999993
+   },
+   "est 0.4–0.5": {
+    "n": 1510,
+    "est": 0.44987728476821104,
+    "true": 0.46604801324503325,
+    "bias": -0.016170728476821196,
+    "biasCI": [
+     -0.036338632162563056,
+     0.003997175208920661
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.10990349569536421
+   },
+   "est 0.5–0.6": {
+    "n": 1394,
+    "est": 0.5488109038737453,
+    "true": 0.5644262553802001,
+    "bias": -0.015615351506456245,
+    "biasCI": [
+     -0.03624743182150032,
+     0.00501672880858783
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.1143801937876614
+   },
+   "est 0.6–0.7": {
+    "n": 1148,
+    "est": 0.648633275261324,
+    "true": 0.6805600174216023,
+    "bias": -0.031926742160278715,
+    "biasCI": [
+     -0.05320060893820732,
+     -0.010652875382350109
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.10396191413763066
+   },
+   "est 0.7–0.8": {
+    "n": 1048,
+    "est": 0.7494899809160304,
+    "true": 0.7624463740458018,
+    "bias": -0.012956393129771017,
+    "biasCI": [
+     -0.033313484731045076,
+     0.007400698471503039
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.08646294384542001
+   },
+   "est 0.8–0.9": {
+    "n": 864,
+    "est": 0.8466788194444456,
+    "true": 0.8408667824074064,
+    "bias": 0.005812037037037045,
+    "biasCI": [
+     -0.015054055620209911,
+     0.026678129694284004
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.06302282958333326
+   },
+   "est 0.9–1.0": {
+    "n": 638,
+    "est": 0.948088871473354,
+    "true": 0.9530255485893414,
+    "bias": -0.004936677115987459,
+    "biasCI": [
+     -0.018523447135036012,
+     0.008650092903061096
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.018120937931034475
+   }
+  },
+  "Position": {
+   "in Position": {
+    "n": 5045,
+    "est": 0.5004298711595643,
+    "true": 0.5162732011892968,
+    "bias": -0.01584333002973237,
+    "biasCI": [
+     -0.02702501037782584,
+     -0.0046616496816388985
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.07995697363726482
+   },
+   "out of Position": {
+    "n": 6669,
+    "est": 0.43957704303493883,
+    "true": 0.45069197780776726,
+    "bias": -0.011114934772829533,
+    "biasCI": [
+     -0.022339201268643735,
+     0.0001093317229846711
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.07795581063577746
+   }
+  }
+ }
+}

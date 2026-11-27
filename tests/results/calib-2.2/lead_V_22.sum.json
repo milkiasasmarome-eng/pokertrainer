@@ -1,0 +1,741 @@
+{
+ "files": [
+  "tests/results/calib-2.2/lead_V_22.json"
+ ],
+ "total": {
+  "n": 856,
+  "est": 0.36876915887850453,
+  "true": 0.350857710280374,
+  "bias": 0.01791144859813084,
+  "biasCI": [
+   -0.0026869522749020623,
+   0.038509849471163746
+  ],
+  "nRef": 0,
+  "mathErr": null,
+  "mathAbs": null,
+  "rangeErr": null,
+  "rangeCI": [
+   null,
+   null
+  ],
+  "brier": 0.09452816710280368
+ },
+ "groups": {
+  "Straße": {
+   "River": {
+    "n": 398,
+    "est": 0.3277942211055277,
+    "true": 0.3103015075376884,
+    "bias": 0.017492713567839196,
+    "biasCI": [
+     -0.014354445804197407,
+     0.049339872939875795
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.1051201087688443
+   },
+   "Turn": {
+    "n": 458,
+    "est": 0.40437620087336257,
+    "true": 0.38610087336244536,
+    "bias": 0.018275327510917042,
+    "biasCI": [
+     -0.00845359473496031,
+     0.045004249756794394
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.08532381604803482
+   }
+  },
+  "Straße × Gegneraktion": {
+   "River · Lead 41–70 %": {
+    "n": 191,
+    "est": 0.31371151832460725,
+    "true": 0.2617801047120419,
+    "bias": 0.05193141361256543,
+    "biasCI": [
+     0.014080162432962902,
+     0.08978266479216795
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.07355700057591621
+   },
+   "River · Lead 71–110 %": {
+    "n": 161,
+    "est": 0.3246217391304348,
+    "true": 0.34782608695652173,
+    "bias": -0.023204347826086966,
+    "biasCI": [
+     -0.07902091963420989,
+     0.03261222398203595
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.13029644627329187
+   },
+   "River · Lead >110 %": {
+    "n": 43,
+    "est": 0.39313953488372094,
+    "true": 0.38372093023255816,
+    "bias": 0.009418604651162791,
+    "biasCI": [
+     -0.10680554417428928,
+     0.12564275347661485
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.14777150279069767
+   },
+   "River · Lead ≤40 %": {
+    "n": 3,
+    "est": 0.45803333333333335,
+    "true": 0.3333333333333333,
+    "bias": 0.12469999999999999,
+    "biasCI": [
+     -0.3875713133851371,
+     0.6369713133851371
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.15217123666666668
+   },
+   "Turn · Lead 41–70 %": {
+    "n": 303,
+    "est": 0.3981841584158416,
+    "true": 0.3756894389438942,
+    "bias": 0.022494719471947196,
+    "biasCI": [
+     -0.008448937259536288,
+     0.053438376203430685
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.07577881211221126
+   },
+   "Turn · Lead 71–110 %": {
+    "n": 125,
+    "est": 0.40610960000000024,
+    "true": 0.42244639999999994,
+    "bias": -0.01633680000000001,
+    "biasCI": [
+     -0.07222414335122004,
+     0.03955054335122003
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.10108451863999994
+   },
+   "Turn · Lead >110 %": {
+    "n": 30,
+    "est": 0.45969333333333334,
+    "true": 0.3398166666666666,
+    "bias": 0.11987666666666669,
+    "biasCI": [
+     0.0038139678348444034,
+     0.23593936549848898
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.11605876166666666
+   }
+  },
+  "Straße × Gegnerzahl": {
+   "River · Heads-up": {
+    "n": 398,
+    "est": 0.3277942211055277,
+    "true": 0.3103015075376884,
+    "bias": 0.017492713567839196,
+    "biasCI": [
+     -0.014354445804197407,
+     0.049339872939875795
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.1051201087688443
+   },
+   "Turn · Heads-up": {
+    "n": 458,
+    "est": 0.40437620087336257,
+    "true": 0.38610087336244536,
+    "bias": 0.018275327510917042,
+    "biasCI": [
+     -0.00845359473496031,
+     0.045004249756794394
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.08532381604803482
+   }
+  },
+  "Einsatz offen × Stil des Setzenden": {
+   "River · bal": {
+    "n": 22,
+    "est": 0.2737636363636364,
+    "true": 0.29545454545454547,
+    "bias": -0.02169090909090912,
+    "biasCI": [
+     -0.17705378247790388,
+     0.13367196429608563
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.13241814000000005
+   },
+   "River · held": {
+    "n": 43,
+    "est": 0.3539674418604651,
+    "true": 0.32558139534883723,
+    "bias": 0.02838604651162792,
+    "biasCI": [
+     -0.06691767819261189,
+     0.12368977121586773
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.1001075162790698
+   },
+   "River · lag": {
+    "n": 53,
+    "est": 0.32014150943396236,
+    "true": 0.3113207547169811,
+    "bias": 0.008820754716981124,
+    "biasCI": [
+     -0.06831481616567428,
+     0.08595632559963653
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.08061576056603774
+   },
+   "River · lp": {
+    "n": 101,
+    "est": 0.25694752475247523,
+    "true": 0.15346534653465346,
+    "bias": 0.10348217821782177,
+    "biasCI": [
+     0.05142750099847913,
+     0.15553685543716442
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.08124400009900991
+   },
+   "River · nit": {
+    "n": 12,
+    "est": 0.465425,
+    "true": 0.375,
+    "bias": 0.09042499999999998,
+    "biasCI": [
+     -0.11783170040201188,
+     0.2986817004020118
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.13236435916666667
+   },
+   "River · tag": {
+    "n": 62,
+    "est": 0.3472,
+    "true": 0.3387096774193548,
+    "bias": 0.008490322580645169,
+    "biasCI": [
+     -0.07596439662647024,
+     0.09294504178776057
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.11332921161290323
+   },
+   "River · vl": {
+    "n": 105,
+    "est": 0.37321904761904773,
+    "true": 0.43333333333333335,
+    "bias": -0.06011428571428572,
+    "biasCI": [
+     -0.12812321855726616,
+     0.007894647128694726
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.12882779295238095
+   },
+   "Turn · bal": {
+    "n": 28,
+    "est": 0.4088392857142858,
+    "true": 0.4623071428571429,
+    "bias": -0.05346785714285714,
+    "biasCI": [
+     -0.18941392070389132,
+     0.08247820641817702
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.1327515567857143
+   },
+   "Turn · held": {
+    "n": 67,
+    "est": 0.4254253731343283,
+    "true": 0.40029402985074614,
+    "bias": 0.02513134328358209,
+    "biasCI": [
+     -0.036598689551010984,
+     0.08686137611817515
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.06609894149253732
+   },
+   "Turn · lag": {
+    "n": 56,
+    "est": 0.4020357142857143,
+    "true": 0.4618035714285715,
+    "bias": -0.05976785714285714,
+    "biasCI": [
+     -0.13481015579913622,
+     0.015274441513421923
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.08419591142857144
+   },
+   "Turn · lp": {
+    "n": 105,
+    "est": 0.3838133333333335,
+    "true": 0.2455047619047619,
+    "bias": 0.13830857142857142,
+    "biasCI": [
+     0.08525007851904992,
+     0.19136706433809292
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.09534260476190473
+   },
+   "Turn · nit": {
+    "n": 18,
+    "est": 0.3994500000000001,
+    "true": 0.45062222222222226,
+    "bias": -0.05117222222222221,
+    "biasCI": [
+     -0.1990972133999014,
+     0.09675276895545701
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.099450815
+   },
+   "Turn · tag": {
+    "n": 64,
+    "est": 0.335628125,
+    "true": 0.3255265624999999,
+    "bias": 0.010101562500000008,
+    "biasCI": [
+     -0.04777687485835973,
+     0.06797999985835974
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.055038669843750006
+   },
+   "Turn · vl": {
+    "n": 120,
+    "est": 0.44807166666666653,
+    "true": 0.4707166666666667,
+    "bias": -0.02264499999999998,
+    "biasCI": [
+     -0.07662807620502601,
+     0.031338076205026044
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.090784175
+   }
+  },
+  "Schätzung (Klassen)": {
+   "est 0.0–0.1": {
+    "n": 180,
+    "est": 0.04377055555555555,
+    "true": 0.044292222222222226,
+    "bias": -0.0005216666666666658,
+    "biasCI": [
+     -0.023754596337658057,
+     0.022711263004324724
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.02515090072222222
+   },
+   "est 0.1–0.2": {
+    "n": 127,
+    "est": 0.14874645669291334,
+    "true": 0.11997401574803152,
+    "bias": 0.028772440944881888,
+    "biasCI": [
+     -0.01232398465447063,
+     0.06986886654423441
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.05622233503937007
+   },
+   "est 0.2–0.3": {
+    "n": 126,
+    "est": 0.2480158730158731,
+    "true": 0.22718412698412693,
+    "bias": 0.020831746031746038,
+    "biasCI": [
+     -0.03357707607960364,
+     0.07524056814309572
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.09675840730158729
+   },
+   "est 0.3–0.4": {
+    "n": 85,
+    "est": 0.3483988235294119,
+    "true": 0.3209152941176471,
+    "bias": 0.027483529411764712,
+    "biasCI": [
+     -0.0531056309491168,
+     0.10807268977264622
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.14276582764705883
+   },
+   "est 0.4–0.5": {
+    "n": 68,
+    "est": 0.45300735294117644,
+    "true": 0.41850147058823545,
+    "bias": 0.03450588235294118,
+    "biasCI": [
+     -0.06951452775042365,
+     0.138526292456306
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.18990277147058823
+   },
+   "est 0.5–0.6": {
+    "n": 65,
+    "est": 0.5475292307692309,
+    "true": 0.5145307692307692,
+    "bias": 0.032998461538461546,
+    "biasCI": [
+     -0.07013614788724258,
+     0.13613307096416566
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.17829419061538454
+   },
+   "est 0.6–0.7": {
+    "n": 64,
+    "est": 0.6457156249999999,
+    "true": 0.583984375,
+    "bias": 0.06173125000000002,
+    "biasCI": [
+     -0.04030316848250274,
+     0.1637656684825028
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.17454544656250007
+   },
+   "est 0.7–0.8": {
+    "n": 49,
+    "est": 0.7509122448979592,
+    "true": 0.8134959183673468,
+    "bias": -0.06258367346938776,
+    "biasCI": [
+     -0.14038007752081763,
+     0.015212730582042117
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.0795387130612245
+   },
+   "est 0.8–0.9": {
+    "n": 39,
+    "est": 0.8497564102564104,
+    "true": 0.7866769230769233,
+    "bias": 0.06307948717948718,
+    "biasCI": [
+     -0.041693713066834615,
+     0.16785268742580897
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.11256453102564098
+   },
+   "est 0.9–1.0": {
+    "n": 53,
+    "est": 0.9505301886792452,
+    "true": 0.9698603773584907,
+    "bias": -0.019330188679245294,
+    "biasCI": [
+     -0.05555518639826405,
+     0.016894809039773463
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.018136313396226414
+   }
+  },
+  "Position": {
+   "in Position": {
+    "n": 846,
+    "est": 0.36936217494089824,
+    "true": 0.3528049645390072,
+    "bias": 0.016557210401891252,
+    "biasCI": [
+     -0.00419819285723376,
+     0.037312613661016264
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.09480537208037816
+   },
+   "out of Position": {
+    "n": 10,
+    "est": 0.31860000000000005,
+    "true": 0.18612,
+    "bias": 0.13248,
+    "biasCI": [
+     -0.01867269519593609,
+     0.28363269519593604
+    ],
+    "nRef": 0,
+    "mathErr": null,
+    "mathAbs": null,
+    "rangeErr": null,
+    "rangeCI": [
+     null,
+     null
+    ],
+    "brier": 0.071076626
+   }
+  }
+ }
+}
