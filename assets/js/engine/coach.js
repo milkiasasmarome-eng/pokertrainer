@@ -91,7 +91,7 @@ function buildRange(v, seat, st, gto, pfaSeat) {
  * aggressiv), gilt die Tabelle für diesen Gegner als nicht belastbar, und das Modell geht zum robusten Modell 2.1 über. Gepoolt über alle Gegner am
  * Tisch entsteht ein Vorwissen für Gegner mit wenigen aufgedeckten Blättern. Auswahlverzerrung (nur Showdowns) betrifft Referenz und Gegner gleich.
  */
-var FIT = { rho: 0.5, llRef: -0.463, llSd: 0.546, zHi: -1, zLo: -3, k: 8, minPairs: 4 }, fitCache = {};
+var FIT = { nResp: 40, rho: 0.5, llRef: -0.463, llSd: 0.546, zHi: -1, zLo: -3, k: 8, minPairs: 4 }, fitCache = {};
 /** Paare [aggressiv 0/1, Stärke, Einsatz offen 0/1, Straße] aus einem aufgedeckten Blatt (Aktionstext je Straße) */
 function shownPairs(s) {
   var key = s.hand + '|' + s.ts + '|' + s.cards + '|' + s.board; if (fitCache[key]) return fitCache[key];
@@ -112,20 +112,21 @@ function pairLL(q) {
   var pA = q[2] ? (d.r || 0) / Math.max(1e-6, (d.c || 0) + (d.r || 0)) : (d.bs || 0) + (d.bl || 0) + (d.bo || 0);
   pA = Math.min(0.98, Math.max(0.02, pA)); return Math.log(q[0] ? pA : 1 - pA);
 }
-function fitOf(pairs) {
-  var ll = 0, n = 0, a = 0, na = 0, p = 0, np = 0;
+function fitOf(pairs, F) {
+  F = F || FIT; var ll = 0, n = 0, a = 0, na = 0, p = 0, np = 0;
   pairs.forEach(function (q) { var l = pairLL(q); if (l != null) { ll += l; n++; } if (q[0]) { a += q[1]; na++; } else { p += q[1]; np++; } });
   var dd = na && np ? a / na - p / np : null;
-  if (n < FIT.minPairs) return { n: n, w: null, d: dd };
-  var m = ll / n, z = (m - FIT.llRef) / (FIT.llSd / Math.sqrt(n));
-  return { n: n, ll: m, d: dd, z: z, w: z >= FIT.zHi ? 1 : z <= FIT.zLo ? 0 : (z - FIT.zLo) / (FIT.zHi - FIT.zLo) };
+  if (n < F.minPairs) return { n: n, w: null, d: dd };
+  var m = ll / n, z = (m - F.llRef) / (F.llSd / Math.sqrt(n));
+  return { n: n, ll: m, d: dd, z: z, w: z >= F.zHi ? 1 : z <= F.zLo ? 0 : (z - F.zLo) / (F.zHi - F.zLo) };
 }
+function fitParams() { if (!R.ABL.fit) return FIT; var o = {}, k; for (k in FIT) o[k] = FIT[k]; for (k in R.ABL.fit) o[k] = R.ABL.fit[k]; return o; }
 function hybridFit(input) {
-  var recs = input.opps || {}, per = {}, pool = [];
+  var recs = input.opps || {}, per = {}, pool = [], F = fitParams();
   Object.keys(recs).forEach(function (id) { var r = recs[id]; if (!r || !Array.isArray(r.shown)) return; var ps = []; r.shown.forEach(function (s) { ps = ps.concat(shownPairs(s)); }); per[id] = ps; pool = pool.concat(ps); });
-  var fp = fitOf(pool), wPool = fp.w == null ? 1 : fp.w, out = {};
-  Object.keys(per).forEach(function (id) { var f = fitOf(per[id]), n = f.w == null ? 0 : f.n; out[id] = { w: (n * (f.w == null ? 0 : f.w) + FIT.k * wPool) / (n + FIT.k), own: f, pool: fp }; });
-  out.__pool = fp; return out;
+  var fp = fitOf(pool, F), wPool = fp.w == null ? (F.w0 != null ? F.w0 : 1) : fp.w, out = {};
+  Object.keys(per).forEach(function (id) { var f = fitOf(per[id], F), n = f.w == null ? 0 : f.n; out[id] = { w: (n * (f.w == null ? 0 : f.w) + F.k * wPool) / (n + F.k), own: f, pool: fp }; });
+  out.__pool = fp; out.__w0 = wPool; return out;
 }
 function heroRangeFor(v) {
   // Range des Helden aus Sicht eines Beobachters (Grundmodell), für das River-Modellspiel
@@ -220,7 +221,10 @@ function prepare(input, v, L0, budget, rng, deadlineAll) {
   var pre = preInfo(v), out = {}, fitAll = null;
   v.players.filter(function (q) { return q.seat !== v.seat && !q.folded; }).forEach(function (q) {
     var st = oppStats(input.opps ? input.opps[q.id] : null);
-    if (R.ABL.hybrid) { if (!fitAll) fitAll = hybridFit(input); st.wTab = fitAll[q.id] ? fitAll[q.id].w : (fitAll.__pool.w == null ? 1 : fitAll.__pool.w); }
+    if (R.ABL.hybrid) { if (!fitAll) fitAll = hybridFit(input); st.wTab = fitAll[q.id] ? fitAll[q.id].w : fitAll.__w0;
+      // 2.3 (Ablation: Hauptursache ist das Reaktionsmodell): die Reaktion aus der Tabelle erst, wenn die Tabelle am Tisch belegt passt –
+      // Vorwissen robust (Modell 2.1), Gewicht wächst mit der gepoolten Zahl der Paare aus aufgedeckten Blättern
+      if (R.ABL.respPrior0) { var np = fitAll.__pool && fitAll.__pool.n || 0; st.wResp = st.wTab * Math.min(1, np / fitParams().nResp); } }
     var rE = buildRange(v, q.seat, st, false, v.pfa), rG = buildRange(v, q.seat, st, true, v.pfa);
     out[q.seat] = { st: st, ex: rE, gto: rG, pending: v.street === 0 && !pre.acted[q.seat] };
   });
@@ -256,7 +260,7 @@ function analyzeMode(input, v, mode, level, L0, budget, rng, deadline, set, prep
   var oppsAll = v.players.filter(function (q) { return q.seat !== v.seat && !q.folded; });
   var opps = oppsAll.map(function (q) {
     var P = prep[q.seat], st = P.st, rg = gto ? P.gto : P.ex;
-    return { p: q, seat: q.seat, w: P.defW && P.pending ? P.defW : rg.w, line: rg.line, sm: rg.sm, prof: rg.prof, raw: st.raw, hands: st.hands, typ: st.typ, bel: st.bel, agg: st.agg, wTab: gto ? null : st.wTab,
+    return { p: q, seat: q.seat, w: P.defW && P.pending ? P.defW : rg.w, line: rg.line, sm: rg.sm, prof: rg.prof, raw: st.raw, hands: st.hands, typ: st.typ, bel: st.bel, agg: st.agg, wTab: gto ? null : st.wTab, wResp: gto ? null : st.wResp,
       pending: P.pending, e: P.e, eqInfo: P.eqInfo, floor: gto ? P.floor.gto : P.floor.ex, isDefW: !!(P.defW && P.pending) };
   });
   var maxOpp = 0; opps.forEach(function (o) { maxOpp = Math.max(maxOpp, o.p.stack + o.p.bet); });
