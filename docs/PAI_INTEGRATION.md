@@ -1,6 +1,6 @@
-# Integration mit Adaptive Poker Intelligence (Arbeitspaket 8, 2.2)
+# Integration mit Adaptive Poker Intelligence (Arbeitspaket 8, 2.2; fortgeschrieben 2.3)
 
-PAI: https://github.com/milkiasasmarome-eng/Assist, geprüfter Stand Version 0.1.0 (Commit 1b0c4da), nur lesend genutzt. Beide Systeme bleiben getrennte
+PAI: https://github.com/milkiasasmarome-eng/Assist, geprüfter Stand Version 0.1.0 (Commit 1b0c4da; am 27.11.2026 erneut abgefragt, unverändert), nur lesend genutzt. Beide Systeme bleiben getrennte
 Engines; der Trainer ruft PAI nicht auf und PAI übernimmt keine Coach-Bewertungen.
 
 ## 1. Entwicklungsstand der PAI-Ereignisschnittstelle
@@ -19,12 +19,14 @@ Engines; der Trainer ruft PAI nicht auf und PAI übernimmt keine Coach-Bewertung
 | Equity auf denselben Spots, unabhängig gerechnet | gleich (Abweichung 0,0000) |
 
 Ursache der Inkompatibilität: Version 3 änderte nur die Gegnerdatensätze (Kurzzeitgedächtnis, Kartenkenntnis, Stilwechsel). Die Handdatensätze
-(`payload.hands`) sind seit 2.0 unverändert. **Nötige Anpassung in PAI** (nicht aus diesem Projekt heraus geändert, weil das PAI-Repository hier nur
-lesbar ist): in `src/data/adapters/pokertrainer.js` die Versionsprüfung auf `json.version !== 2 && json.version !== 3` erweitern; die Umwandlung der
-Hände bleibt gleich (von Prüfer E an einer Kopie des Adapters geprüft: 40 von 40 Händen, Ergebnis gleich wie mit Version 2). Der Ereignisstrom
-(Abschnitt 3) ist als Ersatz für das Gedächtnis nur eingeschränkt geeignet: Seine Handdatensätze tragen bewusst keinen Zeitstempel und keine
-Handnummer (sonst ließen sich verdeckte Karten aus dem Seed nachbauen) und eine eigene, nicht sprechende ID. PAI braucht für das Gedächtnis die
-Zeitfolge; dieselbe Hand über Sicherung und Ereignisstrom eingelesen würde doppelt gezählt. Für das Gedächtnis gilt daher der Weg über die Sicherung.
+(`payload.hands`) sind seit 2.0 unverändert. **Nötige Anpassung in PAI:** `docs/PAI_AENDERUNGSAUFTRAG.md` (2.3). Das PAI-Repository wird aus diesem
+Projekt nicht verändert; eine Kopie mit der Änderung liest 60 von 60 Händen aus Format 3 (`tests/pai-integration.mjs`).
+
+**Datenschutz der Sicherung (Prüfbefund E23-1, 2.3):** Die Sicherung ist die eigene Datei des Spielers und enthält je Hand Tisch-Seed und Handnummer
+(für Wiederaufnahme und Replayer). Daraus lassen sich alle verdeckten Karten nachbauen. Wer eine Sicherung an eine andere Engine gibt, gibt damit auch
+diese Informationen weiter. PAI 0.1.0 übernimmt die Felder nicht; der Änderungsauftrag macht das zur Pflicht (Positivliste). Der Ereignisstrom
+(Abschnitt 3) enthält sie nicht und ist deshalb der Weg für Empfehlungsvergleiche; für das Gegnergedächtnis braucht PAI die Zeitfolge aus der Sicherung.
+Szenariohände aus dem Training (geskriptete Gegner, Feld `training`) gehören nicht ins Gedächtnis (E23-3, Auftrag Punkt 3).
 
 ## 3. Gemeinsames versioniertes Datenformat (Vorbereitung System C)
 

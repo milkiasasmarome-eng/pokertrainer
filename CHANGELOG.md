@@ -10,7 +10,10 @@ Ergebnisse: `docs/ERGEBNISSE_2.3.md` (automatisch), Bewertung: `docs/TESTBERICHT
 ### Strategie
 - Ablationsstudie: Hauptursache der Regression 2.2 ist das Reaktionsmodell aus der Aktionstabelle, zweite Ursache die Range-Tabelle (`docs/URSACHENANALYSE_2.3.md`).
 - Hybrides Modell: Range und Reaktion mischen Populationstabelle und robustes Modell 2.1 je Gegner nach der Belastbarkeit der Tabelle
-  (Übereinstimmung der aufgedeckten Blätter mit der Tabelle, gepoolt über den Tisch); Größensignale nur zur Hälfte vertraut.
+  (Log-Likelihood der aufgedeckten Blätter unter der Tabelle, getrennt nach aggressiven und passiven Aktionen, mit Lage und Einsatzgröße, gepoolt
+  über den Tisch); Größensignale nur zur Hälfte vertraut.
+- Gegnergedächtnis: aufgedeckte Blätter speichern Bets mit Größe relativ zum Pot („Bet 3,00 (0,5 Pot)“), Datenformat unverändert 3.
+- Push/Fold-Hinweis: Handauswahl des Push/Fold-Modellspiels ausdrücklich als vereinfachtes Spiel gekennzeichnet, keine vollständige Strategie.
 - Varianten robust (A), adaptiv (B) und hybrid (C) mit Schaltern für Vergleichsläufe (`PT.ranges.ABL`); Modellwahl auf eigenen Validierungsgegnern.
 
 ### Gegnergruppen und Validierung
@@ -21,6 +24,9 @@ Ergebnisse: `docs/ERGEBNISSE_2.3.md` (automatisch), Bewertung: `docs/TESTBERICHT
 ### Prüfbefunde aus 2.2
 - C-7 (Reparatur der Lerndaten), C-12 (Format-1-Gegner), D-2 (Export im Worker), D-5 (Spielerzahl der Zelle), D-6 (Tabellengewicht 0),
   D-11 (Beschriftung All-in unter Nenngröße), A-15 (Mehrgegnerzelle mit All-in-Spielern); je ein Regressionstest (`tests/unit/pruefung-23.js`).
+
+### Unabhängige Prüfung
+- Fünf Prüfagenten vor den Hauptläufen (`docs/audit-2.3/`), Korrekturen mit Regressionstests (`tests/unit/pruefung-23.js`).
 
 ### PAI
 - Zusätzliche Integrationstests (Reproduzierbarkeit, Fehlerbehandlung, Datenintegrität, Leckage) und Änderungsauftrag für PAI

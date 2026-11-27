@@ -11,10 +11,13 @@ Regressionsset) und 23231 ff. (Tr23, Gegner-KI E), in keiner anderen Studie verw
 | **B adaptiv** | Populationstabelle (Gegner-KI) mit λ/γ-Anpassung | Mischung Tabelle/2.1 (Anteil 0,5) | voll, wie 2.2 |
 | **C hybrid** | Mischung aus Tabelle und 2.1, Gewicht w je Gegner | Tabellenanteil 0,5·w | nur so weit, wie die Tabelle zum Gegner passt |
 
-Das Gewicht w (`hybridFit` in `coach.js`) misst, ob die aufgedeckten Blätter eines Gegners zur Tabelle passen: je Straße Stärke der Hand und Art der
-eigenen Aktion (Bet/Check ohne offenen Einsatz, Raise/Call mit Einsatz), mittlere Log-Likelihood unter der Tabelle gegen den Referenzwert der
-Gegner-KI (Gruppe E: −0,463 je Paar, Streuung 0,546). z ≥ 0 → w = 1, z ≤ −2 → w = 0, dazwischen linear; gepoolt über alle Gegner am Tisch als
-Vorwissen (Stärke 8 Paare). Ohne aufgedeckte Blätter gilt w = 1. Größensignale gehen in C nur zur Hälfte ein (`sizeShrink` 0,5).
+Das Gewicht w (`hybridFit` in `coach.js`, Stand nach den Prüfungen A–D) misst, ob die aufgedeckten Blätter eines Gegners zur Tabelle passen: je
+Straße Stärke der Hand, Lage (Aggressor der Vorstraße oder frei), Art und Größe der eigenen Aktion (Check / Bet ≤ 0,6 / ≤ 1,1 / > 1,1 Pot ohne offenen
+Einsatz, Raise/Call mit Einsatz). Log-Likelihood unter der Tabelle, **getrennt für aggressive und passive Aktionen** gegen die Referenzwerte der
+Gegner-KI (Gruppe E, vier Läufe à 8.000 Hände: aggressiv −1,298 ± 0,753, passiv −0,414 ± 0,457 je Paar, Designeffekt 1,297 für Aktionen derselben
+Hand). Maßgeblich ist der kleinere z-Wert; z ≥ 0 → w = 1, z ≤ −2 → w = 0, dazwischen linear; gepoolt über alle Gegner am Tisch als Vorwissen
+(Stärke 8 Paare). Ohne aufgedeckte Blätter gilt w = 1. Größensignale gehen in C nur zur Hälfte ein (`sizeShrink` 0,5). Bets werden seit 2.3 mit
+ihrer Größe in den aufgedeckten Blättern gespeichert (`docs/GEGNERGEDAECHTNIS.md`, Abschnitt 9).
 Der Produktstand 2.3 ist C (`PT.ranges.ABL = { hybrid: true }`); A und B bleiben als Schalter für Vergleichsläufe.
 
 ## Abstimmung freier Parameter (nur Trainingsgruppen Tr23 und Gegner-KI E)
@@ -47,12 +50,22 @@ höchsten unteren Intervallgrenze gegen 2.1.0 auf Va23.
 | S (Tabellen-Range, Reaktion 2.1) | −26,7 [−39,8; −13,3] | +8,5 | −21,6 | nein |
 | C2 (hybride Range, Reaktion 2.1) | −15,9 [−23,9; −8,4] | +9,2 | −20,9 | nein |
 
-**Gewählt: C mit Schwellen 0/−2** (höchste untere Grenze auf Va23 unter den zulässigen Varianten: −17,9).
+Erste Wahl: C mit Schwellen 0/−2 (untere Grenze −17,9). Die Prüfagenten A–C fanden danach Fehler im Maß w (A23-1 Anzeige, B23-1 Größen nicht
+geprüft, C23-2 feste Lage, A23-2 abhängige Paare). Nach den Korrekturen wurde mit derselben Regel neu gewählt:
+
+| Variante | Va23 gegen 2.1.0 | V gegen 2.1.0 | V gegen B | Regel V erfüllt |
+|---|---|---|---|---|
+| **C nach Prüfung (Produktstand 2.3)** | **−2,8 [−12,5; 6,8]** | **+33,1 [19,5; 46,8]** | **+3,0 [−6,2; 12,8]** | **ja** |
+| B nach Prüfung | wie B (identisches Spiel) | wie B | – | ja |
+
+**Gewählt: C nach Prüfung** (höchste untere Grenze auf Va23 unter den zulässigen Varianten: −12,5). Abstimmungsgruppen zur Kontrolle:
+Tr23 −2,0 [−11,0; 7,1], Gegner-KI E +10,9 [−3,5; 23,7]. Regressionsset (drei Strategien, 7.500 Hände): −22,4 [−36,9; −6,9], zu wenig Blöcke.
 
 Ehrliche Einordnung:
 - Die Varianten S, C2, C3, C5 und die Abstimmung kamen nach der ersten Auswertung hinzu. Die Validierungsgruppe Va23 wurde dadurch mehrfach
   genutzt; die Wahl kann leicht an Va23 angepasst sein. Maßgeblich ist deshalb nur die unberührte abschließende Testgruppe F23.
-- Auch die gewählte Variante ist auf Va23 **belegt schlechter als 2.1.0** (−9,2). Ein robustes Modell ohne Tabellen (A) spielt dort wie 2.1.0,
+- Die erste Wahl war auf Va23 belegt schlechter als 2.1.0 (−9,2); die Variante nach den Korrekturen ist es nicht mehr (−2,8 [−12,5; 6,8]), das
+  Intervall reicht aber bis −12,5. Gegen das Regressionsset bleibt ein Rückstand. Ein robustes Modell ohne Tabellen (A) spielt dort wie 2.1.0,
   gibt aber gegen die Gegner-KI den Vorsprung von rund 30 BB/100 vollständig auf. Kein untersuchter Ansatz erreicht beides.
 - Die strengere Variante (+1/−1) liegt auf Va23 näher an 2.1.0, verliert aber gegen die Gegner-KI belegt gegenüber 2.2 und ist nach der Regel ausgeschlossen.
 - Der abschließende Vergleich P1 (Nichtunterlegenheit gegen 2.1.0 auf F23, δ = 5) entscheidet über die Freigabeempfehlung.

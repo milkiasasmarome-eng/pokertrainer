@@ -1,5 +1,5 @@
 {
- "date": "2026-11-27T19:43:51.705Z",
+ "date": "2026-11-27T20:52:54.194Z",
  "pokertrainer": "2.3.0",
  "pai": "0.1.0",
  "paiRoot": "assist",
@@ -50,7 +50,7 @@
   {
    "name": "Reproduzierbarkeit: gleiche Seeds ergeben denselben Ereignisstrom",
    "ok": true,
-   "detail": "b0ea3714 / b0ea3714"
+   "detail": "8bbd451a / 8bbd451a"
   },
   {
    "name": "Fehlerbehandlung: veränderter Ereignisstrom wird mit Meldung abgelehnt",
@@ -68,9 +68,24 @@
    "detail": "0 Abweichungen in 60 Händen"
   },
   {
-   "name": "Keine Datenleckage: PAI erhält fremde Karten nur aus aufgedeckten Blättern",
+   "name": "Keine Datenleckage im Trainer: aufgedeckte Blätter nur von Plätzen am Showdown",
    "ok": true,
-   "detail": "0 Funde"
+   "detail": "0 im Trainer, 0 nach PAI"
+  },
+  {
+   "name": "Keine Datenleckage nach PAI: umgewandelte Hände ohne Seed, Handnummer, Sitzung, Bewertungen",
+   "ok": true,
+   "detail": "0 Hände mit verbotenen Feldern"
+  },
+  {
+   "name": "Negativtest Leckageprüfung: eingeschleuste Karten gefoldeter Spieler werden erkannt",
+   "ok": true,
+   "detail": "5 eingeschleust, 5 erkannt"
+  },
+  {
+   "name": "Hinweis PAI 0.1.0: validateHand lehnt Karten gefoldeter Spieler ab (Änderungsauftrag Punkt 4)",
+   "ok": false,
+   "detail": "4 von 5 angenommen (bekannt, Auftrag an PAI)"
   },
   {
    "name": "Nach Änderungsauftrag (Kopie von PAI): Format 3 wird gelesen, unbekannte Versionen weiter abgelehnt",

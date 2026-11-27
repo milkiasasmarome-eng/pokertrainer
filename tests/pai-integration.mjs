@@ -79,11 +79,22 @@ let bErr = null; try { bErr = PT.events.validate(broken); } catch (e) { bErr = '
 check('Fehlerbehandlung: veränderter Ereignisstrom wird mit Meldung abgelehnt', typeof bErr === 'string' && !/^Ausnahme/.test(bErr), bErr);
 let v4err = null; try { fromPokerTrainerBackup(Object.assign({}, backupV3, { version: 4 })); } catch (e) { v4err = e.message; }
 check('Fehlerbehandlung: PAI lehnt unbekannte Sicherungsversion 4 mit Meldung ab', !!v4err, v4err);
-// (9) Datenintegrität und Leckage: PAI übernimmt je Hand alle Aktionen und das Board; fremde Karten nur, wenn sie aufgedeckt wurden
-let integ = 0, leakPai = 0; conv.hands.forEach((h, i) => { const src = hands[i]; if (h.actions.length !== src.actions.length || h.board.join('') !== (src.board || []).join('')) integ++;
-  const shownSeats = new Set((src.shown || []).map(x => x.seat)); (h.shown || []).forEach(x => { if (!shownSeats.has(x.seat)) leakPai++; }); if (JSON.stringify(h).indexOf('"cards":[') >= 0 && !(h.shown || []).length && !h.heroCards) leakPai++; });
+// (9) Datenintegrität und Leckage (Prüfbefund E23-2: gegen den tatsächlichen Handverlauf, mit Negativtest)
+const showdownSeats = h => { const folded = new Set(h.actions.filter(a => a.t === 'fold').map(a => a.s)); return new Set(h.seats.map(s => s.seat).filter(s => !folded.has(s))); };
+const leakIn = list => { let n = 0; list.forEach((h, i) => { const src = hands[i], ok = showdownSeats(src); (h.shown || []).forEach(x => { if (!ok.has(x.seat)) n++; }); }); return n; };
+let integ = 0; conv.hands.forEach((h, i) => { const src = hands[i]; if (h.actions.length !== src.actions.length || h.board.join('') !== (src.board || []).join('')) integ++; });
 check('Datenintegrität: Aktionen und Board je Hand vollständig übernommen', integ === 0, integ + ' Abweichungen in ' + conv.hands.length + ' Händen');
-check('Keine Datenleckage: PAI erhält fremde Karten nur aus aufgedeckten Blättern', leakPai === 0, leakPai + ' Funde');
+const leak0 = hands.reduce((n, src) => { const ok = showdownSeats(src); (src.shown || []).forEach(x => { if (!ok.has(x.seat)) n++; }); return n; }, 0);
+check('Keine Datenleckage im Trainer: aufgedeckte Blätter nur von Plätzen am Showdown', leak0 === 0 && leakIn(conv.hands) === 0, leak0 + ' im Trainer, ' + leakIn(conv.hands) + ' nach PAI');
+const FORBID = ['seed', 'no', 'tseed', 'session', 'decisions', 'training'];
+const keysDeep = (o, out = new Set()) => { if (o && typeof o === 'object') Object.keys(o).forEach(k => { out.add(k); keysDeep(o[k], out); }); return out; };
+const bad2 = conv.hands.filter(h => { const ks = keysDeep(h); return FORBID.some(k => ks.has(k)); });
+check('Keine Datenleckage nach PAI: umgewandelte Hände ohne Seed, Handnummer, Sitzung, Bewertungen', bad2.length === 0, bad2.length + ' Hände mit verbotenen Feldern');
+// Negativtest: eingeschleustes Blatt eines gefoldeten Spielers muss die Prüfung rot machen
+const inj = JSON.parse(JSON.stringify(conv.hands)); let injected = 0; inj.forEach((h, i) => { const src = hands[i], ok = showdownSeats(src); const f = src.seats.map(s => s.seat).find(s => !ok.has(s)); if (f != null && injected < 5) { h.shown = (h.shown || []).concat([{ seat: f, cards: 'AsAd' }]); injected++; } });
+check('Negativtest Leckageprüfung: eingeschleuste Karten gefoldeter Spieler werden erkannt', injected > 0 && leakIn(inj) === injected, injected + ' eingeschleust, ' + leakIn(inj) + ' erkannt');
+let paiTakes = 0; inj.forEach(h => { const v = validateHand(h); if (v.ok && (h.shown || []).some(x => x.cards === 'AsAd')) paiTakes++; });
+check('Hinweis PAI 0.1.0: validateHand lehnt Karten gefoldeter Spieler ab (Änderungsauftrag Punkt 4)', paiTakes === 0, paiTakes + ' von ' + injected + ' angenommen (bekannt, Auftrag an PAI)');
 // (10) Kompatibilität nach dem Änderungsauftrag (docs/PAI_AENDERUNGSAUFTRAG.md): Kopie von PAI mit der beschriebenen Änderung, das PAI-Repository bleibt unverändert
 let patchedOk = null, patchedDetail = '';
 try {

@@ -65,3 +65,9 @@ node tests/e2e.js                                  # Browser-Tests (Playwright +
 - Ereignisstrom für unabhängige Engines: `PT.events` (export.js). Der Kanal `pai` wird vom Trainer nie gefüllt.
 - Bekannte Schwäche 2.2 (H4 in `docs/TESTBERICHT_2.2.md`): gegen unbekannte Strategien (Polarisierer, Fallensteller) schwächer als 2.1.0. Änderungen an
   Reaktionsmodell oder Range-Tabelle zusätzlich gegen `FINAL` prüfen, nicht nur gegen V und T.
+
+## Hinweise ab 2.3
+- Produktstand Coach: hybrides Modell C (`PT.ranges.ABL = { hybrid: true }`); A/B/Ablationen nur über Schalter in Vergleichsläufen (Test „Wächter“).
+- Wer Tabelle, Gegner-KI oder `shownEntry` ändert, bestimmt die Referenzwerte von `FIT` neu (`node tests/strategy/fit-hybrid.js bots@E 8000 <Seed>`,
+  mehrere Seeds) und wiederholt die Modellwahl (`sel23`) – Abstimmung nur auf Tr23/E, Wahl auf Va23/V, F23 nur abschließend (versiegelt).
+- Abschließende Vergleiche: Plan `v23`, Kriterien `docs/ABNAHMEKRITERIEN_2.3.md`, Bericht `node tools/report-23.js`.

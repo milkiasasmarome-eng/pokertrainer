@@ -44,7 +44,8 @@ function cardsHtml(str, cls) { var a = PT.parseCards(str || '') || []; return a.
 function toast(t, ms) { var el = $('toast'); el.textContent = t; el.classList.add('on'); clearTimeout(toast._t); toast._t = setTimeout(function () { el.classList.remove('on'); }, ms || 3200); }
 function download(name, text, type) {
   // In der Claude-Vorschau sind Downloads nur über die Fähigkeit „downloads“ möglich
-  if (S.claudeDl) { S.claudeDl.save({ filename: name, data: text }).catch(function () { toast('Speichern nicht möglich. Bitte die Website oder die Offline-Datei nutzen.'); }); return true; }
+  // E23-7: in der Claude-Vorschau Ergebnis erst nach dem Speichern melden (Promise mit true/false)
+  if (S.claudeDl) return S.claudeDl.save({ filename: name, data: text }).then(function () { return true; }, function () { toast('Speichern nicht möglich. Bitte die Website oder die Offline-Datei nutzen.'); return false; });
   try {
     var blob = new Blob([text], { type: type || 'application/json' }), url = URL.createObjectURL(blob), a = document.createElement('a');
     a.href = url; a.download = name; a.rel = 'noopener'; document.body.appendChild(a); a.click(); a.remove();
@@ -1134,7 +1135,7 @@ function boot() {
     if (meta && meta.heroRec) { var hr = PT.stats.loadRecord(meta.heroRec); if (hr) S.heroRec = hr; else { skipped.push('eigene Werte'); bad.hero = meta.heroRec; } }
     if (learn && learn.v) {
       if (!PT.training.validLearning(learn.v)) S.learning = learn.v;
-      else { bad.learn = learn.v; var rep = PT.training.repairLearning(learn.v); if (rep) { S.learning = rep.learning; if (rep.removed) skipped.push(rep.removed + ' Lerneinträge'); } else skipped.push('Lerndaten'); }
+      else { bad.learn = learn.v; var rep = PT.training.repairLearning(learn.v); if (rep) { S.learning = rep.learning; skipped.push(rep.removed ? rep.removed + ' Lerneinträge' : 'Lerndaten repariert'); } else skipped.push('Lerndaten'); }   /* D23-7: Rohsicherung auch, wenn nichts entfernt wurde */
     }
     S.prof = PT.training.profile(S.learning);
     if (meta && PT.session.validTable(meta.table)) S.table = meta.table;

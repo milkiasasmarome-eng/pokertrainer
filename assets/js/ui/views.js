@@ -79,7 +79,7 @@ views.analyse = function (el, arg) {
     '<div class="toolbar"><input type="search" id="hq" placeholder="Suche: Karten (z. B. AK), Gegner, Board" aria-label="Suche"><select id="hk" aria-label="Filter"><option value="alle">alle Hände</option><option value="fehler">mit Fehlern</option><option value="showdown">mit Showdown</option><option value="training">nur Training</option><option value="gewonnen">gewonnen</option><option value="verloren">verloren</option></select>' +
     '<select id="hp" aria-label="Position"><option value="">alle Positionen</option>' + PT.stats.POSITIONS.map(function (p) { return '<option>' + p + '</option>'; }).join('') + '</select>' +
     '<button class="btn" type="button" data-hx="json">Export JSON</button><button class="btn" type="button" data-hx="txt">Export Text</button>' +
-    '<button class="btn" type="button" data-hx="bench" title="Je Entscheidung: Spielzustand zum Entscheidungszeitpunkt, Coach-Empfehlung, Alternativen mit EV und Unsicherheit; spätere Informationen getrennt">Export Benchmark</button> <button class="btn" type="button" data-hx="events" title="Ereignisstrom für unabhängige Engines (PAI, System C): beobachtbarer Zustand je Entscheidung, Empfehlungen je Engine getrennt, Handdatensätze">Export Ereignisse (PAI)</button></div>' +
+    '<button class="btn" type="button" data-hx="bench"' + (PTUI.exportBusy ? ' disabled' : '') + ' title="Je Entscheidung: Spielzustand zum Entscheidungszeitpunkt, Coach-Empfehlung, Alternativen mit EV und Unsicherheit; spätere Informationen getrennt">Export Benchmark</button> <button class="btn" type="button" data-hx="events"' + (PTUI.exportBusy ? ' disabled' : '') + ' title="Ereignisstrom für unabhängige Engines (PAI, System C): beobachtbarer Zustand je Entscheidung, Empfehlungen je Engine getrennt, Handdatensätze">Export Ereignisse (PAI)</button></div>' +
     '<p class="small" id="hskip" hidden></p><div id="hlist" class="scroll"><p class="muted">Lade …</p></div></div><div id="hreplay"></div>';
   $('hq').value = hist.filter.q; $('hk').value = hist.filter.kind; $('hp').value = hist.filter.pos;
   function load() { return loadHands().then(function (l) {
@@ -94,12 +94,13 @@ views.analyse = function (el, arg) {
         // 2.3 (Prüfbefund D-2): Aufbau und Serialisierung in einem eigenen Worker, die Oberfläche bleibt bedienbar; Zähler ohne erneutes Parsen
         // Prüfbefund D23-1: Sperre unabhängig vom Neuzeichnen der Ansicht (ein Export zur Zeit)
         if (PTUI.exportBusy) { H.toast('Ein Export läuft bereits.'); return; }
-        PTUI.exportBusy = true; x.disabled = true; H.toast(kind === 'bench' ? 'Benchmark-Export wird erstellt …' : 'Ereignisstrom wird erstellt …');
+        PTUI.exportBusy = true; x.disabled = true; Array.prototype.forEach.call(document.querySelectorAll('[data-hx="bench"],[data-hx="events"]'), function (b) { b.disabled = true; });   // E23-8 H.toast(kind === 'bench' ? 'Benchmark-Export wird erstellt …' : 'Ereignisstrom wird erstellt …');
         PTUI.offThread(kind, { hands: f }, 300000).then(function (r) {
           var name = kind === 'bench' ? 'PokerTrainer_Benchmark_v' + PT.benchmark.SCHEMA + '_' + H.today() + '.json' : 'PokerTrainer_Ereignisse_v' + PT.events.SCHEMA + '_' + H.today() + '.json';
-          var okDl = H.download(name, r.text);   // D23-3: Erfolg nur melden, wenn der Download gestartet wurde
-          if (okDl !== false) H.toast((kind === 'bench' ? 'Benchmark-Export: ' : 'Ereignisstrom: ') + r.count + ' Entscheidungen aus ' + r.hands + ' Händen.');
-        }, function (e) { H.toast('Export nicht möglich: ' + (e && e.message || e)); }).then(function () { PTUI.exportBusy = false; x.disabled = false; });
+          if (!r.count) { H.toast('Keine Entscheidungen zum Exportieren.'); return; }   // E23-7: kein leerer Export
+          return Promise.resolve(H.download(name, r.text)).then(function (okDl) {   // D23-3/E23-7: Erfolg nur nach gestartetem Download
+            if (okDl !== false) H.toast((kind === 'bench' ? 'Benchmark-Export: ' : 'Ereignisstrom: ') + r.count + ' Entscheidungen aus ' + r.hands + ' Händen.'); });
+        }, function (e) { H.toast('Export nicht möglich: ' + (e && e.message || e)); }).then(function () { PTUI.exportBusy = false; Array.prototype.forEach.call(document.querySelectorAll('[data-hx="bench"],[data-hx="events"]'), function (b) { b.disabled = false; }); });
       }
       else H.download('PokerTrainer_Haende_' + H.today() + '.txt', f.map(PT.training.handText).join('\n\n'), 'text/plain');
       return; }

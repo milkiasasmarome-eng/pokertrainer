@@ -1,6 +1,6 @@
 {
  "app": "2.2.0",
- "date": "2026-11-27T19:20:21.431Z",
+ "date": "2026-11-27T20:53:23.030Z",
  "node": "v22.23.5",
  "cpus": 2,
  "plan": "tune23",
@@ -60,6 +60,9 @@
   "varCz": "Variante C (abgestimmt auf Tr23): hybrid, empfindlichere Schwellen",
   "t-zsq": "Abstimmung: C empfindlich, Reaktion quadratisch",
   "t-z1": "Abstimmung: C sehr empfindlich",
+  "varCz1": "Variante C (abgestimmt auf Tr23/E): hybrid, sehr empfindliche Schwellen",
+  "varC7": "Variante C nach Prüfung A/B (Größensignale, aggressive und passive Aktionen getrennt geprüft)",
+  "varB7": "Variante B (Stand nach Prüfung A/B)",
   "varC2": "Variante C2: hybride Range, Reaktionsmodell 2.1",
   "abl-R": "Ablation: Range-Eingrenzung 2.1",
   "abl-S": "Ablation: Reaktionsmodell 2.1",
@@ -343,7 +346,8 @@
     "tuTr-t-z",
     "tuTr-t-zr",
     "tuTr-t-zsq",
-    "tuTr-t-z1"
+    "tuTr-t-z1",
+    "tuTr-varC7"
    ]
   },
   {
@@ -450,6 +454,59 @@
    "wallMs": 115671,
    "usedIn": [
     "tuTr-t-z1"
+   ]
+  },
+  {
+   "id": "tuTr_varC7_p23-Tr_gemischt_100BB_s23231_2500",
+   "group": "tuTr",
+   "hero": "varC7",
+   "cond": "p23:Tr|gemischt|100",
+   "seed": 23231,
+   "hands": 2500,
+   "decisions": 3395,
+   "invalid": 0,
+   "bb100": 164.66,
+   "bb100Adj": 164.63,
+   "sdHand": 22.36,
+   "sdHandAdj": 17.57,
+   "allinHands": 54,
+   "avgMs": 24.9,
+   "maxMs": 269,
+   "maxIters": 5000,
+   "labels": {
+    "check": 238,
+    "fold": 153,
+    "¾": 41,
+    "call": 108,
+    "⅓": 48,
+    "All-in": 51,
+    "Pot": 72,
+    "½": 26,
+    "Overbet": 40,
+    "Raise Pot": 11,
+    "Raise 2,5×": 13,
+    "andere": 2
+   },
+   "preLabels": {
+    "fold": 1984,
+    "call": 194,
+    "Open": 309,
+    "4-Bet": 14,
+    "3-Bet": 83,
+    "All-in": 8
+   },
+   "classes": {
+    "eindeutig": 425,
+    "klar": 868,
+    "mehrere": 1037,
+    "knapp": 1064,
+    "unsicher": 1
+   },
+   "chartApplied": 468,
+   "chartGapBB": 204.96,
+   "wallMs": 87470,
+   "usedIn": [
+    "tuTr-varC7"
    ]
   },
   {
@@ -718,7 +775,8 @@
     "tuTr-t-z",
     "tuTr-t-zr",
     "tuTr-t-zsq",
-    "tuTr-t-z1"
+    "tuTr-t-z1",
+    "tuTr-varC7"
    ]
   },
   {
@@ -825,6 +883,59 @@
    "wallMs": 83321,
    "usedIn": [
     "tuTr-t-z1"
+   ]
+  },
+  {
+   "id": "tuTr_varC7_p23-Tr_gemischt_100BB_s23232_2500",
+   "group": "tuTr",
+   "hero": "varC7",
+   "cond": "p23:Tr|gemischt|100",
+   "seed": 23232,
+   "hands": 2500,
+   "decisions": 3394,
+   "invalid": 0,
+   "bb100": 210.61,
+   "bb100Adj": 176.44,
+   "sdHand": 22.93,
+   "sdHandAdj": 17.15,
+   "allinHands": 59,
+   "avgMs": 24.1,
+   "maxMs": 240,
+   "maxIters": 5000,
+   "labels": {
+    "Raise 2,5×": 7,
+    "fold": 153,
+    "call": 70,
+    "check": 247,
+    "Pot": 74,
+    "½": 35,
+    "⅓": 79,
+    "¾": 22,
+    "Overbet": 27,
+    "All-in": 49,
+    "Raise Pot": 14,
+    "andere": 2,
+    "Raise 3,5×": 1
+   },
+   "preLabels": {
+    "fold": 1971,
+    "call": 220,
+    "Open": 337,
+    "3-Bet": 69,
+    "All-in": 7,
+    "4-Bet": 10
+   },
+   "classes": {
+    "mehrere": 916,
+    "klar": 992,
+    "knapp": 1070,
+    "eindeutig": 416
+   },
+   "chartApplied": 534,
+   "chartGapBB": 231.92,
+   "wallMs": 84748,
+   "usedIn": [
+    "tuTr-varC7"
    ]
   },
   {
@@ -1088,7 +1199,8 @@
     "tuTr-t-z",
     "tuTr-t-zr",
     "tuTr-t-zsq",
-    "tuTr-t-z1"
+    "tuTr-t-z1",
+    "tuTr-varC7"
    ]
   },
   {
@@ -1193,6 +1305,58 @@
    "wallMs": 89650,
    "usedIn": [
     "tuTr-t-z1"
+   ]
+  },
+  {
+   "id": "tuTr_varC7_p23-Tr_gemischt_100BB_s23233_2500",
+   "group": "tuTr",
+   "hero": "varC7",
+   "cond": "p23:Tr|gemischt|100",
+   "seed": 23233,
+   "hands": 2500,
+   "decisions": 3526,
+   "invalid": 0,
+   "bb100": 118.68,
+   "bb100Adj": 133.54,
+   "sdHand": 22.29,
+   "sdHandAdj": 17.47,
+   "allinHands": 51,
+   "avgMs": 37.3,
+   "maxMs": 394,
+   "maxIters": 5000,
+   "labels": {
+    "call": 107,
+    "fold": 185,
+    "½": 35,
+    "⅓": 66,
+    "check": 320,
+    "¾": 50,
+    "Pot": 81,
+    "Overbet": 40,
+    "All-in": 47,
+    "Raise 2,5×": 7,
+    "Raise Pot": 13,
+    "Raise 3,5×": 1
+   },
+   "preLabels": {
+    "fold": 1900,
+    "Open": 366,
+    "4-Bet": 11,
+    "call": 227,
+    "3-Bet": 60,
+    "All-in": 10
+   },
+   "classes": {
+    "klar": 1022,
+    "knapp": 1115,
+    "mehrere": 991,
+    "eindeutig": 398
+   },
+   "chartApplied": 539,
+   "chartGapBB": 287.44,
+   "wallMs": 135816,
+   "usedIn": [
+    "tuTr-varC7"
    ]
   },
   {
@@ -1462,7 +1626,8 @@
     "tuTr-t-z",
     "tuTr-t-zr",
     "tuTr-t-zsq",
-    "tuTr-t-z1"
+    "tuTr-t-z1",
+    "tuTr-varC7"
    ]
   },
   {
@@ -1569,6 +1734,59 @@
    "wallMs": 88024,
    "usedIn": [
     "tuTr-t-z1"
+   ]
+  },
+  {
+   "id": "tuTr_varC7_p23-Tr_gemischt_100BB_s23234_2500",
+   "group": "tuTr",
+   "hero": "varC7",
+   "cond": "p23:Tr|gemischt|100",
+   "seed": 23234,
+   "hands": 2500,
+   "decisions": 3539,
+   "invalid": 0,
+   "bb100": 144.06,
+   "bb100Adj": 175.56,
+   "sdHand": 23.31,
+   "sdHandAdj": 18.18,
+   "allinHands": 64,
+   "avgMs": 37.1,
+   "maxMs": 482,
+   "maxIters": 5000,
+   "labels": {
+    "⅓": 82,
+    "check": 306,
+    "¾": 38,
+    "fold": 158,
+    "Pot": 75,
+    "Overbet": 33,
+    "All-in": 52,
+    "½": 37,
+    "call": 111,
+    "Raise 2,5×": 11,
+    "Raise Pot": 12,
+    "Raise 3,5×": 2
+   },
+   "preLabels": {
+    "fold": 1962,
+    "Open": 342,
+    "call": 212,
+    "3-Bet": 69,
+    "All-in": 18,
+    "4-Bet": 19
+   },
+   "classes": {
+    "mehrere": 956,
+    "knapp": 1134,
+    "klar": 991,
+    "eindeutig": 457,
+    "unsicher": 1
+   },
+   "chartApplied": 585,
+   "chartGapBB": 219.26,
+   "wallMs": 135504,
+   "usedIn": [
+    "tuTr-varC7"
    ]
   },
   {
@@ -1833,7 +2051,8 @@
     "tuTr-t-z",
     "tuTr-t-zr",
     "tuTr-t-zsq",
-    "tuTr-t-z1"
+    "tuTr-t-z1",
+    "tuTr-varC7"
    ]
   },
   {
@@ -1938,6 +2157,58 @@
    "wallMs": 84727,
    "usedIn": [
     "tuTr-t-z1"
+   ]
+  },
+  {
+   "id": "tuTr_varC7_p23-Tr_gemischt_100BB_s23235_2500",
+   "group": "tuTr",
+   "hero": "varC7",
+   "cond": "p23:Tr|gemischt|100",
+   "seed": 23235,
+   "hands": 2500,
+   "decisions": 3450,
+   "invalid": 0,
+   "bb100": 147.36,
+   "bb100Adj": 139.35,
+   "sdHand": 21.9,
+   "sdHandAdj": 16.81,
+   "allinHands": 58,
+   "avgMs": 40.1,
+   "maxMs": 536,
+   "maxIters": 5000,
+   "labels": {
+    "Raise Pot": 15,
+    "call": 93,
+    "check": 286,
+    "fold": 166,
+    "¾": 32,
+    "⅓": 61,
+    "All-in": 50,
+    "½": 39,
+    "Overbet": 28,
+    "Raise 3,5×": 2,
+    "Pot": 59,
+    "Raise 2,5×": 8
+   },
+   "preLabels": {
+    "Open": 356,
+    "fold": 1941,
+    "call": 210,
+    "3-Bet": 81,
+    "All-in": 10,
+    "4-Bet": 13
+   },
+   "classes": {
+    "knapp": 1130,
+    "eindeutig": 463,
+    "klar": 870,
+    "mehrere": 987
+   },
+   "chartApplied": 491,
+   "chartGapBB": 249.71,
+   "wallMs": 143145,
+   "usedIn": [
+    "tuTr-varC7"
    ]
   },
   {
@@ -2211,7 +2482,8 @@
     "tuE-t-z",
     "tuE-t-zr",
     "tuE-t-zsq",
-    "tuE-t-z1"
+    "tuE-t-z1",
+    "tuE-varC7"
    ]
   },
   {
@@ -2320,6 +2592,60 @@
    "wallMs": 80492,
    "usedIn": [
     "tuE-t-z1"
+   ]
+  },
+  {
+   "id": "tuE_varC7_bots_gemischt_100BB_poolE_s23241_2500",
+   "group": "tuE",
+   "hero": "varC7",
+   "cond": "bots|gemischt|100|E",
+   "seed": 23241,
+   "hands": 2500,
+   "decisions": 3475,
+   "invalid": 0,
+   "bb100": 24.77,
+   "bb100Adj": 22.57,
+   "sdHand": 10.79,
+   "sdHandAdj": 9.35,
+   "allinHands": 12,
+   "avgMs": 37.7,
+   "maxMs": 329,
+   "maxIters": 5000,
+   "labels": {
+    "⅓": 159,
+    "fold": 95,
+    "Overbet": 46,
+    "½": 65,
+    "check": 257,
+    "call": 57,
+    "Pot": 117,
+    "¾": 51,
+    "Raise Pot": 6,
+    "Raise 2,5×": 28,
+    "All-in": 13,
+    "Raise 3,5×": 1
+   },
+   "preLabels": {
+    "fold": 1873,
+    "call": 171,
+    "Open": 357,
+    "3-Bet": 84,
+    "Iso-Raise": 39,
+    "check": 45,
+    "4-Bet": 8,
+    "All-in": 3
+   },
+   "classes": {
+    "klar": 1027,
+    "mehrere": 971,
+    "eindeutig": 261,
+    "knapp": 1216
+   },
+   "chartApplied": 734,
+   "chartGapBB": 207.91,
+   "wallMs": 135819,
+   "usedIn": [
+    "tuE-varC7"
    ]
   },
   {
@@ -2599,7 +2925,8 @@
     "tuE-t-z",
     "tuE-t-zr",
     "tuE-t-zsq",
-    "tuE-t-z1"
+    "tuE-t-z1",
+    "tuE-varC7"
    ]
   },
   {
@@ -2710,6 +3037,61 @@
    "wallMs": 76482,
    "usedIn": [
     "tuE-t-z1"
+   ]
+  },
+  {
+   "id": "tuE_varC7_bots_gemischt_100BB_poolE_s23242_2500",
+   "group": "tuE",
+   "hero": "varC7",
+   "cond": "bots|gemischt|100|E",
+   "seed": 23242,
+   "hands": 2500,
+   "decisions": 3404,
+   "invalid": 0,
+   "bb100": 39.28,
+   "bb100Adj": 43.64,
+   "sdHand": 12.07,
+   "sdHandAdj": 11.17,
+   "allinHands": 16,
+   "avgMs": 26.9,
+   "maxMs": 319,
+   "maxIters": 5000,
+   "labels": {
+    "⅓": 133,
+    "¾": 63,
+    "check": 195,
+    "call": 63,
+    "Pot": 108,
+    "Raise 2,5×": 34,
+    "Overbet": 45,
+    "½": 59,
+    "fold": 97,
+    "All-in": 17,
+    "Raise Pot": 6,
+    "Raise 3,5×": 1
+   },
+   "preLabels": {
+    "fold": 1906,
+    "3-Bet": 116,
+    "Open": 282,
+    "call": 191,
+    "All-in": 2,
+    "check": 19,
+    "4-Bet": 18,
+    "Iso-Raise": 49
+   },
+   "classes": {
+    "klar": 990,
+    "eindeutig": 269,
+    "knapp": 1216,
+    "mehrere": 928,
+    "unsicher": 1
+   },
+   "chartApplied": 700,
+   "chartGapBB": 237.35,
+   "wallMs": 94904,
+   "usedIn": [
+    "tuE-varC7"
    ]
   },
   {
@@ -2986,7 +3368,8 @@
     "tuE-t-z",
     "tuE-t-zr",
     "tuE-t-zsq",
-    "tuE-t-z1"
+    "tuE-t-z1",
+    "tuE-varC7"
    ]
   },
   {
@@ -3097,6 +3480,61 @@
    "wallMs": 87812,
    "usedIn": [
     "tuE-t-z1"
+   ]
+  },
+  {
+   "id": "tuE_varC7_bots_gemischt_100BB_poolE_s23243_2500",
+   "group": "tuE",
+   "hero": "varC7",
+   "cond": "bots|gemischt|100|E",
+   "seed": 23243,
+   "hands": 2500,
+   "decisions": 3653,
+   "invalid": 0,
+   "bb100": 35.15,
+   "bb100Adj": 17.06,
+   "sdHand": 12.8,
+   "sdHandAdj": 11.15,
+   "allinHands": 25,
+   "avgMs": 28.3,
+   "maxMs": 331,
+   "maxIters": 5000,
+   "labels": {
+    "check": 294,
+    "¾": 69,
+    "⅓": 183,
+    "Pot": 164,
+    "½": 82,
+    "fold": 106,
+    "Overbet": 52,
+    "All-in": 23,
+    "call": 54,
+    "Raise 2,5×": 37,
+    "Raise Pot": 7,
+    "Raise 3,5×": 2
+   },
+   "preLabels": {
+    "fold": 1878,
+    "call": 218,
+    "Open": 318,
+    "check": 45,
+    "3-Bet": 72,
+    "Iso-Raise": 35,
+    "4-Bet": 12,
+    "All-in": 2
+   },
+   "classes": {
+    "mehrere": 964,
+    "klar": 938,
+    "knapp": 1423,
+    "eindeutig": 327,
+    "unsicher": 1
+   },
+   "chartApplied": 583,
+   "chartGapBB": 230.77,
+   "wallMs": 106832,
+   "usedIn": [
+    "tuE-varC7"
    ]
   }
  ],
@@ -3354,6 +3792,42 @@
    "invalid": 0
   },
   {
+   "group": "tuE",
+   "hero": "varC7",
+   "heroName": "Variante C nach Prüfung A/B (Größensignale, aggressive und passive Aktionen getrennt geprüft)",
+   "cond": "bots|gemischt|100|E",
+   "condName": "Gegner-KI, gemischt, 100 BB",
+   "startBB": 100,
+   "runs": [
+    "tuE_varC7_bots_gemischt_100BB_poolE_s23241_2500",
+    "tuE_varC7_bots_gemischt_100BB_poolE_s23242_2500",
+    "tuE_varC7_bots_gemischt_100BB_poolE_s23243_2500"
+   ],
+   "seeds": [
+    23241,
+    23242,
+    23243
+   ],
+   "adj": {
+    "bb100": 27.76,
+    "lo": 0.58,
+    "hi": 54.67,
+    "se": 13.7,
+    "hands": 7500,
+    "blocks": 15
+   },
+   "raw": {
+    "bb100": 33.07,
+    "lo": 5.53,
+    "hi": 61.33,
+    "se": 14.28,
+    "hands": 7500,
+    "blocks": 15
+   },
+   "decisions": 10532,
+   "invalid": 0
+  },
+  {
    "group": "tuTr",
    "hero": "coach210",
    "heroName": "Coach 2.1.0 (exploitativ)",
@@ -3376,17 +3850,17 @@
    ],
    "adj": {
     "bb100": 159.94,
-    "lo": 134.25,
-    "hi": 186.69,
-    "se": 13.27,
+    "lo": 133.47,
+    "hi": 186,
+    "se": 13.28,
     "hands": 12500,
     "blocks": 25
    },
    "raw": {
     "bb100": 158.56,
-    "lo": 119.79,
-    "hi": 196.62,
-    "se": 19.12,
+    "lo": 120.51,
+    "hi": 195.78,
+    "se": 19.68,
     "hands": 12500,
     "blocks": 25
    },
@@ -3416,17 +3890,17 @@
    ],
    "adj": {
     "bb100": 153.97,
-    "lo": 127.69,
-    "hi": 180.79,
-    "se": 13.62,
+    "lo": 127.41,
+    "hi": 180.88,
+    "se": 13.51,
     "hands": 12500,
     "blocks": 25
    },
    "raw": {
     "bb100": 152.64,
-    "lo": 115.61,
-    "hi": 190.39,
-    "se": 19.33,
+    "lo": 115.51,
+    "hi": 191.46,
+    "se": 19.37,
     "hands": 12500,
     "blocks": 25
    },
@@ -3456,17 +3930,17 @@
    ],
    "adj": {
     "bb100": 154.04,
-    "lo": 127.48,
-    "hi": 180.96,
-    "se": 13.52,
+    "lo": 128.41,
+    "hi": 179.82,
+    "se": 13.27,
     "hands": 12500,
     "blocks": 25
    },
    "raw": {
     "bb100": 152.72,
-    "lo": 115.66,
-    "hi": 191.47,
-    "se": 19.38,
+    "lo": 115.59,
+    "hi": 190.96,
+    "se": 19.52,
     "hands": 12500,
     "blocks": 25
    },
@@ -3496,17 +3970,17 @@
    ],
    "adj": {
     "bb100": 159.89,
-    "lo": 135.32,
-    "hi": 183.96,
-    "se": 12.74,
+    "lo": 134.92,
+    "hi": 185.26,
+    "se": 12.68,
     "hands": 12500,
     "blocks": 25
    },
    "raw": {
     "bb100": 160.04,
-    "lo": 123.11,
-    "hi": 196.95,
-    "se": 19.04,
+    "lo": 124.03,
+    "hi": 197.29,
+    "se": 18.73,
     "hands": 12500,
     "blocks": 25
    },
@@ -3536,17 +4010,17 @@
    ],
    "adj": {
     "bb100": 162.23,
-    "lo": 136.64,
-    "hi": 187.94,
-    "se": 12.98,
+    "lo": 136.57,
+    "hi": 188.02,
+    "se": 13.29,
     "hands": 12500,
     "blocks": 25
    },
    "raw": {
     "bb100": 161.47,
-    "lo": 123.78,
-    "hi": 199.39,
-    "se": 19.15,
+    "lo": 123.83,
+    "hi": 199.01,
+    "se": 19.39,
     "hands": 12500,
     "blocks": 25
    },
@@ -3576,17 +4050,17 @@
    ],
    "adj": {
     "bb100": 161.79,
-    "lo": 135.95,
-    "hi": 188.59,
-    "se": 13.6,
+    "lo": 135.12,
+    "hi": 186.79,
+    "se": 13.3,
     "hands": 12500,
     "blocks": 25
    },
    "raw": {
     "bb100": 163.02,
-    "lo": 124.9,
-    "hi": 201.38,
-    "se": 19.56,
+    "lo": 125.59,
+    "hi": 199.28,
+    "se": 19.14,
     "hands": 12500,
     "blocks": 25
    },
@@ -3616,21 +4090,61 @@
    ],
    "adj": {
     "bb100": 162.15,
-    "lo": 135.89,
-    "hi": 186.38,
-    "se": 12.97,
+    "lo": 137.39,
+    "hi": 188.15,
+    "se": 13.05,
     "hands": 12500,
     "blocks": 25
    },
    "raw": {
     "bb100": 161.39,
-    "lo": 124.17,
-    "hi": 197.44,
-    "se": 19.04,
+    "lo": 125.16,
+    "hi": 197.87,
+    "se": 18.58,
     "hands": 12500,
     "blocks": 25
    },
    "decisions": 17267,
+   "invalid": 0
+  },
+  {
+   "group": "tuTr",
+   "hero": "varC7",
+   "heroName": "Variante C nach Prüfung A/B (Größensignale, aggressive und passive Aktionen getrennt geprüft)",
+   "cond": "p23:Tr|gemischt|100",
+   "condName": "p23:Tr, 100 BB",
+   "startBB": 100,
+   "runs": [
+    "tuTr_varC7_p23-Tr_gemischt_100BB_s23231_2500",
+    "tuTr_varC7_p23-Tr_gemischt_100BB_s23232_2500",
+    "tuTr_varC7_p23-Tr_gemischt_100BB_s23233_2500",
+    "tuTr_varC7_p23-Tr_gemischt_100BB_s23234_2500",
+    "tuTr_varC7_p23-Tr_gemischt_100BB_s23235_2500"
+   ],
+   "seeds": [
+    23231,
+    23232,
+    23233,
+    23234,
+    23235
+   ],
+   "adj": {
+    "bb100": 157.9,
+    "lo": 130.49,
+    "hi": 184.49,
+    "se": 13.74,
+    "hands": 12500,
+    "blocks": 25
+   },
+   "raw": {
+    "bb100": 157.07,
+    "lo": 118.43,
+    "hi": 193.94,
+    "se": 19.5,
+    "hands": 12500,
+    "blocks": 25
+   },
+   "decisions": 17304,
    "invalid": 0
   }
  ],
@@ -3701,7 +4215,8 @@
     "tuTr-t-z",
     "tuTr-t-zr",
     "tuTr-t-zsq",
-    "tuTr-t-z1"
+    "tuTr-t-z1",
+    "tuTr-varC7"
    ]
   },
   {
@@ -3762,7 +4277,8 @@
     "tuE-t-z",
     "tuE-t-zr",
     "tuE-t-zsq",
-    "tuE-t-z1"
+    "tuE-t-z1",
+    "tuE-varC7"
    ]
   },
   {
@@ -3831,7 +4347,8 @@
     "tuTr-t-z",
     "tuTr-t-zr",
     "tuTr-t-zsq",
-    "tuTr-t-z1"
+    "tuTr-t-z1",
+    "tuTr-varC7"
    ]
   },
   {
@@ -3892,7 +4409,8 @@
     "tuE-t-z",
     "tuE-t-zr",
     "tuE-t-zsq",
-    "tuE-t-z1"
+    "tuE-t-z1",
+    "tuE-varC7"
    ]
   },
   {
@@ -3961,7 +4479,8 @@
     "tuTr-t-w0",
     "tuTr-t-zr",
     "tuTr-t-zsq",
-    "tuTr-t-z1"
+    "tuTr-t-z1",
+    "tuTr-varC7"
    ]
   },
   {
@@ -4022,7 +4541,8 @@
     "tuE-t-w0",
     "tuE-t-zr",
     "tuE-t-zsq",
-    "tuE-t-z1"
+    "tuE-t-z1",
+    "tuE-varC7"
    ]
   },
   {
@@ -4091,7 +4611,8 @@
     "tuTr-t-w0",
     "tuTr-t-z",
     "tuTr-t-zsq",
-    "tuTr-t-z1"
+    "tuTr-t-z1",
+    "tuTr-varC7"
    ]
   },
   {
@@ -4152,7 +4673,8 @@
     "tuE-t-w0",
     "tuE-t-z",
     "tuE-t-zsq",
-    "tuE-t-z1"
+    "tuE-t-z1",
+    "tuE-varC7"
    ]
   },
   {
@@ -4221,7 +4743,8 @@
     "tuTr-t-w0",
     "tuTr-t-z",
     "tuTr-t-zr",
-    "tuTr-t-z1"
+    "tuTr-t-z1",
+    "tuTr-varC7"
    ]
   },
   {
@@ -4282,7 +4805,8 @@
     "tuE-t-w0",
     "tuE-t-z",
     "tuE-t-zr",
-    "tuE-t-z1"
+    "tuE-t-z1",
+    "tuE-varC7"
    ]
   },
   {
@@ -4351,7 +4875,8 @@
     "tuTr-t-w0",
     "tuTr-t-z",
     "tuTr-t-zr",
-    "tuTr-t-zsq"
+    "tuTr-t-zsq",
+    "tuTr-varC7"
    ]
   },
   {
@@ -4412,7 +4937,140 @@
     "tuE-t-w0",
     "tuE-t-z",
     "tuE-t-zr",
-    "tuE-t-zsq"
+    "tuE-t-zsq",
+    "tuE-varC7"
+   ]
+  },
+  {
+   "id": "tuTr-varC7",
+   "title": "Abstimmung Tr23: Variante C nach Prüfung A/B (Größensignale, aggressive und passive Aktionen getrennt geprüft) gegen 2.1.0",
+   "group": "tuTr",
+   "a": "varC7",
+   "b": "coach210",
+   "aName": "Variante C nach Prüfung A/B (Größensignale, aggressive und passive Aktionen getrennt geprüft)",
+   "bName": "Coach 2.1.0 (exploitativ)",
+   "adj": {
+    "diff": -2.04,
+    "lo": -10.95,
+    "hi": 7.11,
+    "se": 4.57,
+    "hands": 12500,
+    "pairs": 5,
+    "blocks": 25
+   },
+   "raw": {
+    "diff": -1.49,
+    "lo": -11.32,
+    "hi": 8,
+    "se": 4.88,
+    "hands": 12500,
+    "pairs": 5,
+    "blocks": 25
+   },
+   "decisionsA": 17304,
+   "decisionsB": 17246,
+   "invalidA": 0,
+   "invalidB": 0,
+   "seeds": [
+    23231,
+    23232,
+    23233,
+    23234,
+    23235
+   ],
+   "runsA": [
+    "tuTr_varC7_p23-Tr_gemischt_100BB_s23231_2500",
+    "tuTr_varC7_p23-Tr_gemischt_100BB_s23232_2500",
+    "tuTr_varC7_p23-Tr_gemischt_100BB_s23233_2500",
+    "tuTr_varC7_p23-Tr_gemischt_100BB_s23234_2500",
+    "tuTr_varC7_p23-Tr_gemischt_100BB_s23235_2500"
+   ],
+   "runsB": [
+    "tuTr_coach210_p23-Tr_gemischt_100BB_s23231_2500",
+    "tuTr_coach210_p23-Tr_gemischt_100BB_s23232_2500",
+    "tuTr_coach210_p23-Tr_gemischt_100BB_s23233_2500",
+    "tuTr_coach210_p23-Tr_gemischt_100BB_s23234_2500",
+    "tuTr_coach210_p23-Tr_gemischt_100BB_s23235_2500"
+   ],
+   "verdict": "nicht belegt",
+   "aAhead": 2,
+   "split": {},
+   "sharedRuns": [
+    "tuTr_coach210_p23-Tr_gemischt_100BB_s23231_2500",
+    "tuTr_coach210_p23-Tr_gemischt_100BB_s23232_2500",
+    "tuTr_coach210_p23-Tr_gemischt_100BB_s23233_2500",
+    "tuTr_coach210_p23-Tr_gemischt_100BB_s23234_2500",
+    "tuTr_coach210_p23-Tr_gemischt_100BB_s23235_2500"
+   ],
+   "sharedWith": [
+    "tuTr-t-C",
+    "tuTr-t-w0",
+    "tuTr-t-z",
+    "tuTr-t-zr",
+    "tuTr-t-zsq",
+    "tuTr-t-z1"
+   ]
+  },
+  {
+   "id": "tuE-varC7",
+   "title": "Abstimmung Gegner-KI E: Variante C nach Prüfung A/B (Größensignale, aggressive und passive Aktionen getrennt geprüft) gegen 2.1.0",
+   "group": "tuE",
+   "a": "varC7",
+   "b": "coach210",
+   "aName": "Variante C nach Prüfung A/B (Größensignale, aggressive und passive Aktionen getrennt geprüft)",
+   "bName": "Coach 2.1.0 (exploitativ)",
+   "adj": {
+    "diff": 10.92,
+    "lo": -3.47,
+    "hi": 23.73,
+    "se": 7.06,
+    "hands": 7500,
+    "pairs": 3,
+    "blocks": 15
+   },
+   "raw": {
+    "diff": 8.49,
+    "lo": -7.31,
+    "hi": 23.14,
+    "se": 7.79,
+    "hands": 7500,
+    "pairs": 3,
+    "blocks": 15
+   },
+   "decisionsA": 10532,
+   "decisionsB": 10545,
+   "invalidA": 0,
+   "invalidB": 0,
+   "seeds": [
+    23241,
+    23242,
+    23243
+   ],
+   "runsA": [
+    "tuE_varC7_bots_gemischt_100BB_poolE_s23241_2500",
+    "tuE_varC7_bots_gemischt_100BB_poolE_s23242_2500",
+    "tuE_varC7_bots_gemischt_100BB_poolE_s23243_2500"
+   ],
+   "runsB": [
+    "tuE_coach210_bots_gemischt_100BB_poolE_s23241_2500",
+    "tuE_coach210_bots_gemischt_100BB_poolE_s23242_2500",
+    "tuE_coach210_bots_gemischt_100BB_poolE_s23243_2500"
+   ],
+   "verdict": "zu wenig Blöcke",
+   "aAhead": 3,
+   "split": {},
+   "sharedRuns": [
+    "tuE_coach210_bots_gemischt_100BB_poolE_s23241_2500",
+    "tuE_coach210_bots_gemischt_100BB_poolE_s23242_2500",
+    "tuE_coach210_bots_gemischt_100BB_poolE_s23243_2500"
+   ],
+   "sharedWith": [
+    "tuE-t-C",
+    "tuE-t-w0",
+    "tuE-t-z",
+    "tuE-t-zr",
+    "tuE-t-zsq",
+    "tuE-t-z1"
    ]
   }
  ],
@@ -4426,7 +5084,8 @@
     "tuTr-t-z",
     "tuTr-t-zr",
     "tuTr-t-zsq",
-    "tuTr-t-z1"
+    "tuTr-t-z1",
+    "tuTr-varC7"
    ]
   },
   {
@@ -4438,7 +5097,8 @@
     "tuTr-t-z",
     "tuTr-t-zr",
     "tuTr-t-zsq",
-    "tuTr-t-z1"
+    "tuTr-t-z1",
+    "tuTr-varC7"
    ]
   },
   {
@@ -4450,7 +5110,8 @@
     "tuTr-t-z",
     "tuTr-t-zr",
     "tuTr-t-zsq",
-    "tuTr-t-z1"
+    "tuTr-t-z1",
+    "tuTr-varC7"
    ]
   },
   {
@@ -4462,7 +5123,8 @@
     "tuTr-t-z",
     "tuTr-t-zr",
     "tuTr-t-zsq",
-    "tuTr-t-z1"
+    "tuTr-t-z1",
+    "tuTr-varC7"
    ]
   },
   {
@@ -4474,7 +5136,8 @@
     "tuTr-t-z",
     "tuTr-t-zr",
     "tuTr-t-zsq",
-    "tuTr-t-z1"
+    "tuTr-t-z1",
+    "tuTr-varC7"
    ]
   },
   {
@@ -4486,7 +5149,8 @@
     "tuE-t-z",
     "tuE-t-zr",
     "tuE-t-zsq",
-    "tuE-t-z1"
+    "tuE-t-z1",
+    "tuE-varC7"
    ]
   },
   {
@@ -4498,7 +5162,8 @@
     "tuE-t-z",
     "tuE-t-zr",
     "tuE-t-zsq",
-    "tuE-t-z1"
+    "tuE-t-z1",
+    "tuE-varC7"
    ]
   },
   {
@@ -4510,15 +5175,16 @@
     "tuE-t-z",
     "tuE-t-zr",
     "tuE-t-zsq",
-    "tuE-t-z1"
+    "tuE-t-z1",
+    "tuE-varC7"
    ]
   }
  ],
  "totals": {
-  "runs": 56,
-  "hands": 140000,
-  "coachDecisions": 194687,
+  "runs": 64,
+  "hands": 160000,
+  "coachDecisions": 222523,
   "invalidCoach": 0,
-  "cpuSeconds": 7789
+  "cpuSeconds": 8713
  }
 }

@@ -75,14 +75,14 @@ function buildRange(v, seat, st, gto, pfaSeat) {
     // 2.3 (hybrides Modell C): Modellmittelung der Range-Schätzung. Gewicht der Populationstabelle = Belastbarkeit der Tabelle für diesen Gegner
     // (hybridFit); der Rest kommt aus dem robusten Modell 2.1. Beide Posteriori werden normiert gemischt.
     var wL = Float64Array.from(w);
-    R.narrowPostflop(w, v.actions, seat, v.board, prof, pfaSeat, v.street, { sm: sm, nPlayers: v.players.length, sizeShrink: R.ABL.hybrid ? FIT.rho : 0 });
+    R.narrowPostflop(w, v.actions, seat, v.board, prof, pfaSeat, v.street, { sm: sm, nPlayers: v.players.length, sizeShrink: R.ABL.hybrid ? fitParams().rho : 0 });
     R.narrowPostflop(wL, v.actions, seat, v.board, prof, pfaSeat, v.street, { legacy: true });
     var sT = 0, sL = 0; for (var k = 0; k < w.length; k++) { sT += w[k]; sL += wL[k]; }
     // Prüfbefund A23-1: nach der Mischung auf die gemischte Masse zurückskalieren (Kombinationszahl und Matrix bleiben vergleichbar)
     var mass = wTab * sT + (1 - wTab) * sL;
     if (sT > 0 && sL > 0) for (var k2 = 0; k2 < w.length; k2++) w[k2] = (wTab * w[k2] / sT + (1 - wTab) * wL[k2] / sL) * mass;
     else if (!(sT > 0)) w.set(wL);
-  } else if (v.street > 0) R.narrowPostflop(w, v.actions, seat, v.board, prof, pfaSeat, v.street, legacy ? { legacy: true } : { sm: sm, nPlayers: v.players.length, sizeShrink: R.ABL.hybrid ? FIT.rho : 0 });
+  } else if (v.street > 0) R.narrowPostflop(w, v.actions, seat, v.board, prof, pfaSeat, v.street, legacy ? { legacy: true } : { sm: sm, nPlayers: v.players.length, sizeShrink: R.ABL.hybrid ? fitParams().rho : 0 });   /* B23-13 */
   return { w: w, line: line, sm: sm, prof: prof };
 }
 /**
@@ -438,15 +438,14 @@ function analyzeMode(input, v, mode, level, L0, budget, rng, deadline, set, prep
   };
 }
 /** Bezeichnung des Preflop-Ankers im Erklärtext. 2.3 (Arbeitspaket 7): Das Push/Fold-Modellspiel ist ausdrücklich keine vollständige Strategie. */
-function chartRef(ch) {
-  return /Push\/Fold/.test(ch.kind) ? 'der ' + ch.kind + ' (vereinfachtes Spiel nur mit All-in oder Fold vor dem Flop, keine vollständige No-Limit-Strategie; die Größe wählt das EV-Modell)' : 'dem Faustregel-Chart (' + ch.kind + ')';
-}
+function chartRef(ch) { return /Push\/Fold/.test(ch.kind) ? 'der ' + ch.kind : 'dem Faustregel-Chart (' + ch.kind + ')'; }
+var PF_NOTE = 'Das Push/Fold-Modellspiel ist ein vereinfachtes Spiel nur mit All-in oder Fold vor dem Flop, keine vollständige No-Limit-Strategie.';
 /** Chart-Gewichte der eigenen Startklasse für die aktuelle Preflop-Situation */
 function heroChart(v, ctx, pre) {
   var me = ctx.me, pos = me.pos, ci = H.classIdx(v.cards[0], v.cards[1]), effBB = ctx.eff / ctx.bb, ch, kind;
   if (pre.rc === 0 && pre.limpers === 0) {
     // Prüfer B 2.2 (B-5): Der Chart des Push/Fold-Modellspiels bestimmt die Handauswahl; die Größe (All-in oder kleines Open) wählt das EV-Modell
-    if (effBB <= 15) { ch = R.chart('push', { pos: pos, bb: effBB }); kind = 'Handauswahl des Push/Fold-Modellspiels bei ' + Math.round(effBB) + ' BB effektiv'; }
+    if (effBB <= 15) { ch = R.chart('push', { pos: pos, bb: effBB }); kind = 'Handauswahl des Push/Fold-Modellspiels ' + (effBB < 3 ? 'unter 3 BB (Lösung für 3 BB)' : 'bei ' + Math.round(effBB) + ' BB effektiv');   /* E23-6: gelöst ab 3 BB */ }
     else { ch = R.chart('rfi', { pos: pos }); kind = 'Open-Raise-Chart ' + pos; }
   } else if (pre.rc === 0) { ch = R.chart('iso', { pos: pos }); kind = 'Chart gegen Limper (' + pos + ')'; }
   else if (pre.rc === 1) { var op = v.players[pre.opener].pos; ch = R.chart('vsOpen', { pos: pos, opener: op, sizeBB: pre.lastTo / v.bb, squeeze: pre.callers > 0 }); kind = 'Chart ' + pos + ' gegen Open ' + op; }
@@ -684,8 +683,8 @@ function explain(a, depth) {
   if (best.type === 'fold') {
     if (po && eq.eq < po.need) core = 'Fold: Du müsstest ' + fmt(po.call) + ' zahlen und bräuchtest dafür mindestens ' + pct(po.need) + ' Gewinnchance. Geschätzt hast du nur etwa ' + pct(eq.eq) + '.';
     else if (po) core = 'Fold: Die rohe Equity (' + pct(eq.eq) + ') liegt zwar über den benötigten ' + pct(po.need) + ', ' + (a.street < 3 && !(a.actions[0].parts || {}).allin ? 'aber ' + (a.ip ? '' : 'außer Position ') + 'realisierst du davon auf den späteren Straßen nur einen Teil, und weitere Einsätze drohen.' : 'aber gegen die wahrscheinliche Range des Gegners verlierst du zu oft.');
-    else if (a.street === 0 && a.chart && a.chart.exploit && a.chart.exploit.dir === 'enger') core = 'Fold: ' + a.hand.cls + ' ist laut ' + a.chart.kind + ' spielbar, aber dieser Gegner foldet nach den Beobachtungen zu selten, als dass sich der Raise lohnt.';
-    else if (a.street === 0 && a.chart) core = 'Fold: ' + a.hand.cls + ' gehört laut ' + a.chart.kind + ' nicht zu den spielbaren Händen' + (a.chart.raise > 0 || a.chart.call > 0 ? ' (nur ' + pct(a.chart.raise + a.chart.call) + ' Spielanteil)' : '') + '.';
+    else if (a.street === 0 && a.chart && a.chart.exploit && a.chart.exploit.dir === 'enger') core = 'Fold: ' + a.hand.cls + ' ist laut ' + (/Push\/Fold/.test(a.chart.kind) ? 'der ' : '') + a.chart.kind + ' spielbar, aber dieser Gegner foldet nach den Beobachtungen zu selten, als dass sich der Raise lohnt.';
+    else if (a.street === 0 && a.chart) core = 'Fold: ' + a.hand.cls + ' gehört laut ' + (/Push\/Fold/.test(a.chart.kind) ? 'der ' : '') + a.chart.kind + ' nicht zu den spielbaren Händen' + (a.chart.raise > 0 || a.chart.call > 0 ? ' (nur ' + pct(a.chart.raise + a.chart.call) + ' Spielanteil)' : '') + '.';
     else core = 'Fold.';
   }
   else if (best.type === 'call' && !po) core = 'Call: Du zahlst ' + fmt(a.callAmt) + ' und siehst den Flop günstig (Equity etwa ' + pct(eq.eq) + ').';
@@ -696,7 +695,12 @@ function explain(a, depth) {
     core = actWord + ': ' + (value ? 'Mit etwa ' + pct(eq.eq) + ' Equity holst du Value von schwächeren Händen.' : 'Die Bet gewinnt den Pot geschätzt in etwa ' + pct(p.pAllFold || 0) + ' der Fälle sofort' + (a.hand.draw && a.hand.draw.strong ? ', und dein Draw hat Rückhalt.' : '.'));
   }
   if (a.mix) core += ' Im Gleichgewicht sind ' + a.mix.passive + ' und ' + a.mix.bluff + ' (Bluff) etwa gleich viel wert; eine Einzelhand-Empfehlung kann diese Mischung nicht abbilden, ' + a.mix.passive + ' ist die risikoärmere Wahl.';
-  if (a.street === 0 && a.chart && a.chart.applied) core += ' Preflop folgt der Coach hier ' + chartRef(a.chart) + '; das vereinfachte EV-Modell sähe ' + a.chart.modelBest + ' um ' + bbTxt(a.chart.modelGap, bb) + ' vorn, aber nur wegen Fold-Annahmen, die nicht durch Gegnerwerte belegt sind.';
+  // E23-6: Hinweis auf die Vereinfachung einmal; den Modellabstand nur nennen, wenn er mindestens 0,05 BB beträgt
+  var speechCore = null;
+  if (a.street === 0 && a.chart && a.chart.applied) { var pfK = /Push\/Fold/.test(a.chart.kind), gapOk = (a.chart.modelGap || 0) >= 0.05 * bb; speechCore = core;
+    if (!pfK) core += ' Preflop folgt der Coach hier ' + chartRef(a.chart) + (gapOk ? '; das vereinfachte EV-Modell sähe ' + a.chart.modelBest + ' um ' + bbTxt(a.chart.modelGap, bb) + ' vorn, aber nur wegen Fold-Annahmen, die nicht durch Gegnerwerte belegt sind.' : '.');
+    else core += ' ' + PF_NOTE + (gapOk ? ' Das vereinfachte EV-Modell sähe ' + a.chart.modelBest + ' um ' + bbTxt(a.chart.modelGap, bb) + ' vorn, aber nur wegen nicht belegter Fold-Annahmen.' : '');
+    if (!pfK) speechCore = null; }
   else if (a.street === 0 && a.chart && a.chart.exploit) core += ' Das weicht vom Faustregel-Chart ab: Nach ' + a.chart.exploit.obs + ' beobachteten Situationen liegt die geschätzte Fold-Rate dieses Gegners bei ' + pct(a.chart.exploit.post) + '; mit ' + pct(a.chart.exploit.p) + ' Wahrscheinlichkeit ' + (a.chart.exploit.dir === 'enger' ? 'unter' : 'über') + ' der Break-even-Rate von ' + pct(a.chart.exploit.fBeRaw != null ? a.chart.exploit.fBeRaw : a.chart.exploit.fBe) + ' (auf die Größe dieses Raises und die Gewichtung im Modell umgerechnet).';
   lines.einsteiger.push(core);
   if (a.street === 0 && a.actions.length) lines.einsteiger.push(a.hand.top <= 0.4 ? a.hand.cls + ' gehört zu den besten ' + (a.hand.top < 0.01 ? '1' : Math.round(a.hand.top * 100)) + ' % aller Starthände.' : a.hand.cls + ' liegt auf Rang ' + (H.CLS_RANK[H.nameToIdx(a.hand.cls)] + 1) + ' von 169 Starthandklassen.');
@@ -726,7 +730,7 @@ function explain(a, depth) {
   if (a.model) x.push('Modellspiel: ' + a.model.freqs.map(function (q) { return q.act + ' ' + pct(q.f); }).join(', ') + ' für deine Stärkegruppe ' + a.model.bucket + '/' + a.model.buckets + '. ' + a.model.note);
   if (a.modeDiff) x.push(a.modeDiff.text + (a.modeDiff.reasons.length ? ' ' + a.modeDiff.reasons.join(' ') : ''));
   x.push('Annahmen: Ranges aus Faustregel-Charts und Bayes-Aktualisierung nach den Aktionen; Gegnerwerte geglättet (Beta-Prior); Multiway-Equity per Produktnäherung kalibriert; spätere Straßen über Equity Realization genähert.');
-  return { einsteiger: lines.einsteiger.join(' '), fortgeschritten: lines.fortgeschritten.join(' '), experte: lines.experte.join(' '), speech: core };
+  return { einsteiger: lines.einsteiger.join(' '), fortgeschritten: lines.fortgeschritten.join(' '), experte: lines.experte.join(' '), speech: speechCore || core };   /* E23-6: kurze Sprachausgabe */
 }
 
 // ---------- Bewertung der gewählten Aktion ----------

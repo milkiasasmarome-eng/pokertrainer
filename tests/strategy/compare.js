@@ -56,8 +56,8 @@ const HEROES = {
   't-zsq': { kind: 'coach', root: path.join(ROOT, '..', 'wt-c6'), mode: 'exploit', abl: { hybrid: true, respSq: true, fit: { zHi: 0, zLo: -2 } }, name: 'Abstimmung: C empfindlich, Reaktion quadratisch' },
   't-z1': { kind: 'coach', root: path.join(ROOT, '..', 'wt-c6'), mode: 'exploit', abl: { hybrid: true, fit: { zHi: 1, zLo: -1 } }, name: 'Abstimmung: C sehr empfindlich' },
   'varCz1': { kind: 'coach', root: path.join(ROOT, '..', 'wt-c4'), mode: 'exploit', abl: { hybrid: true, fit: { zHi: 1, zLo: -1 } }, name: 'Variante C (abgestimmt auf Tr23/E): hybrid, sehr empfindliche Schwellen' },
-  'varC7': { kind: 'coach', root: path.join(ROOT, '..', 'wt-c7'), mode: 'exploit', abl: {}, name: 'Variante C nach Prüfung A/B (Größensignale, getrennte Prüfung aggressiver Aktionen)' },
-  'varB7': { kind: 'coach', root: path.join(ROOT, '..', 'wt-c7'), mode: 'exploit', abl: { hybrid: false }, name: 'Variante B (Stand nach Prüfung A/B)' },
+  'varC7': { kind: 'coach', root: path.join(ROOT, '..', 'wt-c9'), mode: 'exploit', abl: {}, name: 'Variante C nach Prüfung A/B (Größensignale, aggressive und passive Aktionen getrennt geprüft)' },
+  'varB7': { kind: 'coach', root: path.join(ROOT, '..', 'wt-c9'), mode: 'exploit', abl: { hybrid: false }, name: 'Variante B (Stand nach Prüfung A/B)' },
   'varC2': { kind: 'coach', root: ROOT, mode: 'exploit', abl: { hybrid: true, respLegacy: true }, name: 'Variante C2: hybride Range, Reaktionsmodell 2.1' },
   // 2.3 Ablation (Arbeitspaket 1): Coach 2.2 mit einzelnen Komponenten im Stand 2.1
   'abl-R': { kind: 'coach', root: ROOT, mode: 'exploit', abl: { rangeLegacy: true }, name: 'Ablation: Range-Eingrenzung 2.1' },
