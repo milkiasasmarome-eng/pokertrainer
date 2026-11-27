@@ -2,6 +2,53 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [2.1.0] – 2026-11-27
+
+Folgeaudit mit Überprüfung der externen Befunde A1–A6, vier unabhängigen Prüfagenten (A Mathematik, B Strategie, C Architektur/Sicherheit/Datenbank, D Oberfläche/Barrierefreiheit/PWA), statistisch abgesicherten Strategievergleichen und neuem Gegnergedächtnis. Details: `docs/AUDIT.md`, `docs/TESTBERICHT.md`, `docs/VALIDIERUNG_MATHE.md`, `docs/STRATEGIE.md`, `docs/audit-2.1/`.
+
+### Mathematik (Befunde A2–A5, Prüfer A)
+- **A2** Leere oder unvereinbare Ranges in Side-Pot- und Equity-Rechnungen: gekennzeichneter Fehlschlag statt stiller 0 oder NaN, bis in EV-Engine und Coach verfolgt.
+- **A3/A5** Equity-Cache berücksichtigt Methode, erreichte Genauigkeit, Zufallsstrom und Umfang; Range-Kennung ohne Informationsverlust (exakte Gewichte statt Rundung auf 1/1000).
+- **A4** Zeitgrenze überall: exakte Enumeration, Side-Pot-Simulation, Equity je Kombination und River-Modellspiel brechen ab und kennzeichnen das Ergebnis; ein abgebrochenes exaktes Ergebnis gilt nie als exakt.
+- **Monte Carlo:** Stoppregel ohne Verzerrung, Intervall passend zu Equity-Werten mit geteilten Pots; Abdeckung je Analysestufe gegen exakte Enumeration geprüft.
+- **Handbewertung:** unabhängige Best-of-Five-Referenz, individuelle Prüfung jeder Fünf-Karten-Hand, Kicker, Gleichstände, Board spielt, Permutations- und Farbinvarianz; Häufigkeits- und Individualprüfung im Bericht getrennt.
+
+### Coach und Strategie (Befunde A1, A6, Prüfer B)
+- **A1** Beide Analysemodi teilen gemeinsame Zwischenergebnisse und erhalten gleiche Budget- und Zeitanteile mit eigenen Zufallsströmen; Ergebnis unabhängig von Reihenfolge und Cache-Zustand.
+- **A6** Exploits nur mit Bayes-Beleg auf der tatsächlich verwendeten Fold-Rate und mindestens einer eigenen Beobachtung statt starrer 20 Beobachtungen; Kurz- und Langzeitwerte auf gemeinsamer Zeitskala.
+- Postflop-Reaktionsmodell an der Gegnerpopulation kalibriert (Log-Loss auf Prüfdaten 0,771 gegen 0,894 in 2.0.1); Callrange mit scharfem Schnitt; Leads nach absoluter Stärke eingegrenzt.
+- Preflop: Fold wird wie jede Aktion am Chart gemessen; Short Stack ohne Nicht-All-in-Raises ab einem Drittel des Stacks.
+- Bewertung frei gewählter Größen mit begrenzter Modellunsicherheit; reine Bluffs im gleichgewichtsnahen Modus EV-neutral statt systematisch negativ.
+- Gegner-KI: Calls hängen von Einsatzgröße und Stil ab (vorher callten starke Hände jede Größe).
+
+### Gegnergedächtnis
+- Datenformat 3 mit Langzeit- und Kurzzeitwerten, Showdowns getrennt von Schätzungen, Erkennung von Stilwechseln; Migration aus Format 2 mit Sicherung.
+
+### Neu
+- **Startüberwachung und Wiederherstellung** (`assets/js/recovery.js`): Zeitlimits für alle Startschritte (IndexedDB, Tab-Sperre, Daten lesen, Migrationssuche), Hinweis nach 4 s, Fehleranzeige spätestens nach 20 s oder sofort bei fehlender Programmdatei. Wiederherstellung: „Neu laden“, abgesicherter Start (`?start=sicher`, gespeicherte Daten bleiben unberührt), Rohsicherung aller lokalen Daten und erst danach „Lokale Daten zurücksetzen“. Rohsicherungen lassen sich importieren; gültige Einträge werden übernommen.
+- **Benchmark-Export** je Entscheidung (Handhistorie → „Export Benchmark“, Schema-Version 1, `docs/BENCHMARK_EXPORT.md`): Spielzustand zum Entscheidungszeitpunkt getrennt von späteren Informationen, Coach-Empfehlung, Alternativen mit EV und Unsicherheit, Equity, Modus, Stufe, Modell- und Softwareversion, Rechenaufwand, Seeds; ohne persönliche Daten, byteweise reproduzierbar, nachrechenbar.
+- **Mehrere Fenster:** Browser-Tab und installierte App teilen die Daten; das zweite Fenster ist schreibgeschützt (auch Import, Löschen, neue Session) und bietet „Hier weiterspielen“ an, sobald das erste geschlossen ist.
+- Einstellung „Tastenkürzel aus einem Zeichen“ (abschaltbar, WCAG 2.1.4); Einstellungen → Daten → „Rohsicherung exportieren“.
+- **CI:** Build-Reproduzierbarkeit (`tools/check-build.js`), Versionsgleichheit (`tools/check-version.js`), vollständige Suite, Browsertests mit Chromium und axe-core in GitHub Actions als Pflicht vor der Veröffentlichung, Live-Smoke-Test danach (`tests/smoke-live.js`), Testartefakte, Langläufer getrennt (`langlauf.yml`).
+
+### Behoben
+- Trainer blieb dauerhaft bei „Lade …“, wenn IndexedDB nicht antwortete oder blockiert war.
+- Import einer vollständigen Sicherung mit Lerndaten brach mit einem Skriptfehler ab (Dialog blieb bei „Sichere aktuelle Daten …“).
+- Die Markierung „Migration aus Entwurf 2 erledigt“ ging beim ersten Speichern verloren; die alte Datenbank wurde bei jedem Start erneut gesichert.
+- Beschädigte Einträge im lokalen Speicher (Einstellungen außerhalb des Wertebereichs, laufende Hand, Hände) konnten Folgefehler auslösen oder ungeprüft angezeigt werden; Handdatensätze werden jetzt vor jeder Anzeige, Sicherung und jedem Export streng geprüft (endliche Zahlen, Wertebereiche, bekannte Felder).
+- Barrierefreiheit (axe-core, WCAG 2.2 AA, hell und dunkel: 0 Verstöße, Bericht `docs/BARRIEREFREIHEIT.md`): Range-Matrix ohne ungültige Grid-Rollen und mit Pfeiltasten, Kontraste (gefoldete Plätze, Abzeichen, Dunkelmodus), Namen von Schaltern und Plätzen, Fokusfalle und inerter Hintergrund in Dialogen, nicht abgeschnittener Fokus, sparsame Live-Ansagen statt Ansage bei jeder Bot-Aktion, Zielgrößen ≥ 24 px, reduzierte Bewegung auch beim Scrollen.
+
+### Behoben (unabhängige Prüfung 2.1, Prüfer C und D – `docs/audit-2.1/PRUEFUNG_C_D.md`)
+- Daten: Import lehnt nicht endliche Zahlen (1e999) und die Gegner-ID `__proto__` ab; Rohsicherung ohne lesbare IndexedDB gilt als unvollständig (Zurücksetzen nur nach Bestätigung des Verlusts); beschädigte lokale Einträge werden vor dem ersten Überschreiben roh gesichert (Start, Import); Importgrenze 256 MB statt 60 MB, damit jede eigene vollständige Sicherung wieder einlesbar ist; Archivfassung 2.0.1 wird nicht mehr im selben Ursprung veröffentlicht.
+- Performance: Handende liest die Handhistorie nicht mehr vollständig (bei 3.000 Händen 1,8 s Blockade).
+- Mehrere Tabs: ohne Web Locks kein zweiter schreibender Tab mehr; nach einem Update schreibt der neu geladene Tab weiter; ein Tab mit altem Programmstand startet keine Worker des neuen Stands.
+- Barrierefreiheit: Fokus bleibt beim Neuzeichnen erhalten (Plätze, Hinweise, Replayer, Gegnerliste, eigene Aktion, Quiz), Sprunglink ohne Bereichswechsel, Kürzel nicht auf Knöpfen außerhalb der Aktionsleiste, Zug-Ansage nur einmal, wichtige Hinweise werden angesagt, Handverlauf per Tastatur scrollbar, Hinweis ohne JavaScript, Fokus nach „Weiter warten“.
+- Darstellung: keine Überdeckungen am Tisch von 320 bis 1366 px (eigene Karten, Pot, Board, Einsätze, Marker); HUD-Werte umbrechen bei größeren Textabständen.
+
+### Geändert
+- Importdateien werden im Web Worker geprüft (23 MB in 1,3 s, längste Blockade der Oberfläche 0,3 s); Dateien über 60 MB werden vor dem Lesen abgelehnt.
+- Antwortet IndexedDB nicht oder ist sie fehlerhaft, arbeitet der Trainer nur im Arbeitsspeicher (statt in einem zweiten, abweichenden Speicher im localStorage); „Jetzt aktualisieren“ schließt vorher alle Schreibvorgänge ab.
+
 ## [2.0.1] – 2026-11-26
 
 Korrekturen nach zwei unabhängigen Prüfungen (Details: `docs/AUDIT.md`).

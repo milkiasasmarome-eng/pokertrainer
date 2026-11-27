@@ -1,4 +1,4 @@
-/* PokerTrainer 2.0 – Ansichten: Training, Handhistorie mit Replayer, Range-Matrix, Gegnerdatenbank,
+/* PokerTrainer 2.1 – Ansichten: Training, Handhistorie mit Replayer, Range-Matrix, Gegnerdatenbank,
    Lernfortschritt, Einstellungen, Hilfe. */
 (function () {
 'use strict';
@@ -10,7 +10,18 @@ function sectionHead(title, sub) { return '<div class="panel"><h2>' + esc(title)
 function scoreColor(s) { return s == null ? '' : s >= 75 ? 'good' : s < 55 ? 'bad' : ''; }
 function meter(score) { if (score == null) return '<div class="meter"><i style="width:0"></i></div>'; var c = score >= 75 ? '' : score >= 55 ? ' warn' : ' bad'; return '<div class="meter' + c + '"><i style="width:' + Math.round(Math.max(0, Math.min(100, score))) + '%"></i></div>'; }
 function n0(x) { return x == null ? '–' : Math.round(x); }
-function num(x, d) { return x == null || !isFinite(x) ? '–' : x.toFixed(d == null ? 1 : d).replace('.', ','); }
+function num(x, d) { return typeof x !== 'number' || !isFinite(x) ? '–' : x.toFixed(d == null ? 1 : d).replace('.', ','); }
+function int(x) { return typeof x === 'number' && isFinite(x) ? String(Math.round(x)) : '–'; }
+/** Gespeicherte Hände lesen und prüfen: Beschädigte oder manipulierte Einträge werden nicht angezeigt (und nie per innerHTML ausgegeben). */
+function loadHands() {
+  return Store.all('hands').then(function (l) {
+    var ok = [], bad = 0;
+    (l || []).forEach(function (h) { if (PT.training.validHand(h)) bad++; else ok.push(h); });
+    ok.skipped = bad;
+    return ok;
+  });
+}
+PTUI.loadHands = loadHands;
 
 // ---------- Training ----------
 var quizState = null;
@@ -33,14 +44,18 @@ views.training = function (el) {
   el.innerHTML = html;
   el.onclick = function (e) {
     var b = e.target.closest('[data-train]'); if (b) { PTUI.startTraining(b.getAttribute('data-train')); return; }
-    if (e.target.closest('[data-review]')) { var q = PT.training.srsDue(S.learning, Date.now()).slice(0, 20); if (q.length) PTUI.startTraining(q[0].cat, q.map(function (x) { return { key: x.key, cat: PT.training.SCEN[x.cat] ? x.cat : 'preflop-open', seed: x.seed }; })); return; }
+    if (e.target.closest('[data-review]')) { var q = PT.training.srsDue(S.learning, Date.now()).slice(0, 20); if (q.length) PTUI.startTraining(PT.training.hasScen(q[0].cat) ? q[0].cat : 'preflop-open', q.map(function (x) { return { key: x.key, cat: PT.training.hasScen(x.cat) ? x.cat : 'preflop-open', seed: x.seed }; })); return; }
     var qa = e.target.closest('[data-qa]'); if (qa && quizState && quizState.answered == null) {
       quizState.answered = +qa.getAttribute('data-qa');
       var right = quizState.answered === quizState.q.ok, Q = S.learning.quiz;
       Q.n++; if (right) Q.correct++; var bt = Q.byType[quizState.q.type] || (Q.byType[quizState.q.type] = { n: 0, c: 0 }); bt.n++; if (right) bt.c++;
-      PTUI.persistLearning(); renderQuiz(); return;
+      PTUI.persistLearning(); renderQuiz();
+      // Ergebnis ansagen und Fokus auf „Nächste Frage“ (die Antwortknöpfe sind jetzt gesperrt, Prüfung D t6)
+      var res = document.querySelector('#quizBox p.good, #quizBox p.bad'), nx = document.querySelector('#quizBox [data-qnext]');
+      if (res) H.announce(res.textContent); if (nx) nx.focus();
+      return;
     }
-    if (e.target.closest('[data-qnext]')) { quizState = null; renderQuiz(); }
+    if (e.target.closest('[data-qnext]')) { quizState = null; renderQuiz(); var first = document.querySelector('#quizBox [data-qa]'); if (first) first.focus(); }
   };
   renderQuiz();
 };
@@ -63,14 +78,19 @@ views.analyse = function (el, arg) {
   el.innerHTML = '<div class="panel"><h2>Handhistorie</h2><p class="small">Gespeichert werden bis zu 3.000 eigene Hände mit Entscheidungen, Empfehlungen und Bewertungen – lokal in diesem Browser.</p>' +
     '<div class="toolbar"><input type="search" id="hq" placeholder="Suche: Karten (z. B. AK), Gegner, Board" aria-label="Suche"><select id="hk" aria-label="Filter"><option value="alle">alle Hände</option><option value="fehler">mit Fehlern</option><option value="showdown">mit Showdown</option><option value="training">nur Training</option><option value="gewonnen">gewonnen</option><option value="verloren">verloren</option></select>' +
     '<select id="hp" aria-label="Position"><option value="">alle Positionen</option>' + PT.stats.POSITIONS.map(function (p) { return '<option>' + p + '</option>'; }).join('') + '</select>' +
-    '<button class="btn" type="button" data-hx="json">Export JSON</button><button class="btn" type="button" data-hx="txt">Export Text</button></div><div id="hlist" class="scroll"><p class="muted">Lade …</p></div></div><div id="hreplay"></div>';
+    '<button class="btn" type="button" data-hx="json">Export JSON</button><button class="btn" type="button" data-hx="txt">Export Text</button>' +
+    '<button class="btn" type="button" data-hx="bench" title="Je Entscheidung: Spielzustand zum Entscheidungszeitpunkt, Coach-Empfehlung, Alternativen mit EV und Unsicherheit; spätere Informationen getrennt">Export Benchmark</button></div>' +
+    '<p class="small" id="hskip" hidden></p><div id="hlist" class="scroll"><p class="muted">Lade …</p></div></div><div id="hreplay"></div>';
   $('hq').value = hist.filter.q; $('hk').value = hist.filter.kind; $('hp').value = hist.filter.pos;
-  function load() { return Store.all('hands').then(function (l) { l.sort(function (a, b) { return b.ts - a.ts; }); hist.list = l; renderList(); if (arg) { var h = l.filter(function (x) { return x.id === arg; })[0]; if (h) openReplay(h); } }); }
+  function load() { return loadHands().then(function (l) {
+    if (l.skipped) { var sk = $('hskip'); if (sk) { sk.hidden = false; sk.textContent = l.skipped + ' beschädigte Einträge in der gespeicherten Handhistorie werden nicht angezeigt.'; } }
+    l.sort(function (a, b) { return b.ts - a.ts; }); hist.list = l; renderList(); if (arg) { var h = l.filter(function (x) { return x.id === arg; })[0]; if (h) openReplay(h); } }); }
   ['hq', 'hk', 'hp'].forEach(function (id) { $(id).addEventListener(id === 'hq' ? 'input' : 'change', function () { hist.filter = { q: $('hq').value, kind: $('hk').value, pos: $('hp').value }; renderList(); }); });
   el.onclick = function (e) {
     var r = e.target.closest('tr[data-hid]'); if (r) { var h = hist.list.filter(function (x) { return x.id === r.getAttribute('data-hid'); })[0]; if (h) openReplay(h); return; }
     var x = e.target.closest('[data-hx]'); if (x) { var f = filtered(), kind = x.getAttribute('data-hx');
       if (kind === 'json') H.download('PokerTrainer_Haende_' + H.today() + '.json', JSON.stringify({ format: 'PokerTrainer-Hands', version: 1, app: PT.VERSION, count: f.length, hands: f }));
+      else if (kind === 'bench') { var bt = PT.benchmark.exportText(f), bo = JSON.parse(bt); H.download('PokerTrainer_Benchmark_v' + PT.benchmark.SCHEMA + '_' + H.today() + '.json', bt); H.toast('Benchmark-Export: ' + bo.count + ' Entscheidungen aus ' + bo.hands + ' Händen.'); }
       else H.download('PokerTrainer_Haende_' + H.today() + '.txt', f.map(PT.training.handText).join('\n\n'), 'text/plain');
       return; }
     var st = e.target.closest('[data-step]'); if (st) { stepTo(st.getAttribute('data-step')); return; }
@@ -78,7 +98,6 @@ views.analyse = function (el, arg) {
     var rd = e.target.closest('[data-redo]'); if (rd) { redoDecision(+rd.getAttribute('data-redo')); return; }
     var rc = e.target.closest('[data-rchoice]'); if (rc) { chooseRedo(+rc.getAttribute('data-rchoice')); return; }
   };
-  el.onkeydown = function (e) { var r = e.target.closest('tr[data-hid]'); if (r && e.key === 'Enter') r.click(); };
   load();
 };
 function filtered() {
@@ -104,7 +123,7 @@ function renderList() {
   box.innerHTML = '<p class="small">' + l.length + ' Hände</p><div class="scroll"><table class="grid hlist"><thead><tr><th>Zeit</th><th>Hand</th><th>Pos.</th><th>Karten</th><th>Board</th><th class="n">Ergebnis</th><th>Bewertung</th></tr></thead><tbody>' +
     l.slice(0, 300).map(function (h) {
       var worst = h.decisions.reduce(function (m, d) { return !m || d.score < m.score ? d : m; }, null);
-      return '<tr class="click" tabindex="0" data-hid="' + esc(h.id) + '"><td>' + esc(H.dateTxt(h.ts)) + '</td><td>#' + h.no + (h.training ? ' <span class="pill">' + esc((PT.training.SCEN[h.training] || {}).name || 'Training') + '</span>' : '') + '</td><td>' + esc(h.seats[h.heroSeat].pos) + '</td><td><span class="cards">' + H.cardsHtml(h.hero, 'sm') + '</span></td><td><span class="cards">' + H.cardsHtml(h.board.join(''), 'sm') + '</span></td><td class="n ' + (h.heroNet > 0 ? 'good' : h.heroNet < 0 ? 'bad' : '') + '">' + U.fmtSigned(h.heroNet) + '</td><td>' + (worst ? H.gradeHtml({ grade: worst.grade, simple: PT.coach.GRADE_SIMPLE[worst.grade], lossBB: null }) : '–') + '</td></tr>';
+      return '<tr class="click" data-hid="' + esc(h.id) + '"><td><button type="button" class="linkbtn" aria-label="Hand #' + int(h.no) + ' vom ' + esc(H.dateTxt(h.ts)) + ' öffnen">' + esc(H.dateTxt(h.ts)) + '</button></td><td>#' + int(h.no) + (h.training ? ' <span class="pill">' + esc((PT.training.SCEN[h.training] || {}).name || 'Training') + '</span>' : '') + '</td><td>' + esc(h.seats[h.heroSeat].pos) + '</td><td><span class="cards">' + H.cardsHtml(h.hero, 'sm') + '</span></td><td><span class="cards">' + H.cardsHtml(h.board.join(''), 'sm') + '</span></td><td class="n ' + (h.heroNet > 0 ? 'good' : h.heroNet < 0 ? 'bad' : '') + '">' + U.fmtSigned(h.heroNet) + '</td><td>' + (worst ? H.gradeHtml({ grade: worst.grade, simple: PT.coach.GRADE_SIMPLE[worst.grade], lossBB: null }) : '–') + '</td></tr>';
     }).join('') + '</tbody></table></div>' + (l.length > 300 ? '<p class="muted">Es werden die neuesten 300 angezeigt; nutze Filter oder Export.</p>' : '');
 }
 function openReplay(h) {
@@ -114,7 +133,7 @@ function openReplay(h) {
   var rp = PT.rules.replay(h, all);
   hist.sel = { h: h, states: rp.states, shownHoles: shownHoles }; hist.step = 0; hist.redo = null; hist.later = false;
   renderReplay();
-  var r = $('hreplay'); if (r) r.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  var r = $('hreplay'); if (r) r.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
 }
 function stepTo(cmd) {
   var n = hist.sel.states.length - 1;
@@ -123,7 +142,8 @@ function stepTo(cmd) {
   else if (cmd === 'pause') { clearInterval(hist.timer); return; }
   hist.redo = null; renderReplay();
 }
-function renderReplay() {
+function renderReplay() { var box = $('hreplay'); if (box) H.keepFocus(box, renderReplay0); }
+function renderReplay0() {
   var box = $('hreplay'); if (!box || !hist.sel) return;
   var h = hist.sel.h, st = hist.sel.states[hist.step], last = hist.step === hist.sel.states.length - 1;
   if (st.error) { box.innerHTML = '<div class="panel bad">' + esc(st.error) + '</div>'; return; }
@@ -139,19 +159,19 @@ function renderReplay() {
       '<span class="hole">' + hole + '</span>' + (h.button === i ? '<span class="chipmark d">D</span>' : '') + '</div></div>' + (p.bet > 0 ? '<span class="bet b' + i + '">' + fmt(p.bet) + '</span>' : '');
   }
   var pots = st.pots.length > 1 ? st.pots.map(function (p2, k) { return '<span class="pot' + (k ? ' side' : '') + '">' + (k ? 'Side Pot ' + k + ' ' : 'Main Pot ') + fmt(p2.amount) + '</span>'; }).join('') : '<span class="pot">Pot ' + fmt(st.pot) + '</span>';
-  var html = '<div class="panel replay"><h2>Replayer – Hand #' + h.no + ' (' + esc(H.dateTxt(h.ts)) + ')</h2>' +
+  var html = '<div class="panel replay"><h2>Replayer – Hand #' + int(h.no) + ' (' + esc(H.dateTxt(h.ts)) + ')</h2>' +
     '<div class="table rtable"><div class="felt"></div><div class="center"><div class="pots">' + pots + '</div><div class="board">' + st.board.map(function (c) { return H.cardHtml(c); }).join('') + '</div></div>' + seats + '</div>' +
     '<div class="rcontrols"><button class="btn" type="button" data-step="first" aria-label="Zum Anfang">⏮</button><button class="btn" type="button" data-step="prev" aria-label="Schritt zurück">◀</button>' +
     '<button class="btn" type="button" data-step="play" aria-label="Abspielen">▶︎ Abspielen</button><button class="btn" type="button" data-step="pause" aria-label="Pause">⏸</button>' +
     '<button class="btn" type="button" data-step="next" aria-label="Schritt vor">▶</button><button class="btn" type="button" data-step="last" aria-label="Zum Ende">⏭</button>' +
-    '<span class="small">Schritt ' + (hist.step + 1) + ' von ' + hist.sel.states.length + ': ' + esc(st.label) + '</span>' +
+    '<span class="small" role="status">Schritt ' + (hist.step + 1) + ' von ' + hist.sel.states.length + ': ' + esc(st.label) + '</span>' +
     '<button class="btn" type="button" data-later="1" aria-pressed="' + hist.later + '">' + (hist.later ? 'Später bekannte Infos ausblenden' : 'Später bekannte Infos einblenden') + '</button></div>';
-  html += '<div class="split"><div class="box"><h4>Damals bekannt</h4><p class="small">Deine Karten, Board bis hier, alle Aktionen bis hier' + (dec && dec.snap ? ', Gegnerwerte zum Entscheidungszeitpunkt' : '') + '.</p>' +
+  html += '<div class="split"><div class="box"><h3 class="sub">Damals bekannt</h3><p class="small">Deine Karten, Board bis hier, alle Aktionen bis hier' + (dec && dec.snap ? ', Gegnerwerte zum Entscheidungszeitpunkt' : '') + '.</p>' +
     (dec ? '<p>Nächste Aktion: <b>deine Entscheidung</b> – gespielt: ' + esc(dec.chosen) + ', empfohlen: ' + esc(dec.rec) + '</p><p>' + H.gradeHtml({ grade: dec.grade, simple: PT.coach.GRADE_SIMPLE[dec.grade], loss: dec.loss, lossBB: dec.loss / h.bb }) + '</p>' +
       '<table class="evtable"><tbody>' + (dec.evs || []).map(function (x) { return '<tr><td>' + esc(x.l) + '</td><td>' + H.bbTxt(x.ev, 2) + '</td><td>± ' + H.bbTxt(x.u, 1) + '</td></tr>'; }).join('') + '</tbody></table>' +
       (dec.snap ? '<div class="btnrow"><button class="btn primary2" type="button" data-redo="' + hist.sel.h.decisions.indexOf(dec) + '">Entscheidung erneut treffen</button></div>' : '<p class="muted">Für diese Entscheidung liegt keine Momentaufnahme mehr vor.</p>')
       : (nextA ? '<p>Nächste Aktion: ' + esc(h.seats[nextA.s].name) + '</p>' : '<p>Hand beendet.</p>')) + '<div id="redoBox"></div></div>' +
-    '<div class="box"><h4>Später bekannt</h4>' + (showLater ? ((h.shown || []).length ? '<p>' + h.shown.map(function (x) { return esc(h.seats[x.seat].name) + ': <span class="cards">' + H.cardsHtml(x.cards, 'sm') + '</span>'; }).join(' · ') + '</p>' : '<p class="muted">Keine Karten gezeigt.</p>') +
+    '<div class="box"><h3 class="sub">Später bekannt</h3>' + (showLater ? ((h.shown || []).length ? '<p>' + h.shown.map(function (x) { return esc(h.seats[x.seat].name) + ': <span class="cards">' + H.cardsHtml(x.cards, 'sm') + '</span>'; }).join(' · ') + '</p>' : '<p class="muted">Keine Karten gezeigt.</p>') +
       '<p>Ergebnis: <b class="' + (h.heroNet > 0 ? 'good' : h.heroNet < 0 ? 'bad' : '') + '">' + U.fmtSigned(h.heroNet) + '</b> · ' + (h.pots || []).map(function (p3, k) { return (k ? 'Side Pot ' + k : 'Main Pot') + ' ' + fmt(p3.amount) + ' an ' + p3.winners.map(function (w) { return esc(h.seats[w].name); }).join(', '); }).join(' · ') + '</p>' +
       '<p class="small">Das Ergebnis beeinflusst die Bewertung der Entscheidungen nicht.</p>' : '<p class="muted">Ausgeblendet, damit du die Entscheidung ohne Kenntnis des Ausgangs prüfen kannst.</p>') + '</div></div>';
   html += '<details class="more"><summary>Handverlauf als Text</summary><pre class="small" style="white-space:pre-wrap">' + esc(PT.training.handText(h)) + '</pre></details></div>';
@@ -190,7 +210,7 @@ views.ranges = function (el, arg) {
     '<label class="mini">Stack (BB) <input id="rb" type="number" min="3" max="30" value="' + rg.bb + '" style="width:80px"></label>' +
     '<label class="mini"><input id="rip" type="checkbox"' + (rg.ip ? ' checked' : '') + '> in Position</label></div>' +
     '<div class="legend"><span><i style="background:var(--raise)"></i>Raise</span><span><i style="background:var(--call)"></i>Call</span><span><i style="background:var(--fold)"></i>Fold</span><span><i style="background:linear-gradient(var(--raise) 50%,var(--call) 50%)"></i>gemischte Strategie</span></div>' +
-    '<div class="grid2"><div><div class="matrix" id="mx" role="grid" aria-label="Range-Matrix"></div><p class="small" id="mxsum"></p></div><div class="box" id="mxinfo"><p class="muted">Wähle eine Hand für Details.</p></div></div></div>';
+    '<div class="grid2"><div><div class="matrix" id="mx" role="group" aria-label="Range-Matrix, 169 Starthandklassen. Pfeiltasten wechseln die Hand, Enter zeigt Details." aria-describedby="mxsum"></div><p class="small" id="mxsum"></p></div><div class="box" id="mxinfo" aria-live="polite"><p class="muted">Wähle eine Hand für Details.</p></div></div></div>';
   el.innerHTML = html;
   function draw() {
     rg.type = $('rt').value; rg.pos = $('rp').value; rg.opener = $('ro').value; rg.bb = Math.max(3, Math.min(30, +$('rb').value || 15)); rg.ip = $('rip').checked;
@@ -198,7 +218,8 @@ views.ranges = function (el, arg) {
     for (var r = 0; r < 13; r++) for (var c = 0; c < 13; c++) {
       var i = cellIdx(r, c), d = data.rows[i], name = PT.hands.className(i);
       var fill = '<span class="fill"><i style="height:' + (d.fold * 100) + '%;background:var(--fold)"></i><i style="height:' + (d.call * 100) + '%;background:var(--call)"></i><i style="height:' + (d.raise * 100) + '%;background:var(--raise)"></i></span>';
-      cells += '<button class="mcell" type="button" role="gridcell" data-ci="' + i + '" aria-pressed="' + (rg.sel === i) + '" aria-label="' + name + ': Raise ' + Math.round(d.raise * 100) + ' %, Call ' + Math.round(d.call * 100) + ' %">' + fill + '<span class="lbl">' + name + '</span></button>';
+      var focusCell = rg.sel != null ? rg.sel === i : i === 168;
+      cells += '<button class="mcell" type="button" data-ci="' + i + '" data-r="' + r + '" data-c="' + c + '" tabindex="' + (focusCell ? '0' : '-1') + '" aria-pressed="' + (rg.sel === i) + '" aria-label="' + name + ': Raise ' + Math.round(d.raise * 100) + ' %, Call ' + Math.round(d.call * 100) + ' %, Fold ' + Math.round(d.fold * 100) + ' %">' + fill + '<span class="lbl" aria-hidden="true">' + name + '</span></button>';
     }
     $('mx').innerHTML = cells;
     $('mxsum').textContent = data.summary;
@@ -212,11 +233,22 @@ views.ranges = function (el, arg) {
     reason.push(name + ' gehört zu den besten ' + pct(top) + ' aller Starthände (Rangfolge ' + (PT.hands.CLS_RANK[i] + 1) + ' von 169).');
     if (PT.ranges.BLUFF3.indexOf(name) >= 0) reason.push('Typischer 3-Bet-Bluff-Kandidat: Blocker (Ass oder hohe Karte) und gute Spielbarkeit.');
     if (d.raise > 0.05 && d.raise < 0.95) reason.push('Grenzhand: gemischte Strategie – mehrere Aktionen sind ähnlich gut.');
-    $('mxinfo').innerHTML = '<h4>' + esc(name) + '</h4><p>Kombinationen: <b>' + live2 + '</b> von ' + PT.hands.classCombos(i) + (dead.length ? ' (bekannte Karten berücksichtigt)' : '') + '</p>' +
+    $('mxinfo').innerHTML = '<h3 class="sub">' + esc(name) + '</h3><p>Kombinationen: <b>' + live2 + '</b> von ' + PT.hands.classCombos(i) + (dead.length ? ' (bekannte Karten berücksichtigt)' : '') + '</p>' +
       '<p>Raise ' + pct(d.raise) + ' · Call ' + pct(d.call) + ' · Fold ' + pct(d.fold) + '</p><p class="small">' + esc(reason.join(' ')) + '</p><p class="small">' + esc(data.note) + '</p>';
   }
   ['rt', 'rp', 'ro', 'rb', 'rip'].forEach(function (id) { $(id).addEventListener('change', draw); });
-  $('mx').addEventListener('click', function (e) { var b = e.target.closest('[data-ci]'); if (!b) return; rg.sel = +b.getAttribute('data-ci'); draw(); });
+  $('mx').addEventListener('click', function (e) { var b = e.target.closest('[data-ci]'); if (!b) return; rg.sel = +b.getAttribute('data-ci'); draw(); var nb = $('mx').querySelector('[data-ci="' + rg.sel + '"]'); if (nb) nb.focus(); });
+  // Tastatur: ein Tab-Stopp für die Matrix, Pfeiltasten/Pos1/Ende bewegen den Fokus (Roving Tabindex)
+  $('mx').addEventListener('keydown', function (e) {
+    var b = e.target.closest('[data-ci]'); if (!b) return;
+    var r = +b.getAttribute('data-r'), c = +b.getAttribute('data-c'), k = e.key;
+    if (k === 'ArrowRight') c = Math.min(12, c + 1); else if (k === 'ArrowLeft') c = Math.max(0, c - 1);
+    else if (k === 'ArrowDown') r = Math.min(12, r + 1); else if (k === 'ArrowUp') r = Math.max(0, r - 1);
+    else if (k === 'Home') c = 0; else if (k === 'End') c = 12; else return;
+    e.preventDefault();
+    var nb = $('mx').querySelector('[data-r="' + r + '"][data-c="' + c + '"]'); if (!nb) return;
+    b.setAttribute('tabindex', '-1'); nb.setAttribute('tabindex', '0'); nb.focus();
+  });
   draw();
 };
 function rangeData() {
@@ -252,18 +284,18 @@ views.gegner = function (el) {
     '<div class="toolbar"><div class="seg" role="group" aria-label="Liste"><button type="button" data-gtab="aktiv" aria-pressed="' + (gstate.tab === 'aktiv') + '">Am Tisch</button><button type="button" data-gtab="archiv" aria-pressed="' + (gstate.tab === 'archiv') + '">Archiv</button><button type="button" data-gtab="alle" aria-pressed="' + (gstate.tab === 'alle') + '">Alle</button></div>' +
     '<input type="search" id="gq" placeholder="Name filtern" aria-label="Name filtern"><select id="gt" aria-label="Spielertyp"><option value="">alle Typen</option>' + ['unbekannt', 'sehr loose', 'loose-passiv', 'Nit', 'LAG', 'TAG'].map(function (x) { return '<option>' + x + '</option>'; }).join('') + '</select>' +
     '<select id="gs" aria-label="Sortierung"><option value="last">zuletzt gesehen</option><option value="hands">meiste Hände</option><option value="name">Name</option></select></div>' +
-    '<div class="toolbar"><button class="btn" type="button" data-g="export">Datenbank exportieren</button><button class="btn" type="button" data-g="import">Datenbank importieren</button><span class="small">Import akzeptiert Dateien aus Entwurf 2 (Version 1) und PokerTrainer 2.0 (Version 2).</span></div>' +
+    '<div class="toolbar"><button class="btn" type="button" data-g="export">Datenbank exportieren</button><button class="btn" type="button" data-g="import">Datenbank importieren</button><span class="small">Import akzeptiert Dateien aus Entwurf 2 (Version 1), PokerTrainer 2.0 (Version 2) und mit Gegnergedächtnis (Version 3). Ältere Formate werden umgewandelt.</span></div>' +
     '<div class="scroll" id="glist"></div></div>';
   $('gq').value = gstate.q; $('gt').value = gstate.typ; $('gs').value = gstate.sort;
   function draw() {
     var rows = (gstate.tab === 'aktiv' ? act : gstate.tab === 'archiv' ? arc : list).filter(function (r) { return (!gstate.q || r.name.toLowerCase().indexOf(gstate.q.toLowerCase()) >= 0) && (!gstate.typ || PT.stats.playerType(r) === gstate.typ); });
     rows.sort(function (a, b) { return gstate.sort === 'hands' ? b.hands - a.hands : gstate.sort === 'name' ? (a.name < b.name ? -1 : 1) : b.lastSeen - a.lastSeen; });
     var V = function (x) { return x == null ? 'unbekannt' : x + ' %'; };
-    $('glist').innerHTML = rows.length ? '<table class="grid"><thead><tr><th>Name</th><th class="n">Hände</th><th class="n">VPIP</th><th class="n">PFR</th><th class="n">3-Bet</th><th class="n">AF</th><th class="n">C-Bet</th><th class="n">WTSD</th><th>Typ</th><th>Belastbarkeit</th><th>zuletzt</th></tr></thead><tbody>' +
+    $('glist').innerHTML = rows.length ? '<table class="grid"><thead><tr><th>Name</th><th class="n">Hände</th><th class="n">VPIP</th><th class="n">PFR</th><th class="n">3-Bet</th><th class="n">AF</th><th class="n">C-Bet</th><th class="n">WTSD</th><th>Typ</th><th>Belastbarkeit</th><th>Veränderung</th><th>zuletzt</th></tr></thead><tbody>' +
       rows.slice(0, 400).map(function (r) {
         var p = PT.stats.profile(r), af = p.af;
-        return '<tr class="click" tabindex="0" data-opp="' + esc(r.id) + '"><td>' + esc(r.name) + '</td><td class="n">' + r.hands + '</td><td class="n">' + V(p.vpip) + '</td><td class="n">' + V(p.pfr) + '</td><td class="n">' + V(p.threeBet) + '</td><td class="n">' + (af == null ? 'unbekannt' : af === Infinity ? '∞' : num(af)) +
-          '</td><td class="n">' + V(p.cbetFlop) + '</td><td class="n">' + V(p.wtsd) + '</td><td>' + esc(p.typ) + '</td><td>' + esc(p.bel) + '</td><td>' + esc(H.dateTxt(r.lastSeen)) + '</td></tr>';
+        return '<tr class="click" data-opp="' + esc(r.id) + '"><td><button type="button" class="linkbtn" aria-label="' + esc(r.name) + ': alle Werte anzeigen">' + esc(r.name) + '</button></td><td class="n">' + int(r.hands) + '</td><td class="n">' + V(p.vpip) + '</td><td class="n">' + V(p.pfr) + '</td><td class="n">' + V(p.threeBet) + '</td><td class="n">' + (af == null ? 'unbekannt' : af === Infinity ? '∞' : num(af)) +
+          '</td><td class="n">' + V(p.cbetFlop) + '</td><td class="n">' + V(p.wtsd) + '</td><td>' + esc(p.typ) + '</td><td>' + esc(p.bel) + '</td><td>' + changeShort(p.change) + '</td><td>' + esc(H.dateTxt(r.lastSeen)) + '</td></tr>';
       }).join('') + '</tbody></table>' + (rows.length > 400 ? '<p class="muted">' + (rows.length - 400) + ' weitere Einträge, bitte filtern.</p>' : '') : '<p class="muted">Keine Einträge.</p>';
   }
   draw();
@@ -271,21 +303,95 @@ views.gegner = function (el) {
   $('gt').addEventListener('change', function () { gstate.typ = $('gt').value; draw(); });
   $('gs').addEventListener('change', function () { gstate.sort = $('gs').value; draw(); });
   el.onclick = function (e) {
-    var t = e.target.closest('[data-gtab]'); if (t) { gstate.tab = t.getAttribute('data-gtab'); views.gegner(el); return; }
+    var t = e.target.closest('[data-gtab]'); if (t) { gstate.tab = t.getAttribute('data-gtab'); H.keepFocus(el, function () { views.gegner(el); }); return; }
     var r = e.target.closest('[data-opp]'); if (r) { PTUI.showOpp(r.getAttribute('data-opp')); return; }
     var g = e.target.closest('[data-g]'); if (!g) return;
     if (g.getAttribute('data-g') === 'export') { var txt = PT.stats.dbExport(S.db, new Date().toISOString()); H.download('PokerTrainer_Datenbank_' + H.today() + '.json', txt); H.toast('Datenbank mit ' + list.length + ' Gegnern exportiert.'); }
     else pickFile(function (text, name) { importText(text, name, 'db'); });
   };
-  el.onkeydown = function (e) { var r = e.target.closest('tr[data-opp]'); if (r && e.key === 'Enter') r.click(); };
 };
+// ---------- Gegnerdialog: Langzeit, Kurzzeit, Veränderung, beobachtet/geschätzt/unbekannt ----------
+// Alle Werte stammen nur aus am Tisch Sichtbarem (Aktionen, aufgedeckte Karten). Importierte Daten gelten als nicht vertrauenswürdig: jede Ausgabe über esc().
+function pc(x) { return x == null || !isFinite(x) ? 'unbekannt' : esc(String(Math.round(100 * x))) + ' %'; }
+function ciTxt(ci) { return ci ? esc(Math.round(ci[0] * 100) + '–' + Math.round(ci[1] * 100)) + ' %' : '–'; }
+function changeShort(ch) {
+  if (!ch || !ch.detected) return '–';
+  return ch.keys.map(function (x) { return '<span class="pill">' + (x.dir > 0 ? '↑ ' : '↓ ') + esc(x.label) + '</span>'; }).join('');
+}
+function oppShownHtml(s) {
+  var names = ['Preflop', 'Flop', 'Turn', 'River'], acts = [];
+  s.actions.forEach(function (a, i) { if (a) acts.push('<b>' + names[i] + ':</b> ' + esc(a)); });
+  return '<li><div class="cards">' + H.cardsHtml(s.cards, 'sm') + '<span class="muted">&nbsp;' + esc(s.pos) + ' · Hand #' + esc(String(s.hand)) + ' · ' + esc(H.dateTxt(s.ts)) + ' · beobachtet</span></div>' +
+    (s.board ? '<div class="cards"><span class="muted">Board&nbsp;</span>' + H.cardsHtml(s.board, 'sm') + '</div>' : '') +
+    '<div>' + acts.join(' · ') + '</div><div class="muted">Ergebnis ' + esc(U.fmtSigned(s.net)) + '</div></li>';
+}
+function oppStatRows(r, pr) {
+  var ST = PT.stats, sm = PT.ranges.smooth(r.stats), tested = pr.change.tested, td = '<td class="n" style="white-space:nowrap">';
+  return ST.STATS.map(function (k) {
+    var nd = r.stats[k], ci = ST.wilson(nd), rc = pr.recent.stats[k], ch = pr.change.keys.filter(function (x) { return x.key === k; })[0];
+    var status;
+    if (!nd[1]) status = 'unbekannt';
+    else if (ch) status = '<b>' + (ch.dir > 0 ? '↑ höher' : '↓ niedriger') + '</b> seit Hand ' + esc(String(ch.since)) + ' (z ' + esc(num(ch.z, 1)) + ')';
+    else if (tested.indexOf(k) >= 0) status = pr.change.z[k] == null ? 'zu wenig Daten für Vergleich' : 'unauffällig (z ' + esc(num(pr.change.z[k], 1)) + ')';
+    else status = '–';
+    return '<tr><td><button type="button" class="term" data-help="' + esc(k) + '">' + esc(ST.STAT_LABEL[k]) + '</button></td>' +
+      td + (nd[1] ? esc(String(ST.pctOf(nd))) + ' %' : 'unbekannt') + '</td>' + td + esc(nd[0] + '/' + nd[1]) + '</td>' + td + ciTxt(ci) + '</td>' + td + pc(sm[k]) + '</td>' +
+      td + (rc.rate == null ? 'unbekannt' : pc(rc.rate)) + '</td>' + td + esc(num(rc.neff, 0)) + '</td>' + td + ciTxt(rc.ci) + '</td><td>' + status + '</td></tr>';
+  }).join('');
+}
+function showOpp(id) {
+  var r = S.db.opps[id]; if (!r) { H.toast('Noch keine Daten zu diesem Gegner.'); return; }
+  var ST = PT.stats, pr = ST.profile(r), seated = S.table && S.table.seats.some(function (s) { return s.id === id; });
+  var af = ST.af(r.agg), ch = pr.change, M = ST.MEMORY, c = pr.cards;
+  var posRows = ST.POSITIONS.map(function (p) { var x = r.pos[p]; return '<tr><td>' + esc(p) + '</td><td class="n">' + esc(String(x.h)) + '</td><td class="n">' + (x.vpip[1] ? esc(String(ST.pctOf(x.vpip))) + ' %' : 'unbekannt') + '</td><td class="n">' + (x.pfr[1] ? esc(String(ST.pctOf(x.pfr))) + ' %' : 'unbekannt') + '</td></tr>'; }).join('');
+  var chHtml;
+  if (ch.detected) {
+    chHtml = '<div class="notice" role="status"><b>Veränderte Spielweise erkannt</b><ul>' + ch.keys.map(function (x) {
+      return '<li>' + esc(x.label) + ': zuletzt ' + pc(x.recent) + ', vorher ' + pc(x.older) + ' (Langzeit ' + pc(x.long) + ') · seit Hand ' + esc(String(x.since)) + ' des Datensatzes, vor ' + esc(String(x.ago)) + ' Händen · z = ' + esc(num(x.z, 1)) + '</li>';
+    }).join('') + '</ul><span class="small">Für diese Werte nutzt die beste Schätzung jetzt das Kurzzeitgedächtnis statt der Langzeitwerte.</span></div>';
+  } else {
+    var done = ch.tested.filter(function (k) { return ch.z[k] != null; });
+    chHtml = '<p class="small">' + (done.length ? 'Keine statistisch auffällige Veränderung der Spielweise (geprüft: ' + esc(done.map(function (k) { return ST.STAT_LABEL[k]; }).join(', ')) + ').'
+      : 'Für einen Vergleich von Kurzzeit- und Langzeitwerten fehlen noch Beobachtungen.') + '</p>';
+  }
+  var cardsTxt = c.counted ? '<span>Showdowns mit aufgedeckten Karten (beobachtet) <b>' + esc(String(c.observed)) + '</b></span><span>gespielte Hände mit verdeckt gebliebenen Karten (unbekannt) <b>' + esc(String(c.unknown)) + '</b></span>' +
+      (c.share != null ? '<span>beobachteter Anteil <b>' + pc(c.share) + '</b></span>' : '') + (c.from ? '<span class="muted">gezählt ab Hand ' + esc(String(c.from)) + ' des Datensatzes</span>' : '')
+    : '<span class="muted">Kartenkenntnis wird ab Format 3 gezählt.</span>';
+  H.openModal(r.name,
+    '<div class="kv"><span>' + (seated ? 'am Tisch (aktiv)' : 'im Archiv') + '</span><span>Hände <b>' + esc(String(r.hands)) + '</b></span><span>Belastbarkeit <b>' + esc(pr.bel) + '</b></span>' +
+    '<span>Spielertyp <b>' + esc(pr.typ) + '</b></span><span>AF <b>' + (af == null ? 'unbekannt' : af === Infinity ? '∞' : esc(num(af))) + '</b></span><span>zuletzt gesehen ' + esc(H.dateTxt(r.lastSeen)) + '</span></div>' +
+    '<h3>Veränderung der Spielweise</h3>' + chHtml +
+    '<h3>Geschätzt: Werte aus Aktionen</h3>' +
+    '<div class="scroll"><table class="grid" style="font-size:13px"><thead><tr><th rowspan="2">Wert</th><th class="n" colspan="4">Langzeit (alle Hände)</th><th class="n" colspan="3">Kurzzeit (Halbwertszeit ' + esc(String(M.HALF_LIFE)) + ' Hände)</th><th rowspan="2">Veränderung</th></tr>' +
+    '<tr><th class="n">Rohwert</th><th class="n">Z/N</th><th class="n">95 %</th><th class="n">geglättet</th><th class="n">Rohwert</th><th class="n" title="effektive Zahl der Gelegenheiten">eff. n</th><th class="n">95 %</th></tr></thead><tbody>' + oppStatRows(r, pr) + '</tbody></table></div>' +
+    '<p class="small">Z/N: Zähler/Nenner (Treffer/Gelegenheiten). 95 %: Wilson-Intervall. Unbekannt: noch keine Gelegenheit beobachtet.</p>' +
+    '<p class="small">„Geglättet“ mischt die eigenen Beobachtungen mit dem Durchschnitt der Population (Beta-Prior); so nutzt der Coach die Werte. Das Kurzzeitgedächtnis gewichtet jede Beobachtung mit 0,5^(Alter/' + esc(String(M.HALF_LIFE)) +
+    ') (Alter in eigenen Händen des Gegners; im Archiv altert es nicht). Kurzzeitgewicht zurzeit ≈ ' + esc(num(pr.recent.hands, 0)) + ' Hände. Eine Veränderung gilt als erkannt, wenn der gewichtete Zwei-Anteile-Test Kurzzeit gegen ältere Beobachtungen |z| ≥ ' + esc(num(ch.params.zOn, 2)) + ' ergibt.</p>' +
+    '<h3>Beobachtet: Karten am Showdown</h3><div class="kv">' + cardsTxt + '</div>' +
+    (r.shown.length ? '<ul class="shown">' + r.shown.map(oppShownHtml).join('') + '</ul>' : '<p class="muted">Noch keine aufgedeckten Blätter.</p>') +
+    '<p class="small">Unbekannt: In Händen ohne Showdown bleiben die Karten verdeckt; der Coach schätzt sie nur als Range.</p>' +
+    '<h3>Nach Position</h3><div class="scroll"><table class="grid"><thead><tr><th>Position</th><th class="n">Hände</th><th class="n">VPIP</th><th class="n">PFR</th></tr></thead><tbody>' + posRows + '</tbody></table></div>' +
+    '<p class="muted">Alle Werte stammen nur aus dem, was am Tisch sichtbar war: Aktionen und aufgedeckte Blätter.</p>');
+}
+PTUI.showOpp = showOpp;
+// Sicherung vor der Umwandlung der Datenbank erneut herunterladen (Hinweis beim Start)
+document.addEventListener('click', function (e) {
+  var b = e.target && e.target.closest && e.target.closest('[data-act="migdl"]');
+  if (b && S.migBackup) S.migBackup.forEach(function (f) { H.download(f.name, f.text); });
+});
+// Gleiche Grenze wie die Importprüfung (PT.stats.MAX_IMPORT): jede eigene vollständige Sicherung muss wieder einlesbar sein (Prüfung C14)
+var MAX_FILE = PT.stats.MAX_IMPORT || 60 * 1024 * 1024, MAX_MB = Math.round(MAX_FILE / 1048576);
 function pickFile(cb) {
+  if (!PTUI.canWrite()) return;
   if (S.hand && !S.hand.done) { H.toast('Import ist nur zwischen zwei Händen möglich.'); return; }
   var f = $('fileIn'); f.value = '';
   f.onchange = function () {
     var file = f.files && f.files[0]; if (!file) return;
-    if (file.size > 60 * 1024 * 1024) { H.openModal('Import abgelehnt', '<p>Die Datei ist zu groß.</p>'); return; }
+    // Größe vor dem Lesen prüfen: zu große Dateien werden nie eingelesen
+    if (file.size > MAX_FILE) { H.openModal('Import abgelehnt', '<p>Die Datei ist zu groß (' + esc(String(Math.round(file.size / 1048576))) + ' MB, erlaubt sind höchstens ' + MAX_MB + ' MB).</p><p>Die bestehenden Daten bleiben unverändert.</p>'); return; }
+    if (!file.size) { H.openModal('Import abgelehnt', '<p>Die Datei ist leer.</p><p>Die bestehenden Daten bleiben unverändert.</p>'); return; }
     var rd = new FileReader();
+    H.openModal('Datei wird geprüft …', '<p role="status">Die Datei <b>' + esc(file.name) + '</b> wird gelesen und geprüft. Die Oberfläche bleibt bedienbar.</p>');
     rd.onload = function () { cb(String(rd.result || ''), file.name); };
     rd.onerror = function () { H.openModal('Import abgelehnt', '<p>Die Datei konnte nicht gelesen werden. Die bestehenden Daten bleiben unverändert.</p>'); };
     rd.readAsText(file);
@@ -293,20 +399,31 @@ function pickFile(cb) {
   f.click();
 }
 function importText(text, fname, expect) {
-  var r = PT.stats.dbImport(text);
-  if (!r.ok) { H.openModal('Import abgelehnt', '<p>' + esc(r.error) + '</p><p>Die bestehenden Daten bleiben unverändert.</p>'); return; }
+  // Prüfung im Web Worker: große Dateien blockieren die Oberfläche nicht
+  PTUI.offThread('import', { text: text }, Math.max(90000, Math.round(text.length / 1048576 * 600))).then(function (r) { showImport(r, fname); }, function (e) {
+    H.openModal('Import abgelehnt', '<p>Die Datei konnte nicht geprüft werden (' + esc((e && e.message) || e) + ').</p><p>Die bestehenden Daten bleiben unverändert.</p>');
+  });
+}
+function showImport(r, fname) {
+  if (!r || !r.ok) { H.openModal('Import abgelehnt', '<p>' + esc(r ? r.error : 'unbekannter Fehler') + '</p><p>Die bestehenden Daten bleiben unverändert.</p>'); return; }
   var what = r.kind === 'backup' ? 'eine vollständige Sicherung mit ' + r.count + ' Gegnern' + (r.hands ? ', ' + r.hands.length + ' Händen' : '') + (r.learning ? ' und Lerndaten' : '') : r.count + ' Gegner' + (r.migrated ? ' (Format aus Entwurf 2, wird umgewandelt)' : '');
-  H.openModal('Import bestätigen', '<p>Die Datei <b>' + esc(fname) + '</b> ist unbeschädigt und enthält ' + esc(what) + '.</p><p>Die aktuellen Daten werden ersetzt. Vorher wird automatisch eine Sicherung der aktuellen Daten heruntergeladen.</p>' +
+  var raw = r.raw ? '<p><b>Rohsicherung:</b> ' + esc(String(r.raw.opps)) + ' Gegner und ' + esc(String(r.raw.hands)) + ' Hände sind gültig und werden übernommen; übersprungen wurden ' + esc(String(r.raw.oppsSkipped)) + ' beschädigte Gegner-Einträge und ' + esc(String(r.raw.handsSkipped)) + ' beschädigte Hände. Lerndaten: ' + esc(r.raw.learning) + '.</p>' : '';
+  H.openModal('Import bestätigen', '<p>Die Datei <b>' + esc(fname) + '</b> ' + (r.raw ? 'ist eine Rohsicherung und enthält nach der Prüfung ' : 'ist unbeschädigt und enthält ') + esc(what) + '.</p>' + raw + '<p>Die aktuellen Daten werden ersetzt. Vorher wird automatisch eine Sicherung der aktuellen Daten heruntergeladen.</p>' +
     '<div class="btnrow"><button class="btn primary2" type="button" id="impOk">Importieren</button><button class="btn" type="button" id="impNo">Abbrechen</button></div>');
   $('impNo').onclick = H.closeModal;
+  // Lernprofil der Datei wird vor dem Ersetzen berechnet (Fehler → nichts geändert); applyImport nutzt es danach.
+  // (Bis 2.0.1 war newProf nur im Klick-Handler deklariert: Der Import einer vollständigen Sicherung brach mit ReferenceError ab.)
+  var newProf = null;
   $('impOk').onclick = function () {
+    if (!PTUI.canWrite()) { H.closeModal(); return; }
     if (S.hand && !S.hand.done) { H.closeModal(); H.toast('Import ist nur zwischen zwei Händen möglich.'); return; }
     var btn = $('impOk'); btn.disabled = true; btn.textContent = 'Sichere aktuelle Daten …';
-    var newProf = null;
+    newProf = null;
     try { if (r.kind === 'backup' && r.learning) newProf = PT.training.profile(r.learning); }
     catch (e) { H.openModal('Import abgelehnt', '<p>Die Lerndaten der Datei lassen sich nicht auswerten.</p><p>Die bestehenden Daten bleiben unverändert.</p>'); return; }
     // Erst wenn die Sicherung der bisherigen Daten fertig erzeugt ist, werden die Daten ersetzt.
-    backupNow('vor-Import').then(applyImport, function () { H.openModal('Import abgebrochen', '<p>Die Sicherung der aktuellen Daten ist fehlgeschlagen. Es wurde nichts geändert.</p>'); });
+    // Beschädigte lokale Einträge fehlen in der regulären Sicherung: dann zusätzlich die Rohsicherung (wie beim Löschen, Prüfung C12)
+    backupNow('vor-Import', true).then(function (skipped) { return (skipped || S.db.skipped) && window.PTRecovery ? window.PTRecovery.backup() : null; }).then(applyImport, function (e) { H.openModal('Import abgebrochen', '<p>Die Sicherung der aktuellen Daten ist fehlgeschlagen' + (e && e.tooBig ? ': ' + esc(e.message) : '') + '. Es wurde nichts geändert.</p>'); });
   };
   function applyImport() {
     S.db = r.db;
@@ -318,13 +435,22 @@ function importText(text, fname, expect) {
     }
     PT.session.syncStatuses(S.table, S.db);
     p.push(PTUI.persistAllOpps(), PTUI.persist([]));
-    Promise.all(p).then(function () { H.closeModal(); H.toast('Import abgeschlossen: ' + r.count + ' Gegner übernommen.'); PTUI.route(); });
+    PTUI.track(Promise.all(p)).then(function () { H.closeModal(); H.toast('Import abgeschlossen: ' + r.count + ' Gegner übernommen.'); PTUI.route(); },
+      function (e) { H.openModal('Import unvollständig', '<p>Beim Speichern ist ein Fehler aufgetreten (' + esc((e && e.message) || e) + '). Die vorher heruntergeladene Sicherung enthält den alten Stand.</p>'); });
   }
 }
-function backupNow(tag) {
-  return Store.all('hands').then(function (hands) {
+/** strict: Sicherung vor einem Ersetzen/Löschen – ist sie größer als die Importgrenze (nicht wieder einlesbar), wird abgebrochen, bevor etwas geändert wird. */
+function backupNow(tag, strict) {
+  // Nur gültige Hände: Eine Sicherung mit beschädigten Einträgen ließe sich nicht wieder importieren (dafür gibt es die Rohsicherung)
+  return loadHands().then(function (hands) {
     var txt = PT.stats.backupExport({ opponents: PT.stats.dbList(S.db), hero: S.heroRec, hands: hands, learning: S.learning, settings: S.settings, table: S.table }, new Date().toISOString());
+    if (txt.length > MAX_FILE) {
+      var msg = 'Die Sicherung wäre ' + Math.round(txt.length / 1048576) + ' MB groß und damit größer als die Importgrenze von ' + MAX_MB + ' MB';
+      if (strict) { var e = new Error(msg); e.tooBig = true; throw e; }
+      H.toast(msg + '. Bitte zusätzlich die Handhistorie getrennt exportieren.', 8000);
+    }
     H.download('Sicherung_PokerTrainer_' + H.today() + (tag ? '_' + tag : '') + '_Datenbank.json', txt);
+    return hands.skipped || 0;
   });
 }
 PTUI.backupNow = backupNow;
@@ -332,7 +458,7 @@ PTUI.backupNow = backupNow;
 // ---------- Fortschritt ----------
 views.fortschritt = function (el) {
   var prof = S.prof = PT.training.profile(S.learning), all = prof.all, L = S.learning;
-  Store.all('hands').then(function (hands) {
+  loadHands().then(function (hands) {
     var normal = hands.filter(function (h) { return !h.training; }), bb = S.table.cfg.bb;
     var res = normal.map(function (h) { return h.heroNet / h.bb; }), n = res.length, m = n ? res.reduce(function (a, b) { return a + b; }, 0) / n : 0;
     var sd2 = n > 1 ? Math.sqrt(res.reduce(function (a, b) { return a + (b - m) * (b - m); }, 0) / (n - 1)) : 0, ci = n > 1 ? 1.96 * sd2 / Math.sqrt(n) * 100 : null;
@@ -365,7 +491,7 @@ function levelName(l) { return { einsteiger: 'Einsteiger', fortgeschritten: 'For
 function tile(v, label, cls) { return '<div class="box stattile"><b class="' + (cls || '') + '">' + v + '</b><span>' + label + '</span></div>'; }
 function meterRaw(f) { return '<div class="meter warn"><i style="width:' + Math.round(100 * Math.max(0, Math.min(1, f))) + '%"></i></div>'; }
 function table3(rows, train) {
-  return '<div class="scroll"><table class="grid"><thead><tr><th></th><th class="n">n</th><th class="n">Qualität</th><th class="n">Ø EV-Verlust</th>' + (train ? '<th></th>' : '') + '</tr></thead><tbody>' + rows.map(function (r) {
+  return '<div class="scroll"><table class="grid"><thead><tr><th scope="col"><span class="sr">Bereich</span></th><th class="n">n</th><th class="n">Qualität</th><th class="n">Ø EV-Verlust</th>' + (train ? '<th><span class="sr">Aktion</span></th>' : '') + '</tr></thead><tbody>' + rows.map(function (r) {
     var s = r[1] || { n: 0 };
     return '<tr><td>' + esc(r[0]) + '</td><td class="n">' + s.n + '</td><td class="n ' + scoreColor(s.n >= 5 ? s.smooth : null) + '">' + (s.n ? n0(s.smooth) : '–') + '</td><td class="n">' + (s.n ? num(s.loss, 2) + ' BB' : '–') + '</td>' + (train ? '<td><button class="btn" type="button" data-train="' + r[2] + '">Training</button></td>' : '') + '</tr>';
   }).join('') + '</tbody></table></div>';
@@ -407,9 +533,10 @@ views.einstellungen = function (el) {
     '<div class="row"><label for="cFc">Vierfarbiges Deck</label><input id="cFc" type="checkbox"' + (st.fourColor ? ' checked' : '') + '></div>' +
     '<div class="row"><label for="cSo">Sprachausgabe</label><input id="cSo" type="checkbox"' + (st.speech ? ' checked' : '') + '></div>' +
     '<div class="row"><label for="cSr">Sprechtempo</label><input id="cSr" type="range" min="0.7" max="1.5" step="0.05" value="' + st.speechRate + '"></div>' +
-    '<div class="row"><label for="cRh">Hände speichern</label><input id="cRh" type="checkbox"' + (st.recordHands ? ' checked' : '') + '></div></form></div></div>' +
+    '<div class="row"><label for="cRh">Hände speichern</label><input id="cRh" type="checkbox"' + (st.recordHands ? ' checked' : '') + '></div>' +
+    '<div class="row"><label for="cKs">Tastenkürzel aus einem Zeichen (F, C, R, N, T, 1–9)</label><input id="cKs" type="checkbox"' + (st.shortcuts !== false ? ' checked' : '') + '><div class="hint">Abschalten, wenn ein Screenreader oder eine Spracheingabe die Tasten selbst nutzt. Enter im Betragsfeld bleibt aktiv.</div></div></form></div></div>' +
     '<div class="panel"><h2>Daten</h2><p class="small">Alle Daten liegen nur in diesem Browser (' + (Store.mode() === 'idb' ? 'IndexedDB' : Store.mode() === 'ls' ? 'localStorage' : 'nur im Arbeitsspeicher') + '). Andere Browser oder Geräte haben eigene, getrennte Daten.</p>' +
-    '<div class="btnrow"><button class="btn" type="button" id="dBk">Vollständige Sicherung exportieren</button><button class="btn" type="button" id="dIm">Sicherung importieren</button><button class="btn danger" type="button" id="dDel">Alle Daten löschen</button></div></div>';
+    '<div class="btnrow"><button class="btn" type="button" id="dBk">Vollständige Sicherung exportieren</button><button class="btn" type="button" id="dIm">Sicherung importieren</button><button class="btn" type="button" id="dRaw" title="Alle lokalen Daten unverändert, auch beschädigte Einträge">Rohsicherung exportieren</button><button class="btn danger" type="button" id="dDel">Alle Daten löschen</button></div></div>';
   function onT(id, fn) { $(id).addEventListener('change', fn); }
   onT('cTm', function () { PTUI.setSetting('tipMode', $('cTm').value); });
   onT('cSm', function () { PTUI.setSetting('smode', $('cSm').value); });
@@ -422,7 +549,9 @@ views.einstellungen = function (el) {
   onT('cSo', function () { PTUI.setSetting('speech', $('cSo').checked); });
   onT('cSr', function () { PTUI.setSetting('speechRate', +$('cSr').value); });
   onT('cRh', function () { PTUI.setSetting('recordHands', $('cRh').checked); });
+  onT('cKs', function () { PTUI.setSetting('shortcuts', $('cKs').checked); });
   $('sApply').addEventListener('click', function () {
+    if (!PTUI.canWrite()) return;
     if (S.hand && !S.hand.done) { H.toast('Bitte erst die laufende Hand beenden.'); return; }
     var bl = $('sBl').value.split('/').map(Number), cfg = PT.session.defaultConfig();
     cfg.sb = bl[0]; cfg.bb = bl[1]; cfg.startBB = Math.max(10, Math.min(1000, Math.round(+$('sSt').value || 100)));
@@ -438,11 +567,16 @@ views.einstellungen = function (el) {
   });
   $('dBk').addEventListener('click', function () { backupNow('').then(function () { H.toast('Sicherung exportiert.'); }); });
   $('dIm').addEventListener('click', function () { pickFile(function (t, n) { importText(t, n, 'backup'); }); });
+  $('dRaw').addEventListener('click', function () { if (window.PTRecovery) window.PTRecovery.backup().then(function (n) { H.toast('Rohsicherung „' + n + '“ exportiert.' + (window.PTRecovery.backupComplete ? '' : ' Achtung: unvollständig, ' + window.PTRecovery.backupMissing + '.'), 8000); }, function (e) { H.toast('Rohsicherung fehlgeschlagen: ' + ((e && e.message) || e)); }); });
   $('dDel').addEventListener('click', function () {
+    if (!PTUI.canWrite()) return;
     H.openModal('Alle Daten löschen?', '<p>Gegnerdatenbank, Handhistorie, Lernfortschritt und Einstellungen in diesem Browser werden <b>unwiderruflich gelöscht</b>. Vorher wird eine Sicherung heruntergeladen.</p><div class="btnrow"><button class="btn danger" type="button" id="delOk">Endgültig löschen</button><button class="btn" type="button" id="delNo">Abbrechen</button></div>');
     $('delNo').onclick = H.closeModal;
     $('delOk').onclick = function () {
-      backupNow('vor-Loeschen').then(function () { return Store.clearAll(); }).then(function () { location.hash = '#tisch'; location.reload(); });
+      $('delOk').disabled = true;
+      // Beschädigte Einträge fehlen in der regulären Sicherung – dann zusätzlich die Rohsicherung aller Daten
+      backupNow('vor-Loeschen', true).then(function (skipped) { return (skipped || S.db.skipped) && window.PTRecovery ? window.PTRecovery.backup() : null; }).then(function () { return PTUI.flushWrites(3000); }).then(function () { return Store.clearAll(); }).then(function () { location.hash = '#tisch'; location.reload(); },
+        function (e) { H.openModal('Nicht gelöscht', '<p>Die Sicherung oder das Löschen ist fehlgeschlagen (' + esc((e && e.message) || e) + '). Es wurde nichts gelöscht, solange die Sicherung nicht erstellt war.</p>'); });
     };
   });
 };
@@ -453,7 +587,7 @@ views.hilfe = function (el, arg) {
   el.innerHTML = '<div class="grid2"><div class="panel" id="h-start"><h2>Kurzanleitung</h2><ol><li>Am Tisch „Nächste Hand“ wählen. Du sitzt unten, fünf Computergegner um dich herum.</li><li>Bist du am Zug, zeigt der Coach im Modus „vorher“ seine Empfehlung mit Begründung, Equity, benötigter Equity (Pot Odds) und EV-Vergleich.</li>' +
     '<li>Im Modus „nachher“ siehst du erst nach deiner Aktion eine Bewertung von „Optimal“ bis „Schwerer Fehler“.</li><li>Ein Klick auf einen Gegner zeigt alle Werte aus der Datenbank. Nach jeweils 30 Händen wechselt ein Gegner; sein Datensatz bleibt im Archiv.</li>' +
     '<li>Unter „Training“ übst du gezielt Situationen, unter „Handhistorie“ spielst du Hände nach und triffst Entscheidungen erneut.</li></ol></div>' +
-    '<div class="panel" id="h-tasten"><h2>Tastatur</h2><table class="grid"><tbody>' + [['F', 'Fold'], ['C oder K', 'Check / Call'], ['R oder B', 'Betrag eingeben (Enter bestätigt)'], ['1 – 9', 'Einsatz-Presets'], ['A', 'All-in-Preset'], ['N, Enter, Leertaste', 'Nächste Hand'], ['T', 'Tipp-Modus wechseln'], ['Esc', 'Dialog schließen'], ['?', 'Diese Hilfe']].map(function (r) { return '<tr><td><kbd>' + r[0] + '</kbd></td><td>' + r[1] + '</td></tr>'; }).join('') + '</tbody></table></div></div>' +
+    '<div class="panel" id="h-tasten"><h2>Tastatur</h2><table class="grid"><tbody>' + [['F', 'Fold'], ['C oder K', 'Check / Call'], ['R oder B', 'Betrag eingeben (Enter bestätigt)'], ['1 – 9', 'Einsatz-Presets'], ['A', 'All-in-Preset'], ['N, Enter, Leertaste', 'Nächste Hand'], ['T', 'Tipp-Modus wechseln'], ['Esc', 'Dialog schließen'], ['?', 'Diese Hilfe']].map(function (r) { return '<tr><td><kbd>' + r[0] + '</kbd></td><td>' + r[1] + '</td></tr>'; }).join('') + '</tbody></table><p class="small">Die Kürzel aus einem Zeichen gelten am Tisch und lassen sich unter Einstellungen → „Tastenkürzel“ abschalten. Alle Funktionen sind auch mit Tab, Enter und Leertaste bedienbar; Esc schließt Dialoge.</p></div></div>' +
     '<div class="panel" id="h-regeln"><h2>Regeln (No-Limit Hold\'em, Cash Game)</h2><ul>' +
     '<li><b>Mindest-Bet</b> ist ein Big Blind. Ein <b>Raise</b> muss mindestens um den größten vollen Bet oder Raise der laufenden Setzrunde erhöhen. Beträge sind immer „Raise auf“ (Gesamteinsatz der Straße).</li>' +
     '<li><b>Unvollständiger All-in-Raise:</b> Ein All-in unter einem vollen Raise eröffnet die Setzrunde für Spieler, die schon gehandelt haben, nicht wieder – sie dürfen nur callen oder folden. Ergeben mehrere kurze All-ins zusammen mindestens einen vollen Raise gegenüber dem eigenen letzten Einsatz, ist die Runde wieder eröffnet (Cash-Game-Regel nach Robert\'s Rules of Poker). Der nächste Mindest-Raise bleibt der letzte volle Raise.</li>' +

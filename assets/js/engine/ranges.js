@@ -25,11 +25,48 @@ function classWeights(w) {
 }
 /** Anteil der Range an allen 1326 Kombinationen (ohne Kartenentfernung) */
 function widthOf(w) { return total(w) / NC; }
+/**
+ * Kennung einer Range für Caches (Equity, Equity je Kombination). Alle Nutzer hängen nur von den relativen Gewichten ab
+ * (Equity: gewichtete Ziehung bzw. Σ wₖ·eₖ / Σ wₖ; Equity je Kombination: nur vom Träger wₖ > 0). Deshalb wird normalisiert:
+ * rₖ = wₖ / Σ w, quantisiert auf 2⁻³⁶ (gleiche Verteilung in anderer Skalierung → gleiche Kennung, außer in seltenen Fällen
+ * von Rundungsgrenzen, die nur einen Cache-Fehlgriff kosten). Der Träger (jedes k mit wₖ > 0) geht immer ein, auch wenn rₖ
+ * auf 0 gerundet wird. Zwei unabhängige 32-Bit-Hashes (FNV-1a und Murmur3-Mischung) über (k, rₖ) ergeben 64 Bit.
+ * Verteilungen, deren normalisierte Gewichte sich irgendwo um mehr als 2⁻³⁶ ≈ 1,5·10⁻¹¹ unterscheiden, erhalten
+ * verschiedene Kennungen (bis auf 64-Bit-Kollisionen). Nicht-positive und NaN-Gewichte zählen wie 0 (wie bei allen Nutzern).
+ * Präfix „h2“ = Version des Kennungsverfahrens.
+ */
+var HASH_Q = 68719476736; // 2^36
 function hashRange(w) {
-  var h = 2166136261 >>> 0;
-  for (var k = 0; k < NC; k++) { var v = Math.round(w[k] * 1000); if (v) { h ^= (k * 1009 + v); h = Math.imul(h, 16777619) >>> 0; } }
-  return h.toString(36);
+  var tot = 0, k, x, inf = false, mx = 0;
+  for (k = 0; k < NC; k++) { x = w[k]; if (x > 0) { if (x === Infinity) inf = true; else if (x > mx) mx = x; } }
+  if (inf) {
+    // ungültige Range (unendliche Gewichte): eigener Schlüssel je Lage der unendlichen Einträge, keine Sammelkennung
+    HS[0] = 0x811c9dc5 | 0; HS[1] = 0x9747b28c | 0;
+    for (k = 0; k < NC; k++) if (w[k] === Infinity) hashWord(k);
+    return 'h2inf' + ((fmix32(HS[0]) >>> 0).toString(16)) + ((fmix32(HS[1]) >>> 0).toString(16));
+  }
+  // erst durch das Maximum teilen: kein Überlauf der Summe bei sehr großen Gewichten (z. B. 1e306)
+  for (k = 0; k < NC; k++) { x = w[k]; if (x > 0) tot += x / mx; }
+  if (!(tot > 0) || !isFinite(tot)) return 'h2leer';
+  tot *= mx;
+  HS[0] = 0x811c9dc5 | 0; HS[1] = 0x9747b28c | 0;
+  var n = 0;
+  for (k = 0; k < NC; k++) {
+    x = w[k]; if (!(x > 0)) continue;
+    var q = Math.round((x / mx) / (tot / mx) * HASH_Q);
+    hashWord(k); hashWord((q % 4294967296) | 0); hashWord(Math.floor(q / 4294967296) | 0);
+    n++;
+  }
+  var a = fmix32(HS[0] ^ n), b = fmix32(HS[1] ^ n);
+  return 'h2' + ('0000000' + (a >>> 0).toString(16)).slice(-8) + ('0000000' + (b >>> 0).toString(16)).slice(-8);
 }
+var HS = new Int32Array(2);
+function hashWord(wd) {
+  HS[0] = Math.imul(HS[0] ^ wd, 0x01000193);
+  var m = Math.imul(wd, 0xcc9e2d51); m = (m << 15) | (m >>> 17); m = Math.imul(m, 0x1b873593);
+  var h = HS[1] ^ m; h = (h << 13) | (h >>> 19); HS[1] = (Math.imul(h, 5) + 0xe6546b64) | 0;
+}
+function fmix32(h) { h ^= h >>> 16; h = Math.imul(h, 0x85ebca6b); h ^= h >>> 13; h = Math.imul(h, 0xc2b2ae35); h ^= h >>> 16; return h; }
 
 // ---------- weiche Top-x-Bänder ----------
 /** Gewicht einer Klasse für das Band [lo, hi] (Anteil der stärksten Kombinationen) mit weichen Rändern */
@@ -250,6 +287,28 @@ function likelihood(act, x, draw, ctx, prof) {
   } else p = 1;
   return Math.max(0.04, Math.min(1, p));
 }
+/**
+ * Prüfer B, Befund 11: Likelihood eines Leads (Donk-Bet) in den bisherigen Aggressor nach der absoluten Stärke xa (Perzentil gegen alle
+ * mit dem Board verträglichen Hände, nicht relativ zur bisherigen Range). Relative Lead-Häufigkeit (stark = 1) gemessen an der Gegner-KI
+ * (alle 100 Profile, 30.000 zufällige Hände, Linie Flop Check/Call, Turn- bzw. River-Lead): xa 0,8–0,9 Turn 0,32 / River 0,25;
+ * 0,7–0,8 0,13 / 0,08; unter 0,7 0,06. Bei der Politik „Lead immer callen“ wird jede Lead-Hand aufgedeckt; die Messung nutzt also nur
+ * Karten, die am Tisch sichtbar würden (docs/STRATEGIE.md). Starke Draws vor dem River: Annahme 0,25 (nicht getrennt gemessen).
+ */
+function leadLikelihood(xa, draw, ctx) {
+  var p = xa >= 0.9 ? 1 : xa >= 0.8 ? 0.28 : xa >= 0.7 ? 0.1 : 0.06;
+  if (draw && ctx.street < 3) p = Math.max(p, 0.25);
+  return 0.85 * p;
+}
+/** Lead (Donk-Bet): erste Bet einer Straße in den letzten Aggressor früherer Straßen (sonst den Preflop-Raiser), der auf dieser Straße
+    noch nicht gehandelt hat und noch im Pot ist. Nur öffentliche Aktionen. */
+function isLead(actions, a, seat, pfaSeat) {
+  var idx = actions.indexOf(a), aggr = pfaSeat, i;
+  if (idx < 0) return false;
+  for (i = 0; i < idx; i++) { var b = actions[i]; if (b.st > 0 && b.st < a.st && (b.t === 'bet' || b.t === 'raise')) aggr = b.s; }
+  if (aggr == null || aggr < 0 || aggr === seat) return false;
+  for (i = 0; i < idx; i++) { var c = actions[i]; if (c.s === aggr && (c.t === 'fold' || c.st === a.st)) return false; }
+  return true;
+}
 /** Wendet alle Postflop-Aktionen eines Spielers bis einschließlich Straße `upto` an. */
 function narrowPostflop(w, actions, seat, board, prof, pfaSeat, upto) {
   var streets = [1, 2, 3];
@@ -257,10 +316,16 @@ function narrowPostflop(w, actions, seat, board, prof, pfaSeat, upto) {
     if (s > upto) return;
     var acts = actions.filter(function (a) { return a.st === s && a.s === seat && (a.t === 'bet' || a.t === 'raise' || a.t === 'call' || a.t === 'check'); });
     if (!acts.length) return;
-    var bd = board.slice(0, s === 1 ? 3 : s === 2 ? 4 : 5), hs = rangeStrength(w, bd);
+    var bd = board.slice(0, s === 1 ? 3 : s === 2 ? 4 : 5), hs = rangeStrength(w, bd), hsA = null;
     acts.forEach(function (a) {
       var ctx = { street: s, size: a.pot > 0 ? Math.max(a.a - (a.cur || 0), a.a) / Math.max(1, a.pot) : 0.6, cbet: s === 1 && seat === pfaSeat && a.t === 'bet' };
+      if (a.t === 'bet') ctx.lead = isLead(actions, a, seat, pfaSeat);
       if (a.t === 'call') ctx.size = a.tc / Math.max(1, a.pot);
+      if (ctx.lead) {
+        if (!hsA) { var all = new Float64Array(NC), dm = H.deadMaskOf(bd); for (var k0 = 0; k0 < NC; k0++) if (!dm[C1[k0]] && !dm[C2[k0]]) all[k0] = 1; hsA = rangeStrength(all, bd); }
+        for (var k1 = 0; k1 < NC; k1++) if (w[k1] > 0) w[k1] *= leadLikelihood(hsA.v[k1], hs.d[k1] === 1, ctx);
+        return;
+      }
       for (var k = 0; k < NC; k++) if (w[k] > 0) w[k] *= likelihood(a.t, hs.v[k], hs.d[k] === 1, ctx, prof);
     });
   });
@@ -377,6 +442,6 @@ PT.ranges = { empty: empty, full: full, band: band, bandClass: bandClass, fromCl
   total: total, combosCount: combosCount, classWeights: classWeights, widthOf: widthOf, hash: hashRange,
   chart: chart, rangeFromChart: rangeFromChart, RFI_W: RFI_W, DEF_W: DEF_W, V3_W: V3_W, BLUFF3: BLUFF3, BLUFF4: BLUFF4,
   PRIOR: PRIOR, PRIOR_K: PRIOR_K, smooth: smooth, preflopRange: preflopRange, profileOf: profileOf,
-  drawInfo: drawInfo, rangeStrength: rangeStrength, likelihood: likelihood, narrowPostflop: narrowPostflop,
+  drawInfo: drawInfo, rangeStrength: rangeStrength, likelihood: likelihood, narrowPostflop: narrowPostflop, isLead: isLead, leadLikelihood: leadLikelihood,
   analyzeBoard: analyzeBoard, handFeatures: handFeatures };
 })(typeof globalThis !== 'undefined' ? globalThis : (typeof self !== 'undefined' ? self : this));

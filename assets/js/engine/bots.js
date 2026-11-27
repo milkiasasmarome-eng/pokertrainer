@@ -159,8 +159,17 @@ function preflop(v, P, rng, ctx) {
   var openerPos = v.players[opener].pos, sizeBB = lastTo / v.bb;
   if (rc === 1) {
     var tbAdj = heroAgg ? 1 + P.adapt * Math.max(0, adaptFactor(hs, 'steal', 0.4, 30, 30)) * 2.5 : 1;
-    var ch = R.chart('vsOpen', { pos: pos, opener: openerPos, sizeBB: sizeBB, scale: P.tb * tbAdj, bluffScale: P.bl3 * tbAdj, callScale: P.call * tbAdj, squeeze: callers > 0 });
-    var a1 = chartAct(rowFor(ch));
+    // Fold gegen 3-Bet des Helden (beobachtbar): > 0 heißt, der Held gibt zu oft auf → mehr 3-Bet-Bluffs, Calls werden zu 3-Bets;
+    // < 0 (Held hält 3-Bets oft) → weniger Bluffs, etwas breiter für Value
+    var e3 = heroAgg ? P.adapt * adaptFactor(hs, 'foldTo3Bet', 0.55, 25, 20) : 0;
+    var ch = R.chart('vsOpen', { pos: pos, opener: openerPos, sizeBB: sizeBB, scale: P.tb * tbAdj * (1 + 1.5 * Math.max(0, -e3)), bluffScale: P.bl3 * tbAdj * clamp(1 + 6 * e3, 0.25, 4),
+      callScale: P.call * tbAdj, squeeze: callers > 0 });
+    var row1 = rowFor(ch);
+    if (e3 > 0) {
+      var conv = clamp(1.5 * e3, 0, 0.5), xb = x <= 0.5 ? clamp(0.5 * e3, 0, 0.12) : 0;
+      row1 = { raise: row1.raise + conv * row1.call + xb * row1.fold, call: row1.call * (1 - conv), fold: row1.fold * (1 - xb) };
+    }
+    var a1 = chartAct(row1);
     if (a1 === 'raise' && L.canRaise) {
       var ip = PT.POS_ORDER_POST[pos] > PT.POS_ORDER_POST[openerPos];
       return raiseTo(v, L, lastTo * (ip ? 3 : 3.8) + callers * lastTo);
@@ -224,12 +233,14 @@ function postflop(v, P, rng, ctx) {
   if (v.street === 3 && cls === 'weak') cls = p >= 0.62 ? 'weak' : 'air';
   var hsI = streetHistory(v), ip = isIP(v), spr = Math.min(me.stack, maxOppStack(v)) / Math.max(1, pot);
   var hs = ctx && ctx.heroStats, heroIn = v.players.some(function (q) { return q.hero && !q.folded; });
-  var bluffMul = 1, valueMul = 1;
+  var bluffMul = 1, valueMul = 1, thinMul = 1;
   if (heroIn && hs) {
+    // WTSD des Helden über dem Populationsmittel: weniger Bluffs, mehr und dünnere Value-Bets (mittlere Hände)
     var st = adaptFactor(hs, 'wtsd', 0.28, 30, 25);
-    bluffMul = clamp(1 - P.adapt * st * 3, 0.4, 1.6);
+    bluffMul = clamp(1 - P.adapt * st * 3, 0.15, 1.6);
     if (v.street === 1) bluffMul *= clamp(1 + P.adapt * adaptFactor(hs, 'foldToCbet', 0.45, 20, 15) * 2.2, 0.5, 1.8);
     valueMul = clamp(1 + P.adapt * st * 1.5, 0.8, 1.4);
+    thinMul = clamp(1 + P.adapt * st * 4, 0.7, 2.2);
   }
   var mw = nOpp > 1 ? Math.pow(0.6, nOpp - 1) : 1;
   if (L.toCall === 0) {
@@ -241,20 +252,20 @@ function postflop(v, P, rng, ctx) {
     var pB;
     if (cls === 'monster') pB = 1 - P.slow * (v.street < 3 ? 1 : 0.3);
     else if (cls === 'strong') pB = 0.8 * valueMul;
-    else if (cls === 'medium') pB = (v.street === 3 ? P.thin : P.thin * 0.9 + 0.1) * valueMul * mw;
+    else if (cls === 'medium') pB = (v.street === 3 ? P.thin : P.thin * 0.9 + 0.1) * thinMul * mw;
     else if (di.strong) pB = P.semi * mw;
     else if (cls === 'weak') pB = P.bluff * 0.6 * bluffMul * mw;
     else pB = P.bluff * bluffMul * mw;
     if (isPfa && first) {
       if (v.street === 1) {
         if (cls === 'air' || cls === 'weak') pB = clamp(P.cbet * texMod * bluffMul * 0.85, 0, 0.95) * mw;
-        else if (cls === 'medium') pB = Math.max(pB, P.cbet * 0.75 * mw);
+        else if (cls === 'medium') pB = Math.max(pB, P.cbet * 0.75 * Math.max(1, thinMul) * mw);
         else if (di.strong) pB = Math.max(pB, P.cbet * mw);
       } else if (hsI.iBetPrev) {
         var barrel = v.street === 2 ? P.barrel : P.river;
         var scare = P.skill > 0.55 && (v.board[v.board.length - 1] >> 2) > Math.max.apply(null, v.board.slice(0, v.board.length - 1).map(function (c) { return c >> 2; }));
         if (cls === 'air' || cls === 'weak') pB = barrel * bluffMul * (scare ? 1.3 : 0.75) * mw * (v.street === 3 && di.strong === false ? 0.9 : 1);
-        else if (cls === 'medium') pB = barrel * (v.street === 3 ? 0.45 : 0.6);
+        else if (cls === 'medium') pB = barrel * (v.street === 3 ? 0.45 : 0.6) * thinMul;
       }
     } else if (!isPfa && first) {
       var pfaSeat = v.pfa, pfaLive = pfaSeat >= 0 && !v.players[pfaSeat].folded;
@@ -279,7 +290,9 @@ function postflop(v, P, rng, ctx) {
   var bettor = -1; for (var i = v.actions.length - 1; i >= 0; i--) { var a0 = v.actions[i]; if (a0.st === v.street && (a0.t === 'bet' || a0.t === 'raise')) { bettor = a0.s; break; } }
   var bluffy = 0.3;
   if (bettor >= 0 && v.players[bettor].hero && hs && hs.sm) bluffy = clamp(0.15 + (hs.sm.afq - 0.3) * 0.9, 0.1, 0.6);
-  var t0 = clamp(0.57 + 0.2 * Math.min(f, 1.6) - 0.3 * bluffy + (v.street - 1) * 0.06 + (v.raises >= 2 ? 0.1 : 0) + (nOpp > 1 ? 0.04 : 0), 0.35, 0.95);
+  // Prüfer B, Befund 3: Die Schwelle steigt auch oberhalb von 1,6 Pot weiter (logarithmisch); früher war sie dort konstant, sodass ein
+  // 17-facher Pot-Shove wie eine 1,6-Pot-Bet behandelt wurde.
+  var t0 = clamp(0.57 + 0.2 * Math.min(f, 1.6) + 0.08 * Math.log(Math.max(1, f / 1.6)) - 0.3 * bluffy + (v.street - 1) * 0.06 + (v.raises >= 2 ? 0.1 : 0) + (nOpp > 1 ? 0.04 : 0), 0.35, 0.97);
   var eq = clamp((p - t0) / Math.max(0.05, 1 - t0), 0, 1);
   if (di.strong && v.street < 3) {
     var outs = (di.fd ? 9 : 0) + (di.oesd ? 8 : di.gut ? 4 : 0) - (di.fd && di.so ? 2 : 0);
@@ -287,19 +300,27 @@ function postflop(v, P, rng, ctx) {
   }
   var stick = P.stick * (v.street === 3 ? 0.7 : 1) + (heroIn && bettor >= 0 && v.players[bettor].hero ? P.adapt * 0.1 * Math.max(0, bluffy - 0.3) : 0);
   var allInCall = toCall >= me.stack;
+  var implied = di.strong && v.street < 3 && !allInCall ? 0.05 : 0;
+  // Prüfer B, Befund 3: Starke Hände (Perzentil ≥ 0,90, keine Monster) spielen gegen Einsätze über Pot nicht mehr bedingungslos weiter.
+  // Reicht die Preisrechnung nicht, spielen sie mit P = 1 − k·ln(Einsatz/Pot) weiter; k wächst mit dem Können und sinkt mit der
+  // Neigung zum Callen (Calling Stations callen fast alles, Nits und TAGs folden gegen sehr große Einsätze meist).
+  var strongCont = true;
+  if (cls === 'strong' && f > 1 && eq + stick + implied < price) {
+    var kS = clamp(0.15 + 0.35 * P.skill - P.stick, 0.02, 0.8);
+    strongCont = rng() < clamp(1 - kS * Math.log(f), 0.05, 1);
+  }
   // Raise-Optionen
   if (L.canRaise && v.raises < 4) {
     var pr2 = 0;
     if (cls === 'monster') pr2 = (1 - P.slow * 0.6) * (hsI.iCheckedThis ? 0.5 + P.cr * 3 : 0.6);
-    else if (cls === 'strong') pr2 = (hsI.iCheckedThis ? P.cr * 2.2 : P.cr * 1.5) * (v.raises >= 2 ? 0.2 : 1);
+    else if (cls === 'strong' && strongCont) pr2 = (hsI.iCheckedThis ? P.cr * 2.2 : P.cr * 1.5) * (v.raises >= 2 ? 0.2 : 1);
     else if (di.strong && v.street < 3) pr2 = P.cr * 1.4 * P.semi * 2 * (v.raises >= 2 ? 0.1 : 1);
     else if (cls === 'air' && v.raises === 1) pr2 = P.cr * 0.4 * P.bluff * 2 * bluffMul;
-    if (spr < 1.5 && (cls === 'monster' || cls === 'strong')) return { type: 'allin' };
+    if (spr < 1.5 && (cls === 'monster' || (cls === 'strong' && strongCont))) return { type: 'allin' };
     if (rng() < clamp(pr2 * mw, 0, 0.9)) return raiseTo(v, L, v.cur * (v.street === 3 ? 2.8 : 3) + (pot - v.cur - me.bet) * 0.25);
   }
-  var implied = di.strong && v.street < 3 && !allInCall ? 0.05 : 0;
   if (eq + stick + implied >= price) return { type: 'call' };
-  if (cls === 'monster' || cls === 'strong') return { type: 'call' };
+  if (cls === 'monster' || (cls === 'strong' && strongCont)) return { type: 'call' };
   return { type: 'fold' };
 }
 function maxOppStack(v) { var m = 0; v.players.forEach(function (q) { if (q.seat !== v.seat && !q.folded) m = Math.max(m, q.stack); }); return m; }

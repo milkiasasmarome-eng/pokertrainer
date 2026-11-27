@@ -9,7 +9,7 @@ function makeHandRecord(h, meta) {
   var rec = h.publicRecord(), hero = h.p.filter(function (q) { return q.isHero; })[0];
   return {
     v: 1, id: 'h' + (meta.session || 0) + '-' + h.no + '-' + (rec.ts || 0), ts: rec.ts, no: h.no, session: meta.session || 0, seed: meta.seed >>> 0,
-    training: meta.training || null, button: rec.button, sb: rec.sb, bb: rec.bb, n: rec.n,
+    training: meta.training || null, tseed: meta.tseed != null ? meta.tseed >>> 0 : null, button: rec.button, sb: rec.sb, bb: rec.bb, n: rec.n,
     seats: rec.seats.map(function (s) { return { seat: s.seat, id: s.id, name: s.name, pos: s.pos, start: s.start, hero: !!s.hero, typ: s.hero ? null : (meta.types ? meta.types[s.id] || null : null) }; }),
     hero: hero ? PT.cardsStr(hero.cards) : '', heroSeat: hero ? hero.seat : 0,
     board: rec.board.slice(), actions: rec.actions, shown: rec.shown, net: rec.net, won: rec.won, returned: rec.returned, rake: rec.rake, rakeCfg: rec.rakeCfg || null, showdown: rec.showdown, sawFlop: rec.sawFlop,
@@ -20,20 +20,44 @@ function makeHandRecord(h, meta) {
   };
 }
 function slimDecision(d) {
-  return { i: d.i, st: d.st, chosen: d.chosen, rec: d.rec, cls: d.cls, eq: d.eq, need: d.need, grade: d.grade, score: d.score, loss: d.loss,
+  var o = { i: d.i, st: d.st, chosen: d.chosen, rec: d.rec, cls: d.cls, eq: d.eq, need: d.need, grade: d.grade, score: d.score, loss: d.loss,
     cats: d.cats || [], tags: d.tags || [], evs: (d.evs || []).slice(0, 6), mode: d.mode, snap: d.snap || null, pos: d.pos };
+  if (d.x) o.x = d.x;
+  return o;
+}
+function rnd(x, f) { return typeof x === 'number' && isFinite(x) ? Math.round(x * f) / f : null; }
+function ri(x) { return typeof x === 'number' && isFinite(x) ? Math.round(x) : 0; }
+/**
+ * Entscheidungsdatensatz aus Analyse a und Bewertung g (Spieler- und Coachsicht zum Entscheidungszeitpunkt).
+ * ctx: { idx, street, pos, view, opps, seed, chosen: {type, amount, label}, extra: [Beträge] | null }
+ * x: Zusatzfelder für den Benchmark-Export (seit 2.1): Versionen, Stufe, Rechenaufwand, Equity-Fehler, Alternativen mit Typ und Betrag.
+ */
+function makeDecision(ctx, a, g) {
+  var bestA = a.actions.filter(function (y) { return y.label === a.bestLabel; })[0] || a.actions[0] || { type: a.best, amount: a.bestAmount };
+  function amt(y) { return (y.type === 'bet' || y.type === 'raise') && isInt(y.amount, 0, 1e13) ? y.amount : null; }
+  return { i: ctx.idx, st: ctx.street, chosen: ctx.chosen.label, rec: a.bestLabel, cls: a.classification, eq: rnd(a.equity.eq, 1000),
+    need: a.potOdds ? rnd(a.potOdds.need, 1000) : null, grade: g.grade, score: g.score, loss: isFinite(g.loss) ? Math.round(g.loss) : null, cats: g.cats, tags: a.spotTags,
+    evs: a.actions.slice(0, 6).map(function (y) { return { l: y.label, ev: ri(y.ev), u: ri(y.u) }; }), mode: a.mode, pos: ctx.pos,
+    snap: { view: ctx.view, opps: ctx.opps, seed: ctx.seed },
+    x: { v: 1, sw: PT.VERSION, mv: (C && C.MODEL_VERSION) || ('coach-' + PT.VERSION), lvl: a.level, it: a.iters | 0, max: a.maxSim | 0, ms: Math.max(0, Math.round(a.ms || 0)),
+      eq: { se: rnd(a.equity.se, 1e5), m: String(a.equity.method || '').slice(0, 80), lo: rnd(a.equity.rangeLo, 1e4), hi: rnd(a.equity.rangeHi, 1e4) },
+      best: { t: bestA.type, a: amt(bestA) }, ch: { t: ctx.chosen.type, a: amt(ctx.chosen) },
+      ex: (ctx.extra || []).filter(function (e) { return isInt(e, 0, 1e13); }).slice(0, 4),
+      alt: a.actions.slice(0, 12).map(function (y) { return { t: y.type, a: amt(y), l: String(y.label).slice(0, 80), ev: ri(y.ev), u: ri(y.u) }; }) } };
 }
 function unionTags(ds) { var o = []; ds.forEach(function (d) { (d.tags || []).forEach(function (t) { if (o.indexOf(t) < 0) o.push(t); }); }); return o; }
-var HAND_KEYS = ['v', 'id', 'ts', 'no', 'session', 'seed', 'training', 'button', 'sb', 'bb', 'n', 'seats', 'hero', 'heroSeat', 'board', 'actions', 'shown', 'net', 'won', 'returned', 'rake', 'rakeCfg', 'showdown', 'sawFlop', 'heroNet', 'pots', 'decisions', 'tags'];
+var HAND_KEYS = ['v', 'id', 'ts', 'no', 'session', 'seed', 'training', 'tseed', 'button', 'sb', 'bb', 'n', 'seats', 'hero', 'heroSeat', 'board', 'actions', 'shown', 'net', 'won', 'returned', 'rake', 'rakeCfg', 'showdown', 'sawFlop', 'heroNet', 'pots', 'decisions', 'tags'];
 function validHand(h) {
   if (!h || typeof h !== 'object' || Array.isArray(h)) return 'kein Datensatz';
   for (var k in h) if (HAND_KEYS.indexOf(k) < 0) return 'unbekanntes Feld';
   if (h.v !== 1 || typeof h.id !== 'string' || h.id.length > 80 || !/^[A-Za-z0-9_\-]+$/.test(h.id)) return 'ungültige ID';
-  if (!isInt(h.no, 0, 1e12) || typeof h.ts !== 'number' || !isInt(h.bb, 2, 1e7) || !isInt(h.sb, 1, h.bb) || !isInt(h.n, 2, 6) || !isInt(h.button, 0, h.n - 1)) return 'ungültige Kopfdaten';
+  if (!isInt(h.no, 0, 1e12) || !num(h.ts, 0, 8.64e15) || !isInt(h.bb, 2, 1e7) || !isInt(h.sb, 1, h.bb) || !isInt(h.n, 2, 6) || !isInt(h.button, 0, h.n - 1)) return 'ungültige Kopfdaten';
+  if ((h.session != null && !num(h.session, 0, 8.64e15)) || (h.seed != null && !isInt(h.seed, 0, 4294967295)) || (h.tseed != null && !isInt(h.tseed, 0, 4294967295))) return 'ungültige Kopfdaten';
   if (!Array.isArray(h.seats) || h.seats.length !== h.n) return 'ungültige Plätze';
   for (var i = 0; i < h.seats.length; i++) {
     var s = h.seats[i];
-    if (!s || typeof s.name !== 'string' || s.name.length > 40 || !/^[A-Za-zÀ-ÖØ-öø-ÿ0-9 .'\-]+$/.test(s.name) || !isInt(s.start, 0, 1e12) || typeof s.pos !== 'string' || s.pos.length > 4) return 'ungültiger Platz';
+    if (!s || typeof s !== 'object' || typeof s.name !== 'string' || s.name.length > 40 || !/^[A-Za-zÀ-ÖØ-öø-ÿ0-9 .'\-]+$/.test(s.name) || !isInt(s.start, 0, 1e12) || typeof s.pos !== 'string' || !/^[A-Z0-9+]{1,4}$/.test(s.pos)) return 'ungültiger Platz';
+    if ((s.seat != null && s.seat !== i) || (s.id != null && (typeof s.id !== 'string' || !ID_RE2.test(s.id))) || (s.hero != null && typeof s.hero !== 'boolean') || (s.typ != null && (typeof s.typ !== 'string' || !/^[A-Za-zäöü -]{1,20}$/.test(s.typ)))) return 'ungültiger Platz';
   }
   var hc = PT.parseCards(h.hero || ''), bc = PT.parseCards((h.board || []).join(''));
   if (!hc || hc.length !== 2 || !bc || bc.length > 5) return 'ungültige Karten';
@@ -41,16 +65,25 @@ function validHand(h) {
   for (var j = 0; j < h.actions.length; j++) {
     var a = h.actions[j];
     if (!a || !isInt(a.st, 0, 3) || !isInt(a.s, 0, h.n - 1) || ['sb', 'bb', 'fold', 'check', 'call', 'bet', 'raise'].indexOf(a.t) < 0 || !isInt(a.a, 0, 1e12)) return 'ungültige Aktion ' + (j + 1);
+    if ((a.ai != null && typeof a.ai !== 'boolean') || (a.cr != null && typeof a.cr !== 'boolean') || !optInts(a, ['add', 'tc', 'pot', 'cur'])) return 'ungültige Aktion ' + (j + 1);
   }
   if (!Array.isArray(h.decisions) || h.decisions.length > 50) return 'ungültige Entscheidungen';
   for (var d = 0; d < h.decisions.length; d++) {
     var x = h.decisions[d];
-    if (!x || typeof x.grade !== 'string' || C.GRADES.indexOf(x.grade) < 0 || typeof x.score !== 'number') return 'ungültige Entscheidung';
+    if (!x || typeof x !== 'object' || typeof x.grade !== 'string' || C.GRADES.indexOf(x.grade) < 0 || !num(x.score, -1e3, 1e3)) return 'ungültige Entscheidung';
     if (x.rec != null && (typeof x.rec !== 'string' || x.rec.length > 80)) return 'ungültige Empfehlung';
     if (x.chosen != null && (typeof x.chosen !== 'string' || x.chosen.length > 80)) return 'ungültige Aktion';
+    var de = validDecisionFields(x, h); if (de) return de;
   }
   if (!Array.isArray(h.net) || h.net.length !== h.n) return 'ungültiges Ergebnis';
-  for (var q = 0; q < h.n; q++) if (typeof h.net[q] !== 'number' || !isFinite(h.net[q])) return 'ungültiges Ergebnis';
+  for (var q = 0; q < h.n; q++) if (!isInt(h.net[q], -1e13, 1e13)) return 'ungültiges Ergebnis';
+  if (h.heroNet != null && !isInt(h.heroNet, -1e13, 1e13)) return 'ungültiges Ergebnis';
+  if ((h.won != null && !intList(h.won, h.n, 0, 1e13)) || (h.rake != null && !isInt(h.rake, 0, 1e13)) || (h.showdown != null && typeof h.showdown !== 'boolean')) return 'ungültiges Ergebnis';
+  if (h.sawFlop != null && !seatList(h.sawFlop, h.n)) return 'ungültiges Ergebnis';
+  if (h.returned != null) {
+    if (!Array.isArray(h.returned) || h.returned.length > 8) return 'ungültige Rückgabe';
+    for (var rr = 0; rr < h.returned.length; rr++) { var ret = h.returned[rr]; if (!ret || !isInt(ret.seat, 0, h.n - 1) || !isInt(ret.amount, 0, 1e13)) return 'ungültige Rückgabe'; }
+  }
   if (!isInt(h.heroSeat, 0, h.n - 1)) return 'ungültiger Heldenplatz';
   if (h.shown != null) {
     if (!Array.isArray(h.shown) || h.shown.length > h.n) return 'ungültige aufgedeckte Karten';
@@ -68,6 +101,40 @@ function validHand(h) {
   }
   if (h.tags != null && !strList(h.tags, 40)) return 'ungültige Tags';
   if (h.training != null && (typeof h.training !== 'string' || !TAG_RE.test(h.training))) return 'ungültige Trainingskategorie';
+  return null;
+}
+function num(x, lo, hi) { return typeof x === 'number' && isFinite(x) && x >= lo && x <= hi; }
+function optInts(o, keys) { for (var i = 0; i < keys.length; i++) { var v = o[keys[i]]; if (v != null && !isInt(v, -1e13, 1e13)) return false; } return true; }
+function intList(a, n, lo, hi) { if (!Array.isArray(a) || a.length !== n) return false; for (var i = 0; i < a.length; i++) if (!isInt(a[i], lo, hi)) return false; return true; }
+var LEVELS_OK = ['schnell', 'standard', 'praezise', 'tief'], ACT_T = ['fold', 'check', 'call', 'bet', 'raise'], X_KEYS = ['v', 'sw', 'mv', 'lvl', 'it', 'max', 'ms', 'eq', 'best', 'ch', 'ex', 'alt'];
+var HDEC_KEYS = ['i', 'st', 'chosen', 'rec', 'cls', 'eq', 'need', 'grade', 'score', 'loss', 'cats', 'tags', 'evs', 'mode', 'snap', 'pos', 'x'];
+function actRef(o) { return o && typeof o === 'object' && !Array.isArray(o) && ACT_T.indexOf(o.t) >= 0 && (o.a === null || isInt(o.a, 0, 1e13)); }
+/** Strenge Prüfung der übrigen Entscheidungsfelder (Zahlen endlich und im Wertebereich, Texte begrenzt, Zusatzfelder x). */
+function validDecisionFields(x, h) {
+  for (var k in x) if (HDEC_KEYS.indexOf(k) < 0) return 'unbekanntes Feld in Entscheidung';
+  if (x.i != null && !isInt(x.i, 0, 400)) return 'ungültige Entscheidung';
+  if ((x.eq != null && !num(x.eq, 0, 1)) || (x.need != null && !num(x.need, 0, 1)) || (x.loss != null && !num(x.loss, -1e13, 1e13))) return 'ungültige Entscheidung';
+  if (x.cls != null && (typeof x.cls !== 'string' || !/^[a-z]{1,20}$/.test(x.cls))) return 'ungültige Entscheidung';
+  if (x.mode != null && x.mode !== 'exploit' && x.mode !== 'gto') return 'ungültige Entscheidung';
+  if (x.pos != null && (typeof x.pos !== 'string' || !/^[A-Z0-9+]{1,4}$/.test(x.pos))) return 'ungültige Entscheidung';
+  if (x.evs != null) {
+    if (!Array.isArray(x.evs) || x.evs.length > 6) return 'ungültige EV-Liste';
+    for (var e = 0; e < x.evs.length; e++) { var y = x.evs[e]; if (!y || typeof y.l !== 'string' || y.l.length > 80 || !num(y.ev, -1e13, 1e13) || !num(y.u, -1e13, 1e13)) return 'ungültige EV-Liste'; }
+  }
+  if (x.x != null) {
+    var b = x.x;
+    if (!b || typeof b !== 'object' || Array.isArray(b)) return 'ungültige Zusatzfelder';
+    for (var k2 in b) if (X_KEYS.indexOf(k2) < 0) return 'unbekanntes Zusatzfeld';
+    if (b.v !== 1 || typeof b.sw !== 'string' || !/^[0-9A-Za-z.+-]{1,20}$/.test(b.sw) || typeof b.mv !== 'string' || !/^[0-9A-Za-z.+_-]{1,40}$/.test(b.mv) || LEVELS_OK.indexOf(b.lvl) < 0) return 'ungültige Zusatzfelder';
+    if (!isInt(b.it, 0, 1e8) || !isInt(b.max, 0, 1e8) || !isInt(b.ms, 0, 1e8)) return 'ungültige Zusatzfelder';
+    var q = b.eq;
+    if (!q || typeof q !== 'object' || (q.se !== null && !num(q.se, 0, 1)) || typeof q.m !== 'string' || q.m.length > 80 || (q.lo !== null && !num(q.lo, 0, 1)) || (q.hi !== null && !num(q.hi, 0, 1))) return 'ungültige Zusatzfelder';
+    if (!actRef(b.best) || !actRef(b.ch)) return 'ungültige Zusatzfelder';
+    if (!Array.isArray(b.ex) || b.ex.length > 4 || b.ex.some(function (z) { return !isInt(z, 0, 1e13); })) return 'ungültige Zusatzfelder';
+    if (!Array.isArray(b.alt) || b.alt.length > 12) return 'ungültige Zusatzfelder';
+    for (var j = 0; j < b.alt.length; j++) { var al = b.alt[j]; if (!actRef(al) || typeof al.l !== 'string' || al.l.length > 80 || !isInt(al.ev, -1e13, 1e13) || !isInt(al.u, -1e13, 1e13)) return 'ungültige Zusatzfelder'; }
+    if (x.snap == null) return 'Zusatzfelder ohne Momentaufnahme';
+  }
   return null;
 }
 function seatList(a, n) { if (!Array.isArray(a) || a.length > n) return false; for (var i = 0; i < a.length; i++) if (!isInt(a[i], 0, n - 1)) return false; return true; }
@@ -269,10 +336,12 @@ var SCEN = {
 function hasDraw(h) { var d = PT.ranges.drawInfo(h.p[0].cards[0], h.p[0].cards[1], h.board); return d.strong && (PT.eval.evaluate(h.p[0].cards.concat(h.board)) >> 20) <= 1; }
 function weakRiver(h) { return PT.bots.percentile(h.p[0].cards, h.board).p < 0.55; }
 function strongHand(h) { return PT.bots.percentile(h.p[0].cards, h.board).p >= 0.88; }
+/** Bekannte Trainingskategorie (nur eigene Schlüssel: „constructor“ aus importierten Lerndaten ist keine Kategorie, Prüfung C6). */
+function hasScen(cat) { return typeof cat === 'string' && Object.prototype.hasOwnProperty.call(SCEN, cat); }
 /** Führt Aktionen bis zum Zielspot aus. Gibt {hand, ok} zurück. Held sitzt immer auf Platz 0. */
 function generate(cat, seed, opts) {
   opts = opts || {};
-  var sc = SCEN[cat] || SCEN['preflop-open'], rng0 = PT.makeRng('szenario|' + cat + '|' + (seed >>> 0));
+  var sc = (hasScen(cat) && SCEN[cat]) || SCEN['preflop-open'], rng0 = PT.makeRng('szenario|' + cat + '|' + (seed >>> 0));
   var cfg = PT.session.defaultConfig(); cfg.difficulty = opts.difficulty || 'gemischt';
   for (var attempt = 0, maxAtt = sc.any ? 240 : 80; attempt < maxAtt; attempt++) {
     var r = PT.makeRng('szenario|' + cat + '|' + (seed >>> 0) + '|' + attempt);
@@ -456,7 +525,7 @@ function handText(h) {
   return lines.join('\n');
 }
 
-PT.training = { makeHandRecord: makeHandRecord, validHand: validHand, newLearning: newLearning, addDecision: addDecision, validLearning: validLearning, repairLearning: repairLearning, validView: validView, validSnap: validSnap,
-  profile: profile, goalStatus: goalStatus, srsAdd: srsAdd, srsDue: srsDue, srsReview: srsReview, BOX_DAYS: BOX_DAYS, SCEN: SCEN, generate: generate,
+PT.training = { makeHandRecord: makeHandRecord, makeDecision: makeDecision, slimDecision: slimDecision, validHand: validHand, newLearning: newLearning, addDecision: addDecision, validLearning: validLearning, repairLearning: repairLearning, validView: validView, validSnap: validSnap,
+  profile: profile, goalStatus: goalStatus, srsAdd: srsAdd, srsDue: srsDue, srsReview: srsReview, BOX_DAYS: BOX_DAYS, SCEN: SCEN, hasScen: hasScen, generate: generate,
   quiz: quiz, QUIZ_TYPES: QUIZ_TYPES, handText: handText, levelOf: levelOf, defaultGoals: defaultGoals };
 })(typeof globalThis !== 'undefined' ? globalThis : (typeof self !== 'undefined' ? self : this));
