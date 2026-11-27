@@ -39,4 +39,31 @@ module.exports = async function (H) {
     note('Hand mit 3.006 gespeicherten Händen in ' + (Date.now() - t0) + ' ms');
     await c.close();
   });
+
+  await test('Prüfung C3: Rohsicherung ohne lesbare IndexedDB gilt als unvollständig – Zurücksetzen nur nach ausdrücklicher Bestätigung; Fokus nach „Weiter warten“ (D t12)', async () => {
+    const { c, p } = await fresh();
+    await p.goto(BASE + 'index.html#tisch'); await ready(p); for (let i = 0; i < 2; i++) await playOne(p); await p.waitForTimeout(500);
+    await p.evaluate(() => localStorage.setItem('pokertrainer2.meta', '{"v":{"x":1}}'));  // Altbestand aus Entwurf 2: früher genügte er als „Sicherung“
+    const nOpps = (await p.evaluate(IDB.all, 'opps')).length;
+    await p.close();
+    const q = await c.newPage(); await q.addInitScript(INIT.readError);
+    await q.goto(BASE + 'index.html#tisch'); await q.waitForSelector('#recovery', { timeout: 25000 });
+    const [dl] = await Promise.all([q.waitForEvent('download'), q.click('#recBackup')]);
+    const f = path.join(OUT, 'c3-roh.json'); await dl.saveAs(f); const dump = JSON.parse(fs.readFileSync(f, 'utf8')); fs.unlinkSync(f);
+    ok(dump.incomplete === true && /opps/.test(dump.indexedDBError) && Array.isArray(dump.indexedDB.pokertrainer2.meta), 'nicht lesbarer Bereich benannt, übrige Bereiche gesichert: ' + dump.indexedDBError);
+    await q.waitForSelector('#recSaved:not([disabled])');
+    ok(/unvollständig/.test(await q.textContent('#recStatus')), 'Hinweis „unvollständig“');
+    await q.check('#recSaved');
+    ok(await q.locator('#recReset').isDisabled() && await q.locator('#recLoss').isVisible(), 'Zurücksetzen bleibt gesperrt, Verlust-Bestätigung angeboten');
+    ok(await q.evaluate(() => window.PTRecovery.reset().then(() => 'gelöscht', e => e.message)) !== 'gelöscht', 'PTRecovery.reset lehnt ohne Bestätigung ab');
+    await q.close();
+    const r = await c.newPage(); await r.goto(BASE + 'manifest.webmanifest');
+    ok((await r.evaluate(IDB.all, 'opps')).length === nOpps, 'Gegnerdaten unverändert (' + nOpps + ')');
+    // t12: „Weiter warten“ gibt den Fokus an das vorherige Element zurück
+    await r.goto(BASE + 'index.html#tisch'); await ready(r);
+    await r.focus('#bNext'); await r.evaluate(() => window.PTRecovery.fail('timeout', 'Test')); await r.waitForSelector('#recWait');
+    await r.click('#recWait');
+    ok(await r.evaluate(() => document.activeElement && document.activeElement.id) === 'bNext', 'Fokus zurück auf „Nächste Hand“');
+    await c.close();
+  });
 };

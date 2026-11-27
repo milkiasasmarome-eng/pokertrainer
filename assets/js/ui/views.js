@@ -561,7 +561,7 @@ views.einstellungen = function (el) {
   });
   $('dBk').addEventListener('click', function () { backupNow('').then(function () { H.toast('Sicherung exportiert.'); }); });
   $('dIm').addEventListener('click', function () { pickFile(function (t, n) { importText(t, n, 'backup'); }); });
-  $('dRaw').addEventListener('click', function () { if (window.PTRecovery) window.PTRecovery.backup().then(function (n) { H.toast('Rohsicherung „' + n + '“ exportiert.'); }, function (e) { H.toast('Rohsicherung fehlgeschlagen: ' + ((e && e.message) || e)); }); });
+  $('dRaw').addEventListener('click', function () { if (window.PTRecovery) window.PTRecovery.backup().then(function (n) { H.toast('Rohsicherung „' + n + '“ exportiert.' + (window.PTRecovery.backupComplete ? '' : ' Achtung: unvollständig, ' + window.PTRecovery.backupMissing + '.'), 8000); }, function (e) { H.toast('Rohsicherung fehlgeschlagen: ' + ((e && e.message) || e)); }); });
   $('dDel').addEventListener('click', function () {
     if (!PTUI.canWrite()) return;
     H.openModal('Alle Daten löschen?', '<p>Gegnerdatenbank, Handhistorie, Lernfortschritt und Einstellungen in diesem Browser werden <b>unwiderruflich gelöscht</b>. Vorher wird eine Sicherung heruntergeladen.</p><div class="btnrow"><button class="btn danger" type="button" id="delOk">Endgültig löschen</button><button class="btn" type="button" id="delNo">Abbrechen</button></div>');

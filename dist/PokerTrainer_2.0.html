@@ -379,7 +379,11 @@ R.ready = function () {
   // Ein nur wegen Zeitüberschreitung gezeigter Hinweis verschwindet, wenn der Start doch noch gelingt.
   if (R.reason === 'timeout') R.hide();
 };
-R.hide = function () { var p = document.getElementById('recovery'); if (p) p.remove(); if (R.state === 'failed') R.state = isReady() ? 'ready' : 'start'; R.reason = null; setInert(false); };
+R.hide = function () {
+  var p = document.getElementById('recovery'), had = !!p; if (p) p.remove(); if (R.state === 'failed') R.state = isReady() ? 'ready' : 'start'; R.reason = null; setInert(false);
+  // Fokus zurück auf das Element vor der Fehleranzeige (WCAG 2.4.3), sonst auf den Hauptbereich (Prüfung D, t12)
+  if (had) { var f = R.prevFocus; R.prevFocus = null; try { if (f && f !== document.body && document.body.contains(f) && !f.disabled) f.focus(); else { var m = document.getElementById('main'); if (m) m.focus({ preventScroll: true }); } } catch (e) { /* leer */ } }
+};
 
 // ---------- Rohsicherung ----------
 function finite(k, v) { return typeof v === 'number' && !isFinite(v) ? String(v) : v; }
@@ -391,7 +395,9 @@ R.rawDump = function (timeoutMs) {
     var done = false, timer = setTimeout(function () { fin(new Error('IndexedDB antwortet nicht')); }, timeoutMs || 6000);
     function fin(err) {
       if (done) return; done = true; clearTimeout(timer);
-      if (err) { out.indexedDBError = String(err && (err.name || err.message) || err); if (!Object.keys(out.localStorage).length) { rej(err); return; } }
+      if (err) { out.indexedDBError = String(err && (err.name || err.message) || err); out.incomplete = true; if (!Object.keys(out.localStorage).length) { rej(err); return; } }
+      // Vollständig nur, wenn die IndexedDB gelesen wurde (oder es im Browser keine gibt): nur dann darf zurückgesetzt werden
+      R.lastDump = { complete: !out.incomplete, missing: out.incomplete ? out.indexedDBError : '' };
       res(out);
     }
     try {
@@ -401,14 +407,24 @@ R.rawDump = function (timeoutMs) {
       rq.onblocked = function () { fin(new Error('IndexedDB blockiert')); };
       rq.onerror = function (ev) { if (ev && ev.preventDefault) ev.preventDefault(); if (created) { out.indexedDB = {}; fin(); } else fin(rq.error || new Error('IndexedDB-Fehler')); };
       rq.onsuccess = function () {
-        var d = rq.result, names = Array.prototype.slice.call(d.objectStoreNames), db = out.indexedDB[DB] = {};
+        var d = rq.result, names = Array.prototype.slice.call(d.objectStoreNames), db = out.indexedDB[DB] = {}, left = names.length, failed = [];
         if (!names.length) { d.close(); fin(); return; }
-        try {
-          var tx = d.transaction(names, 'readonly');
-          names.forEach(function (n) { var g = tx.objectStore(n).getAll(); g.onsuccess = function () { db[n] = g.result || []; }; });
-          tx.oncomplete = function () { d.close(); fin(); };
-          tx.onerror = tx.onabort = function () { d.close(); fin(tx.error || new Error('Lesefehler')); };
-        } catch (e) { d.close(); fin(e); }
+        // Jeder Speicherbereich einzeln: Ein Lesefehler in einem Bereich (z. B. „Failed to read large IndexedDB value“) kostet nicht die übrigen.
+        // Nicht lesbare Bereiche werden in indexedDBError genannt; die Sicherung gilt dann als unvollständig (Prüfung C3).
+        names.forEach(function (n) {
+          var settled = false;
+          function done(err) {
+            if (settled) return; settled = true;
+            if (err) failed.push(n + ' (' + String(err && (err.name || err.message) || err) + ')');
+            if (--left === 0) { d.close(); if (failed.length) { out.indexedDBError = 'nicht lesbar: ' + failed.join(', '); out.incomplete = true; } fin(); }
+          }
+          try {
+            var tx = d.transaction(n, 'readonly'), g = tx.objectStore(n).getAll();
+            g.onsuccess = function () { db[n] = g.result || []; };
+            tx.oncomplete = function () { done(); };
+            tx.onerror = tx.onabort = function () { done(tx.error || new Error('Lesefehler')); };
+          } catch (e) { done(e); }
+        });
       };
     } catch (e) { fin(e); }
   }).then(function (o) { return JSON.stringify(o, finite); });
@@ -422,12 +438,14 @@ R.backup = function () {
   return R.rawDump().then(function (text) {
     var name = 'Sicherung_PokerTrainer_' + today() + '_Rohdaten.json';
     download(name, text); R.backupDone = true; R.backupName = name; R.backupBytes = text.length;
+    R.backupComplete = !!(R.lastDump && R.lastDump.complete); R.backupMissing = R.lastDump ? R.lastDump.missing : '';
     return name;
   });
 };
 /** Löscht die lokalen Daten des Trainers – nur nach erzeugter Rohsicherung. */
 R.reset = function () {
   if (!R.backupDone) return Promise.reject(new Error('Erst eine Sicherung herunterladen.'));
+  if (!R.backupComplete && !R.lossAccepted) return Promise.reject(new Error('Die Sicherung ist unvollständig. Erst bestätigen, dass die nicht lesbaren Daten verloren gehen.'));
   return new Promise(function (res, rej) {
     try { Object.keys(localStorage).forEach(function (k) { if (/^pokertrainer20\./.test(k)) localStorage.removeItem(k); }); } catch (e) { /* leer */ }
     try {
@@ -465,6 +483,7 @@ var TEXT = {
 R.fail = function (reason, detail, opts) {
   opts = opts || {};
   if (R.state === 'failed' && R.reason === reason && !detail) return;
+  if (R.state !== 'failed') { var ae = document.activeElement; R.prevFocus = ae && ae !== document.body && !(ae.closest && ae.closest('#recovery')) ? ae : null; }
   R.state = 'failed'; R.reason = reason; R.detail = detail || ''; clearTimeout(R._slow); clearTimeout(R._fail);
   if (!document.body) { document.addEventListener('DOMContentLoaded', function () { R.fail(reason, detail, opts); }); return; }
   var old = document.getElementById('recovery'); if (old) old.remove();
@@ -492,25 +511,31 @@ R.fail = function (reason, detail, opts) {
   var bB = el('button', { id: 'recBackup', type: 'button', class: 'btn' }, '1. Sicherung herunterladen');
   var lab = el('label', { class: 'switch' }), chk = el('input', { type: 'checkbox', id: 'recSaved', disabled: '' });
   lab.appendChild(chk); lab.appendChild(document.createTextNode(' Ich habe die Sicherungsdatei gespeichert.'));
+  // Unvollständige Sicherung (IndexedDB nicht lesbar): Zurücksetzen nur nach ausdrücklicher Bestätigung des Verlusts
+  var labL = el('label', { class: 'switch', hidden: '' }), loss = el('input', { type: 'checkbox', id: 'recLoss' });
+  labL.appendChild(loss); labL.appendChild(document.createTextNode(' Ich nehme in Kauf, dass die nicht lesbaren Daten beim Zurücksetzen verloren gehen.'));
+  function upd() { R.lossAccepted = !R.backupComplete && loss.checked; bR.disabled = !(chk.checked && R.backupDone && (R.backupComplete || loss.checked)); }
   var bR = el('button', { id: 'recReset', type: 'button', class: 'btn danger', disabled: '' }, '2. Lokale Daten zurücksetzen');
   bB.addEventListener('click', function () {
     bB.disabled = true; status.textContent = 'Sicherung wird erstellt …';
     R.backup().then(function (name) {
-      status.textContent = 'Die Datei „' + name + '“ wurde zum Herunterladen angeboten (' + Math.max(1, Math.round(R.backupBytes / 1024)) + ' KB). Prüfe, ob sie gespeichert wurde.';
-      chk.disabled = false; bB.disabled = false; bB.textContent = '1. Sicherung erneut herunterladen';
+      status.textContent = 'Die Datei „' + name + '“ wurde zum Herunterladen angeboten (' + Math.max(1, Math.round(R.backupBytes / 1024)) + ' KB). Prüfe, ob sie gespeichert wurde.' +
+        (R.backupComplete ? '' : ' Achtung: Die Sicherung ist unvollständig – aus dem Browser-Speicher (IndexedDB) ' + R.backupMissing + '. Diese Daten fehlen in der Datei und gingen beim Zurücksetzen verloren.');
+      labL.hidden = !!R.backupComplete; loss.checked = false;
+      chk.disabled = false; bB.disabled = false; bB.textContent = '1. Sicherung erneut herunterladen'; upd();
     }, function (e) {
       bB.disabled = false;
       status.textContent = 'Die Sicherung ist fehlgeschlagen (' + (e && (e.message || e.name) || e) + '). Ohne Sicherung wird nichts gelöscht. Nutze „Ohne gespeicherte Daten starten“ oder lade die Seite neu.';
     });
   });
-  chk.addEventListener('change', function () { bR.disabled = !(chk.checked && R.backupDone); });
+  chk.addEventListener('change', upd); loss.addEventListener('change', upd);
   bR.addEventListener('click', function () {
-    if (!(chk.checked && R.backupDone)) return;
+    if (!(chk.checked && R.backupDone && (R.backupComplete || loss.checked))) return;
     bR.disabled = true; status.textContent = 'Lokale Daten werden zurückgesetzt …';
     R.reset().then(function () { status.textContent = 'Zurückgesetzt. Der Trainer startet neu.'; setTimeout(function () { go(normalUrl()); }, 300); },
       function (e) { bR.disabled = false; status.textContent = String(e && e.message || e); });
   });
-  r2.appendChild(bB); r2.appendChild(lab); r2.appendChild(bR);
+  r2.appendChild(bB); r2.appendChild(lab); r2.appendChild(labL); r2.appendChild(bR);
   fs.appendChild(r2); fs.appendChild(status);
   sheet.appendChild(fs);
   box.appendChild(sheet);
@@ -520,7 +545,7 @@ R.fail = function (reason, detail, opts) {
   box.addEventListener('keydown', function (e) {
     if (e.key === 'Escape' && (opts.canContinue || reason === 'timeout')) { e.preventDefault(); R.hide(); return; }
     if (e.key !== 'Tab') return;
-    var f = Array.prototype.filter.call(box.querySelectorAll('button, input, a[href]'), function (x) { return !x.disabled; });
+    var f = Array.prototype.filter.call(box.querySelectorAll('button, input, a[href]'), function (x) { return !x.disabled && x.offsetParent !== null; });
     if (!f.length) return;
     var i = f.indexOf(document.activeElement);
     if (e.shiftKey && (i <= 0)) { e.preventDefault(); f[f.length - 1].focus(); }
@@ -6476,7 +6501,7 @@ function bind() {
     else if (act === 'swupdate') swUpdate();
     else if (act === 'reload' || act === 'takeover') { if (S.hand && !S.hand.done && !S.readonly) toast('Die laufende Hand wird nach dem Neuladen exakt fortgesetzt.'); persist([]); flushWrites(3000).then(function () { location.reload(); }); }
     else if (act === 'normalstart') { if (window.PTRecovery) window.PTRecovery.go(window.PTRecovery.normalUrl()); else location.href = location.pathname + '#tisch'; }
-    else if (act === 'rawbackup' && window.PTRecovery) window.PTRecovery.backup().then(function (n) { toast('Rohsicherung „' + n + '“ heruntergeladen.'); }, function (e2) { toast('Rohsicherung fehlgeschlagen: ' + ((e2 && e2.message) || e2)); });
+    else if (act === 'rawbackup' && window.PTRecovery) window.PTRecovery.backup().then(function (n) { toast('Rohsicherung „' + n + '“ heruntergeladen.' + (window.PTRecovery.backupComplete ? '' : ' Achtung: unvollständig, ' + window.PTRecovery.backupMissing + '.'), 8000); }, function (e2) { toast('Rohsicherung fehlgeschlagen: ' + ((e2 && e2.message) || e2)); });
     else if (act === 'dismiss') { S.notes[b.getAttribute('data-note')] = ''; renderNotice(); }
   });
   window.addEventListener('hashchange', route);
@@ -7321,7 +7346,7 @@ views.einstellungen = function (el) {
   });
   $('dBk').addEventListener('click', function () { backupNow('').then(function () { H.toast('Sicherung exportiert.'); }); });
   $('dIm').addEventListener('click', function () { pickFile(function (t, n) { importText(t, n, 'backup'); }); });
-  $('dRaw').addEventListener('click', function () { if (window.PTRecovery) window.PTRecovery.backup().then(function (n) { H.toast('Rohsicherung „' + n + '“ exportiert.'); }, function (e) { H.toast('Rohsicherung fehlgeschlagen: ' + ((e && e.message) || e)); }); });
+  $('dRaw').addEventListener('click', function () { if (window.PTRecovery) window.PTRecovery.backup().then(function (n) { H.toast('Rohsicherung „' + n + '“ exportiert.' + (window.PTRecovery.backupComplete ? '' : ' Achtung: unvollständig, ' + window.PTRecovery.backupMissing + '.'), 8000); }, function (e) { H.toast('Rohsicherung fehlgeschlagen: ' + ((e && e.message) || e)); }); });
   $('dDel').addEventListener('click', function () {
     if (!PTUI.canWrite()) return;
     H.openModal('Alle Daten löschen?', '<p>Gegnerdatenbank, Handhistorie, Lernfortschritt und Einstellungen in diesem Browser werden <b>unwiderruflich gelöscht</b>. Vorher wird eine Sicherung heruntergeladen.</p><div class="btnrow"><button class="btn danger" type="button" id="delOk">Endgültig löschen</button><button class="btn" type="button" id="delNo">Abbrechen</button></div>');

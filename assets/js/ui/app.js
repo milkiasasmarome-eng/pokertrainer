@@ -774,7 +774,7 @@ function bind() {
     else if (act === 'swupdate') swUpdate();
     else if (act === 'reload' || act === 'takeover') { if (S.hand && !S.hand.done && !S.readonly) toast('Die laufende Hand wird nach dem Neuladen exakt fortgesetzt.'); persist([]); flushWrites(3000).then(function () { location.reload(); }); }
     else if (act === 'normalstart') { if (window.PTRecovery) window.PTRecovery.go(window.PTRecovery.normalUrl()); else location.href = location.pathname + '#tisch'; }
-    else if (act === 'rawbackup' && window.PTRecovery) window.PTRecovery.backup().then(function (n) { toast('Rohsicherung „' + n + '“ heruntergeladen.'); }, function (e2) { toast('Rohsicherung fehlgeschlagen: ' + ((e2 && e2.message) || e2)); });
+    else if (act === 'rawbackup' && window.PTRecovery) window.PTRecovery.backup().then(function (n) { toast('Rohsicherung „' + n + '“ heruntergeladen.' + (window.PTRecovery.backupComplete ? '' : ' Achtung: unvollständig, ' + window.PTRecovery.backupMissing + '.'), 8000); }, function (e2) { toast('Rohsicherung fehlgeschlagen: ' + ((e2 && e2.message) || e2)); });
     else if (act === 'dismiss') { S.notes[b.getAttribute('data-note')] = ''; renderNotice(); }
   });
   window.addEventListener('hashchange', route);
