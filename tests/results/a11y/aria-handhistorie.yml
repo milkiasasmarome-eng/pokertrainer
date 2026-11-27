@@ -31,68 +31,93 @@
       - columnheader "Ergebnis"
       - columnheader "Bewertung"
   - rowgroup:
-    - 'row "Hand #2 vom 27.11.26, 07:41 öffnen #2 CO Acht Kreuz Ass Karo Vier Herz Fünf Pik Bube Herz Drei Kreuz Bube Karo −4,50 Fehler"':
-      - 'cell "Hand #2 vom 27.11.26, 07:41 öffnen"':
-        - 'button "Hand #2 vom 27.11.26, 07:41 öffnen"': 27.11.26, 07:41
+    - 'row "Hand #2 vom 27.11.26, 10:39 öffnen #2 UTG Fünf Kreuz Dame Kreuz Sechs Karo Sieben Herz Acht Kreuz Neun Karo Sechs Kreuz −12,50 Ungenau (vertretbar)"':
+      - 'cell "Hand #2 vom 27.11.26, 10:39 öffnen"':
+        - 'button "Hand #2 vom 27.11.26, 10:39 öffnen"': 27.11.26, 10:39
       - cell "#2"
-      - cell "CO"
-      - cell "Acht Kreuz Ass Karo":
+      - cell "UTG"
+      - cell "Fünf Kreuz Dame Kreuz":
+        - img "Fünf Kreuz"
+        - img "Dame Kreuz"
+      - cell "Sechs Karo Sieben Herz Acht Kreuz Neun Karo Sechs Kreuz":
+        - img "Sechs Karo"
+        - img "Sieben Herz"
         - img "Acht Kreuz"
-        - img "Ass Karo"
-      - cell "Vier Herz Fünf Pik Bube Herz Drei Kreuz Bube Karo":
-        - img "Vier Herz"
-        - img "Fünf Pik"
-        - img "Bube Herz"
-        - img "Drei Kreuz"
-        - img "Bube Karo"
-      - cell "−4,50"
-      - cell "Fehler"
-    - 'row "Hand #1 vom 27.11.26, 07:41 öffnen #1 BTN Zehn Herz Bube Kreuz Zwei Herz Drei Karo Dame Karo Vier Herz Zwei Karo −3,50 Fehler"':
-      - 'cell "Hand #1 vom 27.11.26, 07:41 öffnen"':
-        - 'button "Hand #1 vom 27.11.26, 07:41 öffnen"': 27.11.26, 07:41
+        - img "Neun Karo"
+        - img "Sechs Kreuz"
+      - cell "−12,50"
+      - cell "Ungenau (vertretbar)"
+    - 'row "Hand #1 vom 27.11.26, 10:39 öffnen #1 HJ Ass Herz Zehn Karo Zwei Kreuz Dame Herz Bube Kreuz Zehn Kreuz Acht Kreuz −100,00 Schwerer Fehler (Fehler)"':
+      - 'cell "Hand #1 vom 27.11.26, 10:39 öffnen"':
+        - 'button "Hand #1 vom 27.11.26, 10:39 öffnen"': 27.11.26, 10:39
       - cell "#1"
-      - cell "BTN"
-      - cell "Zehn Herz Bube Kreuz":
-        - img "Zehn Herz"
+      - cell "HJ"
+      - cell "Ass Herz Zehn Karo":
+        - img "Ass Herz"
+        - img "Zehn Karo"
+      - cell "Zwei Kreuz Dame Herz Bube Kreuz Zehn Kreuz Acht Kreuz":
+        - img "Zwei Kreuz"
+        - img "Dame Herz"
         - img "Bube Kreuz"
-      - cell "Zwei Herz Drei Karo Dame Karo Vier Herz Zwei Karo":
-        - img "Zwei Herz"
-        - img "Drei Karo"
-        - img "Dame Karo"
-        - img "Vier Herz"
-        - img "Zwei Karo"
-      - cell "−3,50"
-      - cell "Fehler"
-- 'heading "Replayer – Hand #2 (27.11.26, 07:41)" [level=2]'
-- text: Pot 1,50 Du CO 96,50
-- img "Acht Kreuz"
-- img "Ass Karo"
-- text: Cem BTN 99,00
+        - img "Zehn Kreuz"
+        - img "Acht Kreuz"
+      - cell "−100,00"
+      - cell "Schwerer Fehler (Fehler)"
+- 'heading "Replayer – Hand #2 (27.11.26, 10:39)" [level=2]'
+- text: Pot 1,50 Du UTG 100,00
+- img "Fünf Kreuz"
+- img "Dame Kreuz"
+- text: Olga HJ 201,50
 - img "verdeckte Karte"
 - img "verdeckte Karte"
-- text: D Henrik SB 104,00
+- text: Ulla CO 100,00
 - img "verdeckte Karte"
 - img "verdeckte Karte"
-- text: 0,50 Kalle BB 99,00
+- text: Zeno BTN 99,50
 - img "verdeckte Karte"
 - img "verdeckte Karte"
-- text: 1,00 Enno UTG 100,00
+- text: D Henrik SB 98,50
 - img "verdeckte Karte"
 - img "verdeckte Karte"
-- text: Nele HJ 100,00
+- text: 0,50 Mats BB 99,00
 - img "verdeckte Karte"
 - img "verdeckte Karte"
+- text: 1,00
 - button "Zum Anfang": ⏮
 - button "Schritt zurück": ◀
 - button "Abspielen": ▶︎ Abspielen
 - button "Pause": ⏸
 - button "Schritt vor": ▶
 - button "Zum Ende": ⏭
-- status: "Schritt 1 von 17: Blinds"
+- status: "Schritt 1 von 15: Blinds"
 - button "Später bekannte Infos einblenden"
 - heading "Damals bekannt" [level=3]
-- paragraph: Deine Karten, Board bis hier, alle Aktionen bis hier.
-- paragraph: "Nächste Aktion: Enno"
+- paragraph: Deine Karten, Board bis hier, alle Aktionen bis hier, Gegnerwerte zum Entscheidungszeitpunkt.
+- paragraph: "Nächste Aktion: deine Entscheidung – gespielt: Call 1,00, empfohlen: Fold"
+- paragraph: Ungenau (vertretbar, EV-Verlust 0,21 BB)
+- table:
+  - rowgroup:
+    - row "Fold 0,00 BB ± 0,0 BB":
+      - cell "Fold"
+      - cell "0,00 BB"
+      - cell "± 0,0 BB"
+    - row "Open 2 BB 0,10 BB ± 0,3 BB":
+      - cell "Open 2 BB"
+      - cell "0,10 BB"
+      - cell "± 0,3 BB"
+    - row "Open 2,5 BB 0,07 BB ± 0,4 BB":
+      - cell "Open 2,5 BB"
+      - cell "0,07 BB"
+      - cell "± 0,4 BB"
+    - row "Open 3 BB 0,03 BB ± 0,5 BB":
+      - cell "Open 3 BB"
+      - cell "0,03 BB"
+      - cell "± 0,5 BB"
+    - row "Call 1,00 −0,21 BB ± 0,0 BB":
+      - cell "Call 1,00"
+      - cell "−0,21 BB"
+      - cell "± 0,0 BB"
+- button "Entscheidung erneut treffen"
 - heading "Später bekannt" [level=3]
 - paragraph: Ausgeblendet, damit du die Entscheidung ohne Kenntnis des Ausgangs prüfen kannst.
 - group: Handverlauf als Text

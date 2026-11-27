@@ -131,6 +131,260 @@ Aufrufe: `node tests/strategy/compare.js --plan haupt --jobs 2` (Hauptvergleich)
 ## 6. Automatisch erzeugte Ergebnisse
 
 <!-- AUTO-STRATEGIE-START (erzeugt mit node tools/report-strategy.js, nicht von Hand bearbeiten) -->
+Erzeugt aus `tests/results/strategy.json` (Plan „haupt“, 2026-11-27T09:21:20.031Z, Node v22.23.5, 2 Kerne). 241 Läufe, 602.500 Hände, 442.434 Coach-Entscheidungen, davon von den Regeln abgelehnt: **0**. Rechenzeit 9.805 s (Summe der Läufe).
+
+Methode: All-in-bereinigte BB/100 (unverzerrt, vor den Hauptläufen festgelegt); Rohwerte zusätzlich. 95-%-Intervalle per Block-Bootstrap (Blöcke von 500 aufeinanderfolgenden Händen, 2000 Wiederholungen, geschichtet je Lauf). Urteil: belegt, wenn das 95-%-Intervall der Differenz ganz über 0 liegt. Alle Stacks werden vor jeder Hand auf die Starttiefe gesetzt. Zufallsströme: Karten: deal; Gegner: bots; Tisch/Rotation: tisch; Coach: Tisch-Seed|Hand|Aktionszahl. Versionen: 2.1 (8aeb416982fb), 2.0.1 (8977eca6b2c0), Umgebung bcf2e37cab9b.
+
+### Hauptvergleich: Coach 2.1 − Coach 2.0.1
+
+Differenz **14,0 BB/100** [9,1; 18,9] über 120.000 gepaarte Hände (roh, ohne All-in-Bereinigung: 14,9 [9,1; 20,8]). Urteil: **belegt besser**. In 42 von 48 gepaarten Läufen lag 2.1 vorn, in 6 2.0.1 (Einzelläufe streuen stark; maßgeblich ist das Intervall). Entscheidungen: 2.1 168.424, 2.0.1 164.027; abgelehnte Empfehlungen 2.1 0, 2.0.1 0.
+
+| Stacktiefe | Differenz BB/100 (bereinigt) | 95-%-Intervall | roh | Hände | 2.1 vorn | Urteil |
+|---|---:|---|---:|---:|---:|---|
+| 40 BB | 6,1 | [2,5; 10,0] | 5,1 | 40.000 | 14/16 | besser |
+| 100 BB | 16,3 | [9,1; 23,5] | 15,9 | 40.000 | 15/16 | besser |
+| 200 BB | 19,7 | [7,0; 32,7] | 23,9 | 40.000 | 13/16 | besser |
+
+| Zusammensetzung | Differenz BB/100 (bereinigt) | 95-%-Intervall | roh | Hände | 2.1 vorn | Urteil |
+|---|---:|---|---:|---:|---:|---|
+| Gegner-KI, Anfänger | 15,5 | [7,8; 24,0] | 17,2 | 30.000 | 10/12 | besser |
+| Gegner-KI, Experte | 18,3 | [10,1; 27,0] | 17,9 | 30.000 | 12/12 | besser |
+| Gegner-KI, gemischt | 13,5 | [5,5; 21,8] | 11,8 | 30.000 | 11/12 | besser |
+| halb Gegner-KI, halb synthetisch | 8,8 | [−4,7; 22,7] | 12,8 | 30.000 | 9/12 | offen |
+
+In keiner Teilgruppe (Stacktiefe, Zusammensetzung, Bedingung) liegt das Intervall ganz unter 0.
+
+### Alle Vergleiche
+
+| Vergleich | Differenz BB/100 (bereinigt) | 95-%-Intervall | roh | Hände | A vorn | Urteil | geteilte Läufe |
+|---|---:|---|---:|---:|---:|---|---|
+| Coach 2.1 gegen Coach 2.0.1 (Hauptvergleich) | 14,0 | [9,1; 18,9] | 14,9 | 120.000 | 42/48 | belegt besser | 96 Läufe auch in: v201-bot, v21-bot, v21-potodds |
+| Coach 2.1 gegen Gegner-KI als Held | 42,6 | [35,7; 49,8] | 42,9 | 120.000 | 40/48 | belegt besser | 96 Läufe auch in: v201-bot, v21-v201, v21-potodds |
+| Coach 2.0.1 gegen Gegner-KI als Held | 28,6 | [22,0; 35,2] | 28,0 | 120.000 | 38/48 | belegt besser | 96 Läufe auch in: v21-bot, v21-v201 |
+| Coach 2.1 gegen Referenz Pot-Odds-Schwelle | 94,5 | [84,1; 105,1] | 99,5 | 120.000 | 47/48 | belegt besser | 48 Läufe auch in: v21-v201, v21-bot |
+| Coach 2.1 gegen Coach 2.0.1, dem Coach unbekannte Gegnerstrategien | 43,5 | [28,2; 58,7] | 40,9 | 30.000 | 10/12 | belegt besser | 12 Läufe auch in: v21-bot-unbekannt |
+| Coach 2.1 gegen Gegner-KI als Held, unbekannte Gegnerstrategien | 165,7 | [128,8; 203,9] | 163,9 | 30.000 | 12/12 | belegt besser | 12 Läufe auch in: v21-v201-unbekannt |
+| Coach 2.1 gegen Coach 2.0.1, 15 BB | −0,0 | [−1,5; 1,7] | −0,8 | 7.500 | 1/3 | zu wenig Blöcke für ein Intervall | 3 Läufe auch in: v21-pushfold |
+| Coach 2.1 gegen Referenz Push/Fold, 15 BB | 7,0 | [4,7; 9,4] | 5,9 | 7.500 | 3/3 | zu wenig Blöcke für ein Intervall | 3 Läufe auch in: v21-v201-kurz |
+| Coach 2.1 gegen 2.0.1, gleichgewichtsnaher Modus | −20,6 | [−35,4; −7,5] | −14,1 | 5.000 | 0/2 | zu wenig Blöcke für ein Intervall | – |
+
+Läufe, die in mehreren Vergleichen vorkommen (z. B. ein Lauf der Gegner-KI als Held, der für 2.1 und 2.0.1 als Basis dient), sind dort **keine unabhängigen Stichproben**: Die Intervalle der betroffenen Vergleiche sind einzeln gültig, ihre Differenzen untereinander aber korreliert.
+
+#### Gegen dem Coach unbekannte Strategien (2.1 − 2.0.1)
+
+| Gegnerstrategie | Differenz BB/100 | 95-%-Intervall | Hände | Urteil |
+|---|---:|---|---:|---|
+| synthetisch: Calling Station | 176,3 | [99,5; 255,8] | 5.000 | besser |
+| synthetisch: MDF-Verteidiger | −9,0 | [−32,9; 18,6] | 5.000 | offen |
+| synthetisch: Maniac | 20,7 | [−9,7; 58,4] | 5.000 | offen |
+| synthetisch: Rock | 13,9 | [4,3; 23,3] | 5.000 | besser |
+| synthetisch: Stilwechsler | 11,3 | [−7,8; 29,1] | 5.000 | offen |
+| synthetisch: zufällig-legal | 47,8 | [29,7; 65,9] | 5.000 | besser |
+
+### Absolute Ergebnisse je Held und Bedingung
+
+| Gruppe | Held | Bedingung | BB/100 (bereinigt) | 95-%-Intervall | roh | Hände | Entscheidungen | abgelehnt |
+|---|---|---|---:|---|---:|---:|---:|---:|
+| gto | Coach 2.0.1 (gleichgewichtsnah) | Gegner-KI, gemischt, 100 BB | 13,5 | [−2,9; 29,6] | 14,1 | 5.000 | 6.775 | 0 |
+| gto | Coach 2.1 (gleichgewichtsnah) | Gegner-KI, gemischt, 100 BB | −7,0 | [−21,9; 7,7] | 0,0 | 5.000 | 6.979 | 0 |
+| kurz | Coach 2.0.1 (exploitativ) | Gegner-KI, gemischt, 15 BB | 7,7 | [4,6; 10,6] | 8,4 | 7.500 | 7.178 | 0 |
+| kurz | Coach 2.1 (exploitativ) | Gegner-KI, gemischt, 15 BB | 7,7 | [4,5; 11,0] | 7,6 | 7.500 | 7.220 | 0 |
+| kurz | Referenz: Push/Fold-Chart (≤ 20 BB), sonst Pot-Odds-Schwelle | Gegner-KI, gemischt, 15 BB | 0,6 | [−3,4; 4,8] | 1,7 | 7.500 | 0 | 0 |
+| unbekannt | Gegner-KI als Held (Profil g004, Stil ausgeglichen) | synthetisch: Maniac, 100 BB | 202,2 | [160,3; 247,3] | 176,1 | 5.000 | 0 | 0 |
+| unbekannt | Gegner-KI als Held (Profil g004, Stil ausgeglichen) | synthetisch: MDF-Verteidiger, 100 BB | 33,6 | [6,4; 59,9] | 39,5 | 5.000 | 0 | 0 |
+| unbekannt | Gegner-KI als Held (Profil g004, Stil ausgeglichen) | synthetisch: zufällig-legal, 100 BB | 141,4 | [100,3; 185,6] | 130,6 | 5.000 | 0 | 0 |
+| unbekannt | Gegner-KI als Held (Profil g004, Stil ausgeglichen) | synthetisch: Rock, 100 BB | 22,6 | [3,4; 42,7] | 23,7 | 5.000 | 0 | 0 |
+| unbekannt | Gegner-KI als Held (Profil g004, Stil ausgeglichen) | synthetisch: Calling Station, 100 BB | 128,4 | [60,6; 197,4] | 132,7 | 5.000 | 0 | 0 |
+| unbekannt | Gegner-KI als Held (Profil g004, Stil ausgeglichen) | synthetisch: Stilwechsler, 100 BB | 149,8 | [97,4; 205,5] | 139,8 | 5.000 | 0 | 0 |
+| unbekannt | Coach 2.0.1 (exploitativ) | synthetisch: Maniac, 100 BB | 213,3 | [146,6; 282,8] | 153,8 | 5.000 | 5.816 | 0 |
+| unbekannt | Coach 2.0.1 (exploitativ) | synthetisch: MDF-Verteidiger, 100 BB | 107,1 | [78,9; 144,1] | 130,8 | 5.000 | 6.717 | 0 |
+| unbekannt | Coach 2.0.1 (exploitativ) | synthetisch: zufällig-legal, 100 BB | 161,8 | [96,0; 229,1] | 172,1 | 5.000 | 6.212 | 0 |
+| unbekannt | Coach 2.0.1 (exploitativ) | synthetisch: Rock, 100 BB | 37,8 | [22,9; 50,2] | 38,8 | 5.000 | 5.495 | 0 |
+| unbekannt | Coach 2.0.1 (exploitativ) | synthetisch: Calling Station, 100 BB | 718,3 | [546,4; 923,0] | 714,8 | 5.000 | 9.566 | 0 |
+| unbekannt | Coach 2.0.1 (exploitativ) | synthetisch: Stilwechsler, 100 BB | 172,8 | [132,1; 214,2] | 170,3 | 5.000 | 6.525 | 0 |
+| unbekannt | Coach 2.1 (exploitativ) | synthetisch: Maniac, 100 BB | 233,9 | [179,6; 292,6] | 207,9 | 5.000 | 5.931 | 0 |
+| unbekannt | Coach 2.1 (exploitativ) | synthetisch: MDF-Verteidiger, 100 BB | 98,1 | [73,7; 126,0] | 112,2 | 5.000 | 6.809 | 0 |
+| unbekannt | Coach 2.1 (exploitativ) | synthetisch: zufällig-legal, 100 BB | 209,6 | [144,5; 282,6] | 214,4 | 5.000 | 6.442 | 0 |
+| unbekannt | Coach 2.1 (exploitativ) | synthetisch: Rock, 100 BB | 51,6 | [31,4; 71,6] | 57,4 | 5.000 | 5.612 | 0 |
+| unbekannt | Coach 2.1 (exploitativ) | synthetisch: Calling Station, 100 BB | 894,6 | [671,0; 1146,8] | 860,9 | 5.000 | 10.010 | 0 |
+| unbekannt | Coach 2.1 (exploitativ) | synthetisch: Stilwechsler, 100 BB | 184,2 | [137,6; 232,6] | 172,9 | 5.000 | 6.696 | 0 |
+| zentral | Gegner-KI als Held (Profil g004, Stil ausgeglichen) | Gegner-KI, Anfänger, 100 BB | 16,4 | [4,3; 27,9] | 10,4 | 10.000 | 0 | 0 |
+| zentral | Gegner-KI als Held (Profil g004, Stil ausgeglichen) | Gegner-KI, Anfänger, 200 BB | 15,9 | [−12,2; 46,2] | 11,9 | 10.000 | 0 | 0 |
+| zentral | Gegner-KI als Held (Profil g004, Stil ausgeglichen) | Gegner-KI, Anfänger, 40 BB | 12,8 | [4,3; 21,1] | 15,2 | 10.000 | 0 | 0 |
+| zentral | Gegner-KI als Held (Profil g004, Stil ausgeglichen) | Gegner-KI, Experte, 100 BB | 2,8 | [−11,1; 16,0] | 5,7 | 10.000 | 0 | 0 |
+| zentral | Gegner-KI als Held (Profil g004, Stil ausgeglichen) | Gegner-KI, Experte, 200 BB | 1,2 | [−14,7; 17,1] | 6,1 | 10.000 | 0 | 0 |
+| zentral | Gegner-KI als Held (Profil g004, Stil ausgeglichen) | Gegner-KI, Experte, 40 BB | −0,7 | [−7,7; 6,1] | 0,6 | 10.000 | 0 | 0 |
+| zentral | Gegner-KI als Held (Profil g004, Stil ausgeglichen) | Gegner-KI, gemischt, 100 BB | −0,7 | [−11,5; 8,4] | 4,4 | 10.000 | 0 | 0 |
+| zentral | Gegner-KI als Held (Profil g004, Stil ausgeglichen) | Gegner-KI, gemischt, 200 BB | 11,5 | [−7,8; 28,7] | 9,1 | 10.000 | 0 | 0 |
+| zentral | Gegner-KI als Held (Profil g004, Stil ausgeglichen) | Gegner-KI, gemischt, 40 BB | 1,2 | [−5,2; 7,3] | −0,4 | 10.000 | 0 | 0 |
+| zentral | Gegner-KI als Held (Profil g004, Stil ausgeglichen) | halb Gegner-KI, halb synthetisch, 100 BB | 108,0 | [76,5; 139,9] | 121,5 | 10.000 | 0 | 0 |
+| zentral | Gegner-KI als Held (Profil g004, Stil ausgeglichen) | halb Gegner-KI, halb synthetisch, 200 BB | 163,3 | [119,4; 213,2] | 174,6 | 10.000 | 0 | 0 |
+| zentral | Gegner-KI als Held (Profil g004, Stil ausgeglichen) | halb Gegner-KI, halb synthetisch, 40 BB | 39,1 | [19,5; 61,4] | 33,0 | 10.000 | 0 | 0 |
+| zentral | Coach 2.0.1 (exploitativ) | Gegner-KI, Anfänger, 100 BB | 26,3 | [11,2; 41,1] | 25,7 | 10.000 | 14.224 | 0 |
+| zentral | Coach 2.0.1 (exploitativ) | Gegner-KI, Anfänger, 200 BB | 33,8 | [−1,9; 67,2] | 29,4 | 10.000 | 14.101 | 0 |
+| zentral | Coach 2.0.1 (exploitativ) | Gegner-KI, Anfänger, 40 BB | 15,9 | [4,7; 27,4] | 28,5 | 10.000 | 13.993 | 0 |
+| zentral | Coach 2.0.1 (exploitativ) | Gegner-KI, Experte, 100 BB | 3,0 | [−10,5; 16,9] | 6,2 | 10.000 | 13.121 | 0 |
+| zentral | Coach 2.0.1 (exploitativ) | Gegner-KI, Experte, 200 BB | 17,5 | [−9,9; 46,0] | 32,7 | 10.000 | 13.178 | 0 |
+| zentral | Coach 2.0.1 (exploitativ) | Gegner-KI, Experte, 40 BB | 11,2 | [1,5; 21,3] | 7,9 | 10.000 | 12.833 | 0 |
+| zentral | Coach 2.0.1 (exploitativ) | Gegner-KI, gemischt, 100 BB | 2,4 | [−9,8; 13,9] | 7,1 | 10.000 | 13.502 | 0 |
+| zentral | Coach 2.0.1 (exploitativ) | Gegner-KI, gemischt, 200 BB | −0,9 | [−17,3; 15,7] | −4,2 | 10.000 | 13.735 | 0 |
+| zentral | Coach 2.0.1 (exploitativ) | Gegner-KI, gemischt, 40 BB | 9,5 | [2,9; 16,2] | 4,4 | 10.000 | 13.228 | 0 |
+| zentral | Coach 2.0.1 (exploitativ) | halb Gegner-KI, halb synthetisch, 100 BB | 172,1 | [134,9; 211,7] | 178,8 | 10.000 | 14.269 | 0 |
+| zentral | Coach 2.0.1 (exploitativ) | halb Gegner-KI, halb synthetisch, 200 BB | 331,8 | [272,3; 396,9] | 316,7 | 10.000 | 14.006 | 0 |
+| zentral | Coach 2.0.1 (exploitativ) | halb Gegner-KI, halb synthetisch, 40 BB | 91,5 | [68,2; 116,5] | 94,5 | 10.000 | 13.837 | 0 |
+| zentral | Coach 2.1 (exploitativ) | Gegner-KI, Anfänger, 100 BB | 51,6 | [29,8; 76,8] | 51,7 | 10.000 | 14.960 | 0 |
+| zentral | Coach 2.1 (exploitativ) | Gegner-KI, Anfänger, 200 BB | 43,8 | [10,7; 77,6] | 43,6 | 10.000 | 14.799 | 0 |
+| zentral | Coach 2.1 (exploitativ) | Gegner-KI, Anfänger, 40 BB | 27,1 | [15,7; 37,6] | 39,9 | 10.000 | 14.613 | 0 |
+| zentral | Coach 2.1 (exploitativ) | Gegner-KI, Experte, 100 BB | 21,6 | [8,3; 36,7] | 24,1 | 10.000 | 13.195 | 0 |
+| zentral | Coach 2.1 (exploitativ) | Gegner-KI, Experte, 200 BB | 44,8 | [14,9; 70,0] | 56,1 | 10.000 | 13.218 | 0 |
+| zentral | Coach 2.1 (exploitativ) | Gegner-KI, Experte, 40 BB | 20,3 | [10,2; 30,0] | 20,4 | 10.000 | 12.916 | 0 |
+| zentral | Coach 2.1 (exploitativ) | Gegner-KI, gemischt, 100 BB | 10,7 | [−4,2; 25,2] | 15,5 | 10.000 | 13.693 | 0 |
+| zentral | Coach 2.1 (exploitativ) | Gegner-KI, gemischt, 200 BB | 25,0 | [0,5; 54,8] | 22,5 | 10.000 | 14.095 | 0 |
+| zentral | Coach 2.1 (exploitativ) | Gegner-KI, gemischt, 40 BB | 15,7 | [6,1; 25,3] | 4,9 | 10.000 | 13.499 | 0 |
+| zentral | Coach 2.1 (exploitativ) | halb Gegner-KI, halb synthetisch, 100 BB | 184,8 | [146,5; 224,7] | 190,1 | 10.000 | 14.749 | 0 |
+| zentral | Coach 2.1 (exploitativ) | halb Gegner-KI, halb synthetisch, 200 BB | 347,3 | [286,9; 411,0] | 348,0 | 10.000 | 14.527 | 0 |
+| zentral | Coach 2.1 (exploitativ) | halb Gegner-KI, halb synthetisch, 40 BB | 89,6 | [64,8; 113,8] | 90,4 | 10.000 | 14.160 | 0 |
+| zentral | Referenz: Pot-Odds-Schwelle | Gegner-KI, Anfänger, 100 BB | −53,2 | [−75,9; −29,1] | −51,2 | 10.000 | 0 | 0 |
+| zentral | Referenz: Pot-Odds-Schwelle | Gegner-KI, Anfänger, 200 BB | −85,0 | [−115,0; −53,2] | −85,9 | 10.000 | 0 | 0 |
+| zentral | Referenz: Pot-Odds-Schwelle | Gegner-KI, Anfänger, 40 BB | −41,3 | [−53,1; −28,7] | −35,4 | 10.000 | 0 | 0 |
+| zentral | Referenz: Pot-Odds-Schwelle | Gegner-KI, Experte, 100 BB | −97,1 | [−120,3; −75,8] | −106,0 | 10.000 | 0 | 0 |
+| zentral | Referenz: Pot-Odds-Schwelle | Gegner-KI, Experte, 200 BB | −122,0 | [−160,2; −88,3] | −120,2 | 10.000 | 0 | 0 |
+| zentral | Referenz: Pot-Odds-Schwelle | Gegner-KI, Experte, 40 BB | −66,9 | [−82,3; −51,5] | −68,6 | 10.000 | 0 | 0 |
+| zentral | Referenz: Pot-Odds-Schwelle | Gegner-KI, gemischt, 100 BB | −104,0 | [−125,5; −80,6] | −99,2 | 10.000 | 0 | 0 |
+| zentral | Referenz: Pot-Odds-Schwelle | Gegner-KI, gemischt, 200 BB | −94,8 | [−123,5; −67,5] | −92,9 | 10.000 | 0 | 0 |
+| zentral | Referenz: Pot-Odds-Schwelle | Gegner-KI, gemischt, 40 BB | −57,3 | [−67,8; −46,1] | −57,1 | 10.000 | 0 | 0 |
+| zentral | Referenz: Pot-Odds-Schwelle | halb Gegner-KI, halb synthetisch, 100 BB | 144,5 | [90,2; 197,4] | 145,0 | 10.000 | 0 | 0 |
+| zentral | Referenz: Pot-Odds-Schwelle | halb Gegner-KI, halb synthetisch, 200 BB | 270,1 | [192,0; 354,3] | 222,5 | 10.000 | 0 | 0 |
+| zentral | Referenz: Pot-Odds-Schwelle | halb Gegner-KI, halb synthetisch, 40 BB | 54,8 | [30,1; 79,5] | 61,9 | 10.000 | 0 | 0 |
+
+### Empfohlene Einsatzgrößen postflop (Bet ohne offenen Einsatz)
+
+| Version | ⅓ | ½ | ¾ | Pot | Overbet | All-in | Check | Call | Fold |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 2.1 | 5.382 | 2.389 | 4.009 | 6.460 | 1.837 | 2.532 | 18.927 | 3.625 | 8.467 |
+| 2.0.1 | 3.505 | 1.713 | 1.933 | 4.836 | 2.278 | 2.537 | 21.230 | 3.113 | 7.160 |
+
+Empfehlung ≠ höchster Modell-EV (Preflop-Anker am Faustregel-Chart): 2.1 in 43.048 von 217.144 Entscheidungen (19,8 %), mittlerer Modellabstand 0,42 BB; 2.0.1 in 42.111 (19,9 %), 0,35 BB.
+
+Rechenzeit je Entscheidung (Node, ohne Zeitbremse): 2.1 Ø 25,7 ms, höchstens 360 ms; 2.0.1 Ø 14,5 ms, höchstens 351 ms. Höchstzahl Simulationen je Entscheidung: 2.1 5.000, 2.0.1 5.000 (Grenze 5.000).
+
+### Gepaarte Rollout-Bewertung je Entscheidungspunkt (2.1 − 2.0.1)
+
+24 Sessions, 9.600 Hände, 12.967 Entscheidungspunkte; verschiedene Empfehlung in 1.021 Punkten (7,9 %). Je Unterschied 100 gepaarte Rollouts je Aktion (gepaarte Rollouts je Entscheidungspunkt; Fortsetzung des Helden mit Gegner-KI-Profil g004; Cluster-Bootstrap über Hände (2.000 Wiederholungen)). Mittlere EV-Differenz je verschiedenem Punkt **0,822 BB** [−0,082; 1,718] → nicht belegt; umgerechnet auf alle Punkte 0,0647 BB je Entscheidung [−0,0064; 0,1353].
+
+| Gruppe | Punkte mit Unterschied | Anteil an allen Punkten | mittlere Differenz (BB) | 95-%-Intervall | Urteil |
+|---|---:|---:|---:|---|---|
+| alle | 1.021 | 7,9 % | 0,822 | [−0,082; 1,718] | nicht belegt |
+| Gegner-KI (bekannt) | 639 | 9,9 % | 1,466 | [0,622; 2,320] | 2.1 belegt besser |
+| unbekannte Strategien | 382 | 5,9 % | −0,256 | [−2,274; 1,670] | nicht belegt |
+| preflop | 234 | – | −0,140 | [−2,122; 1,842] | nicht belegt |
+| postflop Bet vs. Check | 451 | – | 1,425 | [0,170; 2,607] | 2.1 belegt besser |
+| postflop Größe | 288 | – | 0,024 | [−1,249; 1,279] | nicht belegt |
+| postflop gegen Einsatz | 48 | – | 4,634 | [−3,961; 12,821] | nicht belegt |
+| Multiway (postflop) | 160 | – | 0,476 | [−2,133; 3,073] | nicht belegt |
+| Preflop | 234 | – | −0,140 | [−2,122; 1,842] | nicht belegt |
+| Flop | 411 | – | 0,871 | [−0,288; 2,001] | nicht belegt |
+| Turn | 217 | – | 1,385 | [−0,678; 3,698] | nicht belegt |
+| River | 159 | – | 1,342 | [−0,956; 3,512] | nicht belegt |
+
+Häufigste Paare (Empfehlung 2.1 ↔ 2.0.1, Beträge durch # ersetzt): Bet ¾ Pot ↔ Check (212, 1,35 BB); Bet Pot ↔ Check (89, 3,14 BB); Bet ⅓ Pot ↔ Check (86, 0,29 BB); Call # ↔ Fold (55, 6,39 BB); Open # BB ↔ Fold (53, 0,53 BB); #-Bet #× ↔ Call # (50, −5,27 BB); Fold ↔ Call # (49, −6,93 BB); Bet Pot ↔ Bet ¾ Pot (39, −0,70 BB).
+
+Grenze: Nach der ersten Aktion spielt der Held mit der festen Politik g004 weiter; gemessen wird die erste Aktion, nicht die ganze Linie des Coaches. Die verdeckten Karten der Gegner sind die echten (nur Auswertung).
+
+#### Größenstudie „base-bots“ (2.095 Spots, davon 1.621 ohne offenen Einsatz)
+
+| Größe | Beobachtungen | Fold beobachtet | Fold Modell | Raise beobachtet | Raise Modell |
+|---|---:|---:|---:|---:|---:|
+| 0.33 Pot | 1.885 | 35 % | 27 % | 5 % | 14 % |
+| 0.5 Pot | 1.874 | 48 % | 36 % | 5 % | 13 % |
+| 0.75 Pot | 1.877 | 55 % | 45 % | 5 % | 11 % |
+| 1 Pot | 1.873 | 62 % | 48 % | 6 % | 10 % |
+| 1.5 Pot | 1.859 | 73 % | 48 % | 6 % | 10 % |
+
+| Strategie über dieselben Spots | Wert gegen „immer Check“ (BB je Spot) | Standardfehler |
+|---|---:|---:|
+| Modell (beste EV) | −0,12 | 0,47 |
+| Modell, Größe frei nach Ausspielung (Orakel) | 3,91 | 0,48 |
+| immer Check | 0,00 | 0,00 |
+| Modell entscheidet Bet/Check, Größe fest 0.33 | 0,08 | 0,41 |
+| immer Bet 0.33 | 0,64 | 0,47 |
+| Modell entscheidet Bet/Check, Größe fest 0.5 | 0,32 | 0,41 |
+| immer Bet 0.5 | 0,59 | 0,50 |
+| Modell entscheidet Bet/Check, Größe fest 0.75 | −0,26 | 0,47 |
+| immer Bet 0.75 | −0,27 | 0,56 |
+| Modell entscheidet Bet/Check, Größe fest 1 | −0,22 | 0,50 |
+| immer Bet 1 | −0,05 | 0,61 |
+| Modell entscheidet Bet/Check, Größe fest 1.5 | −0,37 | 0,53 |
+| immer Bet 1.5 | 0,17 | 0,65 |
+
+#### Größenstudie „v21b-bots“ (578 Spots, davon 466 ohne offenen Einsatz)
+
+| Größe | Beobachtungen | Fold beobachtet | Fold Modell | Raise beobachtet | Raise Modell |
+|---|---:|---:|---:|---:|---:|
+| 0.33 Pot | 576 | 28 % | 31 % | 4 % | 6 % |
+| 0.5 Pot | 571 | 39 % | 40 % | 4 % | 6 % |
+| 0.75 Pot | 576 | 49 % | 49 % | 4 % | 6 % |
+| 1 Pot | 574 | 56 % | 54 % | 5 % | 6 % |
+| 1.5 Pot | 572 | 69 % | 59 % | 6 % | 6 % |
+
+| Strategie über dieselben Spots | Wert gegen „immer Check“ (BB je Spot) | Standardfehler |
+|---|---:|---:|
+| Modell (beste EV) | −1,39 | 1,06 |
+| Modell, Größe frei nach Ausspielung (Orakel) | 5,97 | 0,96 |
+| immer Check | 0,00 | 0,00 |
+| Modell entscheidet Bet/Check, Größe fest 0.33 | 0,16 | 0,83 |
+| immer Bet 0.33 | 0,29 | 0,90 |
+| Modell entscheidet Bet/Check, Größe fest 0.5 | 0,34 | 0,81 |
+| immer Bet 0.5 | 0,18 | 0,92 |
+| Modell entscheidet Bet/Check, Größe fest 0.75 | −0,58 | 0,90 |
+| immer Bet 0.75 | −0,97 | 1,02 |
+| Modell entscheidet Bet/Check, Größe fest 1 | −1,90 | 1,11 |
+| immer Bet 1 | −2,53 | 1,24 |
+| Modell entscheidet Bet/Check, Größe fest 1.5 | −2,78 | 1,27 |
+| immer Bet 1.5 | −2,97 | 1,41 |
+
+#### Größenstudie „v21b-synth“ (605 Spots, davon 409 ohne offenen Einsatz)
+
+| Größe | Beobachtungen | Fold beobachtet | Fold Modell | Raise beobachtet | Raise Modell |
+|---|---:|---:|---:|---:|---:|
+| 0.33 Pot | 759 | 22 % | 20 % | 8 % | 5 % |
+| 0.5 Pot | 751 | 23 % | 27 % | 8 % | 5 % |
+| 0.75 Pot | 751 | 25 % | 34 % | 8 % | 5 % |
+| 1 Pot | 738 | 26 % | 39 % | 8 % | 5 % |
+| 1.5 Pot | 720 | 29 % | 43 % | 8 % | 5 % |
+
+| Strategie über dieselben Spots | Wert gegen „immer Check“ (BB je Spot) | Standardfehler |
+|---|---:|---:|
+| Modell (beste EV) | 1,27 | 1,80 |
+| Modell, Größe frei nach Ausspielung (Orakel) | 5,64 | 1,90 |
+| immer Check | 0,00 | 0,00 |
+| Modell entscheidet Bet/Check, Größe fest 0.33 | −3,11 | 1,72 |
+| immer Bet 0.33 | −4,50 | 1,88 |
+| Modell entscheidet Bet/Check, Größe fest 0.5 | −1,65 | 1,79 |
+| immer Bet 0.5 | −3,89 | 1,97 |
+| Modell entscheidet Bet/Check, Größe fest 0.75 | −0,43 | 1,88 |
+| immer Bet 0.75 | −2,06 | 2,17 |
+| Modell entscheidet Bet/Check, Größe fest 1 | 0,73 | 1,87 |
+| immer Bet 1 | −1,44 | 2,20 |
+| Modell entscheidet Bet/Check, Größe fest 1.5 | 1,97 | 1,93 |
+| immer Bet 1.5 | −1,63 | 2,26 |
+
+#### River-Modellspiel (24 Spots aus Simulationen)
+
+| Stärkegruppen | Exploitability im Kombinationsspiel Ø | max. | Rechenzeit Ø |
+|---:|---:|---:|---:|
+| 5 | 1,19 % Pot | 2,81 % | 19 ms |
+| 10 | 0,46 % Pot | 0,76 % | 39 ms |
+| 20 | 0,31 % Pot | 0,82 % | 69 ms |
+| 40 | 0,24 % Pot | 0,75 % | 141 ms |
+
+| Stärkegruppen | Lösung ohne Raises im Spiel mit Raises Ø (max.) | Lösung mit Raises Ø (max.) | Rechenzeit mit Raises |
+|---:|---:|---:|---:|
+| 10 | 17,18 % (34,09 %) | 0,91 % (1,61 %) | 74 ms |
+| 20 | 17,09 % (32,88 %) | 0,48 % (0,99 %) | 126 ms |
+
+Konvergenz (10 Gruppen, mit Raises, Exploitability im Modellspiel): 100 Iterationen 0,282 %, 300 Iterationen 0,057 %, 700 Iterationen 0,015 %, 2500 Iterationen 0,002 %.
+
 <!-- AUTO-STRATEGIE-ENDE -->
 
 ## 7. Fazit

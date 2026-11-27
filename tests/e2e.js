@@ -97,7 +97,7 @@ async function playHand(page, policy) {
     Object.assign(perf, p);
     ok(perf.lcp < 2500, 'LCP ' + perf.lcp); ok(perf.cls < 0.1, 'CLS ' + perf.cls);
     note('Ladezeit ' + perf.loadMs + ' ms, bereit nach ' + perf.readyMs + ' ms, LCP ' + Math.round(perf.lcp) + ' ms, CLS ' + perf.cls.toFixed(3));
-    ok(await page.title() === "PokerTrainer 2.0 – No-Limit Hold'em Trainer mit Coach", 'Titel');
+    ok(await page.title() === "PokerTrainer 2.1 – No-Limit Hold'em Trainer mit Coach", 'Titel');
   });
 
   await test('Hand spielen: Tipp „vorher“ erscheint binnen 2 Sekunden, keine neue Hand ohne „Nächste Hand“', async () => {

@@ -15,7 +15,7 @@
    "incomplete": [
     {
      "id": "color-contrast",
-     "n": 10
+     "n": 11
     }
    ]
   },
@@ -26,7 +26,7 @@
    "incomplete": [
     {
      "id": "color-contrast",
-     "n": 12
+     "n": 13
     }
    ]
   },
@@ -35,6 +35,10 @@
    "wcag": [],
    "bestPractice": [],
    "incomplete": [
+    {
+     "id": "color-contrast",
+     "n": 1
+    },
     {
      "id": "label-content-name-mismatch",
      "n": 1
@@ -58,7 +62,7 @@
    "incomplete": [
     {
      "id": "color-contrast",
-     "n": 32
+     "n": 31
     },
     {
      "id": "label-content-name-mismatch",
@@ -88,7 +92,7 @@
    "incomplete": [
     {
      "id": "color-contrast",
-     "n": 1
+     "n": 3
     }
    ]
   },
@@ -128,7 +132,7 @@
    "incomplete": [
     {
      "id": "color-contrast",
-     "n": 9
+     "n": 10
     }
    ]
   },
@@ -139,7 +143,7 @@
    "incomplete": [
     {
      "id": "color-contrast",
-     "n": 9
+     "n": 11
     }
    ]
   },
@@ -148,6 +152,10 @@
    "wcag": [],
    "bestPractice": [],
    "incomplete": [
+    {
+     "id": "color-contrast",
+     "n": 1
+    },
     {
      "id": "label-content-name-mismatch",
      "n": 1
@@ -201,7 +209,7 @@
    "incomplete": [
     {
      "id": "color-contrast",
-     "n": 3
+     "n": 2
     }
    ]
   },
@@ -241,7 +249,7 @@
    "incomplete": [
     {
      "id": "color-contrast",
-     "n": 10
+     "n": 11
     }
    ]
   },
