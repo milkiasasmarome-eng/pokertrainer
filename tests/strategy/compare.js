@@ -8,10 +8,13 @@ const fs = require('fs'), path = require('path'), crypto = require('crypto'), os
 const { Worker, isMainThread, parentPort, workerData } = require('worker_threads');
 const ROOT = path.join(__dirname, '..', '..');
 const V201 = process.env.PT_V201 || path.join(ROOT, '..', 'wt-v201');
+const V210 = process.env.PT_V210 || path.join(ROOT, '..', 'wt-v210');   // 2.2: Coach 2.1.0 und unveränderte Gegner-KI 2.1 (Referenzumgebung)
+const ENV_ROOT = { neu: ROOT, ref: V210 };
 const RUNS = path.join(ROOT, 'tests', 'results', 'strategy-runs');
 
 if (!isMainThread) {
   const HS = require('./harness.js'), j = workerData;
+  if (j.opts.group) j.opts.pool = require('./groups.js').make(HS.PT)[j.opts.group];
   const t0 = Date.now(), r = HS.runMatch(j.opts);
   r.wallMs = Date.now() - t0;
   parentPort.postMessage(r);
@@ -29,6 +32,10 @@ const HEROES = {
   'coach21-gto': { kind: 'coach', root: ROOT, mode: 'gto', name: 'Coach 2.1 (gleichgewichtsnah)' },
   'coach21-rein': { kind: 'coach', root: ROOT, mode: 'exploit', popBlend: 0, name: 'Coach 2.1, reines Populationsmodell (Entwicklungsvariante)' },
   'coach201-gto': { kind: 'coach', root: V201, mode: 'gto', name: 'Coach 2.0.1 (gleichgewichtsnah)' },
+  'coach22': { kind: 'coach', root: ROOT, mode: 'exploit', name: 'Coach 2.2 (exploitativ)' },
+  'coach22-gto': { kind: 'coach', root: ROOT, mode: 'gto', name: 'Coach 2.2 (gleichgewichtsnah)' },
+  'coach210': { kind: 'coach', root: V210, mode: 'exploit', name: 'Coach 2.1.0 (exploitativ)' },
+  'coach210-gto': { kind: 'coach', root: V210, mode: 'gto', name: 'Coach 2.1.0 (gleichgewichtsnah)' },
   'bot': { kind: 'bot', id: 'g004', name: 'Gegner-KI als Held (Profil g004, Stil ausgeglichen)' },
   'potodds': { kind: 'potodds', name: 'Referenz: Pot-Odds-Schwelle' },
   'pushfold': { kind: 'pushfold', name: 'Referenz: Push/Fold-Chart (≤ 20 BB), sonst Pot-Odds-Schwelle' }
@@ -36,6 +43,7 @@ const HEROES = {
 const COMP_NAME = { 'bots|gemischt': 'Gegner-KI, gemischt', 'bots|anfaenger': 'Gegner-KI, Anfänger', 'bots|experte': 'Gegner-KI, Experte', 'bots|fortgeschritten': 'Gegner-KI, Fortgeschritten',
   'mixed|gemischt': 'halb Gegner-KI, halb synthetisch', 'synth|gemischt': 'nur synthetische Strategien (gemischt)' };
 ['maniac', 'station', 'rock', 'mdf', 'random', 'switcher'].forEach(k => { COMP_NAME['synth:' + k + '|gemischt'] = 'synthetisch: ' + { maniac: 'Maniac', station: 'Calling Station', rock: 'Rock', mdf: 'MDF-Verteidiger', random: 'zufällig-legal', switcher: 'Stilwechsler' }[k]; });
+['polar', 'sizetell', 'trapper', 'ipaggro', 'nitlag', 'minraiser'].forEach(k => { COMP_NAME['final:' + k + '|gemischt'] = 'abschließend unbekannt: ' + { polar: 'Polarisierer', sizetell: 'umgekehrtes Größensignal', trapper: 'Fallensteller', ipaggro: 'Positionsspieler', nitlag: 'eng preflop, aggressiv postflop', minraiser: 'Minraiser' }[k]; });
 
 /** Pläne. Seeds sind vor den Läufen festgelegt; Entwicklungsläufe nutzen andere Seeds als der Hauptvergleich. */
 function plan(name) {
@@ -43,7 +51,20 @@ function plan(name) {
   const add = (group, heroes, cond, seeds, hands) => seeds.forEach(sd => heroes.forEach(hk => jobs.push({ group, hero: hk, comp: cond.comp, difficulty: cond.difficulty, startBB: cond.startBB, seed: sd, hands })));
   // Läufe zu je 2.500 Händen (Zwischenspeicherung je Lauf; ein Neustart wiederholt höchstens die laufenden Jobs).
   // Reihenfolge: zuerst die gepaarten Coach-Läufe des Hauptvergleichs, Seed für Seed, damit Teilergebnisse ausgewogen sind.
-  if (name === 'haupt') {
+  if (name === 'v22') {
+    // 2.2: Plan vor den Läufen festgelegt (docs/ABNAHMEKRITERIEN_2.2.md). Seeds 22001 ff. kommen in keiner Entwicklung vor.
+    const G = (group, heroes, cond, seeds, env) => seeds.forEach(sd => heroes.forEach(hk => jobs.push({ group, hero: hk, comp: cond.comp, difficulty: cond.difficulty, startBB: cond.startBB, seed: sd, hands: 2500, env: env || 'neu', pool: cond.pool || null })));
+    const range = (a, n) => Array.from({ length: n }, (_, i) => a + i);
+    const B100 = { comp: 'bots', difficulty: 'gemischt', startBB: 100 };
+    G('h1', ['coach22', 'coach210'], B100, range(22001, 20));
+    G('h2ref', ['coach22', 'coach210'], B100, range(22101, 6), 'ref');
+    ['polar', 'sizetell', 'trapper', 'ipaggro', 'nitlag', 'minraiser'].forEach((k, i) => G('h4final', ['coach22', 'coach210', 'coach201'], { comp: 'final:' + k, difficulty: 'gemischt', startBB: 100 }, [22301 + i]));
+    G('h6gto', ['coach22-gto', 'coach210-gto', 'coach201-gto'], B100, range(22501, 4));
+    [15, 25, 40, 200].forEach((sb, i) => G('h5stack', ['coach22', 'coach210'].concat(sb === 15 ? ['pushfold'] : []), { comp: 'bots', difficulty: 'gemischt', startBB: sb }, [22401 + 10 * i, 22402 + 10 * i]));
+    G('h3T', ['coach22', 'coach210'], { comp: 'bots', difficulty: 'gemischt', startBB: 100, pool: 'T' }, range(22201, 3));
+    G('h1', ['coach201', 'bot'], B100, range(22001, 4));
+    G('h1', ['coach22', 'coach210'], B100, range(22021, 20));
+  } else if (name === 'haupt') {
     const STACKS = [40, 100, 200], COMPS = [['bots', 'gemischt'], ['bots', 'anfaenger'], ['bots', 'experte'], ['mixed', 'gemischt']], H = 2500;
     const conds = []; STACKS.forEach(sb => COMPS.forEach(([c, d]) => conds.push({ comp: c, difficulty: d, startBB: sb })));
     for (let si = 1; si <= 4; si++) conds.forEach((cd, ci) => add('zentral', ['coach21', 'coach201'], cd, [1000 + (ci + 1) * 10 + si], H));
@@ -68,8 +89,8 @@ function plan(name) {
   }
   return jobs;
 }
-const condKey = j => j.comp + '|' + j.difficulty + '|' + j.startBB;
-const jobId = j => [j.group, j.hero, j.comp.replace(':', '-'), j.difficulty, j.startBB + 'BB', 's' + j.seed, j.hands].join('_');
+const condKey = j => j.comp + '|' + j.difficulty + '|' + j.startBB + (j.pool ? '|' + j.pool : '') + (j.env && j.env !== 'neu' ? '|' + j.env : '');
+const jobId = j => [j.group, j.hero, j.comp.replace(':', '-'), j.difficulty, j.startBB + 'BB'].concat(j.pool ? ['pool' + j.pool] : [], j.env && j.env !== 'neu' ? ['env' + j.env] : [], ['s' + j.seed, j.hands]).join('_');
 
 async function main() {
   const args = process.argv.slice(2), opt = k => { const i = args.indexOf('--' + k); return i >= 0 ? args[i + 1] : null; };
@@ -77,8 +98,10 @@ async function main() {
   fs.mkdirSync(RUNS, { recursive: true });
   if (!fs.existsSync(path.join(V201, 'assets', 'js', 'engine', 'coach.js'))) throw new Error('Coach 2.0.1 fehlt: git -C <repo> worktree add ' + V201 + ' sicherung-2.0.1');
   const envHash = hashFiles(ROOT, ENV_MODULES), hashes = { [ROOT]: hashFiles(ROOT, COACH_MODULES), [V201]: hashFiles(V201, COACH_MODULES) };
+  if (fs.existsSync(path.join(V210, 'assets'))) hashes[V210] = hashFiles(V210, COACH_MODULES);
+  const envHashOf = j => j.env === 'ref' ? 'ref-' + hashFiles(V210, ENV_MODULES) : envHash;
   const jobs = plan(planName).filter(j => !only || jobId(j).indexOf(only) >= 0);
-  const keyOf = j => { const H = HEROES[j.hero]; return { env: envHash, coach: H.kind === 'coach' ? hashes[H.root] : null }; };
+  const keyOf = j => { const H = HEROES[j.hero]; return { env: envHashOf(j), coach: H.kind === 'coach' ? hashes[H.root] : null }; };
   const fileOf = j => path.join(RUNS, jobId(j) + '.json');
   const cached = j => { try { const r = JSON.parse(fs.readFileSync(fileOf(j), 'utf8')), k = keyOf(j); return r.key && r.key.env === k.env && r.key.coach === k.coach ? r : null; } catch (e) { return null; } };
   const todo = args.includes('--aggregate') ? [] : jobs.filter(j => !cached(j));
@@ -90,7 +113,7 @@ async function main() {
       if (next >= todo.length && active === 0) return resolve();
       while (active < nJobs && next < todo.length) {
         const j = todo[next++], H = HEROES[j.hero]; active++;
-        const w = new Worker(__filename, { workerData: { opts: { seed: j.seed, hands: j.hands, startBB: j.startBB, difficulty: j.difficulty, comp: j.comp, hero: H } } });
+        const w = new Worker(__filename, { env: Object.assign({}, process.env, { PT_ENV_ROOT: ENV_ROOT[j.env || 'neu'] }), workerData: { opts: { seed: j.seed, hands: j.hands, startBB: j.startBB, difficulty: j.difficulty, comp: j.comp, hero: H, group: j.pool || undefined } } });
         w.on('message', r => { r.job = j; r.key = keyOf(j); r.id = jobId(j); fs.writeFileSync(fileOf(j), JSON.stringify(r)); done++;
           console.log('[' + done + '/' + todo.length + '] ' + r.id + ': ' + (r.sumBBAdj / r.hands * 100).toFixed(1) + ' BB/100 (bereinigt), ' + Math.round(r.wallMs / 1000) + ' s, gesamt ' + Math.round((Date.now() - t0) / 1000) + ' s'); });
         w.on('error', e => { console.error('Fehler in ' + jobId(j) + ': ' + e.stack); });
@@ -143,6 +166,19 @@ function aggregate(planName, runs, h) {
     });
     comparisons.push(res);
   }
+  if (planName === 'v22') {
+    compare('h1', 'H1: Coach 2.2 gegen 2.1.0, Gegner-KI 2.2, gemischt, 100 BB (Hauptvergleich)', 'h1', 'coach22', 'coach210', []);
+    compare('h1b-v201', 'Coach 2.2 gegen 2.0.1, Gegner-KI 2.2, 100 BB (Teilmenge der H1-Seeds)', 'h1', 'coach22', 'coach201', []);
+    compare('h1b-bot', 'Coach 2.2 gegen Gegner-KI als Held, 100 BB (Teilmenge der H1-Seeds)', 'h1', 'coach22', 'bot', []);
+    compare('h2ref', 'H2: Coach 2.2 gegen 2.1.0, unveränderte Gegner-KI 2.1 (Referenzumgebung), 100 BB', 'h2ref', 'coach22', 'coach210', []);
+    compare('h3T', 'H3: Coach 2.2 gegen 2.1.0, nur Testgruppe T der Gegner-KI, 100 BB', 'h3T', 'coach22', 'coach210', []);
+    compare('h4final', 'H4: Coach 2.2 gegen 2.1.0, abschließend unbekannte Strategien', 'h4final', 'coach22', 'coach210', ['comp']);
+    compare('h4final-v201', 'Coach 2.2 gegen 2.0.1, abschließend unbekannte Strategien', 'h4final', 'coach22', 'coach201', ['comp']);
+    compare('h5stack', 'H5: Coach 2.2 gegen 2.1.0, Stacktiefen 15/25/40/200 BB', 'h5stack', 'coach22', 'coach210', ['stack']);
+    compare('h5pushfold', 'Coach 2.2 gegen Referenz Push/Fold, 15 BB', 'h5stack', 'coach22', 'pushfold', []);
+    compare('h6gto-v201', 'H6: gleichgewichtsnah 2.2 gegen 2.0.1', 'h6gto', 'coach22-gto', 'coach201-gto', []);
+    compare('h6gto-v210', 'gleichgewichtsnah 2.2 gegen 2.1.0', 'h6gto', 'coach22-gto', 'coach210-gto', []);
+  }
   compare('v21-v201', 'Coach 2.1 gegen Coach 2.0.1 (Hauptvergleich)', 'zentral', 'coach21', 'coach201', ['stack', 'comp', 'cond']);
   compare('v21-bot', 'Coach 2.1 gegen Gegner-KI als Held', 'zentral', 'coach21', 'bot', ['stack', 'comp']);
   compare('v201-bot', 'Coach 2.0.1 gegen Gegner-KI als Held', 'zentral', 'coach201', 'bot', ['stack', 'comp']);
@@ -158,11 +194,12 @@ function aggregate(planName, runs, h) {
   const shared = runTable.filter(x => x.usedIn.length > 1).map(x => ({ id: x.id, hero: x.hero, usedIn: x.usedIn }));
   comparisons.forEach(c => { c.sharedRuns = c.runsB.concat(c.runsA).filter(id => runById[id].usedIn.length > 1); c.sharedWith = [...new Set(c.sharedRuns.flatMap(id => runById[id].usedIn))].filter(x => x !== c.id); });
   const file = path.join(ROOT, 'tests', 'results', planName === 'haupt' ? 'strategy.json' : 'strategy-' + planName + '.json');
+  h.envHash = planName === 'v22' ? { neu: h.envHash, ref: 'ref-' + hashFiles(V210, ENV_MODULES) } : h.envHash;
   let prev = {}; try { prev = JSON.parse(fs.readFileSync(file, 'utf8')); } catch (e) { /* neu */ }
   const out = Object.assign(prev, { app: version(ROOT), date: new Date().toISOString(), node: process.version, cpus: os.cpus().length, plan: planName,
     method: { primary: 'All-in-bereinigte BB/100 (unverzerrt, vor den Hauptläufen festgelegt); Rohwerte zusätzlich', bootstrap: { blockHands: L, reps: B, stratified: 'je Lauf' }, verdict: 'belegt, wenn das 95-%-Intervall der Differenz ganz über 0 liegt',
       stacks: 'Alle Stacks werden vor jeder Hand auf die Starttiefe gesetzt', clock: 'Uhr im Coach-Kontext fest (keine Zeitbremse), Rechenzeit außerhalb gemessen', streams: 'Karten: deal; Gegner: bots; Tisch/Rotation: tisch; Coach: Tisch-Seed|Hand|Aktionszahl' },
-    versions: { v21: { root: path.relative(ROOT, ROOT) || '.', version: version(ROOT), coachHash: h.hashes[ROOT] }, v201: { root: V201, version: version(V201), coachHash: h.hashes[V201] }, envHash: h.envHash },
+    versions: { v21: { root: path.relative(ROOT, ROOT) || '.', version: version(ROOT), coachHash: h.hashes[ROOT] }, v210: fs.existsSync(V210) ? { root: V210, version: version(V210), coachHash: h.hashes[V210] } : null, v201: { root: V201, version: version(V201), coachHash: h.hashes[V201] }, envHash: h.envHash },
     heroes: Object.fromEntries(Object.entries(HEROES).map(([k, v]) => [k, v.name])), runs: runTable, absolute, comparisons, shared,
     totals: { runs: runs.length, hands: runs.reduce((s, r) => s + r.hands, 0), coachDecisions: runs.filter(r => HEROES[r.job.hero].kind === 'coach').reduce((s, r) => s + r.decisions, 0),
       invalidCoach: runs.filter(r => HEROES[r.job.hero].kind === 'coach').reduce((s, r) => s + r.invalid, 0), cpuSeconds: Math.round(runs.reduce((s, r) => s + (r.wallMs || 0), 0) / 1000) } });

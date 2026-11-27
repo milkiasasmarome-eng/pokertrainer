@@ -27,7 +27,7 @@ function weightsFor(cfg) {
   return DIFFICULTY[cfg.difficulty] ? DIFFICULTY[cfg.difficulty].w : null;
 }
 function pickIds(rng, n, exclude, cfg) {
-  var w = weightsFor(cfg || defaultConfig()), cand = B.POOL.map(function (p) { return p.id; }).filter(function (id) { return exclude.indexOf(id) < 0; }), out = [];
+  var w = weightsFor(cfg || defaultConfig()), cand = (cfg && Array.isArray(cfg.pool) && cfg.pool.length >= N ? cfg.pool.filter(function (id) { return !!B.paramsOf(id); }) : B.POOL.map(function (p) { return p.id; })).filter(function (id) { return exclude.indexOf(id) < 0; }), out = [];
   for (var i = 0; i < n && cand.length; i++) {
     var tot = 0, ws = cand.map(function (id) { var x = w ? (w[B.styleOf(id)] || 0) : 1; tot += x; return x; });
     var r = rng() * tot, k = 0;

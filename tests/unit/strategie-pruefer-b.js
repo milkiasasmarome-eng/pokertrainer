@@ -60,7 +60,7 @@ module.exports = function (T) {
     let thrown = false; try { PT.ev.respond(opp, ctx, 300, 550, 1, 'cbet'); } catch (e) { thrown = true; }
     ok(thrown && !PT.ev.respond.inner, 'Ausnahme ausgelöst, Flag zurückgesetzt');
     const a = coach(T.spot('BTN', '9s8s', 'Th7c2d', [['H', 'raise', 2.5], ['BB', 'call'], ['BB', 'check']]), 'exploit');
-    ok(/Populationsmodell/.test(a.actions.find(x => x.type === 'bet').parts.folds[0].basis), 'Populationsmodell bleibt aktiv');
+    ok(/Populationsmodell|Aktionstabelle/.test(a.actions.find(x => x.type === 'bet').parts.folds[0].basis), 'Populationsmodell bleibt aktiv');
   });
   test('Prüfer B 6: Ergebnis unabhängig von Reihenfolge der Modi, Cache-Zustand und Wiederholung (Seeds 77 und 991)', () => {
     let n = 0, diff = 0, mw = 0;

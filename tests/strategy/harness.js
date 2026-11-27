@@ -7,7 +7,7 @@ const path = require('path');
 const PT = require('../load.js').load();            // Umgebung: Regeln, Gegner-KI, Tisch, Statistik (eine feste Version für alle Helden)
 const { loadEngine } = require('./engine-vm.js');
 const STRAT = require('./strategies.js').make(PT);
-const SYNTH_KEYS = Object.keys(STRAT.SYNTH);
+const SYNTH_KEYS = Object.keys(STRAT.SYNTH), FINAL_KEYS = Object.keys(STRAT.FINAL);
 const clone = o => JSON.parse(JSON.stringify(o));
 const BLOCK = 100;
 // River-Modellspiel (nur Erklärtext) in Massensimulationen auslassen; PT_COACH_FULL=1 rechnet es mit (für Zeitmessungen)
@@ -19,6 +19,9 @@ function synthFor(id, comp) {
   const h = PT.rng.hashStr(id + '|synth');
   if (comp === 'mixed' && (h >>> 8) % 2 === 0) return null;
   if (comp.indexOf('synth:') === 0) return comp.slice(6);
+  if (comp.indexOf('final:') === 0) return comp.slice(6);
+  if (comp === 'final') return FINAL_KEYS[h % FINAL_KEYS.length];
+  if (comp === 'finalmixed') return (h >>> 8) % 2 === 0 ? null : FINAL_KEYS[h % FINAL_KEYS.length];
   return SYNTH_KEYS[h % SYNTH_KEYS.length];
 }
 /** All-in-Bereinigung: Endet die Hand im Showdown, nachdem vor dem River niemand mehr handeln konnte, wird das Ergebnis des Helden
@@ -55,7 +58,7 @@ function sizeLabel(a, v) {
 /** Entscheidung eines Gegners (Gegner-KI oder synthetische Strategie), nur aus seiner öffentlichen Sicht */
 function oppDecision(h, s, comp, heroRec) {
   const q = h.p[s], sy = synthFor(q.id, comp);
-  if (sy) return STRAT.SYNTH[sy](PT.bots.publicView(h, s), h.botRng, { handNo: h.no, salt: PT.rng.hashStr(q.id) % 2 });
+  if (sy) return (STRAT.SYNTH[sy] || STRAT.FINAL[sy])(PT.bots.publicView(h, s), h.botRng, { handNo: h.no, salt: PT.rng.hashStr(q.id) % 2 });
   return PT.bots.decideFor(h, s, h.botRng, { heroStats: PT.session.heroCtx(heroRec) });
 }
 /** Führt eine Gegneraktion aus; ungültige Aktionen fallen wie in session.botAct auf Check/Call zurück */
@@ -83,7 +86,7 @@ function cloneHand(h) {
  */
 function runMatch(opts) {
   const seed = opts.seed >>> 0, hands = opts.hands, start = (opts.startBB || 100) * 100;
-  const cfg = Object.assign(PT.session.defaultConfig(), { startBB: opts.startBB || 100, difficulty: opts.difficulty || 'gemischt' });
+  const cfg = Object.assign(PT.session.defaultConfig(), { startBB: opts.startBB || 100, difficulty: opts.difficulty || 'gemischt' }, opts.pool ? { pool: opts.pool } : {});
   const db = PT.stats.newDb(), heroRec = PT.stats.newRecord('hero', 'Du');
   const t = PT.session.newTable(cfg, db, seed);
   const hero = opts.hero, C = hero.kind === 'coach' ? loadEngine(hero.root) : null;
