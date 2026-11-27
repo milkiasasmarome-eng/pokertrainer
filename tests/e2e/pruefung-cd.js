@@ -182,6 +182,29 @@ module.exports = async function (H) {
     await c2.close();
   });
 
+  await test('Prüfung D (t4/t7): Tisch ohne Überdeckungen (eigene Karten, Pot, Board, Einsätze, Marker) bei 320–1366 px; Werte am Platz mit Textabständen nicht abgeschnitten', async () => {
+    const M = require('./layout-messung.js'), probs = [];
+    for (const [w, hgt] of [[320, 640], [360, 740], [640, 400], [1024, 768], [1366, 900]]) {
+      const c = await browser.newContext({ viewport: { width: w, height: hgt }, isMobile: w < 900, hasTouch: w < 900, serviceWorkers: 'block' }), p = await c.newPage();
+      await p.goto(BASE + 'index.html?start=sicher#tisch'); await ready(p);
+      await p.evaluate(() => { window.PTUI.setSetting('speed', 'langsam'); window.PTUI.setSetting('advanced', true); });
+      for (const variant of ['multi', 'allin', 'river']) {
+        await p.evaluate(M.setup, variant); await p.waitForTimeout(150);
+        const m = await p.evaluate(M.measure);
+        const pr = m.ov.concat(m.out.map(x => 'außerhalb ' + x), m.clipped.map(x => 'abgeschnitten ' + x), m.hscroll ? ['seitlich ' + m.sw] : []);
+        if (pr.length) probs.push(w + ' ' + variant + ': ' + pr.join(', '));
+      }
+      if (w === 1366) {
+        await p.addStyleTag({ content: '*{line-height:1.5!important;letter-spacing:.12em!important;word-spacing:.16em!important}' });
+        await p.evaluate(M.setup, 'multi'); await p.waitForTimeout(150);
+        const cut = await p.evaluate(() => [...document.querySelectorAll('#seats .hud')].filter(e => e.scrollWidth > e.clientWidth + 1).length);
+        if (cut) probs.push('Textabstand: ' + cut + ' HUD-Zeilen abgeschnitten');
+      }
+      await c.close();
+    }
+    ok(!probs.length, probs.slice(0, 6).join(' | '));
+  });
+
   await test('Prüfung C3: Rohsicherung ohne lesbare IndexedDB gilt als unvollständig – Zurücksetzen nur nach ausdrücklicher Bestätigung; Fokus nach „Weiter warten“ (D t12)', async () => {
     const { c, p } = await fresh();
     await p.goto(BASE + 'index.html#tisch'); await ready(p); for (let i = 0; i < 2; i++) await playOne(p); await p.waitForTimeout(500);

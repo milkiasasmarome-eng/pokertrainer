@@ -88,7 +88,8 @@ button.plate:hover{border-color:var(--muted)}
 .pos{font-size:12px;color:var(--muted);font-weight:700}
 .stk{font-variant-numeric:tabular-nums;font-weight:650}
 .stk small{font-weight:500;color:var(--muted)}
-.hud{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* Umbruch statt Abschneiden: mit größeren Textabständen (WCAG 1.4.12) ging sonst ein Teil der Werte verloren (Prüfung D, t7) */
+.hud{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
 .hud b{color:var(--ink);font-weight:650}
 .hud2{font-size:12px;color:var(--muted)}
 .hud2 .typ{color:var(--ink);font-weight:650}
@@ -110,6 +111,17 @@ button.plate:hover{border-color:var(--muted)}
 .bet::before{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 2px #fff inset;margin-right:6px;vertical-align:-1px}
 .s0{--x:50%;--y:89%}.s1{--x:12%;--y:69%}.s2{--x:12%;--y:31%}.s3{--x:50%;--y:12%}.s4{--x:88%;--y:31%}.s5{--x:88%;--y:69%}
 .b0{--bx:50%;--by:66%}.b1{--bx:33%;--by:58%}.b2{--bx:33%;--by:42%}.b3{--bx:50%;--by:30%}.b4{--bx:67%;--by:42%}.b5{--bx:67%;--by:58%}
+/* Prüfung D (t4): Abstände in px zum Namensschild statt nur in % der Tischhöhe – sonst verdeckte bei niedrigem Tisch (min-height 430 px,
+   Breiten 640–1180 px) der eigene Einsatz die Ränge der eigenen Karten und die Karten des oberen Platzes den Pot. */
+@media (min-width:601px){
+  .b0{--by:calc(89% - 118px)}.b3{--by:calc(12% + 66px)}
+  /* seitliche Einsätze etwas weiter von der Tischmitte weg (über bzw. unter der Höhe des Boards): auf dem River lagen sie auf den Board-Karten */
+  .b2,.b4{--by:calc(31% + 37px)}.b1,.b5{--by:calc(69% - 37px)}
+  .s3 .hole{left:calc(100% + 8px);top:50%;transform:translateY(-50%)}
+  /* Marker (D/SB/BB) auf der Unterkante des Namensschilds statt seitlich außerhalb: ragten rechts in das Coach-Panel bzw. über den Fensterrand */
+  .chipmark,.s4 .chipmark,.s5 .chipmark{top:auto;bottom:-12px;left:8px;right:auto;margin-top:0}
+  .s0 .chipmark{top:50%;bottom:auto;left:-28px;margin-top:-12px}
+}
 
 /* Karten */
 .card{display:inline-grid;grid-template-rows:auto 1fr;justify-items:center;align-items:center;width:36px;height:50px;border-radius:6px;background:var(--card);color:var(--suit-black);
@@ -274,15 +286,20 @@ table.hlist .cards{flex-wrap:nowrap}
   .hud2{font-size:11px}
   .s0{--x:50%;--y:90%}.s1{--x:17%;--y:67%}.s2{--x:17%;--y:31%}.s3{--x:50%;--y:10%}.s4{--x:83%;--y:31%}.s5{--x:83%;--y:67%}
   /* Seitenplätze: Karten über bzw. unter dem Namensschild, damit sie sich in der Mitte nicht überlappen */
-  .s1 .hole,.s5 .hole{left:50%;right:auto;top:auto;bottom:calc(100% + 4px);transform:translateX(-50%)}
+  /* untere Seitenplätze: Karten unter dem Namensschild (darüber lagen sie auf dem River auf den äußeren Board-Karten, Prüfung D) */
+  .s1 .hole,.s5 .hole{left:50%;right:auto;top:calc(100% + 4px);bottom:auto;transform:translateX(-50%)}
   .s2 .hole,.s4 .hole{left:50%;right:auto;top:calc(100% + 4px);transform:translateX(-50%)}
-  .s1 .lastact,.s5 .lastact{top:auto;bottom:-12px}
   /* Phone: Marker zur Tischmitte hin, damit sie nicht über den Bildschirmrand ragen */
   .s1 .chipmark,.s2 .chipmark{left:auto;right:-27px}
   .s4 .chipmark,.s5 .chipmark{right:auto;left:-27px}
   .s0 .hole{bottom:calc(100% + 6px)}
-  .s3 .hole{top:calc(100% + 6px)}
-  .b0{--bx:50%;--by:74%}.b1{--bx:42%;--by:60%}.b2{--bx:42%;--by:37%}.b3{--bx:50%;--by:27%}.b4{--bx:58%;--by:37%}.b5{--bx:58%;--by:60%}
+  .s3 .hole{left:calc(100% + 6px);top:50%;transform:translateY(-50%)}
+  /* Einsätze: eigener über den eigenen Karten; seitliche direkt neben dem Namensschild, linke und rechte Seite versetzt (Prüfung D, t4) */
+  .b0{--bx:50%;--by:calc(90% - 104px)}.b3{--bx:50%;--by:27%}
+  .b1{--bx:calc(17% + 65px);--by:calc(60% - 11px)}.b2{--bx:calc(17% + 65px);--by:calc(37% - 11px)}
+  .b4{--bx:calc(83% - 65px);--by:calc(37% + 11px)}.b5{--bx:calc(83% - 65px);--by:calc(60% + 11px)}
+  .b1,.b2{transform:translate(0,-50%)}.b4,.b5{transform:translate(-100%,-50%)}
+  .bet{font-size:11px;padding:1px 6px}.bet::before{width:8px;height:8px;margin-right:4px}
   table.hlist .cards{flex-wrap:nowrap}
   table.hlist td{white-space:nowrap}
   .tipmini{display:block}
@@ -305,5 +322,5 @@ table.hlist .cards{flex-wrap:nowrap}
 .recovery .btn:disabled,.recovery input:disabled{opacity:.55;cursor:not-allowed}
 .recovery .small{color:#4a5056}
 /* Sehr schmale Bildschirme (320 px, WCAG 1.4.10): Plätze etwas schmaler, damit nichts über den Rand ragt */
-@media (max-width:340px){.plate{width:110px}.s1,.s2{--x:18%}.s4,.s5{--x:82%}}
+@media (max-width:340px){.plate{width:110px}.s1,.s2{--x:18%}.s4,.s5{--x:82%}.b1,.b2{--bx:calc(18% + 59px)}.b4,.b5{--bx:calc(82% - 59px)}}
 @media print{nav.tabs,.tools,.actions,.foot{display:none}}
