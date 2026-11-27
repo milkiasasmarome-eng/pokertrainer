@@ -145,4 +145,16 @@ module.exports = function (T) {
     ok(big.lp >= 0.5, 'Calling Station (loose-passiv) callt weiterhin meist (' + big.lp + ')');
     ok(Object.values(small).every(x => x >= 0.95), 'gegen ⅓ Pot spielen alle Stile weiter (' + JSON.stringify(small) + ')');
   });
+  test('Prüfer B 11: River-Lead in den Aggressor – Range wertlastig geschätzt, kein Raise mit dem Bluffcatcher', () => {
+    const script = [['H', 'raise', 2.5], ['BB', 'call'], ['BB', 'check'], ['H', 'bet', 2], ['BB', 'call'], ['BB', 'check'], ['H', 'check'], ['BB', 'bet', 9.5]];
+    for (const mode of ['exploit', 'gto']) {
+      const a = coach(T.spot('BTN', 'KsJd', 'Kh8c4d2s7h', script), mode);
+      ok(a.equity.eq < 0.7 && a.actions[0].type !== 'raise' && a.classification !== 'eindeutig', mode + ': Equity ' + a.equity.eq.toFixed(3) + ' (früher 0,866), ' + a.bestLabel + ' (' + a.classification + ')');
+    }
+    // Lead-Erkennung nur aus öffentlichen Aktionen: C-Bet des Preflop-Raisers und Bet nach Check des Aggressors sind kein Lead
+    const acts = [{ st: 1, s: 0, t: 'bet' }, { st: 1, s: 2, t: 'call' }, { st: 2, s: 2, t: 'bet' }];
+    ok(PT.ranges.isLead(acts, acts[2], 2, 0) && !PT.ranges.isLead(acts, acts[0], 0, 0), 'Donk-Bet in den Aggressor erkannt, C-Bet nicht');
+    const acts2 = [{ st: 1, s: 0, t: 'bet' }, { st: 1, s: 2, t: 'call' }, { st: 2, s: 0, t: 'check' }, { st: 2, s: 2, t: 'bet' }];
+    ok(!PT.ranges.isLead(acts2, acts2[3], 2, 0), 'Bet nach Check des Aggressors ist kein Lead');
+  });
 };

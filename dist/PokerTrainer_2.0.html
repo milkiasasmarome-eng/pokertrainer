@@ -1670,6 +1670,28 @@ function likelihood(act, x, draw, ctx, prof) {
   } else p = 1;
   return Math.max(0.04, Math.min(1, p));
 }
+/**
+ * Prüfer B, Befund 11: Likelihood eines Leads (Donk-Bet) in den bisherigen Aggressor nach der absoluten Stärke xa (Perzentil gegen alle
+ * mit dem Board verträglichen Hände, nicht relativ zur bisherigen Range). Relative Lead-Häufigkeit (stark = 1) gemessen an der Gegner-KI
+ * (alle 100 Profile, 30.000 zufällige Hände, Linie Flop Check/Call, Turn- bzw. River-Lead): xa 0,8–0,9 Turn 0,32 / River 0,25;
+ * 0,7–0,8 0,13 / 0,08; unter 0,7 0,06. Bei der Politik „Lead immer callen“ wird jede Lead-Hand aufgedeckt; die Messung nutzt also nur
+ * Karten, die am Tisch sichtbar würden (docs/STRATEGIE.md). Starke Draws vor dem River: Annahme 0,25 (nicht getrennt gemessen).
+ */
+function leadLikelihood(xa, draw, ctx) {
+  var p = xa >= 0.9 ? 1 : xa >= 0.8 ? 0.28 : xa >= 0.7 ? 0.1 : 0.06;
+  if (draw && ctx.street < 3) p = Math.max(p, 0.25);
+  return 0.85 * p;
+}
+/** Lead (Donk-Bet): erste Bet einer Straße in den letzten Aggressor früherer Straßen (sonst den Preflop-Raiser), der auf dieser Straße
+    noch nicht gehandelt hat und noch im Pot ist. Nur öffentliche Aktionen. */
+function isLead(actions, a, seat, pfaSeat) {
+  var idx = actions.indexOf(a), aggr = pfaSeat, i;
+  if (idx < 0) return false;
+  for (i = 0; i < idx; i++) { var b = actions[i]; if (b.st > 0 && b.st < a.st && (b.t === 'bet' || b.t === 'raise')) aggr = b.s; }
+  if (aggr == null || aggr < 0 || aggr === seat) return false;
+  for (i = 0; i < idx; i++) { var c = actions[i]; if (c.s === aggr && (c.t === 'fold' || c.st === a.st)) return false; }
+  return true;
+}
 /** Wendet alle Postflop-Aktionen eines Spielers bis einschließlich Straße `upto` an. */
 function narrowPostflop(w, actions, seat, board, prof, pfaSeat, upto) {
   var streets = [1, 2, 3];
@@ -1677,10 +1699,16 @@ function narrowPostflop(w, actions, seat, board, prof, pfaSeat, upto) {
     if (s > upto) return;
     var acts = actions.filter(function (a) { return a.st === s && a.s === seat && (a.t === 'bet' || a.t === 'raise' || a.t === 'call' || a.t === 'check'); });
     if (!acts.length) return;
-    var bd = board.slice(0, s === 1 ? 3 : s === 2 ? 4 : 5), hs = rangeStrength(w, bd);
+    var bd = board.slice(0, s === 1 ? 3 : s === 2 ? 4 : 5), hs = rangeStrength(w, bd), hsA = null;
     acts.forEach(function (a) {
       var ctx = { street: s, size: a.pot > 0 ? Math.max(a.a - (a.cur || 0), a.a) / Math.max(1, a.pot) : 0.6, cbet: s === 1 && seat === pfaSeat && a.t === 'bet' };
+      if (a.t === 'bet') ctx.lead = isLead(actions, a, seat, pfaSeat);
       if (a.t === 'call') ctx.size = a.tc / Math.max(1, a.pot);
+      if (ctx.lead) {
+        if (!hsA) { var all = new Float64Array(NC), dm = H.deadMaskOf(bd); for (var k0 = 0; k0 < NC; k0++) if (!dm[C1[k0]] && !dm[C2[k0]]) all[k0] = 1; hsA = rangeStrength(all, bd); }
+        for (var k1 = 0; k1 < NC; k1++) if (w[k1] > 0) w[k1] *= leadLikelihood(hsA.v[k1], hs.d[k1] === 1, ctx);
+        return;
+      }
       for (var k = 0; k < NC; k++) if (w[k] > 0) w[k] *= likelihood(a.t, hs.v[k], hs.d[k] === 1, ctx, prof);
     });
   });
@@ -1797,7 +1825,7 @@ PT.ranges = { empty: empty, full: full, band: band, bandClass: bandClass, fromCl
   total: total, combosCount: combosCount, classWeights: classWeights, widthOf: widthOf, hash: hashRange,
   chart: chart, rangeFromChart: rangeFromChart, RFI_W: RFI_W, DEF_W: DEF_W, V3_W: V3_W, BLUFF3: BLUFF3, BLUFF4: BLUFF4,
   PRIOR: PRIOR, PRIOR_K: PRIOR_K, smooth: smooth, preflopRange: preflopRange, profileOf: profileOf,
-  drawInfo: drawInfo, rangeStrength: rangeStrength, likelihood: likelihood, narrowPostflop: narrowPostflop,
+  drawInfo: drawInfo, rangeStrength: rangeStrength, likelihood: likelihood, narrowPostflop: narrowPostflop, isLead: isLead, leadLikelihood: leadLikelihood,
   analyzeBoard: analyzeBoard, handFeatures: handFeatures };
 })(typeof globalThis !== 'undefined' ? globalThis : (typeof self !== 'undefined' ? self : this));
 
