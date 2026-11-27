@@ -509,7 +509,7 @@ function renderTrainbar() {
   if (!S.training) { tb.hidden = true; return; }
   tb.hidden = false;
   var tr = S.training, avg = tr.scores.length ? Math.round(tr.scores.reduce(function (a, b) { return a + b; }, 0) / tr.scores.length) : null;
-  setHtml(tb, '<span><b>Training: ' + esc(tr.name) + '</b>' + (tr.review ? ' · Wiederholung' : '') + ' · Situation ' + tr.count + (avg != null ? ' · Ø Qualität ' + avg : '') + (tr.difficulty ? ' · Gegnerfeld: ' + esc(PT.session.DIFFICULTY[tr.difficulty].name) : '') + '</span>' +
+  setHtml(tb, '<span><b>Training: ' + esc(tr.name) + '</b>' + (tr.review ? ' · Wiederholung' : '') + ' · Situation ' + tr.count + (tr.test && tr.queue ? ' von ' + (tr.count + tr.queue.length) : '') + (avg != null && !tr.test ? ' · Ø Qualität ' + avg : '') + (tr.difficulty ? ' · Gegnerfeld: ' + esc(PT.session.DIFFICULTY[tr.difficulty].name) : '') + '</span>' +
     '<span><button class="btn" type="button" data-act="trainstop">Training beenden</button></span>');
 }
 function render() {
@@ -525,13 +525,20 @@ PTUI.render = render;
 // ---------- Ablauf einer Hand ----------
 function nextHand() {
   if (!S.ready || S.readonly || (S.hand && !S.hand.done) || S.reveal) return;
+  // Prüfer E 2.2 (E-5): Im Vorher-Nachher-Test erst weiter, wenn alle Bewertungen der Situation fertig sind (sonst bräche Analyzer.cancel sie ab)
+  if (S.training && S.training.test && S.pendingGrades.length) {
+    if (S.waitGrades) return;
+    S.waitGrades = true; showMsg('Bewertung läuft …');
+    Promise.all(S.pendingGrades.map(function (p) { return p && p.catch ? p.catch(function () { return null; }) : p; })).then(function () { S.waitGrades = false; S.pendingGrades = []; showMsg(''); nextHand(); });
+    return;
+  }
   clearTimeout(S.timer); Analyzer.cancel();
   if (S.speech) S.speech.stop();
   S.finished = null; S.analysis = null; S.verdict = null; S.cur = null; S.handDecisions = []; S.pendingGrades = [];
   S.shownBoard = 0; S.lastStreet = 0; showMsg('');
   if (S.training) {
     var tr = S.training, item = null, seed;
-    if (tr.test && (!tr.queue || !tr.queue.length)) { var done = tr.test; restoreTestSettings(); S.training = null; S.hand = null; render(); toast('Testphase abgeschlossen (' + done + '). Ergebnis unter Fortschritt.', 6000); location.hash = '#fortschritt'; return; }
+    if (tr.test && (!tr.queue || !tr.queue.length)) { var done = tr.test, nDone = tr.scores.length; restoreTestSettings(); S.training = null; S.hand = null; render(); toast('Testphase abgeschlossen (' + done + ', ' + nDone + ' von ' + tr.count + ' Situationen bewertet). Ergebnis unter Fortschritt.', 6000); announce(done + ' abgeschlossen'); location.hash = '#fortschritt'; setTimeout(function () { var hd = document.querySelector('#view h2'); if (hd) { hd.setAttribute('tabindex', '-1'); hd.focus(); } }, 300); return; }
     if (tr.queue && tr.queue.length) { item = tr.queue.shift(); seed = item.seed; tr.review = item.key; }
     else { tr.review = null; seed = (PT.rng.hashStr(tr.cat + '|' + Date.now() + '|' + tr.count) >>> 0); }
     // Adaptive Schwierigkeit: Gegnerfeld nach Kompetenz in dieser Kategorie
@@ -750,6 +757,7 @@ function applyTheme() {
   if (meta) meta.setAttribute('content', t === 'dark' || (t === 'auto' && window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? '#0e1113' : '#0f5a4a');
 }
 function setSetting(k, val) {
+  if (S.testSaved && (k === 'tipMode' || k === 'smode' || k === 'level')) { if (testLocked()) return; }
   S.settings[k] = val;
   if (k === 'theme') applyTheme();
   if (k === 'speech' && S.speech) { S.speech.enabled = val; if (!val) S.speech.stop(); }
@@ -757,8 +765,11 @@ function setSetting(k, val) {
   render();
 }
 PTUI.setSetting = setSetting;
+function testLocked() { if (S.testSaved) { toast('Während des Vorher-Nachher-Tests sind Tipps und Bewertungsmodus fest (kein Tipp, exploitativ).'); return true; } return false; }
+PTUI.testLocked = testLocked;
 function setMode(mode) {
   if (S.settings.tipMode === mode) return;
+  if (testLocked()) return;
   S.settings.tipMode = mode;
   if (S.speech) S.speech.stop();
   renderTip();
@@ -768,6 +779,7 @@ function setMode(mode) {
 }
 function setSMode(m) {
   if (S.settings.smode === m) return;
+  if (testLocked()) return;
   S.settings.smode = m; persist([]);
   if (myTurn() && S.cur) { var cur = S.cur; S.analysis = null; renderTip();
     cur.promise = Analyzer.run('analyze', { view: cur.view, opps: cur.opps, settings: coachSettings(), seed: cur.seed, learner: learnerSummary(), live: true }).then(function (a) { cur.analysis = a; if (S.cur === cur) { S.analysis = { decision: cur.id, a: a }; PTUI.lastRange = a; renderTip(); } return a; }, function () { return null; }); }
@@ -785,6 +797,7 @@ function route() {
   if (name === 'tisch') render();
 }
 PTUI.route = route;
+PTUI.testSettings = function () { return S.testSaved ? Object.assign({}, S.settings, S.testSaved) : S.settings; };
 PTUI.canStartTraining = function () { return !(S.hand && !S.hand.done); };
 PTUI.startTraining = function (cat, queue) {
   if (S.hand && !S.hand.done) { toast('Bitte erst die laufende Hand beenden.'); location.hash = '#tisch'; return; }
@@ -795,6 +808,7 @@ PTUI.startTraining = function (cat, queue) {
   // Bewertung immer exploitativ mit Stufe Standard; die Einstellungen werden danach wiederhergestellt (nicht gespeichert)
   if (test) { S.testSaved = { tipMode: S.settings.tipMode, smode: S.settings.smode, level: S.settings.level }; S.settings.tipMode = 'aus'; S.settings.smode = 'exploit'; S.settings.level = 'standard'; }
   S.training = { cat: cat, name: test || (queue ? 'Wiederholung' : sc.name), count: 0, scores: [], queue: queue || null, test: test };
+  if (test) { announce(test + ' gestartet, ' + queue.length + ' Situationen, ohne Tipps.'); setTimeout(function () { var tb = $('trainbar'); if (tb) { tb.setAttribute('tabindex', '-1'); tb.scrollIntoView({ block: 'start', behavior: scrollMode() }); tb.focus({ preventScroll: true }); } }, 200); }
   S.hand = null; location.hash = '#tisch'; render(); nextHand();
 };
 function restoreTestSettings() { if (S.testSaved) { S.settings.tipMode = S.testSaved.tipMode; S.settings.smode = S.testSaved.smode; S.settings.level = S.testSaved.level; S.testSaved = null; } }

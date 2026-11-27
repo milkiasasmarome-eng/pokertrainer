@@ -6881,7 +6881,7 @@ function renderTrainbar() {
   if (!S.training) { tb.hidden = true; return; }
   tb.hidden = false;
   var tr = S.training, avg = tr.scores.length ? Math.round(tr.scores.reduce(function (a, b) { return a + b; }, 0) / tr.scores.length) : null;
-  setHtml(tb, '<span><b>Training: ' + esc(tr.name) + '</b>' + (tr.review ? ' · Wiederholung' : '') + ' · Situation ' + tr.count + (avg != null ? ' · Ø Qualität ' + avg : '') + (tr.difficulty ? ' · Gegnerfeld: ' + esc(PT.session.DIFFICULTY[tr.difficulty].name) : '') + '</span>' +
+  setHtml(tb, '<span><b>Training: ' + esc(tr.name) + '</b>' + (tr.review ? ' · Wiederholung' : '') + ' · Situation ' + tr.count + (tr.test && tr.queue ? ' von ' + (tr.count + tr.queue.length) : '') + (avg != null && !tr.test ? ' · Ø Qualität ' + avg : '') + (tr.difficulty ? ' · Gegnerfeld: ' + esc(PT.session.DIFFICULTY[tr.difficulty].name) : '') + '</span>' +
     '<span><button class="btn" type="button" data-act="trainstop">Training beenden</button></span>');
 }
 function render() {
@@ -6897,13 +6897,20 @@ PTUI.render = render;
 // ---------- Ablauf einer Hand ----------
 function nextHand() {
   if (!S.ready || S.readonly || (S.hand && !S.hand.done) || S.reveal) return;
+  // Prüfer E 2.2 (E-5): Im Vorher-Nachher-Test erst weiter, wenn alle Bewertungen der Situation fertig sind (sonst bräche Analyzer.cancel sie ab)
+  if (S.training && S.training.test && S.pendingGrades.length) {
+    if (S.waitGrades) return;
+    S.waitGrades = true; showMsg('Bewertung läuft …');
+    Promise.all(S.pendingGrades.map(function (p) { return p && p.catch ? p.catch(function () { return null; }) : p; })).then(function () { S.waitGrades = false; S.pendingGrades = []; showMsg(''); nextHand(); });
+    return;
+  }
   clearTimeout(S.timer); Analyzer.cancel();
   if (S.speech) S.speech.stop();
   S.finished = null; S.analysis = null; S.verdict = null; S.cur = null; S.handDecisions = []; S.pendingGrades = [];
   S.shownBoard = 0; S.lastStreet = 0; showMsg('');
   if (S.training) {
     var tr = S.training, item = null, seed;
-    if (tr.test && (!tr.queue || !tr.queue.length)) { var done = tr.test; restoreTestSettings(); S.training = null; S.hand = null; render(); toast('Testphase abgeschlossen (' + done + '). Ergebnis unter Fortschritt.', 6000); location.hash = '#fortschritt'; return; }
+    if (tr.test && (!tr.queue || !tr.queue.length)) { var done = tr.test, nDone = tr.scores.length; restoreTestSettings(); S.training = null; S.hand = null; render(); toast('Testphase abgeschlossen (' + done + ', ' + nDone + ' von ' + tr.count + ' Situationen bewertet). Ergebnis unter Fortschritt.', 6000); announce(done + ' abgeschlossen'); location.hash = '#fortschritt'; setTimeout(function () { var hd = document.querySelector('#view h2'); if (hd) { hd.setAttribute('tabindex', '-1'); hd.focus(); } }, 300); return; }
     if (tr.queue && tr.queue.length) { item = tr.queue.shift(); seed = item.seed; tr.review = item.key; }
     else { tr.review = null; seed = (PT.rng.hashStr(tr.cat + '|' + Date.now() + '|' + tr.count) >>> 0); }
     // Adaptive Schwierigkeit: Gegnerfeld nach Kompetenz in dieser Kategorie
@@ -7122,6 +7129,7 @@ function applyTheme() {
   if (meta) meta.setAttribute('content', t === 'dark' || (t === 'auto' && window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? '#0e1113' : '#0f5a4a');
 }
 function setSetting(k, val) {
+  if (S.testSaved && (k === 'tipMode' || k === 'smode' || k === 'level')) { if (testLocked()) return; }
   S.settings[k] = val;
   if (k === 'theme') applyTheme();
   if (k === 'speech' && S.speech) { S.speech.enabled = val; if (!val) S.speech.stop(); }
@@ -7129,8 +7137,11 @@ function setSetting(k, val) {
   render();
 }
 PTUI.setSetting = setSetting;
+function testLocked() { if (S.testSaved) { toast('Während des Vorher-Nachher-Tests sind Tipps und Bewertungsmodus fest (kein Tipp, exploitativ).'); return true; } return false; }
+PTUI.testLocked = testLocked;
 function setMode(mode) {
   if (S.settings.tipMode === mode) return;
+  if (testLocked()) return;
   S.settings.tipMode = mode;
   if (S.speech) S.speech.stop();
   renderTip();
@@ -7140,6 +7151,7 @@ function setMode(mode) {
 }
 function setSMode(m) {
   if (S.settings.smode === m) return;
+  if (testLocked()) return;
   S.settings.smode = m; persist([]);
   if (myTurn() && S.cur) { var cur = S.cur; S.analysis = null; renderTip();
     cur.promise = Analyzer.run('analyze', { view: cur.view, opps: cur.opps, settings: coachSettings(), seed: cur.seed, learner: learnerSummary(), live: true }).then(function (a) { cur.analysis = a; if (S.cur === cur) { S.analysis = { decision: cur.id, a: a }; PTUI.lastRange = a; renderTip(); } return a; }, function () { return null; }); }
@@ -7157,6 +7169,7 @@ function route() {
   if (name === 'tisch') render();
 }
 PTUI.route = route;
+PTUI.testSettings = function () { return S.testSaved ? Object.assign({}, S.settings, S.testSaved) : S.settings; };
 PTUI.canStartTraining = function () { return !(S.hand && !S.hand.done); };
 PTUI.startTraining = function (cat, queue) {
   if (S.hand && !S.hand.done) { toast('Bitte erst die laufende Hand beenden.'); location.hash = '#tisch'; return; }
@@ -7167,6 +7180,7 @@ PTUI.startTraining = function (cat, queue) {
   // Bewertung immer exploitativ mit Stufe Standard; die Einstellungen werden danach wiederhergestellt (nicht gespeichert)
   if (test) { S.testSaved = { tipMode: S.settings.tipMode, smode: S.settings.smode, level: S.settings.level }; S.settings.tipMode = 'aus'; S.settings.smode = 'exploit'; S.settings.level = 'standard'; }
   S.training = { cat: cat, name: test || (queue ? 'Wiederholung' : sc.name), count: 0, scores: [], queue: queue || null, test: test };
+  if (test) { announce(test + ' gestartet, ' + queue.length + ' Situationen, ohne Tipps.'); setTimeout(function () { var tb = $('trainbar'); if (tb) { tb.setAttribute('tabindex', '-1'); tb.scrollIntoView({ block: 'start', behavior: scrollMode() }); tb.focus({ preventScroll: true }); } }, 200); }
   S.hand = null; location.hash = '#tisch'; render(); nextHand();
 };
 function restoreTestSettings() { if (S.testSaved) { S.settings.tipMode = S.testSaved.tipMode; S.settings.smode = S.testSaved.smode; S.settings.level = S.testSaved.level; S.testSaved = null; } }
@@ -7645,7 +7659,7 @@ views.analyse = function (el, arg) {
     var x = e.target.closest('[data-hx]'); if (x) { var f = filtered(), kind = x.getAttribute('data-hx');
       if (kind === 'json') H.download('PokerTrainer_Haende_' + H.today() + '.json', JSON.stringify({ format: 'PokerTrainer-Hands', version: 1, app: PT.VERSION, count: f.length, hands: f }));
       else if (kind === 'bench') { var bt = PT.benchmark.exportText(f), bo = JSON.parse(bt); H.download('PokerTrainer_Benchmark_v' + PT.benchmark.SCHEMA + '_' + H.today() + '.json', bt); H.toast('Benchmark-Export: ' + bo.count + ' Entscheidungen aus ' + bo.hands + ' Händen.'); }
-      else if (kind === 'events') { var eo = PT.events.build(f), et = JSON.stringify(eo) + '\n';  // einmal serialisieren (Prüfer D 2.2, D-2) H.download('PokerTrainer_Ereignisse_v' + PT.events.SCHEMA + '_' + H.today() + '.json', et); H.toast('Ereignisstrom: ' + eo.events + ' Entscheidungen aus ' + eo.hands + ' Händen.'); }
+      else if (kind === 'events') { /* einmal serialisieren (Prüfer D 2.2, D-2) */ var eo = PT.events.build(f), et = JSON.stringify(eo) + '\n'; H.download('PokerTrainer_Ereignisse_v' + PT.events.SCHEMA + '_' + H.today() + '.json', et); H.toast('Ereignisstrom: ' + eo.events + ' Entscheidungen aus ' + eo.hands + ' Händen.'); }
       else H.download('PokerTrainer_Haende_' + H.today() + '.txt', f.map(PT.training.handText).join('\n\n'), 'text/plain');
       return; }
     var st = e.target.closest('[data-step]'); if (st) { stepTo(st.getAttribute('data-step')); return; }
@@ -7917,8 +7931,8 @@ function showOpp(id) {
     '<span>Spielertyp <b>' + esc(pr.typ) + '</b></span><span>AF <b>' + (af == null ? 'unbekannt' : af === Infinity ? '∞' : esc(num(af))) + '</b></span><span>zuletzt gesehen ' + esc(H.dateTxt(r.lastSeen)) + '</span></div>' +
     '<h3>Veränderung der Spielweise</h3>' + chHtml +
     '<h3>Geschätzt: Werte aus Aktionen</h3>' +
-    '<div class="scroll"><table class="grid" style="font-size:13px"><thead><tr><th rowspan="2">Wert</th><th class="n" colspan="4">Langzeit (alle Hände)</th><th class="n" colspan="3">Kurzzeit (Halbwertszeit ' + esc(String(M.HALF_LIFE)) + ' Hände)</th><th rowspan="2" title="nach Gelegenheiten: unter 20 unsicher, 20–99 Tendenz, ab 100 belastbar">Belastbarkeit des Werts</th><th rowspan="2">Veränderung</th></tr>' +
-    '<tr><th class="n">Rohwert</th><th class="n">Z/N</th><th class="n">95 %</th><th class="n">geglättet</th><th class="n">Rohwert</th><th class="n" title="effektive Zahl der Gelegenheiten">eff. n</th><th class="n">95 %</th></tr></thead><tbody>' + oppStatRows(r, pr) + '</tbody></table></div>' +
+    '<div class="scroll"><table class="grid" style="font-size:13px"><thead><tr><th rowspan="2" scope="col">Wert</th><th class="n" colspan="4" scope="colgroup">Langzeit (alle Hände)</th><th class="n" colspan="3" scope="colgroup">Kurzzeit (Halbwertszeit ' + esc(String(M.HALF_LIFE)) + ' Hände)</th><th rowspan="2" scope="col">Belastbarkeit des Werts (Gelegenheiten: unter 20 unsicher, 20–99 Tendenz, ab 100 belastbar)</th><th rowspan="2" scope="col">Veränderung</th></tr>' +
+    '<tr><th class="n" scope="col">Rohwert</th><th class="n" scope="col">Z/N</th><th class="n" scope="col">95 %</th><th class="n" scope="col">geglättet</th><th class="n" scope="col">Rohwert</th><th class="n" scope="col" title="effektive Zahl der Gelegenheiten">eff. n</th><th class="n" scope="col">95 %</th></tr></thead><tbody>' + oppStatRows(r, pr) + '</tbody></table></div>' +
     '<p class="small">Z/N: Zähler/Nenner (Treffer/Gelegenheiten). 95 %: Wilson-Intervall. Unbekannt: noch keine Gelegenheit beobachtet.</p>' +
     '<p class="small">„Geglättet“ mischt die eigenen Beobachtungen mit dem Durchschnitt der Population (Beta-Prior); so nutzt der Coach die Werte. Das Kurzzeitgedächtnis gewichtet jede Beobachtung mit 0,5^(Alter/' + esc(String(M.HALF_LIFE)) +
     ') (Alter in eigenen Händen des Gegners; im Archiv altert es nicht). Kurzzeitgewicht zurzeit ≈ ' + esc(num(pr.recent.hands, 0)) + ' Hände. Eine Veränderung gilt als erkannt, wenn der gewichtete Zwei-Anteile-Test Kurzzeit gegen ältere Beobachtungen |z| ≥ ' + esc(num(ch.params.zOn, 2)) + ' ergibt.</p>' +
@@ -8000,7 +8014,7 @@ function showImport(r, fname) {
 function backupNow(tag, strict) {
   // Nur gültige Hände: Eine Sicherung mit beschädigten Einträgen ließe sich nicht wieder importieren (dafür gibt es die Rohsicherung)
   return loadHands().then(function (hands) {
-    var txt = PT.stats.backupExport({ opponents: PT.stats.dbList(S.db), hero: S.heroRec, hands: hands, learning: S.learning, settings: S.settings, table: S.table }, new Date().toISOString());
+    var txt = PT.stats.backupExport({ opponents: PT.stats.dbList(S.db), hero: S.heroRec, hands: hands, learning: S.learning, settings: PTUI.testSettings ? PTUI.testSettings() : S.settings, table: S.table }, new Date().toISOString());
     if (txt.length > MAX_FILE) {
       var msg = 'Die Sicherung wäre ' + Math.round(txt.length / 1048576) + ' MB groß und damit größer als die Importgrenze von ' + MAX_MB + ' MB';
       if (strict) { var e = new Error(msg); e.tooBig = true; throw e; }
@@ -8060,7 +8074,7 @@ function learnPanels(L, prof) {
     '<h3>Wiederkehrende Fehler</h3>' + (rec.length ? '<ul>' + rec.map(function (r) { return '<li><b>' + esc(sp(r.spot)) + '</b>: ' + esc(ownName(PT.coach.MISTAKES, r.cat)) + ' – ' + r.n + '-mal (' + r.recent + ' in den letzten 100 Entscheidungen)' +
       (PT.training.hasScen(r.spot) ? ' <button class="btn" type="button" data-train="' + esc(r.spot) + '">Gezielt üben</button>' : '') + '</li>'; }).join('') + '</ul>' : '<p class="muted">Kein Fehler kam bisher mindestens dreimal in derselben Situation vor.</p>') + '</div>';
   h += '<div class="panel"><h3>Verbesserung in zuvor schwachen Situationen</h3>' + (imp.length ? '<div class="scroll"><table class="grid"><thead><tr><th scope="col">Situation</th><th class="n" scope="col">vorher (11.–20.)</th><th class="n" scope="col">letzte 10</th><th class="n" scope="col">Differenz</th></tr></thead><tbody>' +
-    imp.map(function (x) { return '<tr><td>' + esc(x.name) + (x.problem ? ' <span class="small">(zuvor schwach)</span>' : '') + '</td><td class="n">' + n0(x.before) + '</td><td class="n">' + n0(x.after) + '</td><td class="n ' + (x.sure ? (x.diff > 0 ? 'good' : 'bad') : '') + '">' + (x.diff >= 0 ? '+' : '') + num(x.diff, 1) + ' ± ' + num(x.ci, 1) + '</td></tr>'; }).join('') + '</tbody></table></div>' :
+    imp.map(function (x) { return '<tr><td>' + esc(x.name) + (x.problem ? ' <span class="small">(zuvor schwach)</span>' : '') + '</td><td class="n">' + n0(x.before) + '</td><td class="n">' + n0(x.after) + '</td><td class="n ' + (x.sure ? (x.diff > 0 ? 'good' : 'bad') : '') + '">' + (x.diff >= 0 ? '+' : '') + num(x.diff, 1) + ' ± ' + (isFinite(x.ci) ? num(x.ci, 1) : '–') + (x.sure ? ' (eindeutig)' : '') + '</td></tr>'; }).join('') + '</tbody></table></div>' :
     '<p class="muted">Ab 30 Entscheidungen in einer Situation erscheint hier der Vergleich.</p>') + '<p class="small">„Zuvor schwach“ bestimmen die ersten 10 Entscheidungen; verglichen werden die Entscheidungen 11–20 mit den letzten 10 (getrennt, damit keine Scheinverbesserung durch Zufall entsteht). Farbig nur, wenn die Differenz größer ist als ihr 95-%-Intervall (Welch, t-Verteilung).</p>';
   h += '<h3>Vorher-Nachher-Test</h3><p class="small">Je Kategorie vier feste Testsituationen vor und vier vergleichbare (nicht identische) nach dem Training, gleiches Gegnerfeld. Gemessen wird deine Entscheidungsqualität in diesen Situationen. Ein Nachweis allgemeiner Lernwirkung ist das nicht; dafür fehlen Daten vieler Nutzer.</p>' +
     tests.map(function (t) { var r = PT.training.prePostResult(t), names = t.cats.map(function (c) { return PT.training.SCEN[c] ? PT.training.SCEN[c].name : c; }).join(', ');

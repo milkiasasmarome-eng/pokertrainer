@@ -21,7 +21,10 @@ Engines; der Trainer ruft PAI nicht auf und PAI übernimmt keine Coach-Bewertung
 Ursache der Inkompatibilität: Version 3 änderte nur die Gegnerdatensätze (Kurzzeitgedächtnis, Kartenkenntnis, Stilwechsel). Die Handdatensätze
 (`payload.hands`) sind seit 2.0 unverändert. **Nötige Anpassung in PAI** (nicht aus diesem Projekt heraus geändert, weil das PAI-Repository hier nur
 lesbar ist): in `src/data/adapters/pokertrainer.js` die Versionsprüfung auf `json.version !== 2 && json.version !== 3` erweitern; die Umwandlung der
-Hände bleibt gleich. Alternativ liest PAI den neuen Ereignisstrom (Abschnitt 3), dessen `handRecord` dasselbe Handformat enthält.
+Hände bleibt gleich (von Prüfer E an einer Kopie des Adapters geprüft: 40 von 40 Händen, Ergebnis gleich wie mit Version 2). Der Ereignisstrom
+(Abschnitt 3) ist als Ersatz für das Gedächtnis nur eingeschränkt geeignet: Seine Handdatensätze tragen bewusst keinen Zeitstempel und keine
+Handnummer (sonst ließen sich verdeckte Karten aus dem Seed nachbauen) und eine eigene, nicht sprechende ID. PAI braucht für das Gedächtnis die
+Zeitfolge; dieselbe Hand über Sicherung und Ereignisstrom eingelesen würde doppelt gezählt. Für das Gedächtnis gilt daher der Weg über die Sicherung.
 
 ## 3. Gemeinsames versioniertes Datenformat (Vorbereitung System C)
 
