@@ -40,6 +40,36 @@ module.exports = async function (H) {
     await c.close();
   });
 
+  await test('Prüfung C12: beschädigte lokale Einträge – Rohsicherung vor dem ersten Überschreiben (Start, einmal je Befund) und vor dem Import', async () => {
+    const { c, p } = await fresh();
+    await p.goto(BASE + 'index.html#tisch'); await ready(p); for (let i = 0; i < 3; i++) await playOne(p); await p.waitForTimeout(600);
+    const dbText = await p.evaluate(() => window.PT.stats.dbExport(window.PTUI.S.db, 'x'));
+    const meta = (await p.evaluate(IDB.all, 'meta'))[0], opps = await p.evaluate(IDB.all, 'opps');
+    const victim = JSON.parse(JSON.stringify(opps[0])); victim.lastSeen = null; meta.heroRec.extra = 1;
+    const heroHands = meta.heroRec.hands;
+    await p.evaluate(IDB.put, ['opps', [victim]]); await p.evaluate(IDB.put, ['meta', [meta]]);
+    await p.close();
+    const dls = []; c.on('page', pg => pg.on('download', d => dls.push(d)));
+    let q = await c.newPage(); await q.goto(BASE + 'index.html#tisch'); await ready(q, 30000); await q.waitForTimeout(800);
+    const raw = dls.find(d => /Rohdaten/.test(d.suggestedFilename()));
+    ok(!!raw, 'Rohsicherung beim Start: ' + dls.map(d => d.suggestedFilename()).join(', '));
+    if (raw) { const f = path.join(OUT, 'c12-roh.json'); await raw.saveAs(f); const t = fs.readFileSync(f, 'utf8'); fs.unlinkSync(f);
+      ok(/"extra":1/.test(t) && t.includes('"id":"' + victim.id + '"'), 'Rohsicherung enthält die beschädigten eigenen Werte (' + heroHands + ' Hände) und den beschädigten Gegner'); }
+    ok(/Rohsicherung/.test(await q.textContent('#notice')), 'Hinweis nennt die Rohsicherung');
+    await q.close();
+    const n0 = dls.length; q = await c.newPage(); await q.goto(BASE + 'index.html#tisch'); await ready(q); await q.waitForTimeout(800);
+    ok(dls.length === n0 && /bereits/.test(await q.textContent('#notice')), 'zweiter Start: keine erneute Rohsicherung für denselben Befund');
+    // Import einer gültigen Datenbank ersetzt den beschädigten Gegner: vorher reguläre Sicherung und Rohsicherung
+    const f2 = path.join(OUT, 'c12-db.json'); fs.writeFileSync(f2, dbText);
+    await q.evaluate(() => { location.hash = '#gegner'; }); await q.waitForTimeout(300);
+    await q.click('[data-g="import"]'); await q.setInputFiles('#fileIn', f2); await q.waitForSelector('#impOk', { timeout: 20000 });
+    const n1 = dls.length; await q.click('#impOk');
+    await q.waitForFunction(() => document.getElementById('modal').hidden, null, { timeout: 20000 }); fs.unlinkSync(f2);
+    const names = dls.slice(n1).map(d => d.suggestedFilename());
+    ok(names.some(x => /vor-Import/.test(x)) && names.some(x => /Rohdaten/.test(x)), 'Import: Sicherung und Rohsicherung vorher: ' + names.join(', '));
+    await c.close();
+  });
+
   await test('Prüfung C3: Rohsicherung ohne lesbare IndexedDB gilt als unvollständig – Zurücksetzen nur nach ausdrücklicher Bestätigung; Fokus nach „Weiter warten“ (D t12)', async () => {
     const { c, p } = await fresh();
     await p.goto(BASE + 'index.html#tisch'); await ready(p); for (let i = 0; i < 2; i++) await playOne(p); await p.waitForTimeout(500);

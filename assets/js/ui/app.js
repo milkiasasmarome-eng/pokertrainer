@@ -963,6 +963,29 @@ function migrateStoredDb(opps, oldFmt) {
       S.notes.migration = 'Die Sicherung der alten Datenbank vor der Umwandlung ist fehlgeschlagen (' + ((e && (e.name || e.message)) || e) + '). Es wurde nichts überschrieben; dieser Tab speichert nicht.';
     });
 }
+/**
+ * Beschädigte lokale Einträge werden beim Laden übersprungen und beim nächsten Speichern überschrieben. Vorher einmal je Befund
+ * (Kennung über die Rohfassung) eine Rohsicherung aller lokalen Daten herunterladen (AGENTS.md: nie ohne Rohsicherung löschen, Prüfung C12).
+ * Gelingt sie nicht, speichert dieser Tab nicht.
+ */
+function rawBackupFirst(bad) {
+  if (!bad || S.readonly || !window.PTRecovery || Store.mode() !== 'idb') return Promise.resolve();
+  // je Teil eine Kennung: Was beim Start repariert wird (eigene Werte, Tisch), fällt beim nächsten Start weg, ohne neue Sicherung auszulösen
+  var parts = Object.keys(bad).map(function (k) { var t = JSON.stringify(bad[k]) || ''; return { k: 'roh-' + k + '-' + U.fnv1a(t), text: t }; });
+  return withTimeout(Promise.all(parts.map(function (x) { return Store.get('backup', x.k); })), 5000, 'Sicherungen lesen').catch(function () { return []; }).then(function (have) {
+    var done = have.length === parts.length && have.every(function (x) { return x && x.name; }) ? have[0] : null;
+    if (done) { S.notes.storage += ' Eine Rohsicherung mit diesen beschädigten Einträgen wurde bereits am ' + dateTxt(done.ts) + ' heruntergeladen („' + done.name + '“).'; return; }
+    window.PTRecovery.busy('Lade … (Rohsicherung beschädigter Daten)', 90000);
+    return withTimeout(S.dlReady.then(function () { return window.PTRecovery.backup(); }), 60000, 'Rohsicherung').then(function (name) {
+      S.notes.storage += ' Vorher wurde eine Rohsicherung aller lokalen Daten heruntergeladen („' + name + '“, enthält auch die beschädigten Einträge).';
+      var ts = Date.now();
+      return Store.put('backup', parts.map(function (x) { return { k: x.k, name: name, text: x.text, ts: ts }; })).catch(function () { /* nur Merker */ });
+    }, function (e) {
+      S.readonly = true;
+      S.notes.storage = { html: '<span>' + esc(S.notes.storage) + ' Die Rohsicherung ist fehlgeschlagen (' + esc((e && e.message) || e) + '). Damit die beschädigten Einträge erhalten bleiben, speichert dieser Tab nicht.</span><button class="btn" type="button" data-act="rawbackup">Rohsicherung herunterladen</button>' };
+    });
+  });
+}
 function boot() {
   S.dlReady = new Promise(function (res) {
     try {
@@ -993,17 +1016,23 @@ function boot() {
     var oldFmt = PT.stats.needsMigration(oppObjs);  // Datenformat 1/2 im Speicher → Umwandlung auf Format 3 mit Sicherung
     S.db = PT.stats.dbFromList(oppObjs);
     var badOpps = (S.db.skipped || 0) + (opps.length - oppObjs.length);
+    S.db.skipped = badOpps;  // auch Nicht-Objekte zählen (Import und Löschen laden dann zusätzlich die Rohsicherung)
     if (badOpps) skipped.push(badOpps + ' Gegner-Einträge');
     if (meta && meta.settings && typeof meta.settings === 'object') Object.keys(DEFAULTS).forEach(function (k) { var x = meta.settings[k]; if (x !== undefined && validSetting(k, x)) S.settings[k] = x; });
-    if (meta && meta.heroRec) { var hr = PT.stats.loadRecord(meta.heroRec); if (hr) S.heroRec = hr; else skipped.push('eigene Werte'); }
+    var bad = {};  // Rohfassung beschädigter Einträge (Kennung der Rohsicherung beim Start, Prüfung C12)
+    if (r[0] != null && !meta) bad.meta = r[0];
+    if (meta && meta.heroRec) { var hr = PT.stats.loadRecord(meta.heroRec); if (hr) S.heroRec = hr; else { skipped.push('eigene Werte'); bad.hero = meta.heroRec; } }
     if (learn && learn.v) {
       if (!PT.training.validLearning(learn.v)) S.learning = learn.v;
-      else { var rep = PT.training.repairLearning(learn.v); if (rep) { S.learning = rep.learning; if (rep.removed) skipped.push(rep.removed + ' Lerneinträge'); } else skipped.push('Lerndaten'); }
+      else { bad.learn = learn.v; var rep = PT.training.repairLearning(learn.v); if (rep) { S.learning = rep.learning; if (rep.removed) skipped.push(rep.removed + ' Lerneinträge'); } else skipped.push('Lerndaten'); }
     }
     S.prof = PT.training.profile(S.learning);
     if (meta && PT.session.validTable(meta.table)) S.table = meta.table;
-    else if (meta && meta.table) skipped.push('Tischstand');
+    else if (meta && meta.table) { skipped.push('Tischstand'); bad.table = meta.table; }
+    if (badOpps) bad.opps = opps.filter(function (x) { return !(x && typeof x === 'object' && !Array.isArray(x) && typeof x.id === 'string' && Object.prototype.hasOwnProperty.call(S.db.opps, x.id) && PT.stats.loadRecord(x)); });
     if (skipped.length) S.notes.storage = 'Beschädigte Einträge im lokalen Speicher wurden übersprungen: ' + skipped.join(', ') + '. Die übrigen Daten wurden geladen.';
+    stage = 'Rohsicherung';
+    return rawBackupFirst(skipped.length ? bad : null).then(function () {
     stage = 'Migration';
     // Umstellung auf Format 3 mit Sicherungs-Download ist ein bekannter, längerer Schritt: Startüberwachung verlängern (kein „hängender Start“)
     if (oldFmt && !S.readonly && window.PTRecovery) window.PTRecovery.busy('Lade … (Gegnerdatenbank wird gesichert und umgestellt)', 60000);
@@ -1024,6 +1053,7 @@ function boot() {
         return persistAllOpps();
       }
     }).then(function () { return meta; });
+    });
   }).then(function (meta) {
     stage = 'Tisch';
     if (!S.table) S.table = PT.session.newTable(PT.session.defaultConfig(), S.db, S.settings.seed != null ? S.settings.seed : null);

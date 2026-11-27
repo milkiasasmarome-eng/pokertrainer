@@ -417,7 +417,8 @@ function showImport(r, fname) {
     try { if (r.kind === 'backup' && r.learning) newProf = PT.training.profile(r.learning); }
     catch (e) { H.openModal('Import abgelehnt', '<p>Die Lerndaten der Datei lassen sich nicht auswerten.</p><p>Die bestehenden Daten bleiben unverändert.</p>'); return; }
     // Erst wenn die Sicherung der bisherigen Daten fertig erzeugt ist, werden die Daten ersetzt.
-    backupNow('vor-Import', true).then(applyImport, function (e) { H.openModal('Import abgebrochen', '<p>Die Sicherung der aktuellen Daten ist fehlgeschlagen' + (e && e.tooBig ? ': ' + esc(e.message) : '') + '. Es wurde nichts geändert.</p>'); });
+    // Beschädigte lokale Einträge fehlen in der regulären Sicherung: dann zusätzlich die Rohsicherung (wie beim Löschen, Prüfung C12)
+    backupNow('vor-Import', true).then(function (skipped) { return (skipped || S.db.skipped) && window.PTRecovery ? window.PTRecovery.backup() : null; }).then(applyImport, function (e) { H.openModal('Import abgebrochen', '<p>Die Sicherung der aktuellen Daten ist fehlgeschlagen' + (e && e.tooBig ? ': ' + esc(e.message) : '') + '. Es wurde nichts geändert.</p>'); });
   };
   function applyImport() {
     S.db = r.db;
