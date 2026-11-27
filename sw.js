@@ -1,6 +1,6 @@
 /* PokerTrainer 2.3.0 – Service Worker (automatisch erzeugt mit tools/build.js). Offline-Betrieb, Cache je Inhaltsstand, kontrollierte Aktualisierung. */
 'use strict';
-var VERSION = '2.3.0', CACHE = 'pokertrainer-' + VERSION + '-320b6db598dd';
+var VERSION = '2.3.0', CACHE = 'pokertrainer-' + VERSION + '-230dc90c1ac7';
 var ASSETS = [
   "./",
   "index.html",

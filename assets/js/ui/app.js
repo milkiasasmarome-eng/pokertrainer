@@ -679,7 +679,8 @@ function gradeDecision(cur, chosen) {
     var isAggr = chosen.type === 'bet' || chosen.type === 'raise';
     var has = !isAggr || a.actions.some(function (x) { return (x.type === 'bet' || x.type === 'raise') && x.amount === chosen.amount; });
     if (has) return a;
-    return Analyzer.run('analyze', { view: cur.view, opps: cur.opps, settings: coachSettings(), seed: cur.seed, extra: [chosen.amount], learner: learnerSummary(), live: true })
+    return Analyzer.run('analyze', { view: cur.view, opps: cur.opps, settings: coachSettings(), seed: cur.seed, extra: [chosen.amount], learner: learnerSummary(), live: true,
+      maxSim: Math.max(0, 5000 - (a.iters || 0)) })   // 2.3 (Prüfbefund A23-13): Nachberechnung teilt das Budget von 5.000 Simulationen je Entscheidung
       .then(function (a2) { a2._extra = [chosen.amount]; return a2; }, function () { return a; });
   }).then(function (a) {
     if (!a) return null;

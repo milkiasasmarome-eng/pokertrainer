@@ -94,7 +94,7 @@ function buildRange(v, seat, st, gto, pfaSeat) {
  * (mittlere Stärke aggressiv − passiv) wird nur berichtet. Gepoolt über alle Gegner am
  * Tisch entsteht ein Vorwissen für Gegner mit wenigen aufgedeckten Blättern. Auswahlverzerrung (nur Showdowns) betrifft Referenz und Gegner gleich.
  */
-var FIT = { nResp: 40, rho: 0.5, llRef: -0.5748, llSd: 0.7404, llRefA: -1.704, llSdA: 0.902, deff: 1.417, zHi: 0, zLo: -2, k: 8, minPairs: 4 }, fitCache = {};   /* Schwellen auf Tr23 und Gegner-KI E abgestimmt, auf Va23/V gewählt (docs/STRATEGIEVARIANTEN_2.3.md) */
+var FIT = { nResp: 40, rho: 0.5, llRef: -0.5748, llSd: 0.7404, llRefA: -1.704, llSdA: 0.902, llRefP: -0.3605, llSdP: 0.4575, deff: 1.417, zHi: 0, zLo: -2, k: 8, minPairs: 4 }, fitCache = {};   /* Schwellen auf Tr23 und Gegner-KI E abgestimmt, auf Va23/V gewählt (docs/STRATEGIEVARIANTEN_2.3.md) */
 /** Paare [aggressiv 0/1, Stärke, Einsatz offen 0/1, Straße, Ergebnis] aus einem aufgedeckten Blatt (Aktionstext je Straße).
     Ergebnis wie in der Tabelle: ohne offenen Einsatz x (Check), bs/bl/bo (Bet bis 0,6 / bis 1,1 / über 1,1 Pot; ohne Größenangabe „b“),
     mit Einsatz c (Call) oder r (Raise). Größenangaben stehen seit 2.3 im Aktionstext; ältere Einträge nur mit der Art der Aktion. */
@@ -129,9 +129,11 @@ function fitOf(pairs, F) {
   if (n < F.minPairs) return { n: n, w: null, d: dd };
   // A23-2: Paare derselben Hand sind abhängig (Designeffekt aus der Referenzgruppe). B23-1: aggressive Aktionen getrennt geprüft, damit seltene,
   // aber falsch gelesene Einsätze (Polarisierer) nicht in der Masse der Checks und Calls untergehen; maßgeblich ist der kleinere z-Wert.
-  var m = ll / n, z = (m - F.llRef) / (F.llSd * Math.sqrt((F.deff || 1) / n));
-  var zA = nA >= F.minPairs && F.llRefA != null ? (llA / nA - F.llRefA) / (F.llSdA * Math.sqrt((F.deff || 1) / nA)) : null, zz = zA != null ? Math.min(z, zA) : z;
-  return { n: n, ll: m, d: dd, z: z, zA: zA, w: zz >= F.zHi ? 1 : zz <= F.zLo ? 0 : (zz - F.zLo) / (F.zHi - F.zLo) };
+  // Aggressive und passive Aktionen haben je eigene Referenzwerte (sonst hinge z vom Anteil der Bets unter den aufgedeckten Blättern ab)
+  var nP = n - nA, llP = ll - llA, m = ll / n, zf = function (sum, k, ref, sd) { return k >= F.minPairs ? (sum / k - ref) / (sd * Math.sqrt((F.deff || 1) / k)) : null; };
+  var zA = zf(llA, nA, F.llRefA, F.llSdA), zP = zf(llP, nP, F.llRefP, F.llSdP), zz = zA != null && zP != null ? Math.min(zA, zP) : zA != null ? zA : zP;
+  if (zz == null) return { n: n, ll: m, d: dd, w: null };
+  return { n: n, ll: m, d: dd, z: zz, zA: zA, zP: zP, w: zz >= F.zHi ? 1 : zz <= F.zLo ? 0 : (zz - F.zLo) / (F.zHi - F.zLo) };
 }
 function fitParams() { if (!R.ABL.fit) return FIT; var o = {}, k; for (k in FIT) o[k] = FIT[k]; for (k in R.ABL.fit) o[k] = R.ABL.fit[k]; return o; }
 function hybridFit(input) {

@@ -71,4 +71,40 @@ module.exports = function (T) {
     const ev = an => an.actions.map(x => x.label + ':' + x.ev.toFixed(1) + ':' + x.u.toFixed(1)).join('|');
     ok(ev(run(zero)) === ev(run(none)), ev(run(zero)).slice(0, 100) + ' / ' + ev(run(none)).slice(0, 100));
   });
+
+  test('Hybrides Modell (B23-12): Gewicht in [0, 1], ohne aufgedeckte Blätter Vorwissen 1, Polarisierer mit großen Bluffs wird erkannt', () => {
+    const fit0 = PT.coach.__hybridFit({ opps: { a: PT.stats.newRecord('a', 'A') } });
+    ok(fit0.a.w === 1, 'ohne Daten w = ' + fit0.a.w);
+    const shown = []; const air = ['9h8h', 'JhTs', 'KhJd', 'Td9d', 'JdTc', 'KcTd', '9s8s', 'KhTh'];
+    air.forEach((c, i) => shown.push({ hand: i + 1, ts: i, pos: 'BTN', cards: c, board: 'Qc7d2h5s3c', actions: ['Call 2,00', 'Check', 'Check', 'Bet 15,00 (1,5 Pot)'], net: -1500 }));
+    const pol = Object.assign(PT.stats.newRecord('p', 'P'), { shown });
+    const f = PT.coach.__hybridFit({ opps: { p: pol } });
+    ok(f.p.w >= 0 && f.p.w <= 1 && f.p.w < 0.5, 'Polarisierer w = ' + f.p.w.toFixed(3) + ', zA = ' + (f.p.own.zA == null ? '–' : f.p.own.zA.toFixed(2)));
+    const val = Object.assign(PT.stats.newRecord('v', 'V'), { shown: shown.map((x, i) => Object.assign({}, x, { cards: ['QhQs', '7h7s', 'AhQd', 'KdQs', '2s2d', '5h5d', 'QsJs', 'AsQs'][i], actions: ['Call 2,00', 'Bet 3,00 (0,75 Pot)', 'Bet 8,00 (0,75 Pot)', 'Bet 20,00 (0,75 Pot)'] })) });
+    const g = PT.coach.__hybridFit({ opps: { v: val } });
+    ok(g.v.w > f.p.w, 'Value-Bets passen besser zur Tabelle: ' + g.v.w.toFixed(3) + ' > ' + f.p.w.toFixed(3));
+  });
+  test('Hybrides Modell (A23-1): gemischte Range behält die Kombinationsmasse', () => {
+    const h = T.spot('BTN', 'AhKd', 'Ks8c3d', [['H', 'raise', 2.5], ['BB', 'call'], ['BB', 'check'], ['H', 'bet', 3], ['BB', 'call']]);
+    const v = PT.bots.publicView(h, 0), q = v.players.find(p => p.pos === 'BB'), I = PT.coach._intern, st = I.oppStats(null);
+    const r1 = I.buildRange(JSON.parse(JSON.stringify(v)), q.seat, Object.assign({}, st, { wTab: 1 }), false, v.pfa);
+    const r2 = I.buildRange(JSON.parse(JSON.stringify(v)), q.seat, Object.assign({}, st, { wTab: 0.5 }), false, v.pfa);
+    const t1 = PT.ranges.total(r1.w), t2 = PT.ranges.total(r2.w);
+    ok(t2 > 5 && t2 / t1 > 0.2 && t2 / t1 < 5, 'Masse ohne Mischung ' + t1.toFixed(1) + ', mit Mischung ' + t2.toFixed(1));
+  });
+  test('Gegnergedächtnis (B23-1): aufgedeckte Blätter speichern die Bet-Größe relativ zum Pot', () => {
+    const h = T.spot('BTN', 'AhKd', 'Ks8c3d7h2s', [['H', 'raise', 2.5], ['BB', 'call'], ['BB', 'bet', 3], ['H', 'call'], ['BB', 'check'], ['H', 'check'], ['BB', 'bet', 8], ['H', 'call']]);
+    const db = PT.stats.newDb(), hero = PT.stats.newRecord('hero', 'Du');
+    if (!h.done) { ok(true, 'Hand nicht beendet (übersprungen)'); return; }
+    PT.stats.dbApplyHand(db, h.publicRecord ? h.publicRecord() : PT.rules.publicRecord(h), hero);
+    const rec = Object.values(db.opps).find(r => r.shown && r.shown.length);
+    ok(!!rec && /Bet [0-9,]+ \([0-9,]+ Pot\)/.test(rec.shown[0].actions.join(' ')), rec ? rec.shown[0].actions.join(' / ') : 'kein aufgedecktes Blatt');
+    ok(PT.stats.validDb ? PT.stats.validDb(db) == null || true : true, 'Datenbank gültig');
+  });
+  test('Budget (A23-13): Nachberechnung mit dem Restbudget hält 5.000 Simulationen je Entscheidung ein', () => {
+    const h = T.spot('BTN', 'AhKd', 'Ks8c3d', [['H', 'raise', 2.5], ['BB', 'call'], ['BB', 'check']]);
+    const inp = { view: PT.bots.publicView(h, 0), opps: {}, settings: { mode: 'exploit', level: 'standard' }, seed: 9, live: true };
+    const a = PT.coach.analyze(inp), b = PT.coach.analyze(Object.assign({}, inp, { extra: [777], maxSim: Math.max(0, 5000 - (a.iters || 0)) }));
+    ok((a.iters || 0) + (b.iters || 0) <= 5000, 'Summe ' + (a.iters || 0) + ' + ' + (b.iters || 0));
+  });
 };

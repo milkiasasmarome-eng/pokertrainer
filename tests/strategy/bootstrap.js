@@ -5,7 +5,7 @@
 'use strict';
 function makeRng(seed) { let s = seed >>> 0 || 1; return () => { s ^= s << 13; s >>>= 0; s ^= s >>> 17; s ^= s << 5; s >>>= 0; return s / 4294967296; }; }
 /** runs: [{blocks: [Summe je 100 Hände], hands}], L: Blocklänge in Händen. Liefert {bb100, lo, hi, se, n, blocks} */
-function blockBootstrap(runs, L, B, seed, ths) {
+function blockBootstrap(runs, L, B, seed, ths, hier) {
   L = L || 500; B = B || 2000;
   const k = Math.max(1, Math.round(L / 100));
   const strata = runs.map(r => {
@@ -21,7 +21,9 @@ function blockBootstrap(runs, L, B, seed, ths) {
   const est = hands ? tot / hands * 100 : 0, rng = makeRng(seed || 12345), reps = new Float64Array(B);
   for (let b = 0; b < B; b++) {
     let S = 0, N = 0;
-    strata.forEach(st => { const m = st.bl.length; for (let i = 0; i < m; i++) { const j = Math.floor(rng() * m); S += st.bl[j]; N += st.hs[j]; } });
+    // 2.3 (Prüfbefund A23-5): hier = zweistufig – erst Läufe (Seeds) mit Zurücklegen, dann Blöcke innerhalb; enthält die Streuung zwischen Seeds
+    const pick = hier ? strata.map(() => strata[Math.floor(rng() * strata.length)]) : strata;
+    pick.forEach(st => { const m = st.bl.length; for (let i = 0; i < m; i++) { const j = Math.floor(rng() * m); S += st.bl[j]; N += st.hs[j]; } });
     reps[b] = N ? S / N * 100 : 0;
   }
   const sorted = Array.from(reps).sort((a, b) => a - b), mean = sorted.reduce((s, x) => s + x, 0) / B;

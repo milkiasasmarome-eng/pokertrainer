@@ -26,9 +26,10 @@ Die Seeds der abschließenden Läufe (23501 ff.) kommen in keiner Entwicklung, A
 - All-in-bereinigte BB/100 des Helden, gepaarte Differenz je Seed (gleiche Karten je Handnummer), Block-Bootstrap mit 500er-Blöcken, je Lauf geschichtet,
   10.000 Wiederholungen. Läufe zu je 2.500 Händen. Jede Kartenfolge (Seed) ist eine unabhängige Zufallsfolge; ihre Anzahl wird je Vergleich berichtet.
 - „Belegt besser“: 95-%-Intervall ganz über 0 und mindestens 20 Blöcke. „Belegt schlechter“: Intervall ganz unter 0.
-- **Nichtunterlegenheit** (einseitig, α = 2,5 % je Test vor Korrektur): untere Grenze des Bootstrap-Intervalls über −δ. p-Wert = Anteil der
-  Bootstrap-Wiederholungen ≤ −δ.
-- **Mehrfachvergleiche:** Holm-Korrektur über die primären Tests P1–P4 (Familienfehler 5 %, einseitig). Sekundäre Vergleiche werden ohne Korrektur
+- **Nichtunterlegenheit** (einseitig, α = 2,5 %): untere Grenze des Bootstrap-Intervalls über −δ. p-Wert = Anteil der Bootstrap-Wiederholungen ≤ −δ.
+  Maßgeblich ist das konservativere von zwei Verfahren: geschichtet (Blöcke innerhalb jedes Seeds) und zweistufig (erst Seeds mit Zurücklegen,
+  dann Blöcke; enthält die Streuung zwischen Seeds). Mindestens 20 Blöcke.
+- **Mehrfachvergleiche:** Holm-Korrektur über die primären Tests P1–P4 (Familienfehler 2,5 %, einseitig; m = 4 fest, ein fehlender Test gilt als nicht bestanden). Sekundäre Vergleiche werden ohne Korrektur
   und als beschreibend gekennzeichnet berichtet.
 - **Abgebrochene Läufe:** Ein Lauf, der nicht vollständig endet, wird wiederholt (gleicher Seed, gleiche Handzahl). Scheitert er dreimal, geht der Seed
   für **alle** Helden des Vergleichs aus der Auswertung, und das wird berichtet. Läufe werden nie nach ihrem Ergebnis ausgeschlossen.
@@ -57,10 +58,10 @@ Freigabekriterium 4 („Qualität gegen bekannte Gegner erhalten“) ist P2 und 
 
 | Kennung | Vergleich | Gegner | Hände je Held |
 |---|---|---|---:|
-| S1 | 2.3 gegen 2.2.0 | Gegner-KI 2.2 | 25.000 (Teilmenge der P2-Seeds) |
+| S1 | 2.3 gegen 2.2.0 | Gegner-KI 2.2 | 15.000 (Teilmenge der P2-Seeds) |
 | S2 | 2.3 gegen 2.1.0 | unveränderte Gegner-KI 2.1 (Referenzumgebung) | 25.000 |
 | S3 | 2.3 gegen 2.1.0 | Regressionsset (frühere FINAL) | 15.000 |
-| S4 | Varianten A, B, C, 2.0.1, 2.1.0, 2.2.0 und 2.3 | F23 und Gegner-KI 2.2 | je 25.000 (Teilmenge der P1/P2-Seeds) |
+| S4 | Varianten A und B, 2.0.1, 2.1.0, 2.2.0 und 2.3 (= C) | F23 und Gegner-KI 2.2 | je 15.000 (Teilmenge der P1/P2-Seeds) |
 | S5 | 2.3 gegen 2.1.0 | 15 BB und 25 BB | je 10.000 |
 | S6 | 2.3 gegen Push/Fold-Referenz | 15 BB | 10.000 |
 
@@ -77,3 +78,11 @@ Freigabekriterium 4 („Qualität gegen bekannte Gegner erhalten“) ist P2 und 
   Intervallgrenze gegen 2.1.0 hat und auf **Gegner-KI V** nicht belegt schlechter als 2.2 ist. Bei Gleichstand die einfachere (A vor C vor B).
 - **Bewertung:** unveränderte Matrix aus `docs/TESTBERICHT.md`. Zusätzlich gesonderte Bewertung der Generalisierung (P1, S3, S4 auf F23). Ist P1 nicht
   erfüllt, wird 2.3 nicht zur Freigabe empfohlen, unabhängig von der Gesamtnote.
+
+## Änderungen vor den abschließenden Läufen
+
+Nach den Prüfagenten A und B (Prüfung des Kandidaten 3cb136d, `docs/audit-2.3/`), bevor ein abschließender Lauf gestartet war:
+Holm-Familienniveau 2,5 % statt 5 % (A23-3, sonst Widerspruch zu α je Test); zweistufiger Bootstrap zusätzlich (A23-5); Regel für abgebrochene Läufe
+umgesetzt (A23-7); S1 und S4 auf 15.000 Hände (Rechenzeit, nur beschreibend), P4 und S2 wie oben (A23-4); Variante C entfällt in S4, weil sie dem
+Produktstand entspricht (A23-6). Die Modellwahl wurde nach den Korrekturen am hybriden Modell (A23-1, B23-1) mit derselben Regel wiederholt
+(`docs/STRATEGIEVARIANTEN_2.3.md`).
