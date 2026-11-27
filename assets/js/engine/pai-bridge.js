@@ -25,16 +25,18 @@ function actedEvent(meta, rec) {
   return { v: VERSION, type: 'acted', decisionId: String(meta.decisionId), handId: String(meta.handId), ts: meta.ts, action: { t: rec.t, a: rec.a, ai: !!rec.ai } };
 }
 
-/** Abgeschlossene Hand in öffentlicher Form (nur aufgedeckte Karten, keine eigenen verdeckten Karten). */
+/** Abgeschlossene Hand in öffentlicher Form: aufgedeckte Karten und die eigenen Karten des Spielers (heroSeat), sonst nichts
+    Verdecktes. Inhaltlich gleich dem Handdatensatz einer Trainer-Sicherung, damit PAI beide als Dublette erkennt. */
 function handEvent(h, meta) {
-  var r = h.publicRecord();
+  var r = h.publicRecord(), hero = h.p.filter(function (q) { return q.isHero; })[0];
   return {
     v: VERSION, type: 'hand', handId: String(meta.handId), ts: meta.ts,
     record: {
       v: 1, id: String(meta.handId), ts: r.ts, no: r.no, button: r.button, sb: r.sb, bb: r.bb, n: r.n,
       seats: r.seats.map(function (s) { return { seat: s.seat, id: s.id, name: s.name, pos: s.pos, start: s.start }; }),
       actions: r.actions.map(function (a) { return { st: a.st, s: a.s, t: a.t, a: a.a, add: a.add, ai: a.ai }; }),
-      board: r.board.slice(), shown: r.shown.slice(), won: r.won.slice(), returned: r.returned.slice(), rake: r.rake, showdown: r.showdown
+      board: r.board.slice(), shown: r.shown.slice(), won: r.won.slice(), returned: r.returned.slice(), rake: r.rake, showdown: r.showdown,
+      heroSeat: hero ? hero.seat : null, hero: hero ? PT.cardsStr(hero.cards) : ''
     }
   };
 }

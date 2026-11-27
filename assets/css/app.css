@@ -212,7 +212,7 @@ table.hlist .cards{flex-wrap:nowrap}
 .spark{width:100%;height:80px;display:block}
 .form{display:grid;gap:12px}
 .form .row{display:grid;grid-template-columns:minmax(150px,240px) minmax(0,1fr);gap:8px;align-items:center}
-.form .row .hint{grid-column:2;font-size:13px;color:var(--muted);margin-top:-6px}
+.form .row .hint{grid-column:2;font-size:13px;color:var(--muted);margin-top:-6px;overflow-wrap:anywhere}
 @media (max-width:600px){.form .row{grid-template-columns:1fr}.form .row .hint{grid-column:1}}
 .cardrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 

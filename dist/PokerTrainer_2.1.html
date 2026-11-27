@@ -225,7 +225,7 @@ table.hlist .cards{flex-wrap:nowrap}
 .spark{width:100%;height:80px;display:block}
 .form{display:grid;gap:12px}
 .form .row{display:grid;grid-template-columns:minmax(150px,240px) minmax(0,1fr);gap:8px;align-items:center}
-.form .row .hint{grid-column:2;font-size:13px;color:var(--muted);margin-top:-6px}
+.form .row .hint{grid-column:2;font-size:13px;color:var(--muted);margin-top:-6px;overflow-wrap:anywhere}
 @media (max-width:600px){.form .row{grid-template-columns:1fr}.form .row .hint{grid-column:1}}
 .cardrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 
@@ -4338,16 +4338,18 @@ function actedEvent(meta, rec) {
   return { v: VERSION, type: 'acted', decisionId: String(meta.decisionId), handId: String(meta.handId), ts: meta.ts, action: { t: rec.t, a: rec.a, ai: !!rec.ai } };
 }
 
-/** Abgeschlossene Hand in öffentlicher Form (nur aufgedeckte Karten, keine eigenen verdeckten Karten). */
+/** Abgeschlossene Hand in öffentlicher Form: aufgedeckte Karten und die eigenen Karten des Spielers (heroSeat), sonst nichts
+    Verdecktes. Inhaltlich gleich dem Handdatensatz einer Trainer-Sicherung, damit PAI beide als Dublette erkennt. */
 function handEvent(h, meta) {
-  var r = h.publicRecord();
+  var r = h.publicRecord(), hero = h.p.filter(function (q) { return q.isHero; })[0];
   return {
     v: VERSION, type: 'hand', handId: String(meta.handId), ts: meta.ts,
     record: {
       v: 1, id: String(meta.handId), ts: r.ts, no: r.no, button: r.button, sb: r.sb, bb: r.bb, n: r.n,
       seats: r.seats.map(function (s) { return { seat: s.seat, id: s.id, name: s.name, pos: s.pos, start: s.start }; }),
       actions: r.actions.map(function (a) { return { st: a.st, s: a.s, t: a.t, a: a.a, add: a.add, ai: a.ai }; }),
-      board: r.board.slice(), shown: r.shown.slice(), won: r.won.slice(), returned: r.returned.slice(), rake: r.rake, showdown: r.showdown
+      board: r.board.slice(), shown: r.shown.slice(), won: r.won.slice(), returned: r.returned.slice(), rake: r.rake, showdown: r.showdown,
+      heroSeat: hero ? hero.seat : null, hero: hero ? PT.cardsStr(hero.cards) : ''
     }
   };
 }
@@ -5781,7 +5783,7 @@ views.einstellungen = function (el) {
     '<div class="row"><label for="cSo">Sprachausgabe</label><input id="cSo" type="checkbox"' + (st.speech ? ' checked' : '') + '></div>' +
     '<div class="row"><label for="cSr">Sprechtempo</label><input id="cSr" type="range" min="0.7" max="1.5" step="0.05" value="' + st.speechRate + '"></div>' +
     '<div class="row"><label for="cRh">Hände speichern</label><input id="cRh" type="checkbox"' + (st.recordHands ? ' checked' : '') + '></div>' +
-    '<div class="row"><label for="cPai">PAI-Schnittstelle</label><input id="cPai" type="checkbox"' + (st.paiBridge ? ' checked' : '') + '><div class="hint">Sendet deine Entscheidungssituationen (nur eigene Karten und öffentliche Informationen) und abgeschlossene Hände an eine geöffnete PAI-Seite derselben Website. Keine Tipps, Bewertungen oder Gegnerdaten des Trainers. Standard: aus.</div></div></form></div></div>' +
+    '<div class="row"><label for="cPai">PAI-Schnittstelle</label><input id="cPai" type="checkbox"' + (st.paiBridge ? ' checked' : '') + '><div class="hint">Sendet deine Spielsituationen (nur eigene Karten und öffentliche Infos) und fertige Hände an eine offene PAI-Seite derselben Website. Keine Tipps, Bewertungen oder Gegnerdaten. Standard: aus.</div></div></form></div></div>' +
     '<div class="panel"><h2>Daten</h2><p class="small">Alle Daten liegen nur in diesem Browser (' + (Store.mode() === 'idb' ? 'IndexedDB' : Store.mode() === 'ls' ? 'localStorage' : 'nur im Arbeitsspeicher') + '). Andere Browser oder Geräte haben eigene, getrennte Daten.</p>' +
     '<div class="btnrow"><button class="btn" type="button" id="dBk">Vollständige Sicherung exportieren</button><button class="btn" type="button" id="dIm">Sicherung importieren</button><button class="btn danger" type="button" id="dDel">Alle Daten löschen</button></div></div>';
   function onT(id, fn) { $(id).addEventListener('change', fn); }

@@ -653,7 +653,7 @@ test('PAI-Schnittstelle: Ereignisse enthalten nur Wissen des Spielers (keine ver
   const B = PT.paiBridge, sim = require('./sim-lib.js');
   const DEC_KEYS = ['v', 'type', 'decisionId', 'handId', 'ts', 'heroSeat', 'heroCards', 'board', 'street', 'button', 'sb', 'bb', 'seats', 'actions'].sort().join();
   const HAND_KEYS = ['v', 'type', 'handId', 'ts', 'record'].sort().join();
-  const REC_KEYS = ['v', 'id', 'ts', 'no', 'button', 'sb', 'bb', 'n', 'seats', 'actions', 'board', 'shown', 'won', 'returned', 'rake', 'showdown'].sort().join();
+  const REC_KEYS = ['v', 'id', 'ts', 'no', 'button', 'sb', 'bb', 'n', 'seats', 'actions', 'board', 'shown', 'won', 'returned', 'rake', 'showdown', 'heroSeat', 'hero'].sort().join();
   const FORBID = ['seed', 'typ', 'style', 'decisions', 'tags', 'training', 'grade', 'score', 'rec', 'evs', 'opps', 'hero', 'cards', 'P', 'skill', 'noise'];
   const keysDeep = (o, acc) => { if (o && typeof o === 'object') Object.keys(o).forEach(k => { acc.add(k); keysDeep(o[k], acc); }); return acc; };
   const forbidden = (o) => [...keysDeep(o, new Set())].filter(k => FORBID.includes(k));
@@ -675,8 +675,10 @@ test('PAI-Schnittstelle: Ereignisse enthalten nur Wissen des Spielers (keine ver
     const shownSeats = h.result.shown.map(x => x.seat);
     ok(e.record.shown.every(x => shownSeats.includes(x.seat)), 'nur aufgedeckte Karten');
     const js = JSON.stringify(e.record.seats) + JSON.stringify(e.record.actions) + JSON.stringify(e.record.board);
-    h.p.forEach(q => { if (!shownSeats.includes(q.seat) && JSON.stringify(e).includes(PT.cardsStr(q.cards))) leaks++; });
-    eq(forbidden({ ...e, record: { ...e.record, shown: [] } }).join(), '', 'kein verbotenes Feld im Handdatensatz (aufgedeckte Karten separat geprüft)');
+    h.p.forEach(q => { if (!shownSeats.includes(q.seat) && !q.isHero && JSON.stringify(e).includes(PT.cardsStr(q.cards))) leaks++; });
+    const heroQ = h.p.filter(q => q.isHero)[0];
+    eq(e.record.hero, PT.cardsStr(heroQ.cards), 'nur die eigenen Karten des Spielers'); eq(e.record.heroSeat, heroQ.seat, 'eigener Platz');
+    { const { hero: _ownCards, shown: _shown, ...restRec } = e.record; eq(forbidden({ ...e, record: restRec }).join(), '', 'kein verbotenes Feld im Handdatensatz (aufgedeckte und eigene Karten separat geprüft)'); }
     ok(js.length > 0, '');
   } });
   eq(leaks, 0, 'verdeckte Karten anderer Spieler in Ereignissen');
