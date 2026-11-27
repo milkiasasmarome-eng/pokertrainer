@@ -469,11 +469,12 @@ function aggRates(agg) {
 /** 2.3: Schalter für Ablationsstudien und Strategievarianten. Produktstand: hybrides Modell C (Modellwahl, docs/STRATEGIEVARIANTEN_2.3.md);
     alle übrigen Schalter nur für Vergleichsläufe. */
 var ABL = { hybrid: true };
-function setLikelihoodTable(t) { LIK = t; }
+function setLikelihoodTable(t) { LIK = t; shareCache = {}; }
 function likelihoodTable() { return LIK; }
 /** Wendet alle Postflop-Aktionen eines Spielers bis einschließlich Straße `upto` an. */
 var shareCache = {};
-/** Anteil einer Einsatzgröße an allen Bets eines Zelltyps über alle Stärkeklassen (Populationstabelle) */
+/** Anteil einer Einsatzgröße an allen Bets eines Zelltyps, gemittelt über die zehn Stärkeklassen mit gleichem Gewicht (Prüfbefund A23-10: kein
+    häufigkeitsgewichteter Populationsanteil, sondern ein stärkeunabhängiger Durchschnitt der Größenwahl) */
 function sizeShare(cellKey, out) {
   var k = cellKey + '|' + out; if (shareCache[k] != null) return shareCache[k];
   var num = 0, den = 0; for (var xb = 0; xb < 10; xb++) { var d = likDist(cellKey, 0, xb); if (!d) continue; num += d[out] || 0; den += (d.bs || 0) + (d.bl || 0) + (d.bo || 0); }

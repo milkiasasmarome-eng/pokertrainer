@@ -78,7 +78,9 @@ function buildRange(v, seat, st, gto, pfaSeat) {
     R.narrowPostflop(w, v.actions, seat, v.board, prof, pfaSeat, v.street, { sm: sm, nPlayers: v.players.length, sizeShrink: R.ABL.hybrid ? FIT.rho : 0 });
     R.narrowPostflop(wL, v.actions, seat, v.board, prof, pfaSeat, v.street, { legacy: true });
     var sT = 0, sL = 0; for (var k = 0; k < w.length; k++) { sT += w[k]; sL += wL[k]; }
-    if (sT > 0 && sL > 0) for (var k2 = 0; k2 < w.length; k2++) w[k2] = wTab * w[k2] / sT + (1 - wTab) * wL[k2] / sL;
+    // Prüfbefund A23-1: nach der Mischung auf die gemischte Masse zurückskalieren (Kombinationszahl und Matrix bleiben vergleichbar)
+    var mass = wTab * sT + (1 - wTab) * sL;
+    if (sT > 0 && sL > 0) for (var k2 = 0; k2 < w.length; k2++) w[k2] = (wTab * w[k2] / sT + (1 - wTab) * wL[k2] / sL) * mass;
     else if (!(sT > 0)) w.set(wL);
   } else if (v.street > 0) R.narrowPostflop(w, v.actions, seat, v.board, prof, pfaSeat, v.street, legacy ? { legacy: true } : { sm: sm, nPlayers: v.players.length, sizeShrink: R.ABL.hybrid ? FIT.rho : 0 });
   return { w: w, line: line, sm: sm, prof: prof };
@@ -86,39 +88,50 @@ function buildRange(v, seat, st, gto, pfaSeat) {
 /**
  * 2.3 (Arbeitspaket 3, Modell C): Belastbarkeit der an der Gegner-KI angepassten Tabellen für die Gegner am Tisch.
  * Grundlage sind nur aufgedeckte Blätter (Datenbank: zehn jüngste je Gegner): je Straße die Stärke der aufgedeckten Hand (Perzentil gegen alle
- * Hände auf dem Board dieser Straße) und die Art der eigenen Aktion. Bei der Gegner-KI sind aggressive Aktionen deutlich stärker als passive
- * (Konsistenz d = mittlere Stärke aggressiv − passiv). Liegt d belastbar darunter (Fallensteller: starke Hände passiv; Polarisierer: Luft
- * aggressiv), gilt die Tabelle für diesen Gegner als nicht belastbar, und das Modell geht zum robusten Modell 2.1 über. Gepoolt über alle Gegner am
+ * Hände auf dem Board dieser Straße), Art und Größe der eigenen Aktion. Maß ist die mittlere Log-Likelihood dieser Aktionen unter der Tabelle,
+ * verglichen mit dem Wert der Gegner-KI (Gruppe E). Liegt sie belastbar darunter (Fallensteller: starke Hände passiv; Polarisierer: große Einsätze
+ * mit Luft), gilt die Tabelle für diesen Gegner als nicht belastbar, und das Modell geht zum robusten Modell 2.1 über. Die Kennzahl d
+ * (mittlere Stärke aggressiv − passiv) wird nur berichtet. Gepoolt über alle Gegner am
  * Tisch entsteht ein Vorwissen für Gegner mit wenigen aufgedeckten Blättern. Auswahlverzerrung (nur Showdowns) betrifft Referenz und Gegner gleich.
  */
-var FIT = { nResp: 40, rho: 0.5, llRef: -0.463, llSd: 0.546, zHi: 0, zLo: -2, k: 8, minPairs: 4 }, fitCache = {};   /* Schwellen auf Tr23 und Gegner-KI E abgestimmt, auf Va23/V gewählt (docs/STRATEGIEVARIANTEN_2.3.md) */
-/** Paare [aggressiv 0/1, Stärke, Einsatz offen 0/1, Straße] aus einem aufgedeckten Blatt (Aktionstext je Straße) */
+var FIT = { nResp: 40, rho: 0.5, llRef: -0.5748, llSd: 0.7404, llRefA: -1.704, llSdA: 0.902, deff: 1.417, zHi: 0, zLo: -2, k: 8, minPairs: 4 }, fitCache = {};   /* Schwellen auf Tr23 und Gegner-KI E abgestimmt, auf Va23/V gewählt (docs/STRATEGIEVARIANTEN_2.3.md) */
+/** Paare [aggressiv 0/1, Stärke, Einsatz offen 0/1, Straße, Ergebnis] aus einem aufgedeckten Blatt (Aktionstext je Straße).
+    Ergebnis wie in der Tabelle: ohne offenen Einsatz x (Check), bs/bl/bo (Bet bis 0,6 / bis 1,1 / über 1,1 Pot; ohne Größenangabe „b“),
+    mit Einsatz c (Call) oder r (Raise). Größenangaben stehen seit 2.3 im Aktionstext; ältere Einträge nur mit der Art der Aktion. */
 function shownPairs(s) {
-  var key = s.hand + '|' + s.ts + '|' + s.cards + '|' + s.board; if (fitCache[key]) return fitCache[key];
+  var key = s.hand + '|' + s.ts + '|' + s.cards + '|' + s.board + '|' + (s.actions || []).join('/'); if (fitCache[key]) return fitCache[key];   // A23-8: Aktionen im Schlüssel
   var out = [], cards, board; try { cards = PT.parseCards(s.cards); board = PT.parseCards(s.board || ''); } catch (e) { return out; }
   if (!cards || cards.length !== 2 || !board) return out;
   [1, 2, 3].forEach(function (st) {
     var n = st === 1 ? 3 : st === 2 ? 4 : 5, txt = s.actions && s.actions[st]; if (!txt || board.length < n) return;
     var x = PT.bots.percentile(cards, board.slice(0, n)).p;
     String(txt).split(', ').forEach(function (t) { var w0 = t.split(' ')[0];
-      if (w0 === 'Bet') out.push([1, x, 0, st]); else if (w0 === 'Check') out.push([0, x, 0, st]); else if (w0 === 'Raise') out.push([1, x, 1, st]); else if (w0 === 'Call') out.push([0, x, 1, st]); });
+      if (w0 === 'Bet') { var m = /\(([0-9]+(?:,[0-9]+)?) Pot\)/.exec(t), f = m ? parseFloat(m[1].replace(',', '.')) : null; out.push([1, x, 0, st, f == null ? 'b' : f <= 0.6 ? 'bs' : f <= 1.1 ? 'bl' : 'bo']); }
+      else if (w0 === 'Check') out.push([0, x, 0, st, 'x']); else if (w0 === 'Raise') out.push([1, x, 1, st, 'r']); else if (w0 === 'Call') out.push([0, x, 1, st, 'c']); });
   });
   if (Object.keys(fitCache).length > 4000) fitCache = {};
   fitCache[key] = out; return out;
 }
-/** Log-Likelihood eines Paars unter der Populationstabelle (ohne offenen Einsatz: Bet gegen Check; mit Einsatz, bedingt aufs Weiterspielen: Raise gegen Call) */
+/** Log-Likelihood eines Paars unter der Populationstabelle: ohne offenen Einsatz Check gegen Bet-Größe, mit Einsatz (bedingt aufs Weiterspielen) Raise gegen Call */
 function pairLL(q) {
   var d = R.likDist(q[3] + '|' + (q[2] ? 's3' : 'fr') + '|h', 0, R.xaBucket(q[1])); if (!d) return null;
-  var pA = q[2] ? (d.r || 0) / Math.max(1e-6, (d.c || 0) + (d.r || 0)) : (d.bs || 0) + (d.bl || 0) + (d.bo || 0);
-  pA = Math.min(0.98, Math.max(0.02, pA)); return Math.log(q[0] ? pA : 1 - pA);
+  var o = q[4], p;
+  if (q[2]) { var pr = (d.r || 0) / Math.max(1e-6, (d.c || 0) + (d.r || 0)); p = o === 'r' ? pr : 1 - pr; }
+  else if (o === 'x') p = d.x != null ? d.x : 1 - ((d.bs || 0) + (d.bl || 0) + (d.bo || 0));
+  else if (o === 'b' || o == null) p = (d.bs || 0) + (d.bl || 0) + (d.bo || 0);
+  else p = d[o] || 0;
+  return Math.log(Math.min(0.98, Math.max(0.01, p)));
 }
 function fitOf(pairs, F) {
-  F = F || FIT; var ll = 0, n = 0, a = 0, na = 0, p = 0, np = 0;
-  pairs.forEach(function (q) { var l = pairLL(q); if (l != null) { ll += l; n++; } if (q[0]) { a += q[1]; na++; } else { p += q[1]; np++; } });
+  F = F || FIT; var ll = 0, n = 0, llA = 0, nA = 0, a = 0, na = 0, p = 0, np = 0;
+  pairs.forEach(function (q) { var l = pairLL(q); if (l != null) { ll += l; n++; if (q[0]) { llA += l; nA++; } } if (q[0]) { a += q[1]; na++; } else { p += q[1]; np++; } });
   var dd = na && np ? a / na - p / np : null;
   if (n < F.minPairs) return { n: n, w: null, d: dd };
-  var m = ll / n, z = (m - F.llRef) / (F.llSd / Math.sqrt(n));
-  return { n: n, ll: m, d: dd, z: z, w: z >= F.zHi ? 1 : z <= F.zLo ? 0 : (z - F.zLo) / (F.zHi - F.zLo) };
+  // A23-2: Paare derselben Hand sind abhängig (Designeffekt aus der Referenzgruppe). B23-1: aggressive Aktionen getrennt geprüft, damit seltene,
+  // aber falsch gelesene Einsätze (Polarisierer) nicht in der Masse der Checks und Calls untergehen; maßgeblich ist der kleinere z-Wert.
+  var m = ll / n, z = (m - F.llRef) / (F.llSd * Math.sqrt((F.deff || 1) / n));
+  var zA = nA >= F.minPairs && F.llRefA != null ? (llA / nA - F.llRefA) / (F.llSdA * Math.sqrt((F.deff || 1) / nA)) : null, zz = zA != null ? Math.min(z, zA) : z;
+  return { n: n, ll: m, d: dd, z: z, zA: zA, w: zz >= F.zHi ? 1 : zz <= F.zLo ? 0 : (zz - F.zLo) / (F.zHi - F.zLo) };
 }
 function fitParams() { if (!R.ABL.fit) return FIT; var o = {}, k; for (k in FIT) o[k] = FIT[k]; for (k in R.ABL.fit) o[k] = R.ABL.fit[k]; return o; }
 function hybridFit(input) {
@@ -420,12 +433,16 @@ function analyzeMode(input, v, mode, level, L0, budget, rng, deadline, set, prep
     heroPos: me.pos, chart: chartInfo, mix: mixNote, unopened: street === 0 && pre.rc === 0
   };
 }
+/** Bezeichnung des Preflop-Ankers im Erklärtext. 2.3 (Arbeitspaket 7): Das Push/Fold-Modellspiel ist ausdrücklich keine vollständige Strategie. */
+function chartRef(ch) {
+  return /Push\/Fold/.test(ch.kind) ? 'der ' + ch.kind + ' (vereinfachtes Spiel nur mit All-in oder Fold vor dem Flop, keine vollständige No-Limit-Strategie; die Größe wählt das EV-Modell)' : 'dem Faustregel-Chart (' + ch.kind + ')';
+}
 /** Chart-Gewichte der eigenen Startklasse für die aktuelle Preflop-Situation */
 function heroChart(v, ctx, pre) {
   var me = ctx.me, pos = me.pos, ci = H.classIdx(v.cards[0], v.cards[1]), effBB = ctx.eff / ctx.bb, ch, kind;
   if (pre.rc === 0 && pre.limpers === 0) {
     // Prüfer B 2.2 (B-5): Der Chart des Push/Fold-Modellspiels bestimmt die Handauswahl; die Größe (All-in oder kleines Open) wählt das EV-Modell
-    if (effBB <= 15) { ch = R.chart('push', { pos: pos, bb: effBB }); kind = 'Handauswahl nach Push/Fold-Modellspiel (' + Math.round(effBB) + ' BB effektiv; vereinfachtes Spiel nur mit All-in oder Fold, keine vollständige Strategie), Größe nach EV'; }
+    if (effBB <= 15) { ch = R.chart('push', { pos: pos, bb: effBB }); kind = 'Handauswahl des Push/Fold-Modellspiels bei ' + Math.round(effBB) + ' BB effektiv'; }
     else { ch = R.chart('rfi', { pos: pos }); kind = 'Open-Raise-Chart ' + pos; }
   } else if (pre.rc === 0) { ch = R.chart('iso', { pos: pos }); kind = 'Chart gegen Limper (' + pos + ')'; }
   else if (pre.rc === 1) { var op = v.players[pre.opener].pos; ch = R.chart('vsOpen', { pos: pos, opener: op, sizeBB: pre.lastTo / v.bb, squeeze: pre.callers > 0 }); kind = 'Chart ' + pos + ' gegen Open ' + op; }
@@ -675,7 +692,7 @@ function explain(a, depth) {
     core = actWord + ': ' + (value ? 'Mit etwa ' + pct(eq.eq) + ' Equity holst du Value von schwächeren Händen.' : 'Die Bet gewinnt den Pot geschätzt in etwa ' + pct(p.pAllFold || 0) + ' der Fälle sofort' + (a.hand.draw && a.hand.draw.strong ? ', und dein Draw hat Rückhalt.' : '.'));
   }
   if (a.mix) core += ' Im Gleichgewicht sind ' + a.mix.passive + ' und ' + a.mix.bluff + ' (Bluff) etwa gleich viel wert; eine Einzelhand-Empfehlung kann diese Mischung nicht abbilden, ' + a.mix.passive + ' ist die risikoärmere Wahl.';
-  if (a.street === 0 && a.chart && a.chart.applied) core += ' Preflop folgt der Coach hier dem Faustregel-Chart (' + a.chart.kind + '); das vereinfachte EV-Modell sähe ' + a.chart.modelBest + ' um ' + bbTxt(a.chart.modelGap, bb) + ' vorn, aber nur wegen Fold-Annahmen, die nicht durch Gegnerwerte belegt sind.';
+  if (a.street === 0 && a.chart && a.chart.applied) core += ' Preflop folgt der Coach hier ' + chartRef(a.chart) + '; das vereinfachte EV-Modell sähe ' + a.chart.modelBest + ' um ' + bbTxt(a.chart.modelGap, bb) + ' vorn, aber nur wegen Fold-Annahmen, die nicht durch Gegnerwerte belegt sind.';
   else if (a.street === 0 && a.chart && a.chart.exploit) core += ' Das weicht vom Faustregel-Chart ab: Nach ' + a.chart.exploit.obs + ' beobachteten Situationen liegt die geschätzte Fold-Rate dieses Gegners bei ' + pct(a.chart.exploit.post) + '; mit ' + pct(a.chart.exploit.p) + ' Wahrscheinlichkeit ' + (a.chart.exploit.dir === 'enger' ? 'unter' : 'über') + ' der Break-even-Rate von ' + pct(a.chart.exploit.fBeRaw != null ? a.chart.exploit.fBeRaw : a.chart.exploit.fBe) + ' (auf die Größe dieses Raises und die Gewichtung im Modell umgerechnet).';
   lines.einsteiger.push(core);
   if (a.street === 0 && a.actions.length) lines.einsteiger.push(a.hand.top <= 0.4 ? a.hand.cls + ' gehört zu den besten ' + (a.hand.top < 0.01 ? '1' : Math.round(a.hand.top * 100)) + ' % aller Starthände.' : a.hand.cls + ' liegt auf Rang ' + (H.CLS_RANK[H.nameToIdx(a.hand.cls)] + 1) + ' von 169 Starthandklassen.');
@@ -768,7 +785,7 @@ function grade(a, chosen) {
 }
 function chartCapText(a, pick, best, loss) {
   var bb = a.bb, aggr = group(pick) === 'aggr', fold = group(pick) === 'fold';
-  var s = 'Empfohlen war ' + best.label + '. ' + (aggr ? 'Ein Raise' : fold ? 'Ein Fold' : 'Ein Limp') + ' mit ' + a.hand.cls + ' liegt außerhalb des Faustregel-Charts (' + a.chart.kind + ')' +
+  var s = 'Empfohlen war ' + best.label + '. ' + (aggr ? 'Ein Raise' : fold ? 'Ein Fold' : 'Ein Limp') + ' mit ' + a.hand.cls + ' liegt außerhalb ' + (/Push\/Fold/.test(a.chart.kind) ? 'der ' + a.chart.kind : 'des Faustregel-Charts (' + a.chart.kind + ')') +
     (fold ? ': Der Chart spielt die Hand zu ' + Math.round(100 * (1 - a.chart.fold)) + ' %.' : '.');
   if (fold) { if (pick.ev > best.ev) s += ' Das vereinfachte Modell sieht den Fold zwar ' + bbTxt(pick.ev - best.ev, bb) + ' vorn, der Coach folgt hier aber dem Chart.'; return s; }
   if (pick.ev > best.ev) s += ' Das vereinfachte Modell rechnet zwar mit ' + bbTxt(pick.ev - best.ev, bb) + ' mehr, die dafür nötigen Folds sind aber nicht durch Gegnerwerte belegt.';
@@ -781,7 +798,7 @@ function gradeText(g, a, pick, best, loss) {
     // Nicht „eindeutig optimal“ nennen, wenn Alternativen innerhalb der Unsicherheit liegen (Auftrag 2.1, Abschnitt 10)
     var near = a.actions.filter(function (x) { return x !== pick && group(x) !== group(pick) && Math.abs(pick.ev - x.ev) <= Math.max(0.1 * bb, Math.max(pick.u || 0, x.u || 0)); });
     if (near.length) return 'Deine Aktion liegt nach dem Modell vorn, aber ' + near.slice(0, 2).map(function (x) { return x.label; }).join(' und ') + (near.length > 1 ? ' liegen' : ' liegt') + ' im Rahmen der Unsicherheit gleichauf. ' + a.text.speech;
-    if (a.chart && a.chart.applied && pick === best) return 'Deine Aktion folgt dem Faustregel-Chart (' + a.chart.kind + '). ' + a.text.speech;
+    if (a.chart && a.chart.applied && pick === best) return 'Deine Aktion folgt ' + chartRef(a.chart) + '. ' + a.text.speech;
     return 'Deine Aktion ist die beste nach dem Modell. ' + a.text.speech;
   }
   var s = 'Empfohlen war ' + best.label + '. Deine Aktion (' + pick.label + ') kostet geschätzt ' + bbTxt(loss, bb) + ' gegenüber der besten Aktion';

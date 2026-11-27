@@ -162,7 +162,9 @@ function newRecord(id, name) {
 function dbEnsure(db, id, name) { var r = db.opps[id]; if (!r) r = db.opps[id] = newRecord(id, name || (PT.bots ? PT.bots.nameOf(id) : id)); return r; }
 function shownEntry(rec, seat, cards) {
   var streets = ['', '', '', ''];
-  rec.actions.forEach(function (a) { if (a.s !== seat) return; var t = PT.actionText(a); streets[a.st] = streets[a.st] ? streets[a.st] + ', ' + t : t; });
+  // 2.3 (Prüfbefund B23-1): Bets mit Größe relativ zum Pot vor dem Einsatz („Bet 3,00 (0,5 Pot)“), damit das hybride Modell Größensignale prüfen kann
+  rec.actions.forEach(function (a) { if (a.s !== seat) return; var t = PT.actionText(a); if (a.t === 'bet' && a.pot > 0) t += ' (' + String(Math.round(a.a / a.pot * 100) / 100).replace('.', ',') + ' Pot)';
+    streets[a.st] = streets[a.st] ? streets[a.st] + ', ' + t : t; });
   return { hand: rec.no, ts: rec.ts, pos: rec.seats[seat].pos, cards: cards, board: rec.board.join(''), actions: streets, net: rec.net[seat] };
 }
 function applyToRecord(r, I, ts) {
