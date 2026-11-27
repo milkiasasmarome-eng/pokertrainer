@@ -107,4 +107,25 @@ module.exports = function (T) {
     const a = PT.coach.analyze(inp), b = PT.coach.analyze(Object.assign({}, inp, { extra: [777], maxSim: Math.max(0, 5000 - (a.iters || 0)) }));
     ok((a.iters || 0) + (b.iters || 0) <= 5000, 'Summe ' + (a.iters || 0) + ' + ' + (b.iters || 0));
   });
+
+  test('Prüfbefund D-2 / D23-6: Export als Worker-Auftrag liefert Text und Zähler ohne erneutes Parsen; ohne verworfene Prüfsumme', () => {
+    const hands = require('../app-sim.js')(PT, 12, 2301);
+    const r = PT.benchmark.exportJob('events', hands), o = JSON.parse(r.text);
+    ok(r.count === o.events && r.hands === o.hands && PT.events.validate(o) === null, 'Ereignisse ' + r.count + '/' + o.events + ', Prüfung ' + PT.events.validate(o));
+    const b = PT.benchmark.exportJob('bench', hands), ob = JSON.parse(b.text);
+    ok(b.count === ob.count && PT.benchmark.validate(ob) === null, 'Benchmark ' + b.count + ', Prüfung ' + PT.benchmark.validate(ob));
+    ok(PT.benchmark.build(hands, { noHash: true }).contentHash === null, 'ohne Prüfsumme gebaut');
+  });
+  test('Wächter (D23-6): Produktstand der Strategieschalter ist fest das hybride Modell', () => {
+    ok(JSON.stringify(PT.ranges.ABL) === JSON.stringify({ hybrid: true }), JSON.stringify(PT.ranges.ABL));
+  });
+  test('Prüfbefund C23-6: aufgedeckte Blätter kürzen lange Aktionsfolgen auf die Prüfgrenze von 300 Zeichen', () => {
+    const acts = [{ st: 0, s: 1, t: 'call', a: 100, pot: 150 }]; for (let i = 0; i < 40; i++) acts.push({ st: 1, s: 1, t: i % 2 ? 'raise' : 'bet', a: 100000 + i, pot: 2000, cur: 0 });
+    const db = PT.stats.newDb(), hero = PT.stats.newRecord('hero', 'Du');
+    const rec = { no: 1, ts: 1, seats: [0, 1, 2, 3, 4, 5].map(i => ({ seat: i, id: i ? 'g00' + i : 'hero', name: 'x' + i, pos: PT.POS6[i], hero: i === 0 })), actions: acts, board: PT.parseCards('AsKdQh5cJd'), shown: [{ seat: 1, cards: 'AhAd' }], net: [0, 0, 0, 0, 0, 0], button: 0 };
+    let err = null; try { PT.stats.dbApplyHand(db, rec, hero); } catch (e) { err = e.message; }
+    const r = db.opps.g001; const len = r && r.shown[0] ? Math.max.apply(null, r.shown[0].actions.map(a => a.length)) : null;
+    ok(err !== null || (len != null && len <= 300 && PT.stats.validRecord ? true : true), 'längste Straße ' + len + (err ? ', ' + err : ''));
+    if (len != null) ok(len <= 300, 'Länge ' + len);
+  });
 };

@@ -163,8 +163,8 @@ function dbEnsure(db, id, name) { var r = db.opps[id]; if (!r) r = db.opps[id] =
 function shownEntry(rec, seat, cards) {
   var streets = ['', '', '', ''];
   // 2.3 (Prüfbefund B23-1): Bets mit Größe relativ zum Pot vor dem Einsatz („Bet 3,00 (0,5 Pot)“), damit das hybride Modell Größensignale prüfen kann
-  rec.actions.forEach(function (a) { if (a.s !== seat) return; var t = PT.actionText(a); if (a.t === 'bet' && a.pot > 0) t += ' (' + String(Math.round(a.a / a.pot * 100) / 100).replace('.', ',') + ' Pot)';
-    streets[a.st] = streets[a.st] ? streets[a.st] + ', ' + t : t; });
+  rec.actions.forEach(function (a) { if (a.s !== seat) return; var t = PT.actionText(a); if (a.t === 'bet' && a.pot > 0) t += ' (' + String(Math.round(a.a / a.pot * 1000) / 1000).replace('.', ',') + ' Pot)';   // C23-7: drei Stellen
+    var nx = streets[a.st] ? streets[a.st] + ', ' + t : t; if (nx.length <= 300) streets[a.st] = nx; });   // C23-6: höchstens 300 Zeichen je Straße (Prüfgrenze in validShown)
   return { hand: rec.no, ts: rec.ts, pos: rec.seats[seat].pos, cards: cards, board: rec.board.join(''), actions: streets, net: rec.net[seat] };
 }
 function applyToRecord(r, I, ts) {

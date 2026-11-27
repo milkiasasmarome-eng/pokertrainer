@@ -2627,8 +2627,8 @@ function dbEnsure(db, id, name) { var r = db.opps[id]; if (!r) r = db.opps[id] =
 function shownEntry(rec, seat, cards) {
   var streets = ['', '', '', ''];
   // 2.3 (Prüfbefund B23-1): Bets mit Größe relativ zum Pot vor dem Einsatz („Bet 3,00 (0,5 Pot)“), damit das hybride Modell Größensignale prüfen kann
-  rec.actions.forEach(function (a) { if (a.s !== seat) return; var t = PT.actionText(a); if (a.t === 'bet' && a.pot > 0) t += ' (' + String(Math.round(a.a / a.pot * 100) / 100).replace('.', ',') + ' Pot)';
-    streets[a.st] = streets[a.st] ? streets[a.st] + ', ' + t : t; });
+  rec.actions.forEach(function (a) { if (a.s !== seat) return; var t = PT.actionText(a); if (a.t === 'bet' && a.pot > 0) t += ' (' + String(Math.round(a.a / a.pot * 1000) / 1000).replace('.', ',') + ' Pot)';   // C23-7: drei Stellen
+    var nx = streets[a.st] ? streets[a.st] + ', ' + t : t; if (nx.length <= 300) streets[a.st] = nx; });   // C23-6: höchstens 300 Zeichen je Straße (Prüfgrenze in validShown)
   return { hand: rec.no, ts: rec.ts, pos: rec.seats[seat].pos, cards: cards, board: rec.board.join(''), actions: streets, net: rec.net[seat] };
 }
 function applyToRecord(r, I, ts) {
@@ -4440,7 +4440,7 @@ function buildRange(v, seat, st, gto, pfaSeat) {
  * (mittlere Stärke aggressiv − passiv) wird nur berichtet. Gepoolt über alle Gegner am
  * Tisch entsteht ein Vorwissen für Gegner mit wenigen aufgedeckten Blättern. Auswahlverzerrung (nur Showdowns) betrifft Referenz und Gegner gleich.
  */
-var FIT = { nResp: 40, rho: 0.5, llRef: -0.5748, llSd: 0.7404, llRefA: -1.704, llSdA: 0.902, llRefP: -0.3605, llSdP: 0.4575, deff: 1.417, zHi: 0, zLo: -2, k: 8, minPairs: 4 }, fitCache = {};   /* Schwellen auf Tr23 und Gegner-KI E abgestimmt, auf Va23/V gewählt (docs/STRATEGIEVARIANTEN_2.3.md) */
+var FIT = { nResp: 40, rho: 0.5, llRef: -0.5748, llSd: 0.7404, llRefA: -1.298, llSdA: 0.753, llRefP: -0.414, llSdP: 0.457, deff: 1.297, zHi: 0, zLo: -2, k: 8, minPairs: 4 }, fitCache = {};   /* Schwellen auf Tr23 und Gegner-KI E abgestimmt, auf Va23/V gewählt (docs/STRATEGIEVARIANTEN_2.3.md) */
 /** Paare [aggressiv 0/1, Stärke, Einsatz offen 0/1, Straße, Ergebnis] aus einem aufgedeckten Blatt (Aktionstext je Straße).
     Ergebnis wie in der Tabelle: ohne offenen Einsatz x (Check), bs/bl/bo (Bet bis 0,6 / bis 1,1 / über 1,1 Pot; ohne Größenangabe „b“),
     mit Einsatz c (Call) oder r (Raise). Größenangaben stehen seit 2.3 im Aktionstext; ältere Einträge nur mit der Art der Aktion. */
@@ -4448,19 +4448,21 @@ function shownPairs(s) {
   var key = s.hand + '|' + s.ts + '|' + s.cards + '|' + s.board + '|' + (s.actions || []).join('/'); if (fitCache[key]) return fitCache[key];   // A23-8: Aktionen im Schlüssel
   var out = [], cards, board; try { cards = PT.parseCards(s.cards); board = PT.parseCards(s.board || ''); } catch (e) { return out; }
   if (!cards || cards.length !== 2 || !board) return out;
+  // Prüfbefund C23-2: Lage wie in der Tabelle – Aggressor der Vorstraße (preflop: letzte eigene Aktion ein Raise) oder frei; sonst misst w Stil und Rolle
+  var aggrOf = function (txt, pre) { var ts = String(txt || '').split(', ').filter(Boolean); if (!ts.length) return false; return pre ? /^Raise/.test(ts[ts.length - 1]) : ts.some(function (t) { return /^(Bet|Raise)/.test(t); }); };
   [1, 2, 3].forEach(function (st) {
     var n = st === 1 ? 3 : st === 2 ? 4 : 5, txt = s.actions && s.actions[st]; if (!txt || board.length < n) return;
-    var x = PT.bots.percentile(cards, board.slice(0, n)).p;
+    var x = PT.bots.percentile(cards, board.slice(0, n)).p, lage = aggrOf(s.actions[st - 1], st === 1) ? 'ag' : 'fr';
     String(txt).split(', ').forEach(function (t) { var w0 = t.split(' ')[0];
-      if (w0 === 'Bet') { var m = /\(([0-9]+(?:,[0-9]+)?) Pot\)/.exec(t), f = m ? parseFloat(m[1].replace(',', '.')) : null; out.push([1, x, 0, st, f == null ? 'b' : f <= 0.6 ? 'bs' : f <= 1.1 ? 'bl' : 'bo']); }
-      else if (w0 === 'Check') out.push([0, x, 0, st, 'x']); else if (w0 === 'Raise') out.push([1, x, 1, st, 'r']); else if (w0 === 'Call') out.push([0, x, 1, st, 'c']); });
+      if (w0 === 'Bet') { var m = /\(([0-9]+(?:,[0-9]+)?) Pot\)/.exec(t), f = m ? parseFloat(m[1].replace(',', '.')) : null; out.push([1, x, 0, st, f == null ? 'b' : f <= 0.6 ? 'bs' : f <= 1.1 ? 'bl' : 'bo', lage]); }
+      else if (w0 === 'Check') out.push([0, x, 0, st, 'x', lage]); else if (w0 === 'Raise') out.push([1, x, 1, st, 'r']); else if (w0 === 'Call') out.push([0, x, 1, st, 'c']); });
   });
   if (Object.keys(fitCache).length > 4000) fitCache = {};
   fitCache[key] = out; return out;
 }
 /** Log-Likelihood eines Paars unter der Populationstabelle: ohne offenen Einsatz Check gegen Bet-Größe, mit Einsatz (bedingt aufs Weiterspielen) Raise gegen Call */
 function pairLL(q) {
-  var d = R.likDist(q[3] + '|' + (q[2] ? 's3' : 'fr') + '|h', 0, R.xaBucket(q[1])); if (!d) return null;
+  var d = R.likDist(q[3] + '|' + (q[2] ? 's3' : q[5] || 'fr') + '|h', 0, R.xaBucket(q[1])); if (!d) return null;
   var o = q[4], p;
   if (q[2]) { var pr = (d.r || 0) / Math.max(1e-6, (d.c || 0) + (d.r || 0)); p = o === 'r' ? pr : 1 - pr; }
   else if (o === 'x') p = d.x != null ? d.x : 1 - ((d.bs || 0) + (d.bl || 0) + (d.bo || 0));
@@ -5480,6 +5482,7 @@ function validLearning(L) {
   for (var j = 0; j < L.srs.length; j++) if (!validSrs(L.srs[j])) return 'Wiederholung ' + (j + 1) + ' ungültig';
   if (!validQuiz(L.quiz)) return 'Quiz ungültig';
   if (!Array.isArray(L.sessions) || L.sessions.length > 5000) return 'Sessions ungültig';
+  for (var si = 0; si < L.sessions.length; si++) { var se = L.sessions[si]; if (!se || typeof se !== 'object' || Array.isArray(se)) return 'Session ' + (si + 1) + ' ungültig'; }   // D23-7: wie repairLearning
   if (!Array.isArray(L.goals) || L.goals.length > 20) return 'Ziele ungültig';
   for (var g = 0; g < L.goals.length; g++) if (!validGoal(L.goals[g])) return 'Ziel ' + (g + 1) + ' ungültig';
   if (L.pp != null && !validPPList(L.pp)) return 'Vorher-Nachher-Tests ungültig';
@@ -7771,11 +7774,14 @@ views.analyse = function (el, arg) {
       if (kind === 'json') H.download('PokerTrainer_Haende_' + H.today() + '.json', JSON.stringify({ format: 'PokerTrainer-Hands', version: 1, app: PT.VERSION, count: f.length, hands: f }));
       else if (kind === 'bench' || kind === 'events') {
         // 2.3 (Prüfbefund D-2): Aufbau und Serialisierung in einem eigenen Worker, die Oberfläche bleibt bedienbar; Zähler ohne erneutes Parsen
-        x.disabled = true; H.toast(kind === 'bench' ? 'Benchmark-Export wird erstellt …' : 'Ereignisstrom wird erstellt …');
+        // Prüfbefund D23-1: Sperre unabhängig vom Neuzeichnen der Ansicht (ein Export zur Zeit)
+        if (PTUI.exportBusy) { H.toast('Ein Export läuft bereits.'); return; }
+        PTUI.exportBusy = true; x.disabled = true; H.toast(kind === 'bench' ? 'Benchmark-Export wird erstellt …' : 'Ereignisstrom wird erstellt …');
         PTUI.offThread(kind, { hands: f }, 300000).then(function (r) {
-          if (kind === 'bench') { H.download('PokerTrainer_Benchmark_v' + PT.benchmark.SCHEMA + '_' + H.today() + '.json', r.text); H.toast('Benchmark-Export: ' + r.count + ' Entscheidungen aus ' + r.hands + ' Händen.'); }
-          else { H.download('PokerTrainer_Ereignisse_v' + PT.events.SCHEMA + '_' + H.today() + '.json', r.text); H.toast('Ereignisstrom: ' + r.count + ' Entscheidungen aus ' + r.hands + ' Händen.'); }
-        }, function (e) { H.toast('Export nicht möglich: ' + (e && e.message || e)); }).then(function () { x.disabled = false; });
+          var name = kind === 'bench' ? 'PokerTrainer_Benchmark_v' + PT.benchmark.SCHEMA + '_' + H.today() + '.json' : 'PokerTrainer_Ereignisse_v' + PT.events.SCHEMA + '_' + H.today() + '.json';
+          var okDl = H.download(name, r.text);   // D23-3: Erfolg nur melden, wenn der Download gestartet wurde
+          if (okDl !== false) H.toast((kind === 'bench' ? 'Benchmark-Export: ' : 'Ereignisstrom: ') + r.count + ' Entscheidungen aus ' + r.hands + ' Händen.');
+        }, function (e) { H.toast('Export nicht möglich: ' + (e && e.message || e)); }).then(function () { PTUI.exportBusy = false; x.disabled = false; });
       }
       else H.download('PokerTrainer_Haende_' + H.today() + '.txt', f.map(PT.training.handText).join('\n\n'), 'text/plain');
       return; }

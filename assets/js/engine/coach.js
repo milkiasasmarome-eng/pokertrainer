@@ -94,7 +94,7 @@ function buildRange(v, seat, st, gto, pfaSeat) {
  * (mittlere Stärke aggressiv − passiv) wird nur berichtet. Gepoolt über alle Gegner am
  * Tisch entsteht ein Vorwissen für Gegner mit wenigen aufgedeckten Blättern. Auswahlverzerrung (nur Showdowns) betrifft Referenz und Gegner gleich.
  */
-var FIT = { nResp: 40, rho: 0.5, llRef: -0.5748, llSd: 0.7404, llRefA: -1.704, llSdA: 0.902, llRefP: -0.3605, llSdP: 0.4575, deff: 1.417, zHi: 0, zLo: -2, k: 8, minPairs: 4 }, fitCache = {};   /* Schwellen auf Tr23 und Gegner-KI E abgestimmt, auf Va23/V gewählt (docs/STRATEGIEVARIANTEN_2.3.md) */
+var FIT = { nResp: 40, rho: 0.5, llRef: -0.5748, llSd: 0.7404, llRefA: -1.298, llSdA: 0.753, llRefP: -0.414, llSdP: 0.457, deff: 1.297, zHi: 0, zLo: -2, k: 8, minPairs: 4 }, fitCache = {};   /* Schwellen auf Tr23 und Gegner-KI E abgestimmt, auf Va23/V gewählt (docs/STRATEGIEVARIANTEN_2.3.md) */
 /** Paare [aggressiv 0/1, Stärke, Einsatz offen 0/1, Straße, Ergebnis] aus einem aufgedeckten Blatt (Aktionstext je Straße).
     Ergebnis wie in der Tabelle: ohne offenen Einsatz x (Check), bs/bl/bo (Bet bis 0,6 / bis 1,1 / über 1,1 Pot; ohne Größenangabe „b“),
     mit Einsatz c (Call) oder r (Raise). Größenangaben stehen seit 2.3 im Aktionstext; ältere Einträge nur mit der Art der Aktion. */
@@ -102,19 +102,21 @@ function shownPairs(s) {
   var key = s.hand + '|' + s.ts + '|' + s.cards + '|' + s.board + '|' + (s.actions || []).join('/'); if (fitCache[key]) return fitCache[key];   // A23-8: Aktionen im Schlüssel
   var out = [], cards, board; try { cards = PT.parseCards(s.cards); board = PT.parseCards(s.board || ''); } catch (e) { return out; }
   if (!cards || cards.length !== 2 || !board) return out;
+  // Prüfbefund C23-2: Lage wie in der Tabelle – Aggressor der Vorstraße (preflop: letzte eigene Aktion ein Raise) oder frei; sonst misst w Stil und Rolle
+  var aggrOf = function (txt, pre) { var ts = String(txt || '').split(', ').filter(Boolean); if (!ts.length) return false; return pre ? /^Raise/.test(ts[ts.length - 1]) : ts.some(function (t) { return /^(Bet|Raise)/.test(t); }); };
   [1, 2, 3].forEach(function (st) {
     var n = st === 1 ? 3 : st === 2 ? 4 : 5, txt = s.actions && s.actions[st]; if (!txt || board.length < n) return;
-    var x = PT.bots.percentile(cards, board.slice(0, n)).p;
+    var x = PT.bots.percentile(cards, board.slice(0, n)).p, lage = aggrOf(s.actions[st - 1], st === 1) ? 'ag' : 'fr';
     String(txt).split(', ').forEach(function (t) { var w0 = t.split(' ')[0];
-      if (w0 === 'Bet') { var m = /\(([0-9]+(?:,[0-9]+)?) Pot\)/.exec(t), f = m ? parseFloat(m[1].replace(',', '.')) : null; out.push([1, x, 0, st, f == null ? 'b' : f <= 0.6 ? 'bs' : f <= 1.1 ? 'bl' : 'bo']); }
-      else if (w0 === 'Check') out.push([0, x, 0, st, 'x']); else if (w0 === 'Raise') out.push([1, x, 1, st, 'r']); else if (w0 === 'Call') out.push([0, x, 1, st, 'c']); });
+      if (w0 === 'Bet') { var m = /\(([0-9]+(?:,[0-9]+)?) Pot\)/.exec(t), f = m ? parseFloat(m[1].replace(',', '.')) : null; out.push([1, x, 0, st, f == null ? 'b' : f <= 0.6 ? 'bs' : f <= 1.1 ? 'bl' : 'bo', lage]); }
+      else if (w0 === 'Check') out.push([0, x, 0, st, 'x', lage]); else if (w0 === 'Raise') out.push([1, x, 1, st, 'r']); else if (w0 === 'Call') out.push([0, x, 1, st, 'c']); });
   });
   if (Object.keys(fitCache).length > 4000) fitCache = {};
   fitCache[key] = out; return out;
 }
 /** Log-Likelihood eines Paars unter der Populationstabelle: ohne offenen Einsatz Check gegen Bet-Größe, mit Einsatz (bedingt aufs Weiterspielen) Raise gegen Call */
 function pairLL(q) {
-  var d = R.likDist(q[3] + '|' + (q[2] ? 's3' : 'fr') + '|h', 0, R.xaBucket(q[1])); if (!d) return null;
+  var d = R.likDist(q[3] + '|' + (q[2] ? 's3' : q[5] || 'fr') + '|h', 0, R.xaBucket(q[1])); if (!d) return null;
   var o = q[4], p;
   if (q[2]) { var pr = (d.r || 0) / Math.max(1e-6, (d.c || 0) + (d.r || 0)); p = o === 'r' ? pr : 1 - pr; }
   else if (o === 'x') p = d.x != null ? d.x : 1 - ((d.bs || 0) + (d.bl || 0) + (d.bo || 0));

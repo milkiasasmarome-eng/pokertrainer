@@ -92,11 +92,14 @@ views.analyse = function (el, arg) {
       if (kind === 'json') H.download('PokerTrainer_Haende_' + H.today() + '.json', JSON.stringify({ format: 'PokerTrainer-Hands', version: 1, app: PT.VERSION, count: f.length, hands: f }));
       else if (kind === 'bench' || kind === 'events') {
         // 2.3 (Prüfbefund D-2): Aufbau und Serialisierung in einem eigenen Worker, die Oberfläche bleibt bedienbar; Zähler ohne erneutes Parsen
-        x.disabled = true; H.toast(kind === 'bench' ? 'Benchmark-Export wird erstellt …' : 'Ereignisstrom wird erstellt …');
+        // Prüfbefund D23-1: Sperre unabhängig vom Neuzeichnen der Ansicht (ein Export zur Zeit)
+        if (PTUI.exportBusy) { H.toast('Ein Export läuft bereits.'); return; }
+        PTUI.exportBusy = true; x.disabled = true; H.toast(kind === 'bench' ? 'Benchmark-Export wird erstellt …' : 'Ereignisstrom wird erstellt …');
         PTUI.offThread(kind, { hands: f }, 300000).then(function (r) {
-          if (kind === 'bench') { H.download('PokerTrainer_Benchmark_v' + PT.benchmark.SCHEMA + '_' + H.today() + '.json', r.text); H.toast('Benchmark-Export: ' + r.count + ' Entscheidungen aus ' + r.hands + ' Händen.'); }
-          else { H.download('PokerTrainer_Ereignisse_v' + PT.events.SCHEMA + '_' + H.today() + '.json', r.text); H.toast('Ereignisstrom: ' + r.count + ' Entscheidungen aus ' + r.hands + ' Händen.'); }
-        }, function (e) { H.toast('Export nicht möglich: ' + (e && e.message || e)); }).then(function () { x.disabled = false; });
+          var name = kind === 'bench' ? 'PokerTrainer_Benchmark_v' + PT.benchmark.SCHEMA + '_' + H.today() + '.json' : 'PokerTrainer_Ereignisse_v' + PT.events.SCHEMA + '_' + H.today() + '.json';
+          var okDl = H.download(name, r.text);   // D23-3: Erfolg nur melden, wenn der Download gestartet wurde
+          if (okDl !== false) H.toast((kind === 'bench' ? 'Benchmark-Export: ' : 'Ereignisstrom: ') + r.count + ' Entscheidungen aus ' + r.hands + ' Händen.');
+        }, function (e) { H.toast('Export nicht möglich: ' + (e && e.message || e)); }).then(function () { PTUI.exportBusy = false; x.disabled = false; });
       }
       else H.download('PokerTrainer_Haende_' + H.today() + '.txt', f.map(PT.training.handText).join('\n\n'), 'text/plain');
       return; }

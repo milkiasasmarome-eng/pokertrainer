@@ -229,6 +229,7 @@ function validLearning(L) {
   for (var j = 0; j < L.srs.length; j++) if (!validSrs(L.srs[j])) return 'Wiederholung ' + (j + 1) + ' ungültig';
   if (!validQuiz(L.quiz)) return 'Quiz ungültig';
   if (!Array.isArray(L.sessions) || L.sessions.length > 5000) return 'Sessions ungültig';
+  for (var si = 0; si < L.sessions.length; si++) { var se = L.sessions[si]; if (!se || typeof se !== 'object' || Array.isArray(se)) return 'Session ' + (si + 1) + ' ungültig'; }   // D23-7: wie repairLearning
   if (!Array.isArray(L.goals) || L.goals.length > 20) return 'Ziele ungültig';
   for (var g = 0; g < L.goals.length; g++) if (!validGoal(L.goals[g])) return 'Ziel ' + (g + 1) + ' ungültig';
   if (L.pp != null && !validPPList(L.pp)) return 'Vorher-Nachher-Tests ungültig';
