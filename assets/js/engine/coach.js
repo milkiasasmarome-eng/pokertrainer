@@ -286,6 +286,17 @@ function analyzeMode(input, v, mode, level, L0, budget, rng, deadline, set, prep
   if (acts.length > 1 && acts[0].extrapolated) { var std0 = acts.filter(function (a2) { return !a2.extrapolated; })[0]; if (std0) { acts.splice(acts.indexOf(std0), 1); acts.unshift(std0); } }
   // Preflop: Faustregel-Chart als Anker. Raises außerhalb des Charts und Open-Limps nur bei belegtem Exploit.
   var chartInfo = street === 0 ? preflopAnchor(v, ctx, pre, acts, gto) : null;
+  // Gleichgewichtsnaher Modus: Gegen MDF-Verteidigung ist ein reiner Bluff indifferent (EV ≈ Check). Eine Einzelhand-Empfehlung kann
+  // keine Mischstrategie abbilden; bei Gleichstand innerhalb der Unsicherheit empfiehlt der Coach die risikoärmere passive Aktion und
+  // nennt den Bluff als gleichwertige Alternative. Sonst würde jede schwache Hand blufft (Überbluffen; Hauptvergleich 2.1: −42,7 BB/100).
+  var mixNote = null;
+  if (gto && street > 0 && acts.length > 1 && group(acts[0]) === 'aggr' && ctx.eqNow != null && ctx.eqNow < 0.35) {
+    var passive = acts.filter(function (a2) { return group(a2) !== 'aggr'; })[0];
+    if (passive && acts[0].ev - passive.ev <= Math.max(0.25 * bb, Math.max(acts[0].u, passive.u))) {
+      mixNote = { bluff: acts[0].label, passive: passive.label };
+      acts.splice(acts.indexOf(passive), 1); acts.unshift(passive);
+    }
+  }
   var best = acts[0];
   // Klassifikation
   var bestOther = null;
@@ -302,6 +313,7 @@ function analyzeMode(input, v, mode, level, L0, budget, rng, deadline, set, prep
   if (best.failed || (bestOther && bestOther.failed && gap < bestOther.u) || (eqFlag && eqFlag.failed)) cls = 'unsicher';
   else if (eqFlag && eqFlag.approx && cls === 'eindeutig' && gap < 3 * Math.max(u, eqSE * Math.max(v.pot, bb))) cls = 'klar';
   if (chartInfo && chartInfo.applied) cls = chartInfo.w >= 0.85 ? 'klar' : 'knapp';
+  if (mixNote) cls = 'mehrere';
   var tol = Math.max(0.25 * bb, 0.5 * u), sizeNote = null;
   if (group(best) === 'aggr') {
     var ag = acts.filter(function (a2) { return group(a2) === 'aggr' && a2 !== best; });
@@ -334,7 +346,7 @@ function analyzeMode(input, v, mode, level, L0, budget, rng, deadline, set, prep
         matrix: o === mainOpp ? classMatrix(o.w) : null };
     }),
     mainOpp: mainOpp ? mainOpp.p.name : null, mainOppHands: mainOpp ? mainOpp.hands : 0, blockers: blockersText(v, mainOpp, board), model: model, mode: mode,
-    heroPos: me.pos, chart: chartInfo, unopened: street === 0 && pre.rc === 0
+    heroPos: me.pos, chart: chartInfo, mix: mixNote, unopened: street === 0 && pre.rc === 0
   };
 }
 /** Chart-Gewichte der eigenen Startklasse für die aktuelle Preflop-Situation */
@@ -590,6 +602,7 @@ function explain(a, depth) {
     var p = best.parts || {}, value = eq.eq >= 0.55;
     core = actWord + ': ' + (value ? 'Mit etwa ' + pct(eq.eq) + ' Equity holst du Value von schwächeren Händen.' : 'Die Bet gewinnt den Pot geschätzt in etwa ' + pct(p.pAllFold || 0) + ' der Fälle sofort' + (a.hand.draw && a.hand.draw.strong ? ', und dein Draw hat Rückhalt.' : '.'));
   }
+  if (a.mix) core += ' Im Gleichgewicht sind ' + a.mix.passive + ' und ' + a.mix.bluff + ' (Bluff) etwa gleich viel wert; eine Einzelhand-Empfehlung kann diese Mischung nicht abbilden, ' + a.mix.passive + ' ist die risikoärmere Wahl.';
   if (a.street === 0 && a.chart && a.chart.applied) core += ' Preflop folgt der Coach hier dem Faustregel-Chart (' + a.chart.kind + '); das vereinfachte EV-Modell sähe ' + a.chart.modelBest + ' um ' + bbTxt(a.chart.modelGap, bb) + ' vorn, aber nur wegen Fold-Annahmen, die nicht durch Gegnerwerte belegt sind.';
   else if (a.street === 0 && a.chart && a.chart.exploit) core += ' Das weicht vom Faustregel-Chart ab: Nach ' + a.chart.exploit.obs + ' beobachteten Situationen liegt die geschätzte Fold-Rate dieses Gegners bei ' + pct(a.chart.exploit.post) + '; mit ' + pct(a.chart.exploit.p) + ' Wahrscheinlichkeit ' + (a.chart.exploit.dir === 'enger' ? 'unter' : 'über') + ' der Break-even-Rate von ' + pct(a.chart.exploit.fBeRaw != null ? a.chart.exploit.fBeRaw : a.chart.exploit.fBe) + ' (auf die Größe dieses Raises und die Gewichtung im Modell umgerechnet).';
   lines.einsteiger.push(core);
