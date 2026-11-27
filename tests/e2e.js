@@ -4,7 +4,7 @@
    Werkzeuge: npm --prefix tests ci (Playwright, axe-core). Browser: CHROME=Pfad, CHROME= (leer) für das Chromium von Playwright.
    Teile: diese Datei (Grundfunktionen), tests/e2e/robust.js (Start, Sicherheit, Daten), tests/e2e/a11y.js (Barrierefreiheit),
    tests/e2e/pruefung-cd.js (Regressionen der Prüfung 2.1, Prüfer C und D).
-   Ergebnis: tests/results/e2e.json, Screenshots in tests/results/screens/, Barrierefreiheit in tests/results/a11y/ */
+   Ergebnis: tests/results/e2e.json (Teilläufe mit --nur: e2e-teil.json), Screenshots in tests/results/screens/, Barrierefreiheit in tests/results/a11y/ */
 'use strict';
 const path = require('path'), fs = require('fs'), http = require('http');
 const LOCAL_PW = path.join(__dirname, 'node_modules', 'playwright');
@@ -97,7 +97,7 @@ async function playHand(page, policy) {
     Object.assign(perf, p);
     ok(perf.lcp < 2500, 'LCP ' + perf.lcp); ok(perf.cls < 0.1, 'CLS ' + perf.cls);
     note('Ladezeit ' + perf.loadMs + ' ms, bereit nach ' + perf.readyMs + ' ms, LCP ' + Math.round(perf.lcp) + ' ms, CLS ' + perf.cls.toFixed(3));
-    ok(await page.title() === "PokerTrainer 2.1 – No-Limit Hold'em Trainer mit Coach", 'Titel');
+    ok(await page.title() === 'PokerTrainer ' + require('../tools/check-version.js').check().version.split('.').slice(0, 2).join('.') + " – No-Limit Hold'em Trainer mit Coach", 'Titel');
   });
 
   await test('Hand spielen: Tipp „vorher“ erscheint binnen 2 Sekunden, keine neue Hand ohne „Nächste Hand“', async () => {
@@ -385,7 +385,7 @@ async function playHand(page, policy) {
   });
 
   await test('Portable Einzeldatei (file://): lädt, spielt, Coach per Blob-Worker', async () => {
-    const file = 'file://' + path.join(__dirname, '..', 'dist', 'PokerTrainer_2.1.html');
+    const file = 'file://' + path.join(__dirname, '..', 'dist', 'PokerTrainer_' + require('../tools/check-version.js').check().version.split('.').slice(0, 2).join('.') + '.html');
     const c = await browser.newContext(), p = await c.newPage(); watch(p, 'einzeldatei');
     await p.goto(file + '#tisch'); await p.waitForFunction(() => window.PTUI && window.PTUI.S.ready, null, { timeout: 15000 });
     await p.click('#bNext');
@@ -419,7 +419,7 @@ async function playHand(page, policy) {
 
   await browser.close(); updServer.close(); fs.rmSync(UPD_DIR, { recursive: true, force: true });
   const out = { base: BASE, date: new Date().toISOString(), passed: results.filter(r => r.ok).length, failed: results.filter(r => !r.ok).length, perf, tests: results };
-  fs.writeFileSync(path.join(OUT, /127\.0\.0\.1|localhost/.test(BASE) ? 'e2e.json' : 'e2e-live.json'), JSON.stringify(out, null, 1));
+  fs.writeFileSync(path.join(OUT, /127\.0\.0\.1|localhost/.test(BASE) ? (ONLY ? 'e2e-teil.json' : 'e2e.json') : (ONLY ? 'e2e-live-teil.json' : 'e2e-live.json')), JSON.stringify(out, null, 1));
   console.log('\n' + out.passed + ' bestanden, ' + out.failed + ' fehlgeschlagen · ' + JSON.stringify(perf));
   process.exit(out.failed ? 1 : 0);
 })();

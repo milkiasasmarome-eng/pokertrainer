@@ -102,6 +102,40 @@ function make(PT) {
   }
   const SYNTH = { maniac, station, rock, mdf, random: randomLegal, switcher };
 
+  // ---------- 2.2: abschließende Teststrategien (Arbeitspakete 5 und 9) ----------
+  // Vor den abschließenden Tests festgelegt und in keiner Entwicklung, Anpassung oder Kalibrierung verwendet (der Coach kennt sie nicht).
+  const preTop = (v, w) => { const t = top(v), rc = preRaises(v), L = v.legal;
+    if (t <= w * (rc ? 0.35 : 1) && L.canRaise) return raiseTo(v, Math.max(v.cur * 3, 2.5 * v.bb));
+    if (L.toCall <= 0) return check(L);
+    return t <= w * 1.3 && L.toCall <= 6 * v.bb ? call(L) : { type: 'fold' }; };
+  const ipOf = v => v.players.every(q => q.seat === v.seat || q.folded || PT.POS_ORDER_POST[q.pos] < PT.POS_ORDER_POST[me(v).pos]);
+  /** Polarisierer: setzt nur mit sehr starken Händen oder Luft, groß (1,2 Pot); callt ab mittlerer Stärke */
+  function polar(v, rng) { const L = v.legal, x = strength(v); if (v.street === 0) return preTop(v, 0.22);
+    if (L.toCall === 0) return x >= 0.88 || (x < 0.25 && rng() < 0.5) ? raiseTo(v, potBet(v, 1.2)) : check(L);
+    if (x >= 0.95 && rng() < 0.5) return raiseTo(v, v.cur * 3); return x >= 0.62 || draw(v).strong ? call(L) : { type: 'fold' }; }
+  /** Umgekehrtes Größensignal: starke Hände klein (⅓), Bluffs groß (Pot); Calls nach Pot Odds auf dem Perzentil */
+  function sizetell(v, rng) { const L = v.legal, x = strength(v); if (v.street === 0) return preTop(v, 0.26);
+    if (L.toCall === 0) { if (x >= 0.8) return raiseTo(v, potBet(v, 0.33)); if (x < 0.3 && rng() < 0.4) return raiseTo(v, potBet(v, 1)); return check(L); }
+    const need = L.callAmt / (v.pot + L.callAmt); return x >= 0.45 + need * 0.6 || draw(v).strong ? call(L) : { type: 'fold' }; }
+  /** Fallensteller: spielt starke Hände langsam (Check, dann Check-Raise), blufft, wenn gecheckt wird */
+  function trapper(v, rng) { const L = v.legal, x = strength(v); if (v.street === 0) return preTop(v, 0.3);
+    if (L.toCall === 0) { const checkedTo = v.actions.some(a => a.st === v.street && a.t === 'check' && a.s !== v.seat);
+      if (x >= 0.9) return rng() < 0.7 ? check(L) : raiseTo(v, potBet(v, 0.6)); if (checkedTo && rng() < 0.4) return raiseTo(v, potBet(v, 0.5)); return check(L); }
+    if (x >= 0.9 && L.canRaise) return raiseTo(v, v.cur * 3 + v.pot * 0.3); return x >= 0.55 || draw(v).strong ? call(L) : { type: 'fold' }; }
+  /** Positionsspieler: in Position sehr aggressiv, ohne Position Check/Call */
+  function ipaggro(v, rng) { const L = v.legal, x = strength(v), ip = ipOf(v); if (v.street === 0) return preTop(v, ip ? 0.35 : 0.2);
+    if (L.toCall === 0) return ip ? (rng() < 0.75 ? raiseTo(v, potBet(v, 0.66)) : check(L)) : check(L);
+    if (ip && x >= 0.8 && L.canRaise && rng() < 0.4) return raiseTo(v, v.cur * 3); return x >= (ip ? 0.45 : 0.6) || draw(v).strong ? call(L) : { type: 'fold' }; }
+  /** Enger Preflop, sehr aggressiver Postflop (setzt fast immer, erhöht oft) */
+  function nitlag(v, rng) { const L = v.legal, x = strength(v); if (v.street === 0) return preTop(v, 0.12);
+    if (L.toCall === 0) return rng() < 0.85 ? raiseTo(v, potBet(v, 0.75)) : check(L);
+    if (L.canRaise && (x >= 0.7 || rng() < 0.2)) return raiseTo(v, v.cur * 2.5 + v.pot * 0.2); return x >= 0.4 || draw(v).strong ? call(L) : { type: 'fold' }; }
+  /** Minraiser: kleine Einsätze (¼ Pot), Minraises mit mittleren und starken Händen sowie Draws */
+  function minraiser(v, rng) { const L = v.legal, x = strength(v); if (v.street === 0) return preTop(v, 0.28);
+    if (L.toCall === 0) return x >= 0.5 || rng() < 0.3 ? raiseTo(v, potBet(v, 0.25)) : check(L);
+    if (L.canRaise && (x >= 0.7 || draw(v).strong) && rng() < 0.6) return raiseTo(v, L.minTo); return x >= 0.5 ? call(L) : { type: 'fold' }; }
+  const FINAL = { polar, sizetell, trapper, ipaggro, nitlag, minraiser };
+
   // ---------- Referenzstrategien für den Helden ----------
   const FULL = R.full();
   /** Pot-Odds-Schwelle: Equity gegen zufällige Hände (je Gegner im Pot); Call ab Pot Odds, Bet/Raise ab fester Schwelle */
@@ -132,6 +166,6 @@ function make(PT) {
     if (row.call >= 0.5) return L.canRaise ? { type: L.isBet ? 'bet' : 'raise', amount: L.maxTo } : call(L);
     return check(L);
   }
-  return { SYNTH, potOdds, pushFold };
+  return { SYNTH, FINAL, potOdds, pushFold };
 }
 module.exports = { make };

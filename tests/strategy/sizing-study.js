@@ -13,6 +13,7 @@ const C = HS.loadEngine(root);
 if (/^base/.test(label) && C.ev.POP) C.ev.POP.off = true;   // Basislauf: Reaktionsmodell wie 2.0.1 (MDF mit Korrekturen)
 if (/^v21p/.test(label) && C.ev.POP) C.ev.POP.blend = 0;    // reines Populationsmodell (ohne Mittelung), nur zum Vergleich
 if (/^v21b/.test(label) && C.ev.POP) C.ev.POP.tauC = 0;     // Zusammensetzung wie vor Prüfer B (weich mit τ), nur zum Vergleich
+if (/^v22alt/.test(label) && C.ev.POP) C.ev.POP.tabOff = true; // 2.2 mit Reaktionsmodell 2.1 (ohne Aktionstabelle), nur zum Vergleich
 const FRACS = [0.33, 0.5, 0.75, 1.0, 1.5], RAISES = [2.5, 3.5];
 const outDir = path.join(__dirname, '..', 'results', 'sizing-study'); fs.mkdirSync(outDir, { recursive: true });
 const outFile = path.join(outDir, label + '-' + comp + '-' + seed + '.json');
@@ -72,7 +73,8 @@ function rollout(h, a, db, heroRec, cfSeed) {
 }
 const spots = [];
 const db = PT.stats.newDb(), heroRec = PT.stats.newRecord('hero', 'Du');
-const cfg = Object.assign(PT.session.defaultConfig(), { startBB: 100 });
+const GR = process.env.PT_GROUP ? require('./groups.js').make(PT)[process.env.PT_GROUP] : null;
+const cfg = Object.assign(PT.session.defaultConfig(), { startBB: 100 }, GR ? { pool: GR } : {});
 const t = PT.session.newTable(cfg, db, seed), start = cfg.startBB * cfg.bb, t0 = Date.now();
 for (let i = 0; i < hands; i++) {
   t.seats.forEach(s => { s.stack = start; });

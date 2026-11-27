@@ -55,7 +55,7 @@ Migration: Daten aus Entwurf 2 (`pokertrainer-v2` in IndexedDB oder `pokertraine
 
 - `index.html` lädt alle Module mit `?v=VERSION`. CSP erlaubt nur eigene Dateien.
 - `sw.js` (erzeugt von `tools/build.js`): Cache `pokertrainer-VERSION`, Vorabladen aller Dateien, Cache-first, alte Caches werden beim Aktivieren gelöscht; neue Version wartet, bis der Nutzer „Jetzt aktualisieren“ wählt (zwischen zwei Händen).
-- `dist/PokerTrainer_2.1.html`: dieselben Quellen inline; der Worker entsteht als Blob aus dem eingebetteten Engine-Code. CSP ohne Netzwerkzugriff.
+- `dist/PokerTrainer_2.2.html`: dieselben Quellen inline; der Worker entsteht als Blob aus dem eingebetteten Engine-Code. CSP ohne Netzwerkzugriff.
 - Pfade sind relativ, daher funktioniert alles im Unterverzeichnis `/pokertrainer/` von GitHub Pages.
 
 ## Veröffentlichung
@@ -129,3 +129,16 @@ und `revealedLater` (spätere Informationen). Format, Felder, Datenschutz und Na
 Die Veröffentlichung (`deploy`) hängt von allen Pflichtjobs ab. Ergebnisdateien, Screenshots und Accessibility-Bäume werden als
 Artefakte hochgeladen. Testwerkzeuge liegen nur in `tests/` (`npm ci --prefix tests`) und werden nicht veröffentlicht.
 
+
+
+## Ergänzungen 2.2
+
+- `ranges.js`: Likelihood-Tabelle (Block `LIK`, erzeugt von `tools/build-likelihood.js` aus `tests/strategy/fit-likelihood.js`), Zellenlogik `cellAt`/`actionOutcome`,
+  Anpassung an Gegnerwerte `oppAdjust`/`famTransform`/`aggRates`; gelöstes Push/Fold-Modellspiel (Block `PF`, `tools/solve-pushfold.js`).
+- `ev.js`: `likRespond` (Reaktion aus der Tabelle) und Modellmittelung in `respond` (`POP.tabBlend`).
+- `coach.js`: Datenlage nach Gelegenheiten (`oppStats().agg`), Tabellenpfad der Range über `buildRange(…, { sm })`.
+- `bots.js`: feste Eigenheiten je Gegner (`sizeSens`, `posAgg`, `shift`, `rare`); öffentliche Sicht enthält die Handnummer (`no`).
+- `training.js`: Fehlerfelder, wiederkehrende Fehler, Verbesserung, Vorher-Nachher-Test (`L.pp`), Belastbarkeit je Wert, Verhaltenshypothesen.
+- `export.js`: Ereignisstrom `PT.events` (Format „PokerTrainer-Ereignisse“, Schema 1) mit getrennten Empfehlungskanälen.
+- Studien und Vergleiche: `tests/strategy/groups.js` (Gegnergruppen E/V/T), `range-calib.js`, `equity-calib.js`, `calib-report.js`, Plan `v22` in `compare.js`
+  (Referenzumgebung mit unveränderter Gegner-KI 2.1 über `PT_ENV_ROOT`), Berichte `tools/report-22.js`, `tools/folgeaudit-2.1.js`.

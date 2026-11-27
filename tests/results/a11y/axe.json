@@ -26,7 +26,7 @@
    "incomplete": [
     {
      "id": "color-contrast",
-     "n": 14
+     "n": 11
     }
    ]
   },
@@ -37,7 +37,7 @@
    "incomplete": [
     {
      "id": "color-contrast",
-     "n": 1
+     "n": 2
     },
     {
      "id": "label-content-name-mismatch",
@@ -62,7 +62,7 @@
    "incomplete": [
     {
      "id": "color-contrast",
-     "n": 31
+     "n": 34
     },
     {
      "id": "label-content-name-mismatch",
@@ -132,7 +132,7 @@
    "incomplete": [
     {
      "id": "color-contrast",
-     "n": 11
+     "n": 10
     }
    ]
   },
@@ -143,7 +143,7 @@
    "incomplete": [
     {
      "id": "color-contrast",
-     "n": 11
+     "n": 12
     }
    ]
   },
@@ -152,6 +152,10 @@
    "wcag": [],
    "bestPractice": [],
    "incomplete": [
+    {
+     "id": "color-contrast",
+     "n": 1
+    },
     {
      "id": "label-content-name-mismatch",
      "n": 1
@@ -205,7 +209,7 @@
    "incomplete": [
     {
      "id": "color-contrast",
-     "n": 2
+     "n": 1
     }
    ]
   },
@@ -245,7 +249,7 @@
    "incomplete": [
     {
      "id": "color-contrast",
-     "n": 10
+     "n": 11
     }
    ]
   },

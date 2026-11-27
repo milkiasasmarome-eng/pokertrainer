@@ -1,0 +1,74 @@
+/* Arbeitspaket 8 (2.2): gemeinsame Integrationstests PokerTrainer ↔ Adaptive Poker Intelligence (PAI).
+   Voraussetzung: Arbeitsstand von https://github.com/milkiasasmarome-eng/Assist lokal (nur lesend), Pfad in PT_PAI_ROOT.
+   Prüft: (1) Ereignisstrom des Trainers enthält nur Beobachtbares; (2) PAI liest die Hand-Datensätze des Trainers mit seinem eigenen
+   Adapter und prüft sie mit seinem eigenen Validator; (3) Versionskompatibilität der Sicherungsdatei; (4) unabhängige Kennzahlen
+   (VPIP/PFR) von PAI und Trainer auf denselben Händen; (5) unabhängige Equity-Rechnung beider Systeme auf denselben Spots;
+   (6) die Empfehlungskanäle bleiben getrennt (der Trainer füllt nur seinen Kanal).
+   Aufruf: PT_PAI_ROOT=/pfad/zu/Assist node tests/pai-integration.mjs  → tests/results/pai-integration.json */
+import { createRequire } from 'module';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath, pathToFileURL } from 'url';
+const require = createRequire(import.meta.url);
+const HERE = path.dirname(fileURLToPath(import.meta.url));
+const PAI = process.env.PT_PAI_ROOT || path.join(HERE, '..', '..', 'milkiasasmarome-eng', 'assist');
+const PT = require('./load.js').load();
+const sim = require('./app-sim.js');
+const imp = (p) => import(pathToFileURL(path.join(PAI, p)).href);
+const results = [];
+function check(name, ok, detail) { results.push({ name, ok: !!ok, detail }); console.log((ok ? 'BESTANDEN ' : 'FEHLER    ') + name + (detail ? ' – ' + detail : '')); }
+
+if (!fs.existsSync(path.join(PAI, 'src', 'data', 'adapters', 'pokertrainer.js'))) { console.log('PAI nicht gefunden unter ' + PAI + ' – Test übersprungen'); process.exit(0); }
+const paiVersion = (await imp('src/core/version.js')).VERSION;
+const { fromPokerTrainerBackup } = await imp('src/data/adapters/pokertrainer.js');
+const { validateHand } = await imp('src/data/hand.js');
+const paiEq = (await imp('src/math/equity.js')).equity;
+
+const hands = sim(PT, 60, 22022);
+// (1) Ereignisstrom
+const ev = PT.events.build(hands), err = PT.events.validate(ev);
+check('Ereignisstrom: Schema, Prüfsumme, nur beobachtbare Informationen', err === null && ev.events > 20, (err || 'ok') + ', ' + ev.events + ' Ereignisse aus ' + ev.hands + ' Händen');
+let leak = 0; ev.payload.forEach(h => h.events.forEach(e => { if (!e.complete) return; const k = e.observed; const own = k.holeCards.join('');
+  (h.afterHand ? h.afterHand.shown : []).forEach(s => { if (s.seat !== k.heroSeat && JSON.stringify(k).indexOf(s.cards) >= 0) leak++; }); if (k.board.length > [0, 3, 4, 5][['preflop', 'flop', 'turn', 'river'].indexOf(k.street)]) leak++; void own; }));
+check('Ereignisstrom: keine später aufgedeckten Gegnerkarten und keine künftigen Boardkarten im Entscheidungsabschnitt', leak === 0, leak + ' Funde');
+const tampered = JSON.parse(JSON.stringify(ev)); const e0 = tampered.payload.find(h => h.events.some(e => e.complete)).events.find(e => e.complete);
+e0.observed.publicView.players[1].cards = ['As', 'Ad']; tampered.contentHash = PT.util.fnv1a(JSON.stringify(tampered.payload));
+check('Ereignisstrom: Prüfung lehnt verdeckte Karten im beobachteten Zustand ab', /verdeckte Karten/.test(PT.events.validate(tampered) || ''), PT.events.validate(tampered));
+// (6) Kanäle
+const chOk = ev.payload.every(h => h.events.every(e => e.recommendations.pai === null && (!e.complete || (e.recommendations['pokertrainer-coach'] && e.recommendations['pokertrainer-coach'].engine === 'pokertrainer-coach'))));
+check('Empfehlungskanäle getrennt: Trainer füllt nur „pokertrainer-coach“, Kanal „pai“ bleibt leer', chOk);
+// (3) Versionskompatibilität
+const backupV3 = JSON.parse(PT.stats.backupExport({ opponents: [], hands }, 'test'));
+let v3err = null; try { fromPokerTrainerBackup(backupV3); } catch (e) { v3err = e.message; }
+check('Versionsprüfung: PAI ' + paiVersion + ' liest Sicherungen des Trainers (Format ' + backupV3.version + ')', v3err === null, v3err ? 'PAI lehnt ab: ' + v3err + ' (bekannte Inkompatibilität, Anpassung in docs/PAI_INTEGRATION.md)' : 'ok');
+// (2) Hand-Datensätze über den PAI-Adapter (Hand-Format 1 ist seit 2.0 unverändert; nur die Kopfversion der Sicherung unterscheidet sich)
+const wrapped = { format: 'PokerTrainer-Backup', version: 2, app: PT.VERSION, exported: 'test', payload: { hands } };
+const conv = fromPokerTrainerBackup(wrapped);
+const bad = conv.hands.map(h => validateHand(h)).filter(v => !v.ok);
+check('PAI-Adapter und PAI-Validator akzeptieren die Hand-Datensätze des Trainers', conv.errors.length === 0 && bad.length === 0 && conv.hands.length === hands.length, conv.hands.length + ' von ' + hands.length + ' Händen, ' + conv.errors.length + ' Fehler' + (conv.errors[0] ? ': ' + conv.errors[0].error : ''));
+const noCoach = conv.hands.every(h => JSON.stringify(h).indexOf('"decisions"') < 0 && JSON.stringify(h).indexOf('"grade"') < 0);
+check('Unabhängigkeit: PAI übernimmt keine Coach-Bewertungen des Trainers', noCoach);
+// (4) Kennzahlen: VPIP/PFR je Spieler unabhängig gezählt
+const ptDb = PT.stats.newDb(), heroRec = PT.stats.newRecord('hero', 'Du'); hands.forEach(h => { PT.stats.dbApplyHand(ptDb, publicRec(h), heroRec); });
+function publicRec(h) { // Handdatensatz → öffentlicher Datensatz wie PT.rules publicRecord (nur für die Zählung)
+  return { no: h.no, ts: h.ts, seats: h.seats.map(s => ({ seat: s.seat, id: s.id, name: s.name, pos: s.pos, hero: s.seat === h.heroSeat })), actions: h.actions, board: h.board.map(c => typeof c === 'string' ? PT.parseCards(c)[0] : c), shown: (h.shown || []).map(s => ({ seat: s.seat, cards: PT.parseCards(s.cards) })), showdown: h.showdown, sawFlop: h.sawFlop || [], net: h.seats.map(() => 0), won: h.won || null };
+}
+let paiCounts = {};
+try {
+  const { extractHand } = await imp('src/memory/extract.js');
+  conv.hands.forEach(h => { for (const o of extractHand(h).values()) { const k = o.key.split('/')[1]; const c = paiCounts[k] = paiCounts[k] || { vpip: [0, 0], pfr: [0, 0] }; ['vpip', 'pfr'].forEach(s => { if (o.stats[s]) { c[s][0] += o.stats[s][0]; c[s][1] += o.stats[s][1]; } }); } });
+} catch (e) { paiCounts = null; check('PAI-Kennzahlen berechenbar', false, e.message); }
+if (paiCounts) {
+  let cmp = 0, diff = 0; const ex = []; Object.keys(ptDb.opps).forEach(id => { const a = ptDb.opps[id].stats, b = paiCounts[id]; if (!b) return; ['vpip', 'pfr'].forEach(s => { cmp++; if (a[s][0] !== b[s][0] || a[s][1] !== b[s][1]) { diff++; if (ex.length < 3) ex.push(id + ' ' + s + ' PT ' + a[s].join('/') + ' PAI ' + b[s].join('/')); } }); });
+  check('Kennzahlen VPIP/PFR: PAI und Trainer zählen auf denselben Händen gleich (unabhängige Implementierungen)', cmp > 0 && diff === 0, cmp + ' Vergleiche, ' + diff + ' Abweichungen' + (ex.length ? ' (z. B. ' + ex.join('; ') + ')' : ''));
+}
+// (5) Equity: Trainer (exakte Aufzählung) gegen PAI (eigene Engine) auf Spots aus dem Ereignisstrom, Gegner = zufällige Hand
+let n = 0, maxd = 0; const rng = PT.makeRng('pai-eq');
+for (const h of ev.payload) for (const e of h.events) { if (!e.complete || e.observed.board.length < 3 || n >= 25) continue; const k = e.observed;
+  const pt = PT.equity.equity({ hero: PT.parseCards(k.holeCards.join('')), board: PT.parseCards(k.board.join('')), ranges: [PT.ranges.full()], level: 'tief', rng, budget: { left: 60000, used: 0 }, cache: false });
+  let pe = null; try { const r = paiEq({ players: [k.holeCards.join(''), 'random'], board: k.board.join('') }); pe = r && r.equity ? r.equity[0] : null; } catch (er) { pe = null; }
+  if (pe == null || pt.eq == null) continue; n++; maxd = Math.max(maxd, Math.abs(pe - pt.eq)); }
+check('Equity: PAI und Trainer stimmen auf denselben Spots überein (Abweichung ≤ 0,01)', n >= 5 && maxd <= 0.01, n + ' Spots, größte Abweichung ' + maxd.toFixed(4));
+const out = { date: new Date().toISOString(), pokertrainer: PT.VERSION, pai: paiVersion, paiRoot: path.basename(PAI), results };
+fs.writeFileSync(path.join(HERE, 'results', 'pai-integration.json'), JSON.stringify(out, null, 1));
+console.log(results.filter(r => r.ok).length + ' von ' + results.length + ' bestanden');

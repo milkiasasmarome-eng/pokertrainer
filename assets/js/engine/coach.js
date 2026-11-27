@@ -35,17 +35,20 @@ function preInfo(v) {
 }
 function lineOf(v, seat) {
   var pre = v.actions.filter(function (a) { return a.st === 0 && a.t !== 'sb' && a.t !== 'bb'; });
-  var rc = 0, limpers = 0, callers = 0, opener = -1, last = null, rcAt = 0, lastTo = v.bb, openerPos = null, sq = false;
+  var rc = 0, limpers = 0, callers = 0, opener = -1, last = null, rcAt = 0, lastTo = v.bb, openerPos = null, sq = false, myAllin = false, openAllin = false;
   pre.forEach(function (a) {
-    if (a.s === seat) { last = a.t; rcAt = rc; sq = callers > 0 && rc === 1; }
-    if (a.t === 'raise' || a.t === 'bet') { rc++; if (rc === 1) { opener = a.s; openerPos = v.players[a.s].pos; } lastTo = a.a; callers = 0; }
+    if (a.s === seat) { last = a.t; rcAt = rc; sq = callers > 0 && rc === 1; myAllin = !!a.ai; }
+    if (a.t === 'raise' || a.t === 'bet') { rc++; if (rc === 1) { opener = a.s; openerPos = v.players[a.s].pos; openAllin = !!a.ai; } lastTo = a.a; callers = 0; }
     else if (a.t === 'call') { if (rc === 0) limpers++; else callers++; }
   });
   var pos = v.players[seat].pos, sizeBB = lastTo / v.bb, kind = 'none';
   if (last === 'raise' || last === 'bet') kind = rcAt === 0 ? (limpers > 0 ? 'iso' : 'open') : rcAt === 1 ? '3bet' : rcAt === 2 ? '4bet' : '5bet';
   else if (last === 'call') kind = rcAt === 0 ? 'limp' : rcAt === 1 ? 'call' : rcAt === 2 ? (seat === opener ? 'call3' : 'call3') : 'call4';
   else if (last === 'check') kind = 'check';
-  return { kind: kind, pos: pos, opener: openerPos, sizeBB: sizeBB, squeeze: sq };
+  // 2.2 (Prüfer A, A-5): All-in-Kennzeichen und effektiver Stack zu Beginn der Hand zwischen dem Spieler und dem Opener (Jam-Ranges nur für echte All-ins)
+  var st0 = function (q) { return q.start != null ? q.start : q.stack + q.total; }, me0 = st0(v.players[seat]);
+  var effBB = (opener >= 0 && opener !== seat ? Math.min(me0, st0(v.players[opener])) : (function () { var m = 0; v.players.forEach(function (q) { if (q.seat !== seat) m = Math.max(m, st0(q)); }); return Math.min(me0, m); })()) / v.bb;
+  return { kind: kind, pos: pos, opener: openerPos, sizeBB: sizeBB, squeeze: sq, allin: myAllin, openAllin: openAllin, effBB: effBB };
 }
 var LINE_TEXT = { open: 'Open-Raise', iso: 'Iso-Raise', limp: 'Limp', call: 'Call gegen Raise', '3bet': '3-Bet', call3: 'Call gegen 3-Bet', '4bet': '4-Bet', call4: 'Call gegen 4-Bet',
   '5bet': '5-Bet', check: 'Check im Big Blind', none: 'noch keine Aktion' };
@@ -56,13 +59,18 @@ function oppStats(dbRec) {
   var eff = dbRec && S.effectiveStats ? S.effectiveStats(dbRec) : null;
   var raw = eff ? eff.stats : (dbRec ? dbRec.stats : S.emptyStats()), hands = eff ? eff.hands : (dbRec ? dbRec.hands : 0);
   var sm = R.smooth(raw); if (sm.pfr > sm.vpip) sm.pfr = sm.vpip;  // PFR ist eine Teilmenge von VPIP (Prüfer B, Befund 9)
-  return { raw: raw, hands: hands, sm: sm, typ: S.playerType(dbRec), bel: S.reliability(hands), changed: eff ? eff.changed : [], longHands: eff ? eff.longHands : hands };
+  // 2.2: Aktionszähler postflop (Bet ohne offenen Einsatz, Fold gegen Einsatz) für die dynamische Range-Schätzung
+  var ar = R.aggRates && dbRec && dbRec.agg ? R.aggRates(dbRec.agg) : null;
+  if (ar) { sm.aggFirst = ar.first; sm.aggFold = ar.fold; }
+  var aggN = ar ? { n: ar.n1 + ar.n2, nFace: ar.n2 } : null;
+  return { raw: raw, hands: hands, sm: sm, typ: S.playerType(dbRec), bel: S.reliability(hands), changed: eff ? eff.changed : [], longHands: eff ? eff.longHands : hands, agg: aggN };
 }
 function buildRange(v, seat, st, gto, pfaSeat) {
   var line = lineOf(v, seat), sm = gto ? R.smooth(null) : st.sm, prof = R.profileOf(sm);
   var w = R.preflopRange(line, sm, gto);
   R.removeDead(w, v.cards.concat(v.board));
-  if (v.street > 0) R.narrowPostflop(w, v.actions, seat, v.board, prof, pfaSeat, v.street);
+  // Prüfer B 2.2 (B-9): Der gleichgewichtsnahe Modus nutzt nicht die an der Gegner-KI angepasste Tabelle, sondern das ausgewogene Faustregelmodell
+  if (v.street > 0) R.narrowPostflop(w, v.actions, seat, v.board, prof, pfaSeat, v.street, gto ? { legacy: true } : { sm: sm });
   return { w: w, line: line, sm: sm, prof: prof };
 }
 function heroRangeFor(v) {
@@ -193,7 +201,7 @@ function analyzeMode(input, v, mode, level, L0, budget, rng, deadline, set, prep
   var oppsAll = v.players.filter(function (q) { return q.seat !== v.seat && !q.folded; });
   var opps = oppsAll.map(function (q) {
     var P = prep[q.seat], st = P.st, rg = gto ? P.gto : P.ex;
-    return { p: q, seat: q.seat, w: P.defW && P.pending ? P.defW : rg.w, line: rg.line, sm: rg.sm, prof: rg.prof, raw: st.raw, hands: st.hands, typ: st.typ, bel: st.bel,
+    return { p: q, seat: q.seat, w: P.defW && P.pending ? P.defW : rg.w, line: rg.line, sm: rg.sm, prof: rg.prof, raw: st.raw, hands: st.hands, typ: st.typ, bel: st.bel, agg: st.agg,
       pending: P.pending, e: P.e, eqInfo: P.eqInfo, floor: gto ? P.floor.gto : P.floor.ex, isDefW: !!(P.defW && P.pending) };
   });
   var maxOpp = 0; opps.forEach(function (o) { maxOpp = Math.max(maxOpp, o.p.stack + o.p.bet); });
@@ -257,12 +265,16 @@ function analyzeMode(input, v, mode, level, L0, budget, rng, deadline, set, prep
     eqTight = X.rangeEq(mainOpp.e, wT); eqLoose = X.rangeEq(mainOpp.e, wL);
     var relScale = relevant.length > 1 ? ctx.eqNow / Math.max(0.01, mainOpp.eqHU || 0.5) : 1;
     if (eqTight != null && eqLoose != null) { eqTight *= relScale; eqLoose *= relScale; spread = Math.abs(eqLoose - eqTight) / 2; }
-    var dataW = mainOpp.hands < 100 ? 1 : mainOpp.hands < 500 ? 0.75 : 0.5;
+    // 2.2 (Arbeitspaket 6): Datenlage nach tatsächlichen Gelegenheiten (Postflop-Entscheidungen des Gegners), nicht nach gespielten Händen
+    var nOppDec = mainOpp.agg ? mainOpp.agg.n : null;
+    var dataW = nOppDec != null ? (nOppDec < 60 ? 1 : nOppDec < 300 ? 0.75 : 0.5) : (mainOpp.hands < 100 ? 1 : mainOpp.hands < 500 ? 0.75 : 0.5);
     if (gto) dataW = 0.75;
     spread *= dataW;
   }
   ctx.eqRangeSpread = spread;
-  ctx.foldUnc = gto ? 0.08 : (mainOpp ? (mainOpp.hands < 100 ? 0.14 : mainOpp.hands < 500 ? 0.1 : 0.06) : 0.1);
+  // Unsicherheit der Fold-Schätzung nach Gelegenheiten gegen Einsätze (Fold gegen C-Bet und alle Einsätze postflop)
+  var nFold = mainOpp && mainOpp.agg ? mainOpp.agg.nFace : null;
+  ctx.foldUnc = gto ? 0.08 : (mainOpp ? (nFold != null ? (nFold < 30 ? 0.14 : nFold < 150 ? 0.1 : 0.06) : (mainOpp.hands < 100 ? 0.14 : mainOpp.hands < 500 ? 0.1 : 0.06)) : 0.1);
   // Aktionen bewerten
   var cands = X.candidates(ctx);
   (input.extra || []).forEach(function (amt) {
@@ -353,7 +365,8 @@ function analyzeMode(input, v, mode, level, L0, budget, rng, deadline, set, prep
 function heroChart(v, ctx, pre) {
   var me = ctx.me, pos = me.pos, ci = H.classIdx(v.cards[0], v.cards[1]), effBB = ctx.eff / ctx.bb, ch, kind;
   if (pre.rc === 0 && pre.limpers === 0) {
-    if (effBB <= 15) { ch = R.chart('push', { pos: pos, bb: effBB }); kind = 'Push-or-Fold-Chart (' + Math.round(effBB) + ' BB effektiv)'; }
+    // Prüfer B 2.2 (B-5): Der Chart des Push/Fold-Modellspiels bestimmt die Handauswahl; die Größe (All-in oder kleines Open) wählt das EV-Modell
+    if (effBB <= 15) { ch = R.chart('push', { pos: pos, bb: effBB }); kind = 'Handauswahl nach Push/Fold-Modellspiel (' + Math.round(effBB) + ' BB effektiv), Größe nach EV'; }
     else { ch = R.chart('rfi', { pos: pos }); kind = 'Open-Raise-Chart ' + pos; }
   } else if (pre.rc === 0) { ch = R.chart('iso', { pos: pos }); kind = 'Chart gegen Limper (' + pos + ')'; }
   else if (pre.rc === 1) { var op = v.players[pre.opener].pos; ch = R.chart('vsOpen', { pos: pos, opener: op, sizeBB: pre.lastTo / v.bb, squeeze: pre.callers > 0 }); kind = 'Chart ' + pos + ' gegen Open ' + op; }

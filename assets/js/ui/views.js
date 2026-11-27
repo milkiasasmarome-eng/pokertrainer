@@ -79,7 +79,7 @@ views.analyse = function (el, arg) {
     '<div class="toolbar"><input type="search" id="hq" placeholder="Suche: Karten (z. B. AK), Gegner, Board" aria-label="Suche"><select id="hk" aria-label="Filter"><option value="alle">alle Hände</option><option value="fehler">mit Fehlern</option><option value="showdown">mit Showdown</option><option value="training">nur Training</option><option value="gewonnen">gewonnen</option><option value="verloren">verloren</option></select>' +
     '<select id="hp" aria-label="Position"><option value="">alle Positionen</option>' + PT.stats.POSITIONS.map(function (p) { return '<option>' + p + '</option>'; }).join('') + '</select>' +
     '<button class="btn" type="button" data-hx="json">Export JSON</button><button class="btn" type="button" data-hx="txt">Export Text</button>' +
-    '<button class="btn" type="button" data-hx="bench" title="Je Entscheidung: Spielzustand zum Entscheidungszeitpunkt, Coach-Empfehlung, Alternativen mit EV und Unsicherheit; spätere Informationen getrennt">Export Benchmark</button></div>' +
+    '<button class="btn" type="button" data-hx="bench" title="Je Entscheidung: Spielzustand zum Entscheidungszeitpunkt, Coach-Empfehlung, Alternativen mit EV und Unsicherheit; spätere Informationen getrennt">Export Benchmark</button> <button class="btn" type="button" data-hx="events" title="Ereignisstrom für unabhängige Engines (PAI, System C): beobachtbarer Zustand je Entscheidung, Empfehlungen je Engine getrennt, Handdatensätze">Export Ereignisse (PAI)</button></div>' +
     '<p class="small" id="hskip" hidden></p><div id="hlist" class="scroll"><p class="muted">Lade …</p></div></div><div id="hreplay"></div>';
   $('hq').value = hist.filter.q; $('hk').value = hist.filter.kind; $('hp').value = hist.filter.pos;
   function load() { return loadHands().then(function (l) {
@@ -91,6 +91,7 @@ views.analyse = function (el, arg) {
     var x = e.target.closest('[data-hx]'); if (x) { var f = filtered(), kind = x.getAttribute('data-hx');
       if (kind === 'json') H.download('PokerTrainer_Haende_' + H.today() + '.json', JSON.stringify({ format: 'PokerTrainer-Hands', version: 1, app: PT.VERSION, count: f.length, hands: f }));
       else if (kind === 'bench') { var bt = PT.benchmark.exportText(f), bo = JSON.parse(bt); H.download('PokerTrainer_Benchmark_v' + PT.benchmark.SCHEMA + '_' + H.today() + '.json', bt); H.toast('Benchmark-Export: ' + bo.count + ' Entscheidungen aus ' + bo.hands + ' Händen.'); }
+      else if (kind === 'events') { /* einmal serialisieren (Prüfer D 2.2, D-2) */ var eo = PT.events.build(f), et = JSON.stringify(eo) + '\n'; H.download('PokerTrainer_Ereignisse_v' + PT.events.SCHEMA + '_' + H.today() + '.json', et); H.toast('Ereignisstrom: ' + eo.events + ' Entscheidungen aus ' + eo.hands + ' Händen.'); }
       else H.download('PokerTrainer_Haende_' + H.today() + '.txt', f.map(PT.training.handText).join('\n\n'), 'text/plain');
       return; }
     var st = e.target.closest('[data-step]'); if (st) { stepTo(st.getAttribute('data-step')); return; }
@@ -336,7 +337,7 @@ function oppStatRows(r, pr) {
     else status = '–';
     return '<tr><td><button type="button" class="term" data-help="' + esc(k) + '">' + esc(ST.STAT_LABEL[k]) + '</button></td>' +
       td + (nd[1] ? esc(String(ST.pctOf(nd))) + ' %' : 'unbekannt') + '</td>' + td + esc(nd[0] + '/' + nd[1]) + '</td>' + td + ciTxt(ci) + '</td>' + td + pc(sm[k]) + '</td>' +
-      td + (rc.rate == null ? 'unbekannt' : pc(rc.rate)) + '</td>' + td + esc(num(rc.neff, 0)) + '</td>' + td + ciTxt(rc.ci) + '</td><td>' + status + '</td></tr>';
+      td + (rc.rate == null ? 'unbekannt' : pc(rc.rate)) + '</td>' + td + esc(num(rc.neff, 0)) + '</td>' + td + ciTxt(rc.ci) + '</td>' + td + esc(PT.training.statReliability(nd)) + '</td><td>' + status + '</td></tr>';
   }).join('');
 }
 function showOpp(id) {
@@ -362,11 +363,13 @@ function showOpp(id) {
     '<span>Spielertyp <b>' + esc(pr.typ) + '</b></span><span>AF <b>' + (af == null ? 'unbekannt' : af === Infinity ? '∞' : esc(num(af))) + '</b></span><span>zuletzt gesehen ' + esc(H.dateTxt(r.lastSeen)) + '</span></div>' +
     '<h3>Veränderung der Spielweise</h3>' + chHtml +
     '<h3>Geschätzt: Werte aus Aktionen</h3>' +
-    '<div class="scroll"><table class="grid" style="font-size:13px"><thead><tr><th rowspan="2">Wert</th><th class="n" colspan="4">Langzeit (alle Hände)</th><th class="n" colspan="3">Kurzzeit (Halbwertszeit ' + esc(String(M.HALF_LIFE)) + ' Hände)</th><th rowspan="2">Veränderung</th></tr>' +
-    '<tr><th class="n">Rohwert</th><th class="n">Z/N</th><th class="n">95 %</th><th class="n">geglättet</th><th class="n">Rohwert</th><th class="n" title="effektive Zahl der Gelegenheiten">eff. n</th><th class="n">95 %</th></tr></thead><tbody>' + oppStatRows(r, pr) + '</tbody></table></div>' +
+    '<div class="scroll"><table class="grid" style="font-size:13px"><thead><tr><th rowspan="2" scope="col">Wert</th><th class="n" colspan="4" scope="colgroup">Langzeit (alle Hände)</th><th class="n" colspan="3" scope="colgroup">Kurzzeit (Halbwertszeit ' + esc(String(M.HALF_LIFE)) + ' Hände)</th><th rowspan="2" scope="col">Belastbarkeit des Werts (Gelegenheiten: unter 20 unsicher, 20–99 Tendenz, ab 100 belastbar)</th><th rowspan="2" scope="col">Veränderung</th></tr>' +
+    '<tr><th class="n" scope="col">Rohwert</th><th class="n" scope="col">Z/N</th><th class="n" scope="col">95 %</th><th class="n" scope="col">geglättet</th><th class="n" scope="col">Rohwert</th><th class="n" scope="col" title="effektive Zahl der Gelegenheiten">eff. n</th><th class="n" scope="col">95 %</th></tr></thead><tbody>' + oppStatRows(r, pr) + '</tbody></table></div>' +
     '<p class="small">Z/N: Zähler/Nenner (Treffer/Gelegenheiten). 95 %: Wilson-Intervall. Unbekannt: noch keine Gelegenheit beobachtet.</p>' +
     '<p class="small">„Geglättet“ mischt die eigenen Beobachtungen mit dem Durchschnitt der Population (Beta-Prior); so nutzt der Coach die Werte. Das Kurzzeitgedächtnis gewichtet jede Beobachtung mit 0,5^(Alter/' + esc(String(M.HALF_LIFE)) +
     ') (Alter in eigenen Händen des Gegners; im Archiv altert es nicht). Kurzzeitgewicht zurzeit ≈ ' + esc(num(pr.recent.hands, 0)) + ' Hände. Eine Veränderung gilt als erkannt, wenn der gewichtete Zwei-Anteile-Test Kurzzeit gegen ältere Beobachtungen |z| ≥ ' + esc(num(ch.params.zOn, 2)) + ' ergibt.</p>' +
+    '<h3>Verhaltenshypothesen</h3>' + (function () { var hy = PT.training.hypotheses(r); return hy.length ? '<ul>' + hy.map(function (x) { return '<li>' + esc(x.text) + ' <span class="pill">' + esc(x.level) + '</span>' + (x.ci ? ' <span class="small">(' + pc(x.raw) + ' bei ' + esc(String(x.n)) + ' Gelegenheiten, Durchschnitt der Gegner ' + pc(x.prior) + ', 95 % ' + ciTxt(x.ci) + ')</span>' : '') + '</li>'; }).join('') + '</ul>' : '<p class="muted">Keine Abweichung vom Durchschnitt erkennbar (oder zu wenige Gelegenheiten).</p>'; })() +
+    '<p class="small">Hypothesen sind Deutungen der beobachteten Werte, keine Beobachtungen. „Gestützt“: Abweichung vom Durchschnitt der Computergegner statistisch gesichert (5 %, Holm-Korrektur über alle geprüften Werte); „Vermutung“: deutliche Abweichung, aber noch innerhalb der Unsicherheit. Die Belastbarkeit eines Werts richtet sich nach seinen Gelegenheiten; die Angabe oben (nach Händen) ist die Projektregel für die Live-Anzeige.</p>' +
     '<h3>Beobachtet: Karten am Showdown</h3><div class="kv">' + cardsTxt + '</div>' +
     (r.shown.length ? '<ul class="shown">' + r.shown.map(oppShownHtml).join('') + '</ul>' : '<p class="muted">Noch keine aufgedeckten Blätter.</p>') +
     '<p class="small">Unbekannt: In Händen ohne Showdown bleiben die Karten verdeckt; der Coach schätzt sie nur als Range.</p>' +
@@ -443,7 +446,7 @@ function showImport(r, fname) {
 function backupNow(tag, strict) {
   // Nur gültige Hände: Eine Sicherung mit beschädigten Einträgen ließe sich nicht wieder importieren (dafür gibt es die Rohsicherung)
   return loadHands().then(function (hands) {
-    var txt = PT.stats.backupExport({ opponents: PT.stats.dbList(S.db), hero: S.heroRec, hands: hands, learning: S.learning, settings: S.settings, table: S.table }, new Date().toISOString());
+    var txt = PT.stats.backupExport({ opponents: PT.stats.dbList(S.db), hero: S.heroRec, hands: hands, learning: S.learning, settings: PTUI.testSettings ? PTUI.testSettings() : S.settings, table: S.table }, new Date().toISOString());
     if (txt.length > MAX_FILE) {
       var msg = 'Die Sicherung wäre ' + Math.round(txt.length / 1048576) + ' MB groß und damit größer als die Importgrenze von ' + MAX_MB + ' MB';
       if (strict) { var e = new Error(msg); e.tooBig = true; throw e; }
@@ -473,20 +476,51 @@ views.fortschritt = function (el) {
       tile(prof.trend ? (prof.trend.diff >= 0 ? '+' : '') + num(prof.trend.diff, 1) : '–', prof.trend ? 'Veränderung: letzte ' + prof.trend.window + ' gegenüber den ' + prof.trend.window + ' davor' + (prof.trend.ci != null ? ' (± ' + num(prof.trend.ci, 1) + ')' : '') : 'Trend ab 40 Entscheidungen', prof.trend && prof.trend.ci != null && Math.abs(prof.trend.diff) > prof.trend.ci ? (prof.trend.diff > 0 ? 'good' : 'bad') : '') +
       tile(esc(levelName(prof.level)), 'eingeschätzter Erfahrungsstand (steuert die automatische Erklärtiefe)') + '</div></div>';
     html += '<div class="grid2"><div class="panel"><h3>Entwicklung der Entscheidungsqualität</h3>' + spark(prof.sessions) + '<p class="small">Mittelwerte je Block aus 25 Entscheidungen.</p></div>' +
-      '<div class="panel"><h3>Häufigste Fehlerkategorien</h3>' + (catRows.length ? '<table class="grid" style="table-layout:fixed"><tbody>' + catRows.map(function (c) { return '<tr><td>' + esc(PT.coach.MISTAKES[c] || c) + '</td><td class="n">' + prof.cats[c] + '</td><td style="width:40%">' + meterRaw(prof.cats[c] / Math.max(1, prof.cats[catRows[0]])) + '</td></tr>'; }).join('') + '</tbody></table>' : '<p class="muted">Noch keine Fehler erfasst.</p>') + '</div></div>';
+      '<div class="panel"><h3>Häufigste Fehlerkategorien</h3>' + (catRows.length ? '<table class="grid" style="table-layout:fixed"><tbody>' + catRows.map(function (c) { return '<tr><td>' + esc(ownName(PT.coach.MISTAKES, c)) + '</td><td class="n">' + prof.cats[c] + '</td><td style="width:40%">' + meterRaw(prof.cats[c] / Math.max(1, prof.cats[catRows[0]])) + '</td></tr>'; }).join('') + '</tbody></table>' : '<p class="muted">Noch keine Fehler erfasst.</p>') + '</div></div>';
     html += '<div class="grid2"><div class="panel"><h3>Nach Position</h3>' + table3(PT.stats.POSITIONS.map(function (p) { return [p, prof.positions[p]]; })) + '</div>' +
       '<div class="panel"><h3>Nach Straße</h3>' + table3([0, 1, 2, 3].map(function (s) { return [PT.rules.STREET_NAME[s], prof.streets[s]]; })) + '</div></div>';
     html += '<div class="grid2"><div class="panel"><h3>Nach Situation</h3>' + table3(Object.keys(PT.coach.SPOTS).map(function (t) { return [PT.coach.SPOTS[t], prof.spots[t], t]; }), true) + '</div>' +
       '<div class="panel"><h3>Gegen Gegnertypen</h3>' + table3(Object.keys(prof.opptyp).map(function (t) { return [t, prof.opptyp[t]]; })) +
       '<h3>Lernziele</h3><ul>' + goals.map(function (g) { return '<li class="' + (g.ok ? 'good' : '') + '">' + (g.ok ? '✓ ' : '○ ') + esc(g.text) + ' – aktuell ' + (g.current == null ? '–' : num(g.current, 1)) + ' (' + g.n + ')</li>'; }).join('') + '</ul>' +
       '<h3>Wissensquiz</h3><p>' + esc(String(L.quiz.correct | 0)) + ' von ' + esc(String(L.quiz.n | 0)) + ' richtig' + (L.quiz.n ? ' (' + pct(L.quiz.correct / L.quiz.n) + ')' : '') + '</p></div></div>';
+    html += learnPanels(L, prof);
     html += '<div class="panel"><h3>Spielgeld-Ergebnis (getrennt von der Entscheidungsqualität)</h3><p>' + n + ' Hände am Tisch · Ergebnis ' + num(m * n, 1) + ' BB · ' + num(m * 100, 1) + ' BB/100' + (ci != null ? ' (95-%-Intervall ± ' + num(ci, 0) + ' BB/100)' : '') + '</p>' +
       '<p class="small">Bei No-Limit Hold\'em liegt die Standardabweichung typischerweise bei 80–120 BB je 100 Hände. Erst nach vielen tausend Händen sagt das Ergebnis etwas über die Spielstärke aus.</p></div>';
     el.innerHTML = html;
-    el.onclick = function (e) { var b = e.target.closest('[data-train]'); if (b) PTUI.startTraining(b.getAttribute('data-train')); };
+    el.onclick = function (e) {
+      var b = e.target.closest('[data-train]'); if (b) { PTUI.startTraining(b.getAttribute('data-train')); return; }
+      var pn = e.target.closest('[data-ppnew]'); if (pn) { if (!PTUI.canStartTraining()) { H.toast('Bitte erst die laufende Hand beenden.'); return; } var t = PT.training.prePostNew(L, { profile: prof }); PTUI.persistLearning(); var q = PT.training.prePostQueue(t, 'pre'); if (q.length) PTUI.startTraining(q[0].cat, q); return; }
+      var pg = e.target.closest('[data-pprun]'); if (pg) { var id = pg.getAttribute('data-pprun'), ph = pg.getAttribute('data-phase'), tt = (L.pp || []).filter(function (x) { return x.id === id; })[0];
+        if (tt) { var q2 = PT.training.prePostQueue(tt, ph); if (q2.length) PTUI.startTraining(q2[0].cat, q2); } }
+    };
   });
   el.innerHTML = '<p class="muted">Lade …</p>';
 };
+/** 2.2: Fehlerfelder, wiederkehrende Fehler, Verbesserung in zuvor schwachen Situationen, Vorher-Nachher-Test */
+function learnPanels(L, prof) {
+  var areas = PT.training.errorAreas(L), rec = PT.training.recurring(L).slice(0, 6), imp = PT.training.improvement(L).slice(0, 8), tests = (L.pp || []).slice(-3).reverse();
+  var sp = function (t) { return t === 'ohne' ? 'ohne Spot-Kennzeichnung' : ownName(PT.coach.SPOTS, t); };
+  var h = '<div class="grid2"><div class="panel"><h3>Fehlerfelder</h3>' + (areas.length ? '<div class="scroll"><table class="grid"><thead><tr><th scope="col">Feld</th><th class="n" scope="col">Fehler</th><th class="n" scope="col">davon letzte 100</th><th class="n" scope="col">geschätzter EV-Verlust</th></tr></thead><tbody>' +
+    areas.map(function (a) { return '<tr><td>' + esc(a.area) + '</td><td class="n">' + a.n + '</td><td class="n">' + a.recent + '</td><td class="n">' + num(a.loss, 1) + ' BB</td></tr>'; }).join('') + '</tbody></table></div>' : '<p class="muted">Noch keine Fehler erfasst.</p>') +
+    '<p class="small">Der EV-Verlust ist eine Modellschätzung des Coaches (Faustregel, kein Solver-Ergebnis) und wird zu gleichen Teilen auf die Fehlerkategorien einer Entscheidung verteilt.</p>' +
+    '<h3>Wiederkehrende Fehler</h3>' + (rec.length ? '<ul>' + rec.map(function (r) { return '<li><b>' + esc(sp(r.spot)) + '</b>: ' + esc(ownName(PT.coach.MISTAKES, r.cat)) + ' – ' + r.n + '-mal (' + r.recent + ' in den letzten 100 Entscheidungen)' +
+      (PT.training.hasScen(r.spot) ? ' <button class="btn" type="button" data-train="' + esc(r.spot) + '">Gezielt üben</button>' : '') + '</li>'; }).join('') + '</ul>' : '<p class="muted">Kein Fehler kam bisher mindestens dreimal in derselben Situation vor.</p>') + '</div>';
+  h += '<div class="panel"><h3>Verbesserung in zuvor schwachen Situationen</h3>' + (imp.length ? '<div class="scroll"><table class="grid"><thead><tr><th scope="col">Situation</th><th class="n" scope="col">vorher (11.–20.)</th><th class="n" scope="col">letzte 10</th><th class="n" scope="col">Differenz</th></tr></thead><tbody>' +
+    imp.map(function (x) { return '<tr><td>' + esc(x.name) + (x.problem ? ' <span class="small">(zuvor schwach)</span>' : '') + '</td><td class="n">' + n0(x.before) + '</td><td class="n">' + n0(x.after) + '</td><td class="n ' + (x.sure ? (x.diff > 0 ? 'good' : 'bad') : '') + '">' + (x.diff >= 0 ? '+' : '') + num(x.diff, 1) + ' ± ' + (isFinite(x.ci) ? num(x.ci, 1) : '–') + (x.sure ? ' (eindeutig)' : '') + '</td></tr>'; }).join('') + '</tbody></table></div>' :
+    '<p class="muted">Ab 30 Entscheidungen in einer Situation erscheint hier der Vergleich.</p>') + '<p class="small">„Zuvor schwach“ bestimmen die ersten 10 Entscheidungen; verglichen werden die Entscheidungen 11–20 mit den letzten 10 (getrennt, damit keine Scheinverbesserung durch Zufall entsteht). Farbig nur, wenn die Differenz größer ist als ihr 95-%-Intervall (Welch, t-Verteilung).</p>';
+  h += '<h3>Vorher-Nachher-Test</h3><p class="small">Je Kategorie vier feste Testsituationen vor und vier vergleichbare (nicht identische) nach dem Training, gleiches Gegnerfeld. Gemessen wird deine Entscheidungsqualität in diesen Situationen. Ein Nachweis allgemeiner Lernwirkung ist das nicht; dafür fehlen Daten vieler Nutzer.</p>' +
+    tests.map(function (t) { var r = PT.training.prePostResult(t), names = t.cats.map(function (c) { return PT.training.SCEN[c] ? PT.training.SCEN[c].name : c; }).join(', ');
+      var line = '<div class="box"><p><b>Test vom ' + esc(new Date(t.ts).toLocaleDateString('de-DE')) + '</b> · ' + esc(names) + '</p><p>Vorher: ' + (r.pre.n ? n0(r.pre.score) + ' (' + r.pre.n + ' Situationen)' : 'offen') + ' · Nachher: ' + (r.post.n ? n0(r.post.score) + ' (' + r.post.n + ')' : 'offen') +
+        (r.diff != null ? ' · Differenz <b class="' + (r.sure ? (r.diff > 0 ? 'good' : 'bad') : '') + '">' + (r.diff >= 0 ? '+' : '') + num(r.diff, 1) + ' ± ' + num(r.ci, 1) + '</b>' + (r.sure ? '' : ' (nicht eindeutig)') : '') + '</p>';
+      if (t.state === 'pre') line += '<button class="btn primary2" type="button" data-pprun="' + esc(t.id) + '" data-phase="pre">Vorher-Test fortsetzen</button>';
+      else if (t.state === 'training') line += '<p class="small">Jetzt die Kategorien trainieren, danach den Nachher-Test machen.</p>' + t.cats.map(function (c) { return '<button class="btn" type="button" data-train="' + esc(c) + '">' + esc(PT.training.SCEN[c] ? PT.training.SCEN[c].name : c) + ' üben</button> '; }).join('') +
+        '<button class="btn primary2" type="button" data-pprun="' + esc(t.id) + '" data-phase="post">Nachher-Test starten</button>';
+      return line + '</div>'; }).join('') +
+    '<button class="btn" type="button" data-ppnew="1">Neuen Vorher-Nachher-Test starten</button></div></div>';
+  return h;
+}
+/** Name aus einer Tabelle nur für eigene Schlüssel (Prüfer C 2.2: importierte Werte wie „constructor“) */
+function ownName(map, k) { return Object.prototype.hasOwnProperty.call(map, k) ? map[k] : String(k); }
 function levelName(l) { return { einsteiger: 'Einsteiger', fortgeschritten: 'Fortgeschritten', experte: 'Experte' }[l] || l; }
 function tile(v, label, cls) { return '<div class="box stattile"><b class="' + (cls || '') + '">' + v + '</b><span>' + label + '</span></div>'; }
 function meterRaw(f) { return '<div class="meter warn"><i style="width:' + Math.round(100 * Math.max(0, Math.min(1, f))) + '%"></i></div>'; }

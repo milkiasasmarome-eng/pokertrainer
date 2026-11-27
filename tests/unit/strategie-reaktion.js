@@ -10,7 +10,7 @@ module.exports = function (T) {
   test('Reaktionsmodell 2.1: Fold steigt mit der Einsatzgröße, Wahrscheinlichkeiten gültig, gleichgewichtsnaher Modus bleibt MDF', () => {
     const h = T.spot('BTN', 'KhQd', '9c7d2s', [['H', 'raise', 2.5], ['BB', 'call'], ['BB', 'check']]);
     const e = betFolds(h, 'exploit'), g = betFolds(h, 'gto');
-    ok(/Populationsmodell/.test(e.basis), 'exploitativ: Populationsmodell (' + e.basis + ')');
+    ok(/Populationsmodell|Aktionstabelle/.test(e.basis), 'exploitativ: Populationsmodell (' + e.basis + ')');
     ok(/MDF/.test(g.basis), 'gleichgewichtsnah: MDF (' + g.basis + ')');
     for (let i = 1; i < e.f.length; i++) ok(e.f[i] >= e.f[i - 1] - 1e-9, 'Fold monoton in der Größe: ' + e.f.map(x => x.toFixed(3)).join(' < '));
     e.bets.forEach(b => { const r = b.parts.folds[0]; ok(r.f >= 0 && r.c >= 0 && r.r >= 0 && Math.abs(r.f + r.c + r.r - 1) < 1e-6, 'Summe der Reaktionen = 1 (' + b.label + ')'); });
