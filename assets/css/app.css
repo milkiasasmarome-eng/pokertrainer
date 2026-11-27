@@ -114,7 +114,9 @@ button.plate:hover{border-color:var(--muted)}
 /* Prüfung D (t4): Abstände in px zum Namensschild statt nur in % der Tischhöhe – sonst verdeckte bei niedrigem Tisch (min-height 430 px,
    Breiten 640–1180 px) der eigene Einsatz die Ränge der eigenen Karten und die Karten des oberen Platzes den Pot. */
 @media (min-width:601px){
-  .b0{--by:calc(89% - 118px)}.b3{--by:calc(12% + 66px)}
+  .b0{--by:calc(89% - 126px)}.b3{--by:calc(12% + 66px)}
+  /* Aktionslabel des rechten oberen Platzes unten: oben lag es auf der rechten Karte des oberen Platzes (CI-Schriften, 640/1024 px) */
+  .s4 .lastact{top:auto;bottom:-12px}
   /* seitliche Einsätze etwas weiter von der Tischmitte weg (über bzw. unter der Höhe des Boards): auf dem River lagen sie auf den Board-Karten */
   .b2,.b4{--by:calc(31% + 37px)}.b1,.b5{--by:calc(69% - 37px)}
   .s3 .hole{left:calc(100% + 8px);top:50%;transform:translateY(-50%)}
@@ -204,7 +206,7 @@ details.more summary{cursor:pointer;color:var(--info);font-size:14px;font-weight
 .simple .adv{display:none!important}
 
 /* Allgemeine Bausteine für Ansichten */
-.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:12px}
 .grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
 .kv{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:14px;margin:6px 0 10px}
 table.grid{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
@@ -212,7 +214,7 @@ table.grid th,table.grid td{text-align:left;padding:6px 8px;border-bottom:1px so
 table.grid td.n,table.grid th.n{text-align:right}
 table.grid tbody tr.click{cursor:pointer}
 table.grid tbody tr.click:hover,table.grid tbody tr.click:focus{background:var(--panel2)}
-.scroll{overflow-x:auto}
+.scroll{overflow-x:auto;position:relative}  /* position: auch absolut positionierte Screenreader-Texte bleiben im Scrollbereich */
 .toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
 .toolbar input[type=search]{flex:1 1 180px}
 .cards{display:inline-flex;gap:3px;align-items:center;flex-wrap:wrap}

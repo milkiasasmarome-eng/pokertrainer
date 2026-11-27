@@ -2,7 +2,7 @@
   - /url: "#main"
 - banner:
   - heading "PokerTrainer 2.1" [level=1]
-  - text: No-Limit Hold'em · 6-max · Spielgeld Hand 2 Gegnerwechsel in 29 Händen Ergebnis −100,00 Nachkäufe 1 0,50/1,00
+  - text: No-Limit Hold'em · 6-max · Spielgeld Hand 2 Gegnerwechsel in 29 Händen Ergebnis −14,00 0,50/1,00
   - button "Erweitert"
   - button "Darstellung wechseln"
 - navigation "Bereiche":
@@ -27,34 +27,30 @@
     - text: PokerTrainer Pot 1,50
     - group "Board"
     - group "Dein Platz":
-      - text: Du , UTG , Stack 100,00 100 BB Session −100,00 ,
-      - img "Fünf Kreuz"
-      - img "Dame Kreuz"
-    - button "Olga , HJ , Stack 201,50 202 BB , VPIP 100 %, PFR 100 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt , verdeckte Karte verdeckte Karte , alle Werte anzeigen":
-      - text: Olga , HJ , Stack 201,50 202 BB , VPIP 100 %, PFR 100 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt ,
+      - text: Du , HJ , Stack 86,00 86 BB Session −14,00 ,
+      - img "Neun Kreuz"
+      - img "Neun Pik"
+    - button "Ivo , CO , Stack 100,00 100 BB , VPIP 0 %, PFR 0 %, 3-Bet 0 % , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt , verdeckte Karte verdeckte Karte , alle Werte anzeigen":
+      - text: Ivo , CO , Stack 100,00 100 BB , VPIP 0 %, PFR 0 %, 3-Bet 0 % , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt ,
       - img "verdeckte Karte"
       - img "verdeckte Karte"
       - text: ", alle Werte anzeigen"
-    - button "Ulla , CO , Stack 100,00 100 BB , VPIP 0 %, PFR 0 %, 3-Bet 0 % , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt , verdeckte Karte verdeckte Karte , alle Werte anzeigen":
-      - text: Ulla , CO , Stack 100,00 100 BB , VPIP 0 %, PFR 0 %, 3-Bet 0 % , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt ,
-      - img "verdeckte Karte"
-      - img "verdeckte Karte"
-      - text: ", alle Werte anzeigen"
-    - button "Zeno , BTN , Stack 99,50 100 BB , VPIP 0 %, PFR 0 %, 3-Bet 0 % , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt , verdeckte Karte verdeckte Karte , Dealer-Button , alle Werte anzeigen":
-      - text: Zeno , BTN , Stack 99,50 100 BB , VPIP 0 %, PFR 0 %, 3-Bet 0 % , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt ,
+    - button "Frieda , BTN , Stack 99,50 100 BB , VPIP 0 %, PFR 0 %, 3-Bet 0 % , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt , verdeckte Karte verdeckte Karte , Dealer-Button , alle Werte anzeigen":
+      - text: Frieda , BTN , Stack 99,50 100 BB , VPIP 0 %, PFR 0 %, 3-Bet 0 % , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt ,
       - img "verdeckte Karte"
       - img "verdeckte Karte"
       - text: ", Dealer-Button , alle Werte anzeigen"
-    - button "Henrik , SB , Stack 98,50 99 BB , VPIP 0 %, PFR 0 %, 3-Bet 0 % , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt , verdeckte Karte verdeckte Karte , letzte Aktion SB , alle Werte anzeigen":
-      - text: Henrik , SB , Stack 98,50 99 BB , VPIP 0 %, PFR 0 %, 3-Bet 0 % , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt ,
+    - button "Lina , SB , Stack 98,50 99 BB , VPIP 0 %, PFR 0 %, 3-Bet 0 % , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt , verdeckte Karte verdeckte Karte , letzte Aktion SB , alle Werte anzeigen":
+      - text: Lina , SB , Stack 98,50 99 BB , VPIP 0 %, PFR 0 %, 3-Bet 0 % , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt ,
       - img "verdeckte Karte"
       - img "verdeckte Karte"
       - text: ", letzte Aktion SB , alle Werte anzeigen"
-    - button "Mats , BB , Stack 99,00 99 BB , VPIP 0 %, PFR 0 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt , verdeckte Karte verdeckte Karte , letzte Aktion BB , alle Werte anzeigen":
-      - text: Mats , BB , Stack 99,00 99 BB , VPIP 0 %, PFR 0 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt ,
+    - button "Ines , BB , Stack 114,50 115 BB , VPIP 100 %, PFR 100 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt , verdeckte Karte verdeckte Karte , letzte Aktion BB , alle Werte anzeigen":
+      - text: Ines , BB , Stack 114,50 115 BB , VPIP 100 %, PFR 100 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt ,
       - img "verdeckte Karte"
       - img "verdeckte Karte"
       - text: ", letzte Aktion BB , alle Werte anzeigen"
+    - button "Finn , UTG , Stack 100,00 100 BB , VPIP 0 %, PFR 0 %, 3-Bet 0 % , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt , letzte Aktion Fold , alle Werte anzeigen"
     - text: 0,50 1,00
     - group "Aktionen":
       - button "Fold"
@@ -64,7 +60,7 @@
       - button "2 BB (2,00)"
       - button "2,5 BB (2,50)"
       - button "3 BB (3,00)"
-      - button "All-in (100,00)"
+      - button "All-in (86,00)"
       - slider "Betrag wählen": "0"
       - text: Betrag
       - textbox "Betrag (Raise auf)": 2,00
@@ -86,9 +82,12 @@
           - option "Einsteiger"
           - option "Fortgeschritten"
           - option "Experte"
-        - text: "Empfehlung: Fold Klar bevorzugt"
-        - paragraph: "Fold: Q5s gehört laut Open-Raise-Chart UTG nicht zu den spielbaren Händen. Preflop folgt der Coach hier dem Faustregel-Chart (Open-Raise-Chart UTG); das vereinfachte EV-Modell sähe Open 2 BB um 0,1 BB vorn, aber nur wegen Fold-Annahmen, die nicht durch Gegnerwerte belegt sind. Q5s liegt auf Rang 81 von 169 Starthandklassen."
-        - text: Equity 37 % ± 3,0 % Pot 1,50 Eff. Stack 100 BB
+        - text: "Empfehlung: Open 2,5 BB Knappe Entscheidung"
+        - paragraph:
+          - text: "Open 2,5 BB: Mit etwa 59 %"
+          - button "Equity"
+          - text: holst du Value von schwächeren Händen. 99 gehört zu den besten 2 % aller Starthände.
+        - text: "Equity 59 % ± 3,0 % Pot 1,50 Eff. Stack 86 BB Die Aktion ist knapp, die Größe ist offen: Open 2,5 BB, Open 3 BB, Open 2 BB liegen im Rahmen der Unsicherheit nahe beieinander."
         - group: EV-Vergleich und Annahmen
         - paragraph: Faustregel, kein Solver-Ergebnis
         - checkbox "Sprachausgabe" [checked]
@@ -99,9 +98,10 @@
       - region "Handverlauf":
         - heading "Handverlauf" [level=2]
         - list "Handverlauf":
-          - listitem: "Hand #2 · Button: Zeno"
-          - listitem: Henrik postet Small Blind 0,50
-          - listitem: Mats postet Big Blind 1,00
+          - listitem: "Hand #2 · Button: Frieda"
+          - listitem: Lina postet Small Blind 0,50
+          - listitem: Ines postet Big Blind 1,00
+          - listitem: "Finn: Fold"
 - contentinfo:
   - text: PokerTrainer 2.1.0 · nur Spielgeld, kein Glücksspiel · Daten bleiben in deinem Browser
   - link "Datenschutz & Rechtliches":
