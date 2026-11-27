@@ -1,14 +1,14 @@
-/* Arbeitspaket 10 (2.2): Rechenzeit des automatischen Tipps an realen Entscheidungen (nicht nur an ausgewählten Spots).
-   Coach 2.2 und 2.1.0 spielen dieselben Seeds (Gegner-KI 2.2, gemischt, 100 BB und 15 BB). Gemessen wird jede Analyse
+/* Arbeitspaket 10 (2.2, fortgeschrieben 2.3): Rechenzeit des automatischen Tipps an realen Entscheidungen (nicht nur an ausgewählten Spots).
+   Coach 2.3, 2.2.0 und 2.1.0 spielen dieselben Seeds (Gegner-KI 2.2, gemischt, 100 BB und 15 BB). Gemessen wird jede Analyse
    (beide Modi, Stufe „Standard“, höchstens 5.000 Simulationen) mit der echten Uhr: Median, 95. und 99. Perzentil, Maximum, langsamste Spots.
-   Aufruf: node tests/perf-22.js [Hände] [Wurzel 2.1.0] → tests/results/perf-22.json */
+   Aufruf: node tests/perf-23.js [Hände] [Wurzel 2.1.0] [Wurzel 2.2.0] → tests/results/perf-23.json */
 'use strict';
 const fs = require('fs'), path = require('path');
 const HS = require('./strategy/harness.js'), { loadEngine } = require('./strategy/engine-vm.js');
-const hands = +(process.argv[2] || 400), OLD = process.argv[3] || path.join(__dirname, '..', '..', 'wt-v210');
+const hands = +(process.argv[2] || 400), OLD = process.argv[3] || path.join(__dirname, '..', '..', 'wt-v210'), V22 = process.argv[4] || path.join(__dirname, '..', '..', 'wt-v220');
 function q(a, p) { const s = a.slice().sort((x, y) => x - y); return s[Math.min(s.length - 1, Math.floor(p * s.length))]; }
 const out = { date: new Date().toISOString(), hands, versions: {} };
-[['2.2', path.join(__dirname, '..')], ['2.1.0', OLD]].forEach(([name, root]) => {
+[['2.3', path.join(__dirname, '..')], ['2.2.0', V22], ['2.1.0', OLD]].forEach(([name, root]) => {
   if (!fs.existsSync(path.join(root, 'assets'))) return;
   const C = loadEngine(root, { realClock: true }), res = { all: [], slow: [] };
   [[100, 23901], [15, 23902]].forEach(([bb, seed]) => {
@@ -35,4 +35,4 @@ const out = { date: new Date().toISOString(), hands, versions: {} };
     over1000: a.filter(x => x > 1000).length, over2000: a.filter(x => x > 2000).length, slowest: res.slow.sort((x, y) => y.ms - x.ms).slice(0, 8) };
   console.log(name + ': ' + JSON.stringify(out.versions[name]).slice(0, 300));
 });
-fs.writeFileSync(path.join(__dirname, 'results', 'perf-22.json'), JSON.stringify(out, null, 1));
+fs.writeFileSync(path.join(__dirname, 'results', 'perf-23.json'), JSON.stringify(out, null, 1));

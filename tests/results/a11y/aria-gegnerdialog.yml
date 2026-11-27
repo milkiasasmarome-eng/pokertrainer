@@ -1,7 +1,7 @@
-- dialog "Gero":
-  - heading "Gero" [level=2]
+- dialog "Pia":
+  - heading "Pia" [level=2]
   - button "Schließen": ×
-  - text: am Tisch (aktiv) Hände 2 Belastbarkeit unsicher Spielertyp unbekannt AF unbekannt zuletzt gesehen 27.11.26, 16:05
+  - text: am Tisch (aktiv) Hände 2 Belastbarkeit unsicher Spielertyp unbekannt AF ∞ zuletzt gesehen 27.11.26, 20:42
   - heading "Veränderung der Spielweise" [level=3]
   - paragraph: Für einen Vergleich von Kurzzeit- und Langzeitwerten fehlen noch Beobachtungen.
   - 'heading "Geschätzt: Werte aus Aktionen" [level=3]'
@@ -22,7 +22,7 @@
         - columnheader "eff. n"
         - columnheader "95 %"
     - rowgroup:
-      - row "VPIP 50 % 1/2 9–91 % 29 % 50 % 2 9–90 % unsicher zu wenig Daten für Vergleich":
+      - row "VPIP 50 % 1/2 9–91 % 29 % 50 % 2 10–91 % unsicher zu wenig Daten für Vergleich":
         - cell "VPIP":
           - button "VPIP"
         - cell "50 %"
@@ -31,33 +31,33 @@
         - cell "29 %"
         - cell "50 %"
         - cell "2"
-        - cell "9–90 %"
+        - cell "10–91 %"
         - cell "unsicher"
         - cell "zu wenig Daten für Vergleich"
-      - row "PFR 0 % 0/2 0–66 % 18 % 0 % 2 0–66 % unsicher zu wenig Daten für Vergleich":
+      - row "PFR 50 % 1/2 9–91 % 21 % 50 % 2 10–91 % unsicher zu wenig Daten für Vergleich":
         - cell "PFR":
           - button "PFR"
-        - cell "0 %"
-        - cell "0/2"
-        - cell "0–66 %"
-        - cell "18 %"
-        - cell "0 %"
+        - cell "50 %"
+        - cell "1/2"
+        - cell "9–91 %"
+        - cell "21 %"
+        - cell "50 %"
         - cell "2"
-        - cell "0–66 %"
+        - cell "10–91 %"
         - cell "unsicher"
         - cell "zu wenig Daten für Vergleich"
-      - row "3-Bet 0 % 0/1 0–79 % 7 % 0 % 1 0–79 % unsicher zu wenig Daten für Vergleich":
+      - row "3-Bet unbekannt 0/0 – 8 % unbekannt 0 – unsicher unbekannt":
         - cell "3-Bet":
           - button "3-Bet"
-        - cell "0 %"
-        - cell "0/1"
-        - cell "0–79 %"
-        - cell "7 %"
-        - cell "0 %"
-        - cell "1"
-        - cell "0–79 %"
+        - cell "unbekannt"
+        - cell "0/0"
+        - cell "–"
+        - cell "8 %"
+        - cell "unbekannt"
+        - cell "0"
+        - cell "–"
         - cell "unsicher"
-        - cell "zu wenig Daten für Vergleich"
+        - cell "unbekannt"
       - row "4-Bet unbekannt 0/0 – 6 % unbekannt 0 – unsicher unbekannt":
         - cell "4-Bet":
           - button "4-Bet"
@@ -118,42 +118,42 @@
         - cell "–"
         - cell "unsicher"
         - cell "unbekannt"
-      - row "C-Bet Flop unbekannt 0/0 – 62 % unbekannt 0 – unsicher unbekannt":
+      - row "C-Bet Flop 100 % 1/1 21–100 % 64 % 100 % 1 21–100 % unsicher zu wenig Daten für Vergleich":
         - cell "C-Bet Flop":
           - button "C-Bet Flop"
-        - cell "unbekannt"
-        - cell "0/0"
-        - cell "–"
-        - cell "62 %"
-        - cell "unbekannt"
-        - cell "0"
-        - cell "–"
+        - cell "100 %"
+        - cell "1/1"
+        - cell "21–100 %"
+        - cell "64 %"
+        - cell "100 %"
+        - cell "1"
+        - cell "21–100 %"
         - cell "unsicher"
-        - cell "unbekannt"
-      - row "C-Bet Turn unbekannt 0/0 – 50 % unbekannt 0 – unsicher unbekannt":
+        - cell "zu wenig Daten für Vergleich"
+      - row "C-Bet Turn 100 % 1/1 21–100 % 54 % 100 % 1 21–100 % unsicher –":
         - cell "C-Bet Turn":
           - button "C-Bet Turn"
-        - cell "unbekannt"
-        - cell "0/0"
-        - cell "–"
-        - cell "50 %"
-        - cell "unbekannt"
-        - cell "0"
-        - cell "–"
+        - cell "100 %"
+        - cell "1/1"
+        - cell "21–100 %"
+        - cell "54 %"
+        - cell "100 %"
+        - cell "1"
+        - cell "21–100 %"
         - cell "unsicher"
-        - cell "unbekannt"
-      - row "C-Bet River unbekannt 0/0 – 45 % unbekannt 0 – unsicher unbekannt":
+        - cell "–"
+      - row "C-Bet River 0 % 0/1 0–79 % 41 % 0 % 1 0–79 % unsicher –":
         - cell "C-Bet River":
           - button "C-Bet River"
-        - cell "unbekannt"
-        - cell "0/0"
-        - cell "–"
-        - cell "45 %"
-        - cell "unbekannt"
-        - cell "0"
-        - cell "–"
+        - cell "0 %"
+        - cell "0/1"
+        - cell "0–79 %"
+        - cell "41 %"
+        - cell "0 %"
+        - cell "1"
+        - cell "0–79 %"
         - cell "unsicher"
-        - cell "unbekannt"
+        - cell "–"
       - row "Fold gegen C-Bet (Flop) unbekannt 0/0 – 44 % unbekannt 0 – unsicher unbekannt":
         - cell "Fold gegen C-Bet (Flop)":
           - button "Fold gegen C-Bet (Flop)"
@@ -190,50 +190,60 @@
         - cell "–"
         - cell "unsicher"
         - cell "unbekannt"
-      - row "Aggression Frequency unbekannt 0/0 – 42 % unbekannt 0 – unsicher unbekannt":
+      - row "Aggression Frequency 100 % 2/2 34–100 % 46 % 100 % 2 34–100 % unsicher zu wenig Daten für Vergleich":
         - cell "Aggression Frequency":
           - button "Aggression Frequency"
-        - cell "unbekannt"
-        - cell "0/0"
-        - cell "–"
-        - cell "42 %"
-        - cell "unbekannt"
-        - cell "0"
-        - cell "–"
+        - cell "100 %"
+        - cell "2/2"
+        - cell "34–100 %"
+        - cell "46 %"
+        - cell "100 %"
+        - cell "2"
+        - cell "34–100 %"
         - cell "unsicher"
-        - cell "unbekannt"
-      - row "WTSD unbekannt 0/0 – 28 % unbekannt 0 – unsicher unbekannt":
+        - cell "zu wenig Daten für Vergleich"
+      - row "WTSD 100 % 1/1 21–100 % 31 % 100 % 1 21–100 % unsicher zu wenig Daten für Vergleich":
         - cell "WTSD":
           - button "WTSD"
-        - cell "unbekannt"
-        - cell "0/0"
-        - cell "–"
-        - cell "28 %"
-        - cell "unbekannt"
-        - cell "0"
-        - cell "–"
+        - cell "100 %"
+        - cell "1/1"
+        - cell "21–100 %"
+        - cell "31 %"
+        - cell "100 %"
+        - cell "1"
+        - cell "21–100 %"
         - cell "unsicher"
-        - cell "unbekannt"
-      - row "W$SD unbekannt 0/0 – 50 % unbekannt 0 – unsicher unbekannt":
+        - cell "zu wenig Daten für Vergleich"
+      - row "W$SD 0 % 0/1 0–79 % 47 % 0 % 1 0–79 % unsicher –":
         - cell "W$SD":
           - button "W$SD"
-        - cell "unbekannt"
-        - cell "0/0"
-        - cell "–"
-        - cell "50 %"
-        - cell "unbekannt"
-        - cell "0"
-        - cell "–"
+        - cell "0 %"
+        - cell "0/1"
+        - cell "0–79 %"
+        - cell "47 %"
+        - cell "0 %"
+        - cell "1"
+        - cell "0–79 %"
         - cell "unsicher"
-        - cell "unbekannt"
+        - cell "–"
   - paragraph: "Z/N: Zähler/Nenner (Treffer/Gelegenheiten). 95 %: Wilson-Intervall. Unbekannt: noch keine Gelegenheit beobachtet."
   - paragraph: „Geglättet“ mischt die eigenen Beobachtungen mit dem Durchschnitt der Population (Beta-Prior); so nutzt der Coach die Werte. Das Kurzzeitgedächtnis gewichtet jede Beobachtung mit 0,5^(Alter/100) (Alter in eigenen Händen des Gegners; im Archiv altert es nicht). Kurzzeitgewicht zurzeit ≈ 2 Hände. Eine Veränderung gilt als erkannt, wenn der gewichtete Zwei-Anteile-Test Kurzzeit gegen ältere Beobachtungen |z| ≥ 3,75 ergibt.
   - heading "Verhaltenshypothesen" [level=3]
   - paragraph: Keine Abweichung vom Durchschnitt erkennbar (oder zu wenige Gelegenheiten).
   - paragraph: "Hypothesen sind Deutungen der beobachteten Werte, keine Beobachtungen. „Gestützt“: Abweichung vom Durchschnitt der Computergegner statistisch gesichert (5 %, Holm-Korrektur über alle geprüften Werte); „Vermutung“: deutliche Abweichung, aber noch innerhalb der Unsicherheit. Die Belastbarkeit eines Werts richtet sich nach seinen Gelegenheiten; die Angabe oben (nach Händen) ist die Projektregel für die Live-Anzeige."
   - 'heading "Beobachtet: Karten am Showdown" [level=3]'
-  - text: Showdowns mit aufgedeckten Karten (beobachtet) 0 gespielte Hände mit verdeckt gebliebenen Karten (unbekannt) 1 beobachteter Anteil 0 %
-  - paragraph: Noch keine aufgedeckten Blätter.
+  - text: Showdowns mit aufgedeckten Karten (beobachtet) 1 gespielte Hände mit verdeckt gebliebenen Karten (unbekannt) 0 beobachteter Anteil 100 %
+  - list:
+    - listitem:
+      - img "Bube Kreuz"
+      - img "Ass Kreuz"
+      - text: "HJ · Hand #2 · 27.11.26, 20:42 · beobachtet Board"
+      - img "Fünf Pik"
+      - img "Bube Herz"
+      - img "Vier Pik"
+      - img "Drei Pik"
+      - img "Bube Pik"
+      - text: "Preflop: Raise auf 4,50 · Flop: Bet 9,00 · Turn: Bet 16,00 · River: Check Ergebnis −29,50"
   - paragraph: "Unbekannt: In Händen ohne Showdown bleiben die Karten verdeckt; der Coach schätzt sie nur als Range."
   - heading "Nach Position" [level=3]
   - table:
@@ -244,21 +254,21 @@
         - columnheader "VPIP"
         - columnheader "PFR"
     - rowgroup:
-      - row "UTG 1 0 % 0 %":
+      - row "UTG 0 unbekannt unbekannt":
         - cell "UTG"
-        - cell "1"
-        - cell "0 %"
-        - cell "0 %"
-      - row "HJ 1 100 % 0 %":
-        - cell "HJ"
-        - cell "1"
-        - cell "100 %"
-        - cell "0 %"
-      - row "CO 0 unbekannt unbekannt":
-        - cell "CO"
         - cell "0"
         - cell "unbekannt"
         - cell "unbekannt"
+      - row "HJ 1 100 % 100 %":
+        - cell "HJ"
+        - cell "1"
+        - cell "100 %"
+        - cell "100 %"
+      - row "CO 1 0 % 0 %":
+        - cell "CO"
+        - cell "1"
+        - cell "0 %"
+        - cell "0 %"
       - row "BTN 0 unbekannt unbekannt":
         - cell "BTN"
         - cell "0"

@@ -1,6 +1,6 @@
 {
- "date": "2026-11-27T15:55:06.213Z",
- "pokertrainer": "2.2.0",
+ "date": "2026-11-27T19:43:51.705Z",
+ "pokertrainer": "2.3.0",
  "pai": "0.1.0",
  "paiRoot": "assist",
  "results": [
@@ -50,7 +50,7 @@
   {
    "name": "Reproduzierbarkeit: gleiche Seeds ergeben denselben Ereignisstrom",
    "ok": true,
-   "detail": "5f75d2d9 / 5f75d2d9"
+   "detail": "b0ea3714 / b0ea3714"
   },
   {
    "name": "Fehlerbehandlung: veränderter Ereignisstrom wird mit Meldung abgelehnt",
