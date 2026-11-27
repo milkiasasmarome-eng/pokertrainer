@@ -204,7 +204,8 @@ function splitRange(w, sc, contFrac, raiseFrac) {
  * der Gegnerpopulation geschätzt (Maximum Likelihood, tests/strategy/fit-response.js; Daten und Prüfung auf getrennten Seeds: docs/STRATEGIE.md).
  * Keine verdeckten Karten, keine internen Spielstile. Modellannahme, kein Solver-Ergebnis.
  */
-var POP = { c0: [0, 0.2085, 0.0646, 0.2314], c1: [0, 1.7984, 2.2272, 2.09], c2: 0.0175, c3: -0.0599, tau: 0.1268, c4: -0.1845, taud: 0.015, lf: 0.01, lw: -0.1161, r0: 0.4171, r1: 0.9306, rd: 0.1749, lv: -0.0309, lp: -0.7881, blend: 0.5 };
+// Neu kalibriert nach Prüfer B (Gegner-KI B3, Lead-Ranges B11): Seeds 503/504, je 3.500 Hände, strategy.json responseFit.final
+var POP = { c0: [0, 0.1798, 0.0364, 0.258], c1: [0, 1.8703, 2.3214, 2.0446], c2: 0.0301, c3: -0.0772, tau: 0.1353, c4: -0.1876, taud: 0.015, lf: 0.0142, lw: -0.1309, r0: 0.364, r1: 0.9141, rd: 0.1525, lv: -0.0265, lp: -0.7811, blend: 0.5 };
 function logit(p) { p = clamp(p, 0.01, 0.99); return Math.log(p / (1 - p)); }
 function sigm(z) { return 1 / (1 + Math.exp(-z)); }
 /** Anteil der Range, der bei Schwelle th weiterspielt */
@@ -301,14 +302,18 @@ function respond(opp, ctx, heroAdd, potBefore, nResp, kind) {
     var fl = F.strong * (ctx.street === 3 ? clamp(1.15 - 0.15 * s0, 0.55, 1) : 1) + F.good * clamp(1.1 - 0.5 * s0, 0.12, 0.85) + F.draw * clamp(0.8 - 0.3 * s0, 0.1, 0.6);
     def = Math.max(def, clamp(fl * (ctx.mode === 'gto' ? 1 : 0.85 + 0.3 * prof.station), 0, 0.95));
   }
-  if (ctx.street > 0) {
+  // Prüfer B, Befund 7: Im gleichgewichtsnahen Modus gilt die Gleichgewichtsannahme MDF ohne die Populationskorrekturen (Overbet-/Raise-
+  // Korrektur und konservativer Abschlag). Diese machten jeden reinen Bluff strukturell −EV (Fold-Rate unter der Break-even-Rate),
+  // sodass der Modus praktisch nie bluffte; im Gleichgewicht ist ein Bluff gegen MDF-Verteidigung gerade indifferent.
+  var popAdj = ctx.mode !== 'gto';
+  if (ctx.street > 0 && popAdj) {
     // Korrektur für Overbets und Raises: polarisierte große Einsätze und Raises gegen eine gezeigte Bet werden seltener gefoldet,
     // als die reine MDF-Annahme für eine Einzelhand nahelegt (Modellannahme).
     var sz = heroAdd / Math.max(1, potBefore), alpha = sz <= 0.75 ? 1 : Math.max(0.7, 1 - 0.3 * (sz - 0.75));
     if (kind === 'raise' || kind === 'jam' && ctx.L.toCall > 0) alpha *= 0.85;
     def = 1 - (1 - def) * alpha;
   }
-  if (ctx.street > 0) {
+  if (ctx.street > 0 && popAdj) {
     // Konservative Fold-Schätzung: Die MDF-Annahme überschätzt Folds gegen Gegner, die nicht ausgewogen verteidigen
     // (Population der Computergegner: Fold gegen Turn-C-Bet beobachtet 34 % statt 43 % nach MDF). Im Multiway-Pot zusätzlich weniger Folds je Spieler.
     var cbObs = opp.raw && opp.raw.foldToCbet ? opp.raw.foldToCbet[1] : 0;
@@ -528,7 +533,10 @@ function evaluateAction(ctx, act) {
   var modelU = (r.dEdq || 0) * (ctx.eqRangeSpread || 0);
   if (act.type === 'bet' || act.type === 'raise') {
     // Unsicherheit der Reaktionsannahmen wächst mit der Einsatzgröße und der Zahl der Gegner
-    var szU = Math.max(1, ((act.amount || 0) - ctx.me.bet) / Math.max(1, ctx.pot)), nU = Math.max(1, ctx.opps.filter(function (o) { return !o.p.allIn; }).length);
+    // Prüfer B, Befund 2: Die Unsicherheit der Fold-Wahrscheinlichkeit ist eine Wahrscheinlichkeit und wächst nur bis zur doppelten Pot-Größe
+    // (höchstens foldUnc); die Wirkung auf den EV wächst über |Pot − EV| ohnehin linear mit der Größe. Früher wuchs sie mit szU unbegrenzt,
+    // die Unsicherheit also quadratisch, und neutralisierte große Verluste (z. B. All-in-Bluff mit 17-fachem Pot „Gut“).
+    var szU = Math.min(2, Math.max(1, ((act.amount || 0) - ctx.me.bet) / Math.max(1, ctx.pot))), nU = Math.max(1, ctx.opps.filter(function (o) { return !o.p.allIn; }).length);
     modelU += Math.abs(ctx.pot - (r.ev || 0)) * ctx.foldUnc * 0.5 * szU * Math.sqrt(nU) + 0.02 * ctx.pot;
   }
   r.uSim = simU; r.uModel = modelU; r.u = Math.sqrt(simU * simU + modelU * modelU);

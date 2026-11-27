@@ -157,4 +157,27 @@ module.exports = function (T) {
     const acts2 = [{ st: 1, s: 0, t: 'bet' }, { st: 1, s: 2, t: 'call' }, { st: 2, s: 0, t: 'check' }, { st: 2, s: 2, t: 'bet' }];
     ok(!PT.ranges.isLead(acts2, acts2[3], 2, 0), 'Bet nach Check des Aggressors ist kein Lead');
   });
+  test('Prüfer B 2: frei gewählte Größen – große Verluste nie „Gut“/„Vertretbar“, Extrapolation nie Empfehlung', () => {
+    const fl = [['H', 'raise', 2.5], ['BB', 'call'], ['BB', 'check']];
+    for (const mode of ['exploit', 'gto']) {
+      const hb = T.spot('BTN', '3h2h', 'KsQd9s', fl), allin = PT.bots.publicView(hb, 0).legal.maxTo;
+      const ab = coach(hb, mode, { extra: [allin] }), gb = PT.coach.grade(ab, { type: 'bet', amount: allin });
+      ok(gb.loss > 0.4 * ab.pot && gb.score <= 20, mode + ': Luft-All-in in 5,5 BB → ' + gb.grade + ' (Verlust ' + gb.lossBB.toFixed(1) + ' BB)');
+      const hv = T.spot('BTN', '7h7d', 'Ks7c2d', fl), av = coach(hv, mode, { extra: [allin] }), gv = PT.coach.grade(av, { type: 'bet', amount: allin });
+      ok(!av.actions[0].extrapolated && av.actions[0].amount < allin && gv.extrapolated && gv.score <= 80, mode + ': Value-All-in mit 17,7-fachem Pot nicht Empfehlung (' + av.bestLabel + '), Note ' + gv.grade);
+    }
+    // Interpolation ohne Nachrechnung: Verluste über 0,4 Pot nie „Vertretbar“ oder besser
+    const hr = T.spot('BTN', '5c4c', 'KsQd9s2h8d', [['H', 'raise', 2.5], ['BB', 'call'], ['BB', 'check'], ['H', 'bet', 2], ['BB', 'call'], ['BB', 'check'], ['H', 'bet', 5], ['BB', 'call'], ['BB', 'check']]);
+    let bad = 0, n = 0; for (const mode of ['exploit', 'gto']) { const a = coach(hr, mode); [1.25, 2, 3].forEach(x => { const amt = Math.round(a.pot * x); if (amt > PT.bots.publicView(hr, 0).legal.maxTo) return; const g = PT.coach.grade(a, { type: 'bet', amount: amt }); n++; if (g.loss > 0.4 * a.pot && g.loss > 4 * a.bb && g.score >= 65) bad++; }); }
+    ok(n > 0 && bad === 0, n + ' interpolierte Größen: kein Verlust über 0,4 Pot mit „Vertretbar“ oder besser (' + bad + ')');
+  });
+
+  test('Prüfer B 7: gleichgewichtsnaher Modus – reiner Bluff gegen MDF-Verteidigung nicht strukturell −EV', () => {
+    const hr = T.spot('BTN', '5c4c', 'KsQd9s2h8d', [['H', 'raise', 2.5], ['BB', 'call'], ['BB', 'check'], ['H', 'bet', 2], ['BB', 'call'], ['BB', 'check'], ['H', 'bet', 5], ['BB', 'call'], ['BB', 'check']]);
+    const a = coach(hr, 'gto'), pot = a.actions.find(x => x.label === 'Bet Pot'), chk = a.actions.find(x => x.type === 'check');
+    ok(pot && Math.abs(pot.ev - chk.ev) < 0.05 * a.pot, 'River-Bluff Pot gleichgewichtsnah ≈ Check (' + (pot.ev / 100).toFixed(2) + ' vs ' + (chk.ev / 100).toFixed(2) + ' BB)');
+    const g = PT.coach.grade(a, { type: 'bet', amount: pot.amount }); ok(g.score >= 65, 'Note des ausgewogenen Bluffs ' + g.grade + ' (früher „Fehler“)');
+    // Fold-Rate gleichgewichtsnah = MDF ohne Populationskorrekturen (heads-up, keine starke Untergrenze)
+    const f = pot.parts.folds[0].f, mdfF = 1 - a.pot / (a.pot + (pot.amount - 0)); ok(Math.abs(f - mdfF) < 0.02 || f > mdfF, 'Fold-Rate ' + f.toFixed(3) + ' ≥ 1 − MDF ' + mdfF.toFixed(3));
+  });
 };

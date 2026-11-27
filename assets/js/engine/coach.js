@@ -278,6 +278,12 @@ function analyzeMode(input, v, mode, level, L0, budget, rng, deadline, set, prep
       approx: approx, failed: failed, reason: pp.reason || (failed ? 'EV nicht berechenbar' : null) };
   });
   acts.sort(function (a, b) { return b.ev - a.ev; });
+  // Prüfer B, Befund 2: Frei gewählte Größen über der größten Kandidatengröße liegen außerhalb aller bewerteten und kalibrierten Größen
+  // (Reaktionsmodell: ⅓ bis 1,5 Pot, All-in bis 2,5 Pot). Ihr EV ist eine Extrapolation: gekennzeichnet, nie die Empfehlung; die Bewertung
+  // deckelt einen scheinbaren Vorteil auf „Gut“ (grade). Die Unsicherheit wird nicht erweitert, damit sie Verluste nicht mildert.
+  var maxStd = 0; acts.forEach(function (a2) { if ((a2.type === 'bet' || a2.type === 'raise') && !a2.extra) maxStd = Math.max(maxStd, a2.amount); });
+  acts.forEach(function (a2) { if (a2.extra && maxStd > 0 && a2.amount > maxStd) a2.extrapolated = true; });
+  if (acts.length > 1 && acts[0].extrapolated) { var std0 = acts.filter(function (a2) { return !a2.extrapolated; })[0]; if (std0) { acts.splice(acts.indexOf(std0), 1); acts.unshift(std0); } }
   // Preflop: Faustregel-Chart als Anker. Raises außerhalb des Charts und Open-Limps nur bei belegtem Exploit.
   var chartInfo = street === 0 ? preflopAnchor(v, ctx, pre, acts, gto) : null;
   var best = acts[0];
@@ -634,24 +640,30 @@ function grade(a, chosen) {
       if (ag.length) {
         var lo = ag[0], hi = ag[ag.length - 1];
         for (var i = 0; i < ag.length - 1; i++) if (ag[i].amount <= amt && ag[i + 1].amount >= amt) { lo = ag[i]; hi = ag[i + 1]; }
-        var fr = hi.amount === lo.amount ? 0 : clamp((amt - lo.amount) / (hi.amount - lo.amount), 0, 1);
+        var fr = hi.amount === lo.amount ? 0 : clamp((amt - lo.amount) / (hi.amount - lo.amount), 0, 1), evI = lo.ev + fr * (hi.ev - lo.ev);
+        // Prüfer B, Befund 2: oberhalb der größten bewerteten Größe nicht konstant fortschreiben, sondern mit der Steigung des letzten
+        // Abschnitts, soweit sie fällt (konservativ: steigende EV-Kurven werden nicht über den letzten Wert hinaus verlängert)
+        if (amt > hi.amount && ag.length >= 2) { var p2 = ag[ag.length - 2], sl = (hi.ev - p2.ev) / Math.max(1, hi.amount - p2.amount); evI = hi.ev + Math.min(0, sl) * (amt - hi.amount); }
         // Interpolationsfehler (gemessen gegen Nachrechnung, docs/STRATEGIE.md): im Mittel 15 %, im 90. Perzentil 30 % des EV-Abstands der
         // benachbarten Größen. Die Unsicherheit wird um 35 % dieses Abstands erweitert; außerhalb der bewerteten Größen um den vollen Abstand.
         var span = Math.abs(hi.ev - lo.ev), outside = amt < ag[0].amount || amt > ag[ag.length - 1].amount, iErr = outside ? Math.max(span, 0.5 * bb) : 0.35 * span;
         var uI = Math.max(lo.u, hi.u);
-        pick = { type: t, amount: amt, ev: lo.ev + fr * (hi.ev - lo.ev), u: Math.sqrt(uI * uI + iErr * iErr), label: (t === 'bet' ? 'Bet ' : 'Raise auf ') + fmt(amt), interpolated: true, interpErr: iErr };
+        pick = { type: t, amount: amt, ev: evI, u: Math.sqrt(uI * uI + iErr * iErr), label: (t === 'bet' ? 'Bet ' : 'Raise auf ') + fmt(amt), interpolated: true, interpErr: iErr, extrapolated: amt > ag[ag.length - 1].amount };
       }
     }
   } else pick = a.actions.filter(function (x) { return x.type === t; })[0];
   if (!pick) return { grade: 'Fehler', simple: 'Fehler', score: 20, loss: null, text: 'Diese Aktion wurde nicht bewertet.' };
   var best = a.actions[0], loss = Math.max(0, best.ev - pick.ev), u = Math.max(best.u, pick.u || 0), pot = Math.max(a.pot, bb);
+  // Prüfer B, Befund 2: Die Unsicherheit darf große Verluste nicht neutralisieren. Für die Toleranzstufen zählt sie höchstens bis ¼ Pot;
+  // damit bleibt jeder Verlust über 0,375 Pot (und über 0,75 BB) unter „Vertretbar“, über 0,4 Pot (und 4 BB) „Schwerer Fehler“.
+  var uG = Math.min(u, Math.max(0.5 * bb, 0.25 * pot));
   // Höchster Modell-EV (kann preflop vom Chart-Anker abweichen); die Bewertung misst gegen die Empfehlung, meldet den Abstand aber mit
   var top = a.actions.reduce(function (m, x) { return x.ev > m.ev ? x : m; }, best), recGap = Math.max(0, top.ev - best.ev);
   var g;
   if (pick === best || loss <= 0.02 * bb) g = 'Optimal';
-  else if (loss <= Math.max(0.1 * bb, 0.5 * u)) g = 'Sehr gut';
-  else if (loss <= Math.max(0.3 * bb, 1.0 * u)) g = 'Gut';
-  else if (loss <= Math.max(0.75 * bb, 1.5 * u)) g = 'Vertretbar';
+  else if (loss <= Math.max(0.1 * bb, 0.5 * uG)) g = 'Sehr gut';
+  else if (loss <= Math.max(0.3 * bb, 1.0 * uG)) g = 'Gut';
+  else if (loss <= Math.max(0.75 * bb, 1.5 * uG)) g = 'Vertretbar';
   else if (loss <= Math.max(1.5 * bb, 0.15 * pot)) g = 'Ungenau';
   else if (loss <= Math.max(4 * bb, 0.4 * pot)) g = 'Fehler';
   else g = 'Schwerer Fehler';
@@ -660,11 +672,14 @@ function grade(a, chosen) {
     var wp = chartWeight(a.chart, pick, a.unopened);
     if (wp < CHART_MIN) { var capG = wp < 0.03 ? 'Ungenau' : 'Vertretbar'; if (GRADE_SCORE[g] > GRADE_SCORE[capG]) { g = capG; chartCap = { w: wp }; } }
   }
+  var extrap = null;
+  if (pick.extrapolated && GRADE_SCORE[g] > GRADE_SCORE.Gut) { g = 'Gut'; extrap = true; }
   var cats = GRADE_SCORE[g] <= 45 ? mistakeCats(a, pick, best) : [];
   var text = chartCap ? chartCapText(a, pick, best, loss) : gradeText(g, a, pick, best, loss);
+  if (extrap) text = 'Empfohlen war ' + best.label + '. ' + pick.label + ' liegt über allen bewerteten Größen; das Modell rechnet dort nur hochgerechnet' + (pick.ev > best.ev ? ' (' + bbTxt(pick.ev - best.ev, bb) + ' mehr)' : '') + ', die Reaktionen der Gegner auf so große Einsätze sind nicht kalibriert.';
   var tied = a.actions.some(function (x) { return x !== pick && group(x) !== group(pick) && Math.abs(pick.ev - x.ev) <= Math.max(0.1 * bb, Math.max(pick.u || 0, x.u || 0)); });
   return { grade: g, simple: GRADE_SIMPLE[g], score: GRADE_SCORE[g], loss: loss, lossBB: loss / bb, u: u, chosenLabel: pick.label, bestLabel: best.label, text: text, cats: cats, interpolated: !!pick.interpolated, tied: tied,
-    modelTopLabel: top.label, recGapBB: recGap / bb, withinU: loss <= u };
+    modelTopLabel: top.label, recGapBB: recGap / bb, withinU: loss <= uG, uGrade: uG, extrapolated: !!pick.extrapolated };
 }
 function chartCapText(a, pick, best, loss) {
   var bb = a.bb, aggr = group(pick) === 'aggr', fold = group(pick) === 'fold';
