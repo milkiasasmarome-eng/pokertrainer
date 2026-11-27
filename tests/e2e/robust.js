@@ -309,11 +309,12 @@ module.exports = async function (H) {
     await c.close();
   });
 
-  await test('Daten: zu große Datei (über 60 MB) sofort abgelehnt; große gültige Sicherung wird im Worker geprüft, Oberfläche bleibt bedienbar', async () => {
+  await test('Daten: zu große Datei (über der Importgrenze) sofort abgelehnt; große gültige Sicherung wird im Worker geprüft, Oberfläche bleibt bedienbar', async () => {
     const { c, p } = await fresh();
     await p.addInitScript(INIT.heartbeat);
     await p.goto(BASE + 'index.html#tisch'); await ready(p); await playOne(p); await playOne(p); await p.waitForTimeout(600);
-    const huge = path.join(OUT, 'zu-gross.tmp'); fs.writeFileSync(huge, Buffer.alloc(61 * 1024 * 1024, 32));
+    const MAXB = await p.evaluate(() => window.PT.stats.MAX_IMPORT);
+    const huge = path.join(OUT, 'zu-gross.tmp'); fs.writeFileSync(huge, Buffer.alloc(MAXB + 1024 * 1024, 32));
     await p.evaluate(() => { location.hash = '#einstellungen'; }); await p.waitForTimeout(300);
     const t0 = Date.now(); await p.click('#dIm'); await p.setInputFiles('#fileIn', huge);
     await p.waitForSelector('#modal:not([hidden])');

@@ -38,6 +38,17 @@ module.exports = function (T) {
     ok(r2.ok && Object.keys(r2.db.opps).length === 2, 'ID „constructor“ ist ein normaler eigener Schlüssel und bleibt erhalten');
   });
 
+  test('Prüfung C14: Importgrenze deckt die größte eigene Sicherung (3.000 Hände) ab; Oberfläche nutzt dieselbe Grenze', () => {
+    const hs = require('../app-sim.js')(PT, 12, 4242), mean = hs.reduce((a, h) => a + JSON.stringify(h).length, 0) / hs.length;
+    const need = 3000 * mean + 2 * 1048576;
+    ok(PT.stats.MAX_IMPORT >= need, 'Grenze ' + Math.round(PT.stats.MAX_IMPORT / 1048576) + ' MB ≥ 3.000 × ' + Math.round(mean / 1024) + ' KB = ' + Math.round(need / 1048576) + ' MB');
+    const v = fs.readFileSync(path.join(ROOT, 'assets/js/ui/views.js'), 'utf8');
+    ok(/MAX_FILE = PT\.stats\.MAX_IMPORT/.test(v) && /backupNow\('vor-Import', true\)/.test(v) && /backupNow\('vor-Loeschen', true\)/.test(v), 'Dateigrenze = Importgrenze; Sicherung vor Ersetzen/Löschen bricht bei Überschreitung ab');
+    // Datei knapp über der alten Grenze (60 MB) wird nicht mehr wegen der Größe abgelehnt
+    const r = PT.dataport.parseImport('{' + ' '.repeat(61 * 1048576) + '}');
+    ok(!r.ok && !/zu groß/.test(r.error), '61 MB: Formatprüfung statt Größenablehnung (' + r.error + ')');
+  });
+
   test('Prüfung C6: Trainingskategorie „constructor“ (aus Object.prototype) erzeugt keine Ausnahme', () => {
     ok(!PT.training.hasScen('constructor') && !PT.training.hasScen('__proto__') && !PT.training.hasScen(5) && PT.training.hasScen('preflop-open'), 'hasScen prüft nur eigene Kategorien');
     let g = null, err = null;

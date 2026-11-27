@@ -100,7 +100,7 @@ assets/js/recovery.js (erstes Skript, ohne Engine)        assets/js/ui/app.js bo
 - Alle Daten aus Dateien *und* aus dem lokalen Speicher gelten als nicht vertrauenswürdig. Handdatensätze werden vor jeder Anzeige,
   Sicherung und jedem Export mit `PT.training.validHand` geprüft (`PTUI.loadHands`); jedes Feld ist auf Typ und Wertebereich
   geprüft (endliche Zahlen, ganzzahlige Beträge, begrenzte Texte, bekannte Schlüssel). Textausgaben laufen über `esc()`.
-- Importdateien werden im Web Worker geprüft (`PTUI.offThread('import', …)`); Dateien über 60 MB werden vor dem Lesen abgelehnt.
+- Importdateien werden im Web Worker geprüft (`PTUI.offThread('import', …)`); Dateien über der Importgrenze (`PT.stats.MAX_IMPORT`, 256 MB) werden vor dem Lesen abgelehnt. Die Grenze deckt jede vollständige Sicherung ab, die der Trainer selbst erzeugt (bis 3.000 Hände); eine Sicherung vor Import oder Löschen, die größer wäre, bricht den Vorgang ab, bevor etwas geändert wird.
   Gemessen: 23 MB Sicherung in 1,3 s, längste Blockade der Oberfläche 0,3 s.
 - Vor jedem Import und vor „Alle Daten löschen“ wird eine Sicherung heruntergeladen; enthält der Speicher beschädigte Einträge,
   zusätzlich die Rohsicherung. Behoben: Der Import einer vollständigen Sicherung mit Lerndaten brach in 2.0.1 mit einem
