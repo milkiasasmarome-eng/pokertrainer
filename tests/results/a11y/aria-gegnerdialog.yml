@@ -1,7 +1,7 @@
-- dialog "Kalle":
-  - heading "Kalle" [level=2]
+- dialog "Cem":
+  - heading "Cem" [level=2]
   - button "Schließen": ×
-  - text: am Tisch (aktiv) Hände 2 Belastbarkeit unsicher Spielertyp unbekannt AF unbekannt zuletzt gesehen 26.11.26, 22:19
+  - text: am Tisch (aktiv) Hände 2 Belastbarkeit unsicher Spielertyp unbekannt AF unbekannt zuletzt gesehen 27.11.26, 07:41
   - heading "Veränderung der Spielweise" [level=3]
   - paragraph: Für einen Vergleich von Kurzzeit- und Langzeitwerten fehlen noch Beobachtungen.
   - 'heading "Geschätzt: Werte aus Aktionen" [level=3]'
@@ -21,16 +21,16 @@
         - columnheader "eff. n"
         - columnheader "95 %"
     - rowgroup:
-      - row "VPIP 0 % 0/2 0–66 % 25 % 0 % 2 0–66 % zu wenig Daten für Vergleich":
+      - row "VPIP 50 % 1/2 9–91 % 29 % 50 % 2 9–90 % zu wenig Daten für Vergleich":
         - cell "VPIP":
           - button "VPIP"
-        - cell "0 %"
-        - cell "0/2"
-        - cell "0–66 %"
-        - cell "25 %"
-        - cell "0 %"
+        - cell "50 %"
+        - cell "1/2"
+        - cell "9–91 %"
+        - cell "29 %"
+        - cell "50 %"
         - cell "2"
-        - cell "0–66 %"
+        - cell "9–90 %"
         - cell "zu wenig Daten für Vergleich"
       - row "PFR 0 % 0/2 0–66 % 18 % 0 % 2 0–66 % zu wenig Daten für Vergleich":
         - cell "PFR":
@@ -43,17 +43,17 @@
         - cell "2"
         - cell "0–66 %"
         - cell "zu wenig Daten für Vergleich"
-      - row "3-Bet unbekannt 0/0 – 8 % unbekannt 0 – unbekannt":
+      - row "3-Bet 0 % 0/1 0–79 % 7 % 0 % 1 0–79 % zu wenig Daten für Vergleich":
         - cell "3-Bet":
           - button "3-Bet"
-        - cell "unbekannt"
-        - cell "0/0"
-        - cell "–"
-        - cell "8 %"
-        - cell "unbekannt"
-        - cell "0"
-        - cell "–"
-        - cell "unbekannt"
+        - cell "0 %"
+        - cell "0/1"
+        - cell "0–79 %"
+        - cell "7 %"
+        - cell "0 %"
+        - cell "1"
+        - cell "0–79 %"
+        - cell "zu wenig Daten für Vergleich"
       - row "4-Bet unbekannt 0/0 – 6 % unbekannt 0 – unbekannt":
         - cell "4-Bet":
           - button "4-Bet"
@@ -164,39 +164,39 @@
         - cell "0"
         - cell "–"
         - cell "unbekannt"
-      - row "Check-Raise unbekannt 0/0 – 8 % unbekannt 0 – unbekannt":
+      - row "Check-Raise 0 % 0/1 0–79 % 8 % 0 % 1 0–79 % –":
         - cell "Check-Raise":
           - button "Check-Raise"
-        - cell "unbekannt"
-        - cell "0/0"
-        - cell "–"
+        - cell "0 %"
+        - cell "0/1"
+        - cell "0–79 %"
         - cell "8 %"
-        - cell "unbekannt"
-        - cell "0"
+        - cell "0 %"
+        - cell "1"
+        - cell "0–79 %"
         - cell "–"
-        - cell "unbekannt"
-      - row "Aggression Frequency unbekannt 0/0 – 42 % unbekannt 0 – unbekannt":
+      - row "Aggression Frequency 0 % 0/1 0–79 % 40 % 0 % 1 0–79 % zu wenig Daten für Vergleich":
         - cell "Aggression Frequency":
           - button "Aggression Frequency"
-        - cell "unbekannt"
-        - cell "0/0"
-        - cell "–"
-        - cell "42 %"
-        - cell "unbekannt"
-        - cell "0"
-        - cell "–"
-        - cell "unbekannt"
-      - row "WTSD unbekannt 0/0 – 28 % unbekannt 0 – unbekannt":
+        - cell "0 %"
+        - cell "0/1"
+        - cell "0–79 %"
+        - cell "40 %"
+        - cell "0 %"
+        - cell "1"
+        - cell "0–79 %"
+        - cell "zu wenig Daten für Vergleich"
+      - row "WTSD 0 % 0/1 0–79 % 27 % 0 % 1 0–79 % zu wenig Daten für Vergleich":
         - cell "WTSD":
           - button "WTSD"
-        - cell "unbekannt"
-        - cell "0/0"
-        - cell "–"
-        - cell "28 %"
-        - cell "unbekannt"
-        - cell "0"
-        - cell "–"
-        - cell "unbekannt"
+        - cell "0 %"
+        - cell "0/1"
+        - cell "0–79 %"
+        - cell "27 %"
+        - cell "0 %"
+        - cell "1"
+        - cell "0–79 %"
+        - cell "zu wenig Daten für Vergleich"
       - row "W$SD unbekannt 0/0 – 50 % unbekannt 0 – unbekannt":
         - cell "W$SD":
           - button "W$SD"
@@ -211,7 +211,7 @@
   - paragraph: "Z/N: Zähler/Nenner (Treffer/Gelegenheiten). 95 %: Wilson-Intervall. Unbekannt: noch keine Gelegenheit beobachtet."
   - paragraph: „Geglättet“ mischt die eigenen Beobachtungen mit dem Durchschnitt der Population (Beta-Prior); so nutzt der Coach die Werte. Das Kurzzeitgedächtnis gewichtet jede Beobachtung mit 0,5^(Alter/100) (Alter in eigenen Händen des Gegners; im Archiv altert es nicht). Kurzzeitgewicht zurzeit ≈ 2 Hände. Eine Veränderung gilt als erkannt, wenn der gewichtete Zwei-Anteile-Test Kurzzeit gegen ältere Beobachtungen |z| ≥ 3,75 ergibt.
   - 'heading "Beobachtet: Karten am Showdown" [level=3]'
-  - text: Showdowns mit aufgedeckten Karten (beobachtet) 0 gespielte Hände mit verdeckt gebliebenen Karten (unbekannt) 0
+  - text: Showdowns mit aufgedeckten Karten (beobachtet) 0 gespielte Hände mit verdeckt gebliebenen Karten (unbekannt) 1 beobachteter Anteil 0 %
   - paragraph: Noch keine aufgedeckten Blätter.
   - paragraph: "Unbekannt: In Händen ohne Showdown bleiben die Karten verdeckt; der Coach schätzt sie nur als Range."
   - heading "Nach Position" [level=3]
@@ -228,26 +228,26 @@
         - cell "0"
         - cell "unbekannt"
         - cell "unbekannt"
-      - row "HJ 1 0 % 0 %":
+      - row "HJ 0 unbekannt unbekannt":
         - cell "HJ"
-        - cell "1"
-        - cell "0 %"
-        - cell "0 %"
-      - row "CO 1 0 % 0 %":
+        - cell "0"
+        - cell "unbekannt"
+        - cell "unbekannt"
+      - row "CO 0 unbekannt unbekannt":
         - cell "CO"
+        - cell "0"
+        - cell "unbekannt"
+        - cell "unbekannt"
+      - row "BTN 1 0 % 0 %":
+        - cell "BTN"
         - cell "1"
         - cell "0 %"
         - cell "0 %"
-      - row "BTN 0 unbekannt unbekannt":
-        - cell "BTN"
-        - cell "0"
-        - cell "unbekannt"
-        - cell "unbekannt"
-      - row "SB 0 unbekannt unbekannt":
+      - row "SB 1 100 % 0 %":
         - cell "SB"
-        - cell "0"
-        - cell "unbekannt"
-        - cell "unbekannt"
+        - cell "1"
+        - cell "100 %"
+        - cell "0 %"
       - row "BB 0 unbekannt unbekannt":
         - cell "BB"
         - cell "0"

@@ -59,6 +59,13 @@ Seitenplätze auf dem Board (320–360 px) – beide nicht von t4 erfasst (nur P
 | t11/t11b | PWA | installierbar | widerlegt | „in-incognito“ nur im nicht persistenten Testkontext; persistentes Profil: keine Fehler, Symbole korrekt | – | – |
 | t12 | Fehleranzeige | Fokus nach „Weiter warten“ | **bestätigt** (1 Teil) | Fokus → `<body>`; reduzierte Bewegung, Kartenfarben im Verlauf in Ordnung | `recovery.js`: Fokus zurück auf das vorherige Element (sonst Hauptbereich) | Browser „Prüfung C3 … (D t12)“ |
 
+## Teststatus (Endstand)
+
+- `node tools/build.js`, `node tools/check-build.js` (reproduzierbar, aktuell), `node tools/check-version.js`: in Ordnung.
+- `node tests/run.js --quick`: 100 bestanden, 0 fehlgeschlagen (enthält `tests/unit/pruefung-cd.js`).
+- `node tests/e2e.js`: 52 bestanden, 0 fehlgeschlagen (enthält Teil `cd` mit 8 Regressionstests; axe-core über `tests/node_modules`).
+- Keine Langläufer (`tests/long.js`, `tests/strategy/*`) ausgeführt.
+
 ## Geänderte Engine-Dateien
 
 - `assets/js/engine/stats.js` – nur Commit „ENGINE: Prüfung C14“ (19b14a7): Konstante `MAX_IMPORT` 60 → 256 MB, Fehlermeldung, Export
