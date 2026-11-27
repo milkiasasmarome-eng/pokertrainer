@@ -1,4 +1,4 @@
-/* PokerTrainer 2.1 – Web Worker für Coach-Analysen und Importprüfung (hält die Oberfläche bedienbar). */
+/* PokerTrainer 2.2 – Web Worker für Coach-Analysen und Importprüfung (hält die Oberfläche bedienbar). */
 /* global importScripts, self */
 (function () {
 'use strict';

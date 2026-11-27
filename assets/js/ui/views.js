@@ -91,7 +91,7 @@ views.analyse = function (el, arg) {
     var x = e.target.closest('[data-hx]'); if (x) { var f = filtered(), kind = x.getAttribute('data-hx');
       if (kind === 'json') H.download('PokerTrainer_Haende_' + H.today() + '.json', JSON.stringify({ format: 'PokerTrainer-Hands', version: 1, app: PT.VERSION, count: f.length, hands: f }));
       else if (kind === 'bench') { var bt = PT.benchmark.exportText(f), bo = JSON.parse(bt); H.download('PokerTrainer_Benchmark_v' + PT.benchmark.SCHEMA + '_' + H.today() + '.json', bt); H.toast('Benchmark-Export: ' + bo.count + ' Entscheidungen aus ' + bo.hands + ' Händen.'); }
-      else if (kind === 'events') { var et = PT.events.text(f), eo = JSON.parse(et); H.download('PokerTrainer_Ereignisse_v' + PT.events.SCHEMA + '_' + H.today() + '.json', et); H.toast('Ereignisstrom: ' + eo.events + ' Entscheidungen aus ' + eo.hands + ' Händen.'); }
+      else if (kind === 'events') { var eo = PT.events.build(f), et = JSON.stringify(eo) + '\n';  // einmal serialisieren (Prüfer D 2.2, D-2) H.download('PokerTrainer_Ereignisse_v' + PT.events.SCHEMA + '_' + H.today() + '.json', et); H.toast('Ereignisstrom: ' + eo.events + ' Entscheidungen aus ' + eo.hands + ' Händen.'); }
       else H.download('PokerTrainer_Haende_' + H.today() + '.txt', f.map(PT.training.handText).join('\n\n'), 'text/plain');
       return; }
     var st = e.target.closest('[data-step]'); if (st) { stepTo(st.getAttribute('data-step')); return; }
