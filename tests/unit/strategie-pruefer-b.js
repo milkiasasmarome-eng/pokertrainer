@@ -78,4 +78,24 @@ module.exports = function (T) {
     PT.ev.comboEquities(hero, board, w, o()); const hit = PT.ev.comboEquities(hero, board, w, o()); PT.equity.cacheClear(); const miss = PT.ev.comboEquities(hero, board, w, o());
     ok(hit.info.cached && !miss.info.cached, 'PT.equity.cacheClear leert ev.comboEquities-Cache');
   });
+  test('Prüfer B 5: kein Exploit ohne eigene Beobachtung; Beleg auf der Fold-Rate, die das Modell verwendet', () => {
+    // Ohne Gegnerdaten: keine Abweichung vom Chart über den Exploit-Weg (früher 23 Fälle, z. B. HJ 22, SB T7s, BB 3-Bet AJo/44)
+    const cases = [['HJ', '2s2h', []], ['SB', 'Ts7s', []], ['BB', 'AsJh', [['BTN', 'raise', 2.5]]], ['BB', '4s4h', [['BTN', 'raise', 2.5]]], ['CO', '2s2h', []]];
+    let ex = 0; for (const [pos, cards, script] of cases) { const a = coach(T.spot(pos, cards, '', script), 'exploit'); if (a.chart && a.chart.exploit) ex++; }
+    ok(ex === 0, 'ohne Beobachtungen kein Exploit (' + ex + ' von ' + cases.length + ')');
+    const steal = (rate, n, cards) => {
+      const h = T.spot('BTN', cards || '7c2d', '', []), bb = h.p.find(q => q.pos === 'BB'), r = PT.stats.newRecord(bb.id, bb.name);
+      r.hands = Math.max(3 * n, 1); r.stats.foldToSteal = [Math.round(rate * n), n]; r.stats.vpip = [Math.round(0.75 * n), 3 * n]; r.stats.pfr = [Math.round(0.54 * n), 3 * n];
+      return coach(h, 'exploit', { opps: { [bb.id]: r } });
+    };
+    // Konsistenz: an der Schwelle r* erreicht die Modell-Fold-Rate genau fBe
+    const a10 = steal(0.9, 10), ev = a10.chart && a10.chart.evidence;
+    ok(ev && ev.w > 0 && ev.fBeRaw > 0, 'Beleg berechnet (n = 10)');
+    if (ev) {
+      const top = a10.actions.find(x => x.type === 'raise' && x.amount === ev.to), fr = top && top.parts.folds.find(x => x.pf && x.pf.key === 'foldToSteal' && x.pf.w > 0);
+      ok(fr && Math.abs(fr.pf.chartF * (1 - fr.pf.w) + ev.fBeRaw * fr.pf.g.mul * fr.pf.w - ev.fBe) < 1e-9, 'chartF·(1 − w) + g(r*)·w = fBe');
+    }
+    // Anpassung bleibt möglich: 90 % Fold über 100 Gelegenheiten → Steal mit 72o
+    ok(steal(0.9, 100).actions[0].type === 'raise', 'BB foldet 90 % (n = 100): Steal mit 72o');
+  });
 };

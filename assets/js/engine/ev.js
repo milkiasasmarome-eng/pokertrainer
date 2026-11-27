@@ -258,7 +258,7 @@ function respond(opp, ctx, heroAdd, potBefore, nResp, kind) {
     }
     if (pr0) return pr0; }
   var mdf = potBefore / Math.max(1, potBefore + heroAdd), gtoDef = 1 - Math.pow(1 - mdf, 1 / Math.max(1, nResp));
-  var sm = opp.sm, prof = opp.prof, def = gtoDef, basis = 'MDF';
+  var sm = opp.sm, prof = opp.prof, def = gtoDef, basis = 'MDF', pfInfo = null;
   if (ctx.street === 0) {
     // Preflop: Fold-Wahrscheinlichkeit aus Chart/Modell, im exploitativen Modus mit Gegnerwerten gemischt
     var chartF = clamp(1 - gtoDef * 0.85, 0.1, 0.95), statF = null, nObs = 0, lk = opp.line ? opp.line.kind : 'none', raw = opp.raw || {};
@@ -276,10 +276,18 @@ function respond(opp, ctx, heroAdd, potBefore, nResp, kind) {
     } else if (lk === 'open' || lk === 'iso') { chartF = kind === 'jam' ? 0.62 : clamp(0.5 + 0.07 * (mult - 3), 0.38, 0.68); statF = clamp(sm.foldTo3Bet + 0.07 * (mult - 3), 0.05, 0.97); nObs = obs('foldTo3Bet'); }
     else if (lk === '3bet') { chartF = kind === 'jam' ? 0.6 : clamp(0.5 + 0.08 * (mult - 2.3), 0.38, 0.7); statF = clamp(sm.foldTo4Bet + 0.08 * (mult - 2.3), 0.05, 0.97); nObs = obs('foldTo4Bet'); }
     else if (lk === 'limp') { chartF = clamp(0.5 + 0.05 * (toBB - 4), 0.3, 0.75); statF = clamp(1 - sm.vpip * 0.8 + 0.05 * (toBB - 4), 0.1, 0.9); nObs = opp.hands; }
-    var f0 = chartF;
-    if (ctx.mode !== 'gto' && statF != null) { var wObs = nObs / (nObs + 25); f0 = chartF * (1 - wObs) + statF * wObs; basis = 'Gegnerwerte (' + nObs + ' Gelegenheiten)'; }
+    var f0 = chartF, wObs = 0;
+    if (ctx.mode !== 'gto' && statF != null) { wObs = nObs / (nObs + 25); f0 = chartF * (1 - wObs) + statF * wObs; basis = 'Gegnerwerte (' + nObs + ' Gelegenheiten)'; }
     else basis = 'Faustregel-Chart';
     def = clamp(1 - f0, 0.04, 0.96);
+    // Bestandteile der Fold-Rate für den Bayes-Beleg (Prüfer B, Befund 5): f = chartF·(1 − w) + g(Rate)·w, g = Größenanpassung der Statistik
+    var pfKey = null, pfG = null;
+    if (ctx.mode !== 'gto' && statF != null) {
+      if ((opp.pending || lk === 'none') && (kind === 'open' || kind === 'iso') && (opp.p.pos === 'SB' || opp.p.pos === 'BB')) { pfKey = 'foldToSteal'; pfG = { mul: Math.pow(clamp(toBB, 1.6, 8) / 2.5, 0.25) }; }
+      else if (lk === 'open' || lk === 'iso') { pfKey = 'foldTo3Bet'; pfG = { add: 0.07 * (mult - 3) }; }
+      else if (lk === '3bet') { pfKey = 'foldTo4Bet'; pfG = { add: 0.08 * (mult - 2.3) }; }
+    }
+    pfInfo = { chartF: chartF, statF: statF, w: wObs, n: nObs, key: pfKey, g: pfG };
   } else if (ctx.mode !== 'gto') {
     var adj = 0;
     if (kind === 'cbet') adj += (R.PRIOR.foldToCbet - sm.foldToCbet) * 0.9;
@@ -310,7 +318,7 @@ function respond(opp, ctx, heroAdd, potBefore, nResp, kind) {
   var raiseFrac = def * (ctx.mode === 'gto' ? 0.16 : clamp(0.08 + 0.22 * prof.aggr, 0.05, 0.35));
   if (opp.p.stack <= heroAdd) raiseFrac = 0;
   var sp = splitRange(opp.w, strengthScores(opp, ctx), def, raiseFrac);
-  return { f: 1 - def, c: def - raiseFrac, r: raiseFrac, contW: sp.contW, callW: sp.callW, raiseW: sp.raiseW, basis: basis };
+  return { f: 1 - def, c: def - raiseFrac, r: raiseFrac, contW: sp.contW, callW: sp.callW, raiseW: sp.raiseW, basis: basis, pf: ctx.street === 0 ? pfInfo : undefined };
 }
 
 // ---------- Equity Realization ----------
@@ -452,7 +460,7 @@ function evBet(ctx, to, kind) {
   // Ableitung nach Equity (für Unsicherheit): Anteil der Fälle mit Showdown-Beteiligung
   var dEdq = 0; branches.forEach(function (b) { if (b.eq != null) dEdq += b.p * b.pot * RzBet; });
   return { ev: total, dEdq: dEdq, parts: { to: to, add: a, pAllFold: allins.length ? 0 : pAllFold, pRaise: pRaise, evRaised: evRaised, branches: branches.slice(0, 8),
-    folds: R0.map(function (r, i) { return { name: resp[i].p.name, f: r.f, c: r.c, r: r.r, basis: r.basis }; }), realization: RzBet } };
+    folds: R0.map(function (r, i) { return { name: resp[i].p.name, f: r.f, c: r.c, r: r.r, basis: r.basis, pf: r.pf }; }), realization: RzBet } };
 }
 
 // ---------- Kandidaten-Größen ----------

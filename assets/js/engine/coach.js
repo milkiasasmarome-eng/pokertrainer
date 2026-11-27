@@ -372,8 +372,14 @@ function preflopAnchor(v, ctx, pre, acts, gto) {
   // entscheidenden Gegners (Beta-Prior aus dem Populationsmittel, Stärke wie bei der Glättung) und Wahrscheinlichkeit,
   // dass die wahre Fold-Rate über der Break-even-Rate liegt, ab der die Abweichung vom Chart nichts mehr bringt.
   var evd = !gto && group(top) === 'aggr' ? exploitEvidence(ctx, pre, top, alt, unopened, raiser) : null;
+  // Gegenrichtung (Prüfer B, Befund 1/5): Fold statt Chart-Raise nur, wenn belegt ist, dass dieser Gegner seltener foldet als nötig
+  var tighter = !gto && group(top) === 'fold' && group(alt) === 'aggr';
+  if (tighter) evd = exploitEvidence(ctx, pre, alt, top, unopened, raiser);
   if (evd) info.evidence = evd;
-  if (evd && evd.p >= 0.9 && gapM >= Math.max(0.3 * ctx.bb, top.u)) { info.exploit = { obs: evd.n, gap: gapM, p: evd.p, fBe: evd.fBe, fBeRaw: evd.fBeRaw, post: evd.mean }; return info; }
+  var pDir = evd ? (tighter ? evd.pBelow : evd.p) : 0;
+  if (evd && pDir >= 0.9 && gapM >= Math.max(0.3 * ctx.bb, top.u, tighter ? alt.u : 0)) {
+    info.exploit = { obs: evd.n, gap: gapM, p: pDir, fBe: evd.fBe, fBeRaw: evd.fBeRaw, post: evd.est != null ? evd.est : evd.mean, dir: tighter ? 'enger' : 'weiter' }; return info;
+  }
   acts.splice(acts.indexOf(alt), 1); acts.unshift(alt);
   info.applied = true; info.w = chartWeight(hc, alt, unopened); info.modelBest = top.label; info.modelGap = gapM; info.obs = evd ? evd.n : 0;
   return info;
@@ -391,17 +397,26 @@ function exploitEvidence(ctx, pre, top, alt, unopened, raiser) {
   if (!(pAF > 0) || !(pAF < 1)) return null;
   var C = (top.ev - pAF * P) / (1 - pAF), b = (P - C) * pAF / fr.f;  // ∂EV/∂f dieses Gegners (übrige Gegner fest)
   if (!(b > 0)) return null;
-  var fBe = clamp(fr.f - (top.ev - alt.ev) / b, 0, 1);
+  var fBe = clamp(fr.f - (top.ev - alt.ev) / b, 0, 1);  // top: die Raise-Aktion, alt: die Vergleichsaktion (auch Fold bei engerem Spiel)
   // Prüfer A, Befund 12: fBe gilt für die Fold-Wahrscheinlichkeit bei dieser Größe; die Posterior beschreibt den größenunabhängigen Rohwert.
   // Die Größenanpassung des Reaktionsmodells (respond, preflop) wird deshalb umgekehrt: Rohwert-Schwelle r*, deren größenangepasste
   // Fold-Rate gerade fBe ergibt (3-Bet: r + 0,07·(Vielfaches − 3); 4-Bet: r + 0,08·(Vielfaches − 2,3); Steal: r·(BB/2,5)^0,25).
-  var to = top.amount || 0, toBB = to / ctx.bb, mult = to / Math.max(1, ctx.cur || ctx.bb), fBeRaw;
-  if (key === 'foldTo3Bet') fBeRaw = fBe - 0.07 * (mult - 3);
-  else if (key === 'foldTo4Bet') fBeRaw = fBe - 0.08 * (mult - 2.3);
-  else fBeRaw = fBe / Math.pow(clamp(toBB, 1.6, 8) / 2.5, 0.25);
-  fBeRaw = clamp(fBeRaw, 0, 1);
-  var a = m * k + raw[0], bb = (1 - m) * k + (raw[1] - raw[0]);
-  return { key: key, n: raw[1], folds: raw[0], fBe: fBe, fBeRaw: fBeRaw, mult: mult, fModel: fr.f, mean: a / (a + bb), p: 1 - betaCdf(fBeRaw, a, bb) };
+  // Prüfer B, Befund 5: Der Beleg prüft dieselbe Größe wie das Modell. Die Fold-Rate des Modells ist f = chartF·(1 − w) + g(Rate)·w
+  // (w = n/(n + 25), g = Größenanpassung der Statistik, respond preflop). Gesucht ist die Rate r*, bei der f gerade fBe erreicht.
+  // Skeptischer Prior: Beta mit Mittel r* (Stärke wie bei der Glättung) – ohne Beobachtungen ist P(Rate > r*) ≈ 0,5, ein Exploit
+  // braucht also eigene Evidenz statt der Populationsannahme. Hängt die Modellentscheidung gar nicht von der Rate ab (w = 0 oder
+  // chartF·(1 − w) ≥ fBe), ist sie nicht durch Beobachtungen belegt (p = 0).
+  var pf = fr.pf, to = top.amount || 0, mult = to / Math.max(1, ctx.cur || ctx.bb);
+  var out = { key: key, n: raw[1], folds: raw[0], fBe: fBe, fBeRaw: null, mult: mult, fModel: fr.f, mean: null, p: 0, pBelow: 0, k: k, to: to };
+  if (!pf || pf.key !== key || !(pf.w > 0) || !pf.g) { out.reason = 'Modell hängt nicht von Beobachtungen ab'; return out; }
+  out.chartF = pf.chartF; out.w = pf.w;
+  var gT = (fBe - pf.chartF * (1 - pf.w)) / pf.w, rStar = pf.g.mul ? gT / pf.g.mul : gT - pf.g.add;
+  if (!(rStar > 0.001)) { out.fBeRaw = 0; out.reason = 'Modellentscheidung unabhängig von der Rate'; return out; }
+  if (rStar >= 0.999) { out.fBeRaw = 1; out.p = 0; return out; }
+  var a = rStar * k + raw[0], bb = (1 - rStar) * k + (raw[1] - raw[0]);
+  out.fBeRaw = rStar; out.mean = a / (a + bb); out.p = 1 - betaCdf(rStar, a, bb); out.pBelow = 1 - out.p;
+  out.est = ro.sm && ro.sm[key] != null ? ro.sm[key] : out.mean;  // geglätteter Wert, mit dem das Modell rechnet (Anzeige)
+  return out;
 }
 /** Regularisierte unvollständige Betafunktion I_x(a, b) (Kettenbruch nach Lentz) */
 function betaCdf(x, a, b) {
@@ -558,6 +573,7 @@ function explain(a, depth) {
   if (best.type === 'fold') {
     if (po && eq.eq < po.need) core = 'Fold: Du müsstest ' + fmt(po.call) + ' zahlen und bräuchtest dafür mindestens ' + pct(po.need) + ' Gewinnchance. Geschätzt hast du nur etwa ' + pct(eq.eq) + '.';
     else if (po) core = 'Fold: Die rohe Equity (' + pct(eq.eq) + ') liegt zwar über den benötigten ' + pct(po.need) + ', ' + (a.street < 3 && !(a.actions[0].parts || {}).allin ? 'aber ' + (a.ip ? '' : 'außer Position ') + 'realisierst du davon auf den späteren Straßen nur einen Teil, und weitere Einsätze drohen.' : 'aber gegen die wahrscheinliche Range des Gegners verlierst du zu oft.');
+    else if (a.street === 0 && a.chart && a.chart.exploit && a.chart.exploit.dir === 'enger') core = 'Fold: ' + a.hand.cls + ' ist laut ' + a.chart.kind + ' spielbar, aber dieser Gegner foldet nach den Beobachtungen zu selten, als dass sich der Raise lohnt.';
     else if (a.street === 0 && a.chart) core = 'Fold: ' + a.hand.cls + ' gehört laut ' + a.chart.kind + ' nicht zu den spielbaren Händen' + (a.chart.raise > 0 || a.chart.call > 0 ? ' (nur ' + pct(a.chart.raise + a.chart.call) + ' Spielanteil)' : '') + '.';
     else core = 'Fold.';
   }
@@ -569,7 +585,7 @@ function explain(a, depth) {
     core = actWord + ': ' + (value ? 'Mit etwa ' + pct(eq.eq) + ' Equity holst du Value von schwächeren Händen.' : 'Die Bet gewinnt den Pot geschätzt in etwa ' + pct(p.pAllFold || 0) + ' der Fälle sofort' + (a.hand.draw && a.hand.draw.strong ? ', und dein Draw hat Rückhalt.' : '.'));
   }
   if (a.street === 0 && a.chart && a.chart.applied) core += ' Preflop folgt der Coach hier dem Faustregel-Chart (' + a.chart.kind + '); das vereinfachte EV-Modell sähe ' + a.chart.modelBest + ' um ' + bbTxt(a.chart.modelGap, bb) + ' vorn, aber nur wegen Fold-Annahmen, die nicht durch Gegnerwerte belegt sind.';
-  else if (a.street === 0 && a.chart && a.chart.exploit) core += ' Das weicht vom Faustregel-Chart ab: Nach ' + a.chart.exploit.obs + ' beobachteten Situationen liegt die geschätzte Fold-Rate dieses Gegners bei ' + pct(a.chart.exploit.post) + '; mit ' + pct(a.chart.exploit.p) + ' Wahrscheinlichkeit über der Break-even-Rate von ' + pct(a.chart.exploit.fBeRaw != null ? a.chart.exploit.fBeRaw : a.chart.exploit.fBe) + ' (auf die Größe dieses Raises umgerechnet).';
+  else if (a.street === 0 && a.chart && a.chart.exploit) core += ' Das weicht vom Faustregel-Chart ab: Nach ' + a.chart.exploit.obs + ' beobachteten Situationen liegt die geschätzte Fold-Rate dieses Gegners bei ' + pct(a.chart.exploit.post) + '; mit ' + pct(a.chart.exploit.p) + ' Wahrscheinlichkeit ' + (a.chart.exploit.dir === 'enger' ? 'unter' : 'über') + ' der Break-even-Rate von ' + pct(a.chart.exploit.fBeRaw != null ? a.chart.exploit.fBeRaw : a.chart.exploit.fBe) + ' (auf die Größe dieses Raises und die Gewichtung im Modell umgerechnet).';
   lines.einsteiger.push(core);
   if (a.street === 0 && a.actions.length) lines.einsteiger.push(a.hand.top <= 0.4 ? a.hand.cls + ' gehört zu den besten ' + (a.hand.top < 0.01 ? '1' : Math.round(a.hand.top * 100)) + ' % aller Starthände.' : a.hand.cls + ' liegt auf Rang ' + (H.CLS_RANK[H.nameToIdx(a.hand.cls)] + 1) + ' von 169 Starthandklassen.');
   // Fortgeschritten

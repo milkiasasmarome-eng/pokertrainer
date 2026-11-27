@@ -58,10 +58,11 @@ module.exports = function (T) {
     const a = run(4.2), ev = a.chart && a.chart.evidence;
     ok(ev && ev.key === 'foldTo3Bet', 'Beleg berechnet (' + (ev ? ev.key : '-') + ')');
     if (ev) {
-      const exp = Math.min(1, Math.max(0, ev.fBe - 0.07 * (ev.mult - 3)));
-      ok(Math.abs(ev.fBeRaw - exp) < 1e-9, 'fBeRaw = fBe − 0,07·(Vielfaches − 3) (' + ev.fBeRaw.toFixed(4) + ' vs ' + exp.toFixed(4) + ')');
-      const k = PT.ranges.PRIOR_K.foldTo3Bet, m = PT.ranges.PRIOR.foldTo3Bet, aa = m * k + 80, bb = (1 - m) * k + 20;
-      ok(Math.abs(ev.p - (1 - PT.coach.betaCdf(ev.fBeRaw, aa, bb))) < 1e-9, 'Wahrscheinlichkeit aus der Posterior des Rohwerts an der umgerechneten Schwelle');
+      // Seit Prüfer B, Befund 5: Umkehr der ganzen Modell-Fold-Rate f = chartF·(1 − w) + (r + 0,07·(Vielfaches − 3))·w, skeptischer Prior um r*
+      const exp = (ev.fBe - ev.chartF * (1 - ev.w)) / ev.w - 0.07 * (ev.mult - 3);
+      ok(Math.abs(ev.w - 100 / 125) < 1e-9 && Math.abs(ev.fBeRaw - exp) < 1e-9, 'fBeRaw = Rate, bei der die Modell-Fold-Rate fBe erreicht (' + ev.fBeRaw.toFixed(4) + ' vs ' + exp.toFixed(4) + ')');
+      const k = PT.ranges.PRIOR_K.foldTo3Bet, aa = ev.fBeRaw * k + 80, bb = (1 - ev.fBeRaw) * k + 20;
+      ok(Math.abs(ev.p - (1 - PT.coach.betaCdf(ev.fBeRaw, aa, bb))) < 1e-9, 'Wahrscheinlichkeit aus der Posterior (skeptischer Prior um die Schwelle)');
     }
   });
 };
