@@ -2,6 +2,30 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [2.3.0] – 2026-11-27
+
+Generalisierung, Ursachenanalyse der Regression 2.2 und unabhängige Validierung. Nicht freigegeben, solange der Final Acceptance Test aussteht.
+Ergebnisse: `docs/ERGEBNISSE_2.3.md` (automatisch), Bewertung: `docs/TESTBERICHT_2.3.md`, Ursachen: `docs/URSACHENANALYSE_2.3.md`.
+
+### Strategie
+- Ablationsstudie: Hauptursache der Regression 2.2 ist das Reaktionsmodell aus der Aktionstabelle, zweite Ursache die Range-Tabelle (`docs/URSACHENANALYSE_2.3.md`).
+- Hybrides Modell: Range und Reaktion mischen Populationstabelle und robustes Modell 2.1 je Gegner nach der Belastbarkeit der Tabelle
+  (Übereinstimmung der aufgedeckten Blätter mit der Tabelle, gepoolt über den Tisch); Größensignale nur zur Hälfte vertraut.
+- Varianten robust (A), adaptiv (B) und hybrid (C) mit Schaltern für Vergleichsläufe (`PT.ranges.ABL`); Modellwahl auf eigenen Validierungsgegnern.
+
+### Gegnergruppen und Validierung
+- Parametrische synthetische Gegner mit Gruppen Entwicklung, Training, Validierung, Kalibrierung (`tests/strategy/synth23.js`);
+  abschließende Testgruppe F23 von einem unabhängigen Prüfagenten (versiegelt, `tests/strategy/final23/`).
+- Abnahmekriterien mit Nichtunterlegenheitsgrenzen und Holm-Korrektur vor den Läufen (`docs/ABNAHMEKRITERIEN_2.3.md`).
+
+### Prüfbefunde aus 2.2
+- C-7 (Reparatur der Lerndaten), C-12 (Format-1-Gegner), D-2 (Export im Worker), D-5 (Spielerzahl der Zelle), D-6 (Tabellengewicht 0),
+  D-11 (Beschriftung All-in unter Nenngröße), A-15 (Mehrgegnerzelle mit All-in-Spielern); je ein Regressionstest (`tests/unit/pruefung-23.js`).
+
+### PAI
+- Zusätzliche Integrationstests (Reproduzierbarkeit, Fehlerbehandlung, Datenintegrität, Leckage) und Änderungsauftrag für PAI
+  (`docs/PAI_AENDERUNGSAUFTRAG.md`): PAI 0.1.0 liest Format 3 nach einer einzeiligen Änderung; geprüft an einer Kopie.
+
 ## [2.2.0] – 2026-11-27
 
 Strategische Überarbeitung mit Folgeaudit, getrennten Gegnergruppen, vor den Tests festgelegten Kriterien und Berichten aus Rohdaten.

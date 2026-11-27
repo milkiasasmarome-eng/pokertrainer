@@ -466,8 +466,9 @@ function aggRates(agg) {
   var K = 30, n1 = (agg.bet || 0) + (agg.check || 0), n2 = (agg.fold || 0) + (agg.call || 0) + (agg.raise || 0), pf = LIK.ref ? LIK.ref.aggFirst : LIK.pool.first, pd = LIK.ref ? LIK.ref.aggFold : LIK.pool.fold;
   return { first: ((agg.bet || 0) + K * pf) / (n1 + K), fold: ((agg.fold || 0) + K * pd) / (n2 + K), n1: n1, n2: n2 };
 }
-/** 2.3: Schalter für Ablationsstudien und Strategievarianten (nur Vergleichsläufe; im Trainer alle aus). */
-var ABL = {};
+/** 2.3: Schalter für Ablationsstudien und Strategievarianten. Produktstand: hybrides Modell C (Modellwahl, docs/STRATEGIEVARIANTEN_2.3.md);
+    alle übrigen Schalter nur für Vergleichsläufe. */
+var ABL = { hybrid: true };
 function setLikelihoodTable(t) { LIK = t; }
 function likelihoodTable() { return LIK; }
 /** Wendet alle Postflop-Aktionen eines Spielers bis einschließlich Straße `upto` an. */

@@ -1,4 +1,4 @@
-# PokerTrainer 2.2
+# PokerTrainer 2.3
 
 **Live:** https://milkiasasmarome-eng.github.io/pokertrainer/
 
@@ -12,7 +12,7 @@ No-Limit-Hold'em-Trainer im Browser: 6-max Cash Game mit Spielgeld gegen 100 wie
 |---|---|
 | Website | Link oben öffnen. Funktioniert auf Desktop, Tablet und Smartphone. |
 | App installieren | Im Browser „Installieren“ bzw. „Zum Home-Bildschirm“ wählen (PWA). Danach auch offline nutzbar. |
-| Offline-Datei | [`dist/PokerTrainer_2.2.html`](dist/PokerTrainer_2.2.html) herunterladen und per Doppelklick öffnen – eine einzige Datei, keine Installation. |
+| Offline-Datei | [`dist/PokerTrainer_2.3.html`](dist/PokerTrainer_2.3.html) herunterladen und per Doppelklick öffnen – eine einzige Datei, keine Installation. |
 
 Daten (Gegnerdatenbank, Handhistorie, Lernfortschritt) bleiben im jeweiligen Browser. Export, Import und Löschen unter **Einstellungen → Daten**. Siehe [PRIVACY.md](PRIVACY.md).
 
@@ -41,7 +41,7 @@ assets/css/app.css         Oberfläche
 assets/js/engine/*.js      Spiel- und Trainingslogik (ohne DOM, auch in Node testbar)
 assets/js/ui/*.js          Oberfläche: Persistenz (store), Controller (app), Ansichten (views)
 assets/js/worker.js        Web Worker für Coach-Analysen
-dist/PokerTrainer_2.2.html portable Einzeldatei (erzeugt von tools/build.js)
+dist/PokerTrainer_2.3.html portable Einzeldatei (erzeugt von tools/build.js)
 tests/                     Testsuite, Langläufer, Browser-Tests, Ergebnisse
 tools/                     Build, Bilder, Preflop-Tabelle, Prüfprogramme
 docs/                      Architektur, Methoden, Testbericht, Audit, Quellen
@@ -54,7 +54,7 @@ Website und Offline-Datei nutzen dieselben Quelldateien; `tools/build.js` setzt 
 Voraussetzung: Node.js 22. Keine Abhängigkeiten.
 
 ```bash
-node tools/build.js            # sw.js und dist/PokerTrainer_2.2.html erzeugen
+node tools/build.js            # sw.js und dist/PokerTrainer_2.3.html erzeugen
 node tests/run.js --quick      # schnelle Testsuite (läuft auch in GitHub Actions)
 node tests/run.js              # vollständige Testsuite
 node tests/long.js             # Langläufer: 7-Karten-Enumeration, 1.000.000 Hände, Kalibrierung, Coach-Vergleich

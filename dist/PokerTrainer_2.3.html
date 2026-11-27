@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' blob:; style-src 'unsafe-inline'; img-src data:; worker-src blob:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
-<title>PokerTrainer 2.2 – No-Limit Hold'em Trainer mit Coach</title>
+<title>PokerTrainer 2.3 – No-Limit Hold'em Trainer mit Coach</title>
 <meta name="description" content="Kostenloser No-Limit-Hold'em-Trainer im Browser: 6-max Cash Game mit Spielgeld, 100 Computergegnern, Echtzeit-Coach mit Equity und EV, Hand-Replayer, Range-Matrix und Lernfortschritt. Ohne Konto, läuft offline.">
 <meta name="theme-color" content="#0f5a4a">
 <meta name="color-scheme" content="light dark">
@@ -584,7 +584,7 @@ R.fail = function (reason, detail, opts) {
   <header class="top">
     <div class="brand">
       <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgcm9sZT0iaW1nIiBhcmlhLWxhYmVsPSJQb2tlclRyYWluZXIiPgogIDxkZWZzPjxyYWRpYWxHcmFkaWVudCBpZD0iZyIgY3g9IjUwJSIgY3k9IjM4JSIgcj0iNzAlIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiMxZjhhNzEiLz48c3RvcCBvZmZzZXQ9Ii42IiBzdG9wLWNvbG9yPSIjMTE2MDRmIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMGE0NDM4Ii8+PC9yYWRpYWxHcmFkaWVudD48L2RlZnM+CiAgPHJlY3QgeD0iMiIgeT0iMiIgd2lkdGg9IjYwIiBoZWlnaHQ9IjYwIiByeD0iMTQiIGZpbGw9InVybCgjZykiLz4KICA8cmVjdCB4PSIyIiB5PSIyIiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHJ4PSIxNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjM2IyZDI0IiBzdHJva2Utd2lkdGg9IjMiLz4KICA8cGF0aCBkPSJNMzIgMTJjLTMuMiA0LjYtMTQgMTEuMi0xNCAxOS4yIDAgNSAzLjkgOC4yIDguMiA4LjIgMi40IDAgNC4yLTEgNS4yLTIuNC0uNiA0LjItMi4zIDcuNC01LjIgOS40aDExLjZjLTIuOS0yLTQuNi01LjItNS4yLTkuNCAxIDEuNCAyLjggMi40IDUuMiAyLjQgNC4zIDAgOC4yLTMuMiA4LjItOC4yQzQ2IDIzLjIgMzUuMiAxNi42IDMyIDEyeiIgZmlsbD0iI2ZiZjhmMCIvPgogIDxjaXJjbGUgY3g9IjQ3IiBjeT0iNDciIHI9IjkiIGZpbGw9IiNjZjNmMmMiIHN0cm9rZT0iI2ZiZjhmMCIgc3Ryb2tlLXdpZHRoPSIyLjUiLz4KICA8Y2lyY2xlIGN4PSI0NyIgY3k9IjQ3IiByPSI0LjIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZiZjhmMCIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1kYXNoYXJyYXk9IjIuMiAyLjIiLz4KPC9zdmc+Cg==" alt="" width="30" height="30">
-      <div><h1>PokerTrainer <span class="ver">2.2</span></h1>
+      <div><h1>PokerTrainer <span class="ver">2.3</span></h1>
       <span class="sub">No-Limit Hold'em · 6-max · Spielgeld</span></div>
     </div>
     <div class="status" id="status">Lade …</div>
@@ -687,7 +687,7 @@ R.fail = function (reason, detail, opts) {
     <section class="view" id="view-hilfe" hidden></section>
   </main>
   <footer class="foot">
-    <span>PokerTrainer <span id="verText">2.2.0</span> · nur Spielgeld, kein Glücksspiel · Daten bleiben in deinem Browser</span>
+    <span>PokerTrainer <span id="verText">2.3.0</span> · nur Spielgeld, kein Glücksspiel · Daten bleiben in deinem Browser</span>
     <a href="#hilfe/datenschutz">Datenschutz &amp; Rechtliches</a>
   </footer>
 </div>
@@ -708,7 +708,7 @@ R.fail = function (reason, detail, opts) {
 (function (G) {
 'use strict';
 var PT = G.PT || (G.PT = {});
-PT.VERSION = '2.2.0';
+PT.VERSION = '2.3.0';
 PT.BUILD = '2026-11-27';
 
 // ---------- Hilfen ----------
@@ -1895,11 +1895,19 @@ function aggRates(agg) {
   var K = 30, n1 = (agg.bet || 0) + (agg.check || 0), n2 = (agg.fold || 0) + (agg.call || 0) + (agg.raise || 0), pf = LIK.ref ? LIK.ref.aggFirst : LIK.pool.first, pd = LIK.ref ? LIK.ref.aggFold : LIK.pool.fold;
   return { first: ((agg.bet || 0) + K * pf) / (n1 + K), fold: ((agg.fold || 0) + K * pd) / (n2 + K), n1: n1, n2: n2 };
 }
-/** 2.3: Schalter für Ablationsstudien und Strategievarianten (nur Vergleichsläufe; im Trainer alle aus). */
-var ABL = {};
+/** 2.3: Schalter für Ablationsstudien und Strategievarianten. Produktstand: hybrides Modell C (Modellwahl, docs/STRATEGIEVARIANTEN_2.3.md);
+    alle übrigen Schalter nur für Vergleichsläufe. */
+var ABL = { hybrid: true };
 function setLikelihoodTable(t) { LIK = t; }
 function likelihoodTable() { return LIK; }
 /** Wendet alle Postflop-Aktionen eines Spielers bis einschließlich Straße `upto` an. */
+var shareCache = {};
+/** Anteil einer Einsatzgröße an allen Bets eines Zelltyps über alle Stärkeklassen (Populationstabelle) */
+function sizeShare(cellKey, out) {
+  var k = cellKey + '|' + out; if (shareCache[k] != null) return shareCache[k];
+  var num = 0, den = 0; for (var xb = 0; xb < 10; xb++) { var d = likDist(cellKey, 0, xb); if (!d) continue; num += d[out] || 0; den += (d.bs || 0) + (d.bl || 0) + (d.bo || 0); }
+  return (shareCache[k] = den > 0 ? num / den : 1 / 3);
+}
 function narrowPostflop(w, actions, seat, board, prof, pfaSeat, upto, opt) {
   var streets = [1, 2, 3], useTable = !!LIK && !(opt && opt.legacy), tcache = {};
   streets.forEach(function (s) {
@@ -1916,12 +1924,14 @@ function narrowPostflop(w, actions, seat, board, prof, pfaSeat, upto, opt) {
         // 2.2: datenbasierte Likelihood nach absoluter Stärke, Lage, Einsatzgröße und Mehrgegner, angepasst an die Werte des Gegners;
         // Zellen ohne Daten: Faustregel mit der absoluten Stärke
         if (!hsA) hsA = absAll();
-        var idx = actions.indexOf(a), cell = cellAt(actions, idx, seat, pfaSeat, 6), out = actionOutcome(a, cell);
+        var idx = actions.indexOf(a), cell = cellAt(actions, idx, seat, pfaSeat, opt && opt.nPlayers || 6), out = actionOutcome(a, cell);
         for (var k2 = 0; k2 < NC; k2++) {
           if (!(w[k2] > 0)) continue;
           var xa = hsA.v[k2], dr = s < 3 && hsA.d[k2] === 1 ? 1 : 0, d = likDist(cell.key, dr, xaBucket(xa));
           if (!d) { w[k2] *= likelihood(a.t, xa, dr === 1, ctx, prof); continue; }
-          var pk = oppAdjust(d, cell.facing, xa, prof, cell.key, opt && opt.sm, tcache)[out];
+          var dA = oppAdjust(d, cell.facing, xa, prof, cell.key, opt && opt.sm, tcache), pk = dA[out];
+          // 2.3 (Modell C): Größensignale nur teilweise vertrauen – Anteil rho der Größenwahl stärkeunabhängig (Populationsanteil der Größe im Zelltyp)
+          if (opt && opt.sizeShrink > 0 && (out === 'bs' || out === 'bl' || out === 'bo')) { var tb = (dA.bs || 0) + (dA.bl || 0) + (dA.bo || 0); pk = (1 - opt.sizeShrink) * (pk || 0) + opt.sizeShrink * tb * sizeShare(cell.key, out); }
           w[k2] *= Math.max(0.02, Math.min(1, pk == null ? 0.02 : pk));
         }
         return;
@@ -3773,7 +3783,8 @@ function likRespond(opp, ctx, heroAdd, potBefore, nResp) {
   var st = ctx.street, A = absStrength(ctx.board), w = opp.w;
   var callAmt = Math.max(0, Math.min(ctx.me.bet + heroAdd, opp.p.bet + opp.p.stack) - opp.p.bet);
   var f = callAmt / Math.max(1, potBefore + heroAdd - callAmt), facingRaise = ctx.L.toCall > 0;  // wie in den Daten: Einsatz / Pot vor dem Einsatz
-  var key = st + '|' + (facingRaise ? 'rr' : R.sizeKey(f)) + '|' + (nResp > 1 ? 'm' : 'h'), cache = {};
+  var nLive = ctx.opps ? ctx.opps.length : nResp;   // 2.3 (A-15): wie in den Daten zählen alle nicht gefoldeten Gegner, auch All-in
+  var sk = facingRaise ? 'rr' : R.sizeKey(f), key = st + '|' + sk + '|' + (Math.max(nResp, nLive) > 1 ? 'm' : 'h'), cache = {};
   var canRaise = opp.p.stack > callAmt, contW = new Float64Array(NC), callW = new Float64Array(NC), raiseW = new Float64Array(NC), W = 0, Cn = 0, Rs = 0, miss = 0;
   for (var k = 0; k < NC; k++) {
     var x0 = w[k]; if (!(x0 > 0)) continue;
@@ -3787,28 +3798,30 @@ function likRespond(opp, ctx, heroAdd, potBefore, nResp) {
   if (!(W > 0) || miss > 0) return null;
   var nObs = opp.raw && opp.raw.foldToCbet ? opp.raw.foldToCbet[1] : 0;
   return { f: clamp(1 - Cn / W, 0, 1), c: Math.max(0, (Cn - Rs) / W), r: Rs / W, contW: contW, callW: callW, raiseW: raiseW,
-    basis: 'Aktionstabelle der Population, angepasst an Gegnerwerte (' + nObs + ' Beobachtungen)', model: 'tab', price: callAmt / Math.max(1, potBefore + heroAdd + callAmt) };
+    basis: 'Aktionstabelle der Population, angepasst an Gegnerwerte (' + nObs + ' Beobachtungen)', model: 'tab', sk: sk, price: callAmt / Math.max(1, potBefore + heroAdd + callAmt) };
 }
 /**
  * Reaktion eines Gegners auf einen Einsatz. heroAdd: Chips, die der Held hinzufügt; potBefore: Pot vor der Aktion.
  * Rückgabe: {f, c, r} (Wahrscheinlichkeiten), contW/callW/raiseW (Ranges), basis (Text)
  */
+/** 2.3: Gewicht der Aktionstabelle in der Reaktion je Größenklasse (Prüfbefund B-6: Overbets s5/s6 eigenes Gewicht, auf V gewählt) */
+function tabWeight(sk) { if ((sk === 's5' || sk === 's6') && POP.tabBlendBig != null) return POP.tabBlendBig; return POP.tabBlend; }
 function respond(opp, ctx, heroAdd, potBefore, nResp, kind) {
   if (ctx.street > 0 && ctx.mode !== 'gto' && !POP.off && !POP.tabOff && !R.ABL.respLegacy && !respond.inner) {
-    var tr = likRespond(opp, ctx, heroAdd, potBefore, nResp);
-    if (tr && POP.tabBlend > 0 && POP.tabBlend < 1) {
+    var tr = likRespond(opp, ctx, heroAdd, potBefore, nResp), a = tr ? tabWeight(tr.sk) * (opp.wResp != null ? opp.wResp : opp.wTab != null ? opp.wTab : 1) : 0;   // 2.3: Modell C skaliert das Tabellengewicht je Gegner
+    if (tr && a > 0 && a < 1) {
       // Modellmittelung (2.2): Mischung aus Aktionstabelle und Reaktionsmodell 2.1 (Populationsmodell gemittelt mit MDF). Die Tabelle
       // überschätzt Folds gegen kleine Einsätze, das 2.1-Modell unterschätzt sie gegen große (Größenstudie Gruppe V, docs/STRATEGIE.md);
       // die Mischung ist über alle Größen am genauesten. Gemischt werden die Reaktionsranges, Fold-Rate und Zusammensetzung folgen daraus.
-      var alt; POP.tabOff = true; try { alt = respond(opp, ctx, heroAdd, potBefore, nResp, kind); } finally { POP.tabOff = false; }
+      var alt, prevOff = POP.tabOff; POP.tabOff = true; try { alt = respond(opp, ctx, heroAdd, potBefore, nResp, kind); } finally { POP.tabOff = prevOff; }
       if (alt && alt.contW) {
-        var a = POP.tabBlend, cw = new Float64Array(NC), cl = new Float64Array(NC), rw = new Float64Array(NC);
+        var cw = new Float64Array(NC), cl = new Float64Array(NC), rw = new Float64Array(NC);
         for (var q = 0; q < NC; q++) { cw[q] = a * tr.contW[q] + (1 - a) * alt.contW[q]; cl[q] = a * tr.callW[q] + (1 - a) * alt.callW[q]; rw[q] = a * tr.raiseW[q] + (1 - a) * alt.raiseW[q]; }
         return { f: a * tr.f + (1 - a) * alt.f, c: a * tr.c + (1 - a) * alt.c, r: a * tr.r + (1 - a) * alt.r, contW: cw, callW: cl, raiseW: rw,
           basis: 'Aktionstabelle gemittelt mit Populations-/MDF-Modell, angepasst an Gegnerwerte', model: 'tab+pop', price: tr.price };
       }
     }
-    if (tr) return tr;
+    if (tr && a >= 1) return tr;   // 2.3 (D-6): Gewicht 0 heißt Modell 2.1, nicht reine Tabelle
   }
   if (ctx.street > 0 && ctx.mode !== 'gto' && !POP.off && !respond.inner) {  // POP.off: nur für Studien (Reaktionsmodell 2.0.1)
     var pr0 = popRespond(opp, ctx, heroAdd, potBefore, nResp, kind);
@@ -4042,7 +4055,10 @@ function candidates(ctx) {
     if (to > L.maxTo) to = L.maxTo;
     return to;
   }
-  function add(to, label, kind) { to = fit(to); if (seen[to]) return; seen[to] = 1; out.push({ type: L.isBet ? 'bet' : 'raise', amount: to, label: label, kind: kind }); }
+  function add(to, label, kind) { var nominal = to; to = fit(to); if (seen[to]) return; seen[to] = 1;
+    // 2.3 (Prüfbefund D-11): liegt der Stack unter der Nenngröße, nennt die Beschriftung den tatsächlichen Betrag
+    if (to === L.maxTo && nominal > to + 0.5 && label !== 'All-in') label = 'All-in ' + U.fmt(to);
+    out.push({ type: L.isBet ? 'bet' : 'raise', amount: to, label: label, kind: kind }); }
   if (L.canFold) out.push({ type: 'fold', label: 'Fold' });
   if (L.canCheck) out.push({ type: 'check', label: 'Check' });
   if (L.canCall) out.push({ type: 'call', amount: L.callAmt, label: 'Call ' + U.fmt(L.callAmt) });
@@ -4081,7 +4097,7 @@ function candidates(ctx) {
       add(ctx.cur + (pot + ctx.L.toCall), 'Raise Pot', 'raise');
       if (L.maxTo - me.bet <= 3 * (pot + ctx.L.toCall)) add(L.maxTo, 'All-in', 'jam');
     }
-    out.forEach(function (a) { if ((a.type === 'bet' || a.type === 'raise') && a.amount === L.maxTo) a.label = (a.label === 'All-in' ? 'All-in' : a.label + ' (All-in)'), a.allin = true; });
+    out.forEach(function (a) { if ((a.type === 'bet' || a.type === 'raise') && a.amount === L.maxTo) a.label = (/^All-in/.test(a.label) ? a.label : a.label + ' (All-in)'), a.allin = true; });
   }
   return out;
 }
@@ -4397,8 +4413,63 @@ function buildRange(v, seat, st, gto, pfaSeat) {
   var w = R.preflopRange(line, sm, gto);
   R.removeDead(w, v.cards.concat(v.board));
   // Prüfer B 2.2 (B-9): Der gleichgewichtsnahe Modus nutzt nicht die an der Gegner-KI angepasste Tabelle, sondern das ausgewogene Faustregelmodell
-  if (v.street > 0) R.narrowPostflop(w, v.actions, seat, v.board, prof, pfaSeat, v.street, gto || R.ABL.rangeLegacy ? { legacy: true } : { sm: sm });
+  var legacy = gto || R.ABL.rangeLegacy, wTab = !gto && st && st.wTab != null ? st.wTab : 1;
+  if (v.street > 0 && !legacy && wTab < 0.999) {
+    // 2.3 (hybrides Modell C): Modellmittelung der Range-Schätzung. Gewicht der Populationstabelle = Belastbarkeit der Tabelle für diesen Gegner
+    // (hybridFit); der Rest kommt aus dem robusten Modell 2.1. Beide Posteriori werden normiert gemischt.
+    var wL = Float64Array.from(w);
+    R.narrowPostflop(w, v.actions, seat, v.board, prof, pfaSeat, v.street, { sm: sm, nPlayers: v.players.length, sizeShrink: R.ABL.hybrid ? FIT.rho : 0 });
+    R.narrowPostflop(wL, v.actions, seat, v.board, prof, pfaSeat, v.street, { legacy: true });
+    var sT = 0, sL = 0; for (var k = 0; k < w.length; k++) { sT += w[k]; sL += wL[k]; }
+    if (sT > 0 && sL > 0) for (var k2 = 0; k2 < w.length; k2++) w[k2] = wTab * w[k2] / sT + (1 - wTab) * wL[k2] / sL;
+    else if (!(sT > 0)) w.set(wL);
+  } else if (v.street > 0) R.narrowPostflop(w, v.actions, seat, v.board, prof, pfaSeat, v.street, legacy ? { legacy: true } : { sm: sm, nPlayers: v.players.length, sizeShrink: R.ABL.hybrid ? FIT.rho : 0 });
   return { w: w, line: line, sm: sm, prof: prof };
+}
+/**
+ * 2.3 (Arbeitspaket 3, Modell C): Belastbarkeit der an der Gegner-KI angepassten Tabellen für die Gegner am Tisch.
+ * Grundlage sind nur aufgedeckte Blätter (Datenbank: zehn jüngste je Gegner): je Straße die Stärke der aufgedeckten Hand (Perzentil gegen alle
+ * Hände auf dem Board dieser Straße) und die Art der eigenen Aktion. Bei der Gegner-KI sind aggressive Aktionen deutlich stärker als passive
+ * (Konsistenz d = mittlere Stärke aggressiv − passiv). Liegt d belastbar darunter (Fallensteller: starke Hände passiv; Polarisierer: Luft
+ * aggressiv), gilt die Tabelle für diesen Gegner als nicht belastbar, und das Modell geht zum robusten Modell 2.1 über. Gepoolt über alle Gegner am
+ * Tisch entsteht ein Vorwissen für Gegner mit wenigen aufgedeckten Blättern. Auswahlverzerrung (nur Showdowns) betrifft Referenz und Gegner gleich.
+ */
+var FIT = { nResp: 40, rho: 0.5, llRef: -0.463, llSd: 0.546, zHi: 0, zLo: -2, k: 8, minPairs: 4 }, fitCache = {};   /* Schwellen auf Tr23 und Gegner-KI E abgestimmt, auf Va23/V gewählt (docs/STRATEGIEVARIANTEN_2.3.md) */
+/** Paare [aggressiv 0/1, Stärke, Einsatz offen 0/1, Straße] aus einem aufgedeckten Blatt (Aktionstext je Straße) */
+function shownPairs(s) {
+  var key = s.hand + '|' + s.ts + '|' + s.cards + '|' + s.board; if (fitCache[key]) return fitCache[key];
+  var out = [], cards, board; try { cards = PT.parseCards(s.cards); board = PT.parseCards(s.board || ''); } catch (e) { return out; }
+  if (!cards || cards.length !== 2 || !board) return out;
+  [1, 2, 3].forEach(function (st) {
+    var n = st === 1 ? 3 : st === 2 ? 4 : 5, txt = s.actions && s.actions[st]; if (!txt || board.length < n) return;
+    var x = PT.bots.percentile(cards, board.slice(0, n)).p;
+    String(txt).split(', ').forEach(function (t) { var w0 = t.split(' ')[0];
+      if (w0 === 'Bet') out.push([1, x, 0, st]); else if (w0 === 'Check') out.push([0, x, 0, st]); else if (w0 === 'Raise') out.push([1, x, 1, st]); else if (w0 === 'Call') out.push([0, x, 1, st]); });
+  });
+  if (Object.keys(fitCache).length > 4000) fitCache = {};
+  fitCache[key] = out; return out;
+}
+/** Log-Likelihood eines Paars unter der Populationstabelle (ohne offenen Einsatz: Bet gegen Check; mit Einsatz, bedingt aufs Weiterspielen: Raise gegen Call) */
+function pairLL(q) {
+  var d = R.likDist(q[3] + '|' + (q[2] ? 's3' : 'fr') + '|h', 0, R.xaBucket(q[1])); if (!d) return null;
+  var pA = q[2] ? (d.r || 0) / Math.max(1e-6, (d.c || 0) + (d.r || 0)) : (d.bs || 0) + (d.bl || 0) + (d.bo || 0);
+  pA = Math.min(0.98, Math.max(0.02, pA)); return Math.log(q[0] ? pA : 1 - pA);
+}
+function fitOf(pairs, F) {
+  F = F || FIT; var ll = 0, n = 0, a = 0, na = 0, p = 0, np = 0;
+  pairs.forEach(function (q) { var l = pairLL(q); if (l != null) { ll += l; n++; } if (q[0]) { a += q[1]; na++; } else { p += q[1]; np++; } });
+  var dd = na && np ? a / na - p / np : null;
+  if (n < F.minPairs) return { n: n, w: null, d: dd };
+  var m = ll / n, z = (m - F.llRef) / (F.llSd / Math.sqrt(n));
+  return { n: n, ll: m, d: dd, z: z, w: z >= F.zHi ? 1 : z <= F.zLo ? 0 : (z - F.zLo) / (F.zHi - F.zLo) };
+}
+function fitParams() { if (!R.ABL.fit) return FIT; var o = {}, k; for (k in FIT) o[k] = FIT[k]; for (k in R.ABL.fit) o[k] = R.ABL.fit[k]; return o; }
+function hybridFit(input) {
+  var recs = input.opps || {}, per = {}, pool = [], F = fitParams();
+  Object.keys(recs).forEach(function (id) { var r = recs[id]; if (!r || !Array.isArray(r.shown)) return; var ps = []; r.shown.forEach(function (s) { ps = ps.concat(shownPairs(s)); }); per[id] = ps; pool = pool.concat(ps); });
+  var fp = fitOf(pool, F), wPool = fp.w == null ? (F.w0 != null ? F.w0 : 1) : fp.w, out = {};
+  Object.keys(per).forEach(function (id) { var f = fitOf(per[id], F), n = f.w == null ? 0 : f.n; out[id] = { w: (n * (f.w == null ? 0 : f.w) + F.k * wPool) / (n + F.k), own: f, pool: fp }; });
+  out.__pool = fp; out.__w0 = wPool; return out;
 }
 function heroRangeFor(v) {
   // Range des Helden aus Sicht eines Beobachters (Grundmodell), für das River-Modellspiel
@@ -4490,9 +4561,13 @@ function rngFor(budget, tag, ranges) {
 }
 /** Ranges beider Modi und eine gemeinsame Equity je Kombination (Vereinigung der Träger) */
 function prepare(input, v, L0, budget, rng, deadlineAll) {
-  var pre = preInfo(v), out = {};
+  var pre = preInfo(v), out = {}, fitAll = null;
   v.players.filter(function (q) { return q.seat !== v.seat && !q.folded; }).forEach(function (q) {
     var st = oppStats(input.opps ? input.opps[q.id] : null);
+    if (R.ABL.hybrid) { if (!fitAll) fitAll = hybridFit(input); st.wTab = fitAll[q.id] ? fitAll[q.id].w : fitAll.__w0;
+      // 2.3 (Ablation: Hauptursache ist das Reaktionsmodell): die Reaktion aus der Tabelle erst, wenn die Tabelle am Tisch belegt passt –
+      // Vorwissen robust (Modell 2.1), Gewicht wächst mit der gepoolten Zahl der Paare aus aufgedeckten Blättern
+      if (R.ABL.respPrior0) { var np = fitAll.__pool && fitAll.__pool.n || 0; st.wResp = st.wTab * Math.min(1, np / fitParams().nResp); } }
     var rE = buildRange(v, q.seat, st, false, v.pfa), rG = buildRange(v, q.seat, st, true, v.pfa);
     out[q.seat] = { st: st, ex: rE, gto: rG, pending: v.street === 0 && !pre.acted[q.seat] };
   });
@@ -4528,7 +4603,7 @@ function analyzeMode(input, v, mode, level, L0, budget, rng, deadline, set, prep
   var oppsAll = v.players.filter(function (q) { return q.seat !== v.seat && !q.folded; });
   var opps = oppsAll.map(function (q) {
     var P = prep[q.seat], st = P.st, rg = gto ? P.gto : P.ex;
-    return { p: q, seat: q.seat, w: P.defW && P.pending ? P.defW : rg.w, line: rg.line, sm: rg.sm, prof: rg.prof, raw: st.raw, hands: st.hands, typ: st.typ, bel: st.bel, agg: st.agg,
+    return { p: q, seat: q.seat, w: P.defW && P.pending ? P.defW : rg.w, line: rg.line, sm: rg.sm, prof: rg.prof, raw: st.raw, hands: st.hands, typ: st.typ, bel: st.bel, agg: st.agg, wTab: gto ? null : st.wTab, wResp: gto ? null : st.wResp,
       pending: P.pending, e: P.e, eqInfo: P.eqInfo, floor: gto ? P.floor.gto : P.floor.ex, isDefW: !!(P.defW && P.pending) };
   });
   var maxOpp = 0; opps.forEach(function (o) { maxOpp = Math.max(maxOpp, o.p.stack + o.p.bet); });
@@ -4593,14 +4668,14 @@ function analyzeMode(input, v, mode, level, L0, budget, rng, deadline, set, prep
     var relScale = relevant.length > 1 ? ctx.eqNow / Math.max(0.01, mainOpp.eqHU || 0.5) : 1;
     if (eqTight != null && eqLoose != null) { eqTight *= relScale; eqLoose *= relScale; spread = Math.abs(eqLoose - eqTight) / 2; }
     // 2.2 (Arbeitspaket 6): Datenlage nach tatsächlichen Gelegenheiten (Postflop-Entscheidungen des Gegners), nicht nach gespielten Händen
-    var nOppDec = mainOpp.agg ? mainOpp.agg.n : null;
+    var nOppDec = mainOpp.agg && !(mainOpp.agg.n === 0 && mainOpp.hands > 0) ? mainOpp.agg.n : null;   // 2.3 (C-12): ohne Aktionszähler Rückfall auf Hände
     var dataW = nOppDec != null && !R.ABL.dataHands ? (nOppDec < 60 ? 1 : nOppDec < 300 ? 0.75 : 0.5) : (mainOpp.hands < 100 ? 1 : mainOpp.hands < 500 ? 0.75 : 0.5);
     if (gto) dataW = 0.75;
     spread *= dataW;
   }
   ctx.eqRangeSpread = spread;
   // Unsicherheit der Fold-Schätzung nach Gelegenheiten gegen Einsätze (Fold gegen C-Bet und alle Einsätze postflop)
-  var nFold = mainOpp && mainOpp.agg ? mainOpp.agg.nFace : null;
+  var nFold = mainOpp && mainOpp.agg && !(mainOpp.agg.n === 0 && mainOpp.hands > 0) ? mainOpp.agg.nFace : null;
   ctx.foldUnc = gto ? 0.08 : (mainOpp ? (nFold != null && !R.ABL.dataHands ? (nFold < 30 ? 0.14 : nFold < 150 ? 0.1 : 0.06) : (mainOpp.hands < 100 ? 0.14 : mainOpp.hands < 500 ? 0.1 : 0.06)) : 0.1);
   // Aktionen bewerten
   var cands = X.candidates(ctx);
@@ -4693,7 +4768,7 @@ function heroChart(v, ctx, pre) {
   var me = ctx.me, pos = me.pos, ci = H.classIdx(v.cards[0], v.cards[1]), effBB = ctx.eff / ctx.bb, ch, kind;
   if (pre.rc === 0 && pre.limpers === 0) {
     // Prüfer B 2.2 (B-5): Der Chart des Push/Fold-Modellspiels bestimmt die Handauswahl; die Größe (All-in oder kleines Open) wählt das EV-Modell
-    if (effBB <= 15) { ch = R.chart('push', { pos: pos, bb: effBB }); kind = 'Handauswahl nach Push/Fold-Modellspiel (' + Math.round(effBB) + ' BB effektiv), Größe nach EV'; }
+    if (effBB <= 15) { ch = R.chart('push', { pos: pos, bb: effBB }); kind = 'Handauswahl nach Push/Fold-Modellspiel (' + Math.round(effBB) + ' BB effektiv; vereinfachtes Spiel nur mit All-in oder Fold, keine vollständige Strategie), Größe nach EV'; }
     else { ch = R.chart('rfi', { pos: pos }); kind = 'Open-Raise-Chart ' + pos; }
   } else if (pre.rc === 0) { ch = R.chart('iso', { pos: pos }); kind = 'Chart gegen Limper (' + pos + ')'; }
   else if (pre.rc === 1) { var op = v.players[pre.opener].pos; ch = R.chart('vsOpen', { pos: pos, opener: op, sizeBB: pre.lastTo / v.bb, squeeze: pre.callers > 0 }); kind = 'Chart ' + pos + ' gegen Open ' + op; }
@@ -5145,7 +5220,7 @@ var GLOSSARY = {
   'Rake': 'Gebühr des Veranstalters, die vom Pot abgezogen wird. In dieser App optional und standardmäßig aus.'
 };
 
-PT.coach = { betaCdf: betaCdf, analyze: analyze, grade: grade, explain: explain, GRADES: GRADES, GRADE_SCORE: GRADE_SCORE, GRADE_SIMPLE: GRADE_SIMPLE, CLASS_TEXT: CLASS_TEXT,
+PT.coach = { __shownPairs: shownPairs, __fitOf: fitOf, __pairLL: pairLL, __hybridFit: hybridFit, FIT: FIT, betaCdf: betaCdf, analyze: analyze, grade: grade, explain: explain, GRADES: GRADES, GRADE_SCORE: GRADE_SCORE, GRADE_SIMPLE: GRADE_SIMPLE, CLASS_TEXT: CLASS_TEXT,
   MISTAKES: MISTAKES, SPOTS: SPOTS, GLOSSARY: GLOSSARY, lineOf: lineOf, preInfo: preInfo, LINE_TEXT: LINE_TEXT, composition: composition,
   _intern: { heroRangeFor: heroRangeFor, buildRange: buildRange, oppStats: oppStats } };  // _intern: nur für Tests und Studien
 PT.glossary = GLOSSARY;
@@ -5392,12 +5467,15 @@ function validLearning(L) {
 function repairLearning(L) {
   if (!L || typeof L !== 'object' || Array.isArray(L) || L.v !== 1) return null;
   var out = newLearning(), removed = 0;
-  if (Array.isArray(L.decisions)) L.decisions.slice(-DEC_MAX).forEach(function (d) { if (validDecision(d)) out.decisions.push(d); else removed++; });
-  if (Array.isArray(L.srs)) L.srs.slice(-300).forEach(function (it) { if (validSrs(it)) out.srs.push(it); else removed++; });
+  // 2.3 (Prüfbefund C-7): jede verworfene oder gekürzte Struktur zählt; gleiche Grenzen wie validLearning (Entscheidungen DEC_MAX, Wiederholungen 1.000, Sessions 5.000)
+  if (Array.isArray(L.decisions)) { removed += Math.max(0, L.decisions.length - DEC_MAX); L.decisions.slice(-DEC_MAX).forEach(function (d) { if (validDecision(d)) out.decisions.push(d); else removed++; }); } else if (L.decisions != null) removed++;
+  if (Array.isArray(L.srs)) { removed += Math.max(0, L.srs.length - 1000); L.srs.slice(-1000).forEach(function (it) { if (validSrs(it)) out.srs.push(it); else removed++; }); } else if (L.srs != null) removed++;
+  if (Array.isArray(L.sessions)) { removed += Math.max(0, L.sessions.length - 5000); L.sessions.slice(-5000).forEach(function (x) { if (x && typeof x === 'object' && !Array.isArray(x)) out.sessions.push(x); else removed++; }); } else if (L.sessions != null) removed++;
   if (validQuiz(L.quiz)) out.quiz = L.quiz; else removed++;
   if (Array.isArray(L.goals) && L.goals.length <= 20 && L.goals.every(validGoal)) out.goals = L.goals; else removed++;
   if (typeof L.created === 'number') out.created = L.created;
-  if (Array.isArray(L.pp)) { out.pp = []; var seen = {}; L.pp.slice(-PP_MAX).forEach(function (t) { if (validPP(t) && !seen[t.id]) { seen[t.id] = 1; out.pp.push(t); } else removed++; }); }
+  if (Array.isArray(L.pp)) { out.pp = []; var seen = {}; removed += Math.max(0, L.pp.length - PP_MAX); L.pp.slice(-PP_MAX).forEach(function (t) { if (validPP(t) && !seen[t.id]) { seen[t.id] = 1; out.pp.push(t); } else removed++; }); }
+  else if (L.pp != null) removed++;
   return { learning: out, removed: removed };
 }
 function mean(a) { return a.length ? a.reduce(function (s, x) { return s + x; }, 0) / a.length : null; }
@@ -5905,17 +5983,22 @@ function decisionOut(h, d, seq) {
  * Baut den Benchmark-Export aus Handdatensätzen (PT.training.makeHandRecord). Ungültige Datensätze werden übersprungen.
  * Gleiche Eingabe → byteweise gleiche Ausgabe (kein Exportzeitpunkt im Inhalt).
  */
-function build(hands) {
+function build(hands, opt) {
   var list = (hands || []).filter(function (h) { return PT.training && !PT.training.validHand(h); });
   list.sort(function (a, b) { return a.ts !== b.ts ? a.ts - b.ts : (a.id < b.id ? -1 : a.id > b.id ? 1 : 0); });
   var decisions = [], skipped = (hands || []).length - list.length;
   list.forEach(function (h) { (h.decisions || []).slice().sort(function (a, b) { return a.i - b.i; }).forEach(function (d, k) { decisions.push(decisionOut(h, d, k + 1)); }); });
-  var body = JSON.stringify(decisions);
+  var body = opt && opt.noHash ? null : JSON.stringify(decisions);   // 2.3 (D-2): ohne Prüfsumme, wenn der Aufrufer sie verwirft
   return { format: FORMAT, schemaVersion: SCHEMA, software: { name: 'PokerTrainer', version: PT.VERSION }, modelVersion: modelVersion(),
     units: { money: 'Cent Spielgeld (blinds.bb = 1 Big Blind)', equity: 'Anteil 0–1', ev: 'Cent, Erwartungswert der Aktion gegenüber Fold ab dem Entscheidungszeitpunkt' },
-    separation: SEPARATION, hands: list.length, skippedHands: skipped, count: decisions.length, contentHash: U.fnv1a(body), decisions: decisions };
+    separation: SEPARATION, hands: list.length, skippedHands: skipped, count: decisions.length, contentHash: body == null ? null : U.fnv1a(body), decisions: decisions };
 }
 function exportText(hands) { return JSON.stringify(build(hands), null, 1) + '\n'; }
+/** 2.3 (Prüfbefund D-2): Export als Auftrag für einen eigenen Worker; liefert Text und Zähler, damit die Oberfläche nicht erneut parsen muss. */
+function exportJob(kind, hands) {
+  if (kind === 'events') { var e = buildEvents(hands); return { text: JSON.stringify(e) + '\n', hands: e.hands, count: e.events }; }
+  var b = build(hands); return { text: JSON.stringify(b, null, 1) + '\n', hands: b.hands, count: b.count };
+}
 
 /** Strukturprüfung eines Benchmark-Exports (für Empfänger und Tests). Gibt null oder eine Fehlerbeschreibung zurück. */
 function validate(o) {
@@ -6023,7 +6106,7 @@ function parseImport(text) {
    Spieler, keine internen Gegnerparameter, keine zukünftigen Ereignisse im Entscheidungsabschnitt (validateEvents prüft das). */
 var EV_FORMAT = 'PokerTrainer-Ereignisse', EV_SCHEMA = 1, CHANNELS = ['pokertrainer-coach', 'pai'];
 function buildEvents(hands) {
-  var b = build(hands), byHand = {}, recs = {};
+  var b = build(hands, { noHash: true }), byHand = {}, recs = {};
   (hands || []).forEach(function (h) { if (PT.training && !PT.training.validHand(h)) recs[handId(h)] = h; });
   b.decisions.forEach(function (d) {
     var e = byHand[d.handId] || (byHand[d.handId] = { handId: d.handId, events: [] });
@@ -6082,7 +6165,7 @@ function validateEvents0(o) {
 }
 PT.events = { FORMAT: EV_FORMAT, SCHEMA: EV_SCHEMA, CHANNELS: CHANNELS, build: buildEvents, validate: validateEvents,
   text: function (hands) { return JSON.stringify(buildEvents(hands)) + '\n'; } };
-PT.benchmark = { FORMAT: FORMAT, SCHEMA: SCHEMA, build: build, exportText: exportText, validate: validate, coachInput: coachInput, handId: handId, modelVersion: modelVersion, SEPARATION: SEPARATION };
+PT.benchmark = { FORMAT: FORMAT, SCHEMA: SCHEMA, build: build, exportText: exportText, exportJob: exportJob, validate: validate, coachInput: coachInput, handId: handId, modelVersion: modelVersion, SEPARATION: SEPARATION };
 PT.dataport = { parseImport: parseImport, rawToBackup: rawToBackup, RAW: RAW, allFinite: allFinite };
 })(typeof globalThis !== 'undefined' ? globalThis : (typeof self !== 'undefined' ? self : this));
 
@@ -6150,12 +6233,12 @@ PT.Speech = Speech; PT.toSpeech = toSpeech; PT.pickVoice = pickVoice;
 
 </script>
 <script id="pt-worker" type="text/plain">
-/* PokerTrainer 2.2 – Web Worker für Coach-Analysen und Importprüfung (hält die Oberfläche bedienbar). */
+/* PokerTrainer 2.3 – Web Worker für Coach-Analysen und Importprüfung (hält die Oberfläche bedienbar). */
 /* global importScripts, self */
 (function () {
 'use strict';
 if (typeof importScripts === 'function' && !self.PT) {
-  var v = '?v=2.2.0';
+  var v = '?v=2.3.0';
   importScripts('engine/core.js' + v, 'engine/evaluator.js' + v, 'engine/preflop-data.js' + v, 'engine/rules.js' + v, 'engine/ranges.js' + v, 'engine/equity.js' + v,
     'engine/stats.js' + v, 'engine/bots.js' + v, 'engine/session.js' + v, 'engine/ev.js' + v, 'engine/cfr.js' + v, 'engine/coach.js' + v, 'engine/training.js' + v, 'engine/export.js' + v);
 }
@@ -6164,6 +6247,7 @@ self.onmessage = function (e) {
   try {
     if (m.kind === 'analyze') self.postMessage({ id: m.id, ok: true, result: self.PT.coach.analyze(m.input) });
     // Prüfung einer Importdatei (Datenbank, Sicherung, Rohsicherung) ohne Blockade der Oberfläche
+    else if (m.kind === 'events' || m.kind === 'bench') self.postMessage({ id: m.id, ok: true, result: self.PT.benchmark.exportJob(m.kind, m.input && m.input.hands) });
     else if (m.kind === 'import') self.postMessage({ id: m.id, ok: true, result: self.PT.dataport.parseImport(m.input && m.input.text) });
     else self.postMessage({ id: m.id, ok: false, error: 'unbekannter Auftrag' });
   } catch (err) {
@@ -6495,6 +6579,7 @@ function newWorker() {
 function runJob(kind, input) {
   if (kind === 'analyze') return PT.coach.analyze(input);
   if (kind === 'import') return PT.dataport.parseImport(input.text);
+  if (kind === 'events' || kind === 'bench') return PT.benchmark.exportJob(kind, input.hands);
   throw new Error('unbekannter Auftrag');
 }
 /**
@@ -7661,8 +7746,14 @@ views.analyse = function (el, arg) {
     var r = e.target.closest('tr[data-hid]'); if (r) { var h = hist.list.filter(function (x) { return x.id === r.getAttribute('data-hid'); })[0]; if (h) openReplay(h); return; }
     var x = e.target.closest('[data-hx]'); if (x) { var f = filtered(), kind = x.getAttribute('data-hx');
       if (kind === 'json') H.download('PokerTrainer_Haende_' + H.today() + '.json', JSON.stringify({ format: 'PokerTrainer-Hands', version: 1, app: PT.VERSION, count: f.length, hands: f }));
-      else if (kind === 'bench') { var bt = PT.benchmark.exportText(f), bo = JSON.parse(bt); H.download('PokerTrainer_Benchmark_v' + PT.benchmark.SCHEMA + '_' + H.today() + '.json', bt); H.toast('Benchmark-Export: ' + bo.count + ' Entscheidungen aus ' + bo.hands + ' Händen.'); }
-      else if (kind === 'events') { /* einmal serialisieren (Prüfer D 2.2, D-2) */ var eo = PT.events.build(f), et = JSON.stringify(eo) + '\n'; H.download('PokerTrainer_Ereignisse_v' + PT.events.SCHEMA + '_' + H.today() + '.json', et); H.toast('Ereignisstrom: ' + eo.events + ' Entscheidungen aus ' + eo.hands + ' Händen.'); }
+      else if (kind === 'bench' || kind === 'events') {
+        // 2.3 (Prüfbefund D-2): Aufbau und Serialisierung in einem eigenen Worker, die Oberfläche bleibt bedienbar; Zähler ohne erneutes Parsen
+        x.disabled = true; H.toast(kind === 'bench' ? 'Benchmark-Export wird erstellt …' : 'Ereignisstrom wird erstellt …');
+        PTUI.offThread(kind, { hands: f }, 300000).then(function (r) {
+          if (kind === 'bench') { H.download('PokerTrainer_Benchmark_v' + PT.benchmark.SCHEMA + '_' + H.today() + '.json', r.text); H.toast('Benchmark-Export: ' + r.count + ' Entscheidungen aus ' + r.hands + ' Händen.'); }
+          else { H.download('PokerTrainer_Ereignisse_v' + PT.events.SCHEMA + '_' + H.today() + '.json', r.text); H.toast('Ereignisstrom: ' + r.count + ' Entscheidungen aus ' + r.hands + ' Händen.'); }
+        }, function (e) { H.toast('Export nicht möglich: ' + (e && e.message || e)); }).then(function () { x.disabled = false; });
+      }
       else H.download('PokerTrainer_Haende_' + H.today() + '.txt', f.map(PT.training.handText).join('\n\n'), 'text/plain');
       return; }
     var st = e.target.closest('[data-step]'); if (st) { stepTo(st.getAttribute('data-step')); return; }

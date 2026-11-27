@@ -91,7 +91,7 @@ function buildRange(v, seat, st, gto, pfaSeat) {
  * aggressiv), gilt die Tabelle für diesen Gegner als nicht belastbar, und das Modell geht zum robusten Modell 2.1 über. Gepoolt über alle Gegner am
  * Tisch entsteht ein Vorwissen für Gegner mit wenigen aufgedeckten Blättern. Auswahlverzerrung (nur Showdowns) betrifft Referenz und Gegner gleich.
  */
-var FIT = { nResp: 40, rho: 0.5, llRef: -0.463, llSd: 0.546, zHi: -1, zLo: -3, k: 8, minPairs: 4 }, fitCache = {};
+var FIT = { nResp: 40, rho: 0.5, llRef: -0.463, llSd: 0.546, zHi: 0, zLo: -2, k: 8, minPairs: 4 }, fitCache = {};   /* Schwellen auf Tr23 und Gegner-KI E abgestimmt, auf Va23/V gewählt (docs/STRATEGIEVARIANTEN_2.3.md) */
 /** Paare [aggressiv 0/1, Stärke, Einsatz offen 0/1, Straße] aus einem aufgedeckten Blatt (Aktionstext je Straße) */
 function shownPairs(s) {
   var key = s.hand + '|' + s.ts + '|' + s.cards + '|' + s.board; if (fitCache[key]) return fitCache[key];
@@ -425,7 +425,7 @@ function heroChart(v, ctx, pre) {
   var me = ctx.me, pos = me.pos, ci = H.classIdx(v.cards[0], v.cards[1]), effBB = ctx.eff / ctx.bb, ch, kind;
   if (pre.rc === 0 && pre.limpers === 0) {
     // Prüfer B 2.2 (B-5): Der Chart des Push/Fold-Modellspiels bestimmt die Handauswahl; die Größe (All-in oder kleines Open) wählt das EV-Modell
-    if (effBB <= 15) { ch = R.chart('push', { pos: pos, bb: effBB }); kind = 'Handauswahl nach Push/Fold-Modellspiel (' + Math.round(effBB) + ' BB effektiv), Größe nach EV'; }
+    if (effBB <= 15) { ch = R.chart('push', { pos: pos, bb: effBB }); kind = 'Handauswahl nach Push/Fold-Modellspiel (' + Math.round(effBB) + ' BB effektiv; vereinfachtes Spiel nur mit All-in oder Fold, keine vollständige Strategie), Größe nach EV'; }
     else { ch = R.chart('rfi', { pos: pos }); kind = 'Open-Raise-Chart ' + pos; }
   } else if (pre.rc === 0) { ch = R.chart('iso', { pos: pos }); kind = 'Chart gegen Limper (' + pos + ')'; }
   else if (pre.rc === 1) { var op = v.players[pre.opener].pos; ch = R.chart('vsOpen', { pos: pos, opener: op, sizeBB: pre.lastTo / v.bb, squeeze: pre.callers > 0 }); kind = 'Chart ' + pos + ' gegen Open ' + op; }

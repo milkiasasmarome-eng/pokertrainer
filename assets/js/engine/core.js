@@ -3,7 +3,7 @@
 (function (G) {
 'use strict';
 var PT = G.PT || (G.PT = {});
-PT.VERSION = '2.2.0';
+PT.VERSION = '2.3.0';
 PT.BUILD = '2026-11-27';
 
 // ---------- Hilfen ----------
