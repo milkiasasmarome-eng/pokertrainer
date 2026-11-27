@@ -192,6 +192,57 @@ function parseImport(text) {
   return checkResult(PT.stats.dbImport(text));
 }
 
+// ---------- 2.2: Ereignisstrom für unabhängige Engines (PAI) und das spätere System C (Arbeitspaket 8) ----------
+/* Format „PokerTrainer-Ereignisse“, Schema 1. Je Entscheidung des Spielers ein Ereignis mit dem zum Entscheidungszeitpunkt beobachtbaren
+   Zustand (aus dem Benchmark-Abschnitt knownAtDecision) und getrennten Empfehlungskanälen je Engine. Der Kanal „pokertrainer-coach“ wird
+   vom Trainer gefüllt; der Kanal „pai“ bleibt leer und wird von der eigenständigen PAI-Engine außerhalb des Trainers geschrieben.
+   Je Hand folgt ein Abschnitt „afterHand“ mit erst nach der Hand bekannten Informationen (aufgedeckte Karten, Ergebnis) und der
+   unveränderte Handdatensatz (Hand-Format 1), den der PAI-Adapter `fromPokerTrainerBackup` liest. Keine verdeckten Karten anderer
+   Spieler, keine internen Gegnerparameter, keine zukünftigen Ereignisse im Entscheidungsabschnitt (validateEvents prüft das). */
+var EV_FORMAT = 'PokerTrainer-Ereignisse', EV_SCHEMA = 1, CHANNELS = ['pokertrainer-coach', 'pai'];
+function buildEvents(hands) {
+  var b = build(hands), byHand = {}, recs = {};
+  (hands || []).forEach(function (h) { if (PT.training && !PT.training.validHand(h)) recs[handId(h)] = h; });
+  b.decisions.forEach(function (d) {
+    var e = byHand[d.handId] || (byHand[d.handId] = { handId: d.handId, events: [] });
+    var c = d.coach || {}, best = c.recommendation || null;
+    e.events.push({ type: 'decision', decisionId: d.decisionId, actionIndex: d.actionIndex, complete: !!d.complete, observed: d.knownAtDecision || null,
+      recommendations: { 'pokertrainer-coach': d.complete ? { engine: 'pokertrainer-coach', softwareVersion: c.softwareVersion, modelVersion: c.modelVersion, mode: c.analysisMode,
+        action: best ? { type: best.type, amount: best.amount == null ? null : best.amount, label: best.label } : null, equity: c.equity ? c.equity.value : null,
+        alternatives: (c.alternatives || []).map(function (a) { return { type: a.type, amount: a.amount == null ? null : a.amount, ev: a.ev, uncertainty: a.uncertainty }; }) } : null, pai: null },
+      chosen: d.playerDecision ? { type: d.playerDecision.type, amount: d.playerDecision.amount, label: d.playerDecision.label } : null });
+  });
+  var out = Object.keys(byHand).sort().map(function (k) {
+    var h = recs[k] || null, x = byHand[k];
+    x.afterHand = h ? { board: (h.board || []).slice(), shown: (h.shown || []).map(function (s) { return { seat: s.seat, cards: s.cards }; }), heroNet: h.heroNet, showdown: !!h.showdown } : null;
+    x.handRecord = h ? strip(h) : null;
+    return x;
+  });
+  var body = JSON.stringify(out);
+  return { format: EV_FORMAT, schemaVersion: EV_SCHEMA, software: { name: 'PokerTrainer', version: PT.VERSION }, channels: CHANNELS,
+    separation: 'observed: nur zum Entscheidungszeitpunkt beobachtbare Informationen. recommendations: je Engine getrennt, keine Engine sieht die Empfehlung der anderen. afterHand und handRecord: erst nach der Hand bekannt; nur für Auswertung und Gedächtnis, nie für die Entscheidung derselben Hand.',
+    hands: out.length, events: b.decisions.length, contentHash: U.fnv1a(body), payload: out };
+}
+function validateEvents(o) {
+  if (!o || o.format !== EV_FORMAT) return 'kein Ereignisstrom';
+  if (o.schemaVersion !== EV_SCHEMA) return 'unbekannte Schema-Version';
+  if (!Array.isArray(o.payload) || U.fnv1a(JSON.stringify(o.payload)) !== o.contentHash) return 'Prüfsumme stimmt nicht';
+  for (var i = 0; i < o.payload.length; i++) {
+    var hnd = o.payload[i];
+    for (var j = 0; j < hnd.events.length; j++) {
+      var e = hnd.events[j], k = e.observed, n = 'Hand ' + (i + 1) + ', Ereignis ' + (j + 1) + ': ';
+      if (!e.recommendations || Object.keys(e.recommendations).some(function (c) { return CHANNELS.indexOf(c) < 0; })) return n + 'unbekannter Kanal';
+      if (!e.complete || !k) continue;
+      if (k.publicView.players.some(function (q) { return q.cards; })) return n + 'verdeckte Karten im beobachteten Zustand';
+      if (!isInt(e.actionIndex, 0, 400) || k.actions.length !== e.actionIndex) return n + 'spätere Aktionen im beobachteten Zustand';
+      if ([0, 3, 4, 5][STREETS.indexOf(k.street)] !== k.board.length) return n + 'Board passt nicht zur Straße';
+      if (JSON.stringify(k).indexOf('"style"') >= 0 || JSON.stringify(k).indexOf('"P"') >= 0) return n + 'interne Gegnerparameter';
+    }
+  }
+  return null;
+}
+PT.events = { FORMAT: EV_FORMAT, SCHEMA: EV_SCHEMA, CHANNELS: CHANNELS, build: buildEvents, validate: validateEvents,
+  text: function (hands) { return JSON.stringify(buildEvents(hands)) + '\n'; } };
 PT.benchmark = { FORMAT: FORMAT, SCHEMA: SCHEMA, build: build, exportText: exportText, validate: validate, coachInput: coachInput, handId: handId, modelVersion: modelVersion, SEPARATION: SEPARATION };
 PT.dataport = { parseImport: parseImport, rawToBackup: rawToBackup, RAW: RAW, allFinite: allFinite };
 })(typeof globalThis !== 'undefined' ? globalThis : (typeof self !== 'undefined' ? self : this));

@@ -1,0 +1,51 @@
+{
+ "date": "2026-11-27T11:31:03.169Z",
+ "pokertrainer": "2.2.0",
+ "pai": "0.1.0",
+ "paiRoot": "assist",
+ "results": [
+  {
+   "name": "Ereignisstrom: Schema, Prüfsumme, nur beobachtbare Informationen",
+   "ok": true,
+   "detail": "ok, 183 Ereignisse aus 59 Händen"
+  },
+  {
+   "name": "Ereignisstrom: keine später aufgedeckten Gegnerkarten und keine künftigen Boardkarten im Entscheidungsabschnitt",
+   "ok": true,
+   "detail": "0 Funde"
+  },
+  {
+   "name": "Ereignisstrom: Prüfung lehnt verdeckte Karten im beobachteten Zustand ab",
+   "ok": true,
+   "detail": "Hand 1, Ereignis 1: verdeckte Karten im beobachteten Zustand"
+  },
+  {
+   "name": "Empfehlungskanäle getrennt: Trainer füllt nur „pokertrainer-coach“, Kanal „pai“ bleibt leer",
+   "ok": true
+  },
+  {
+   "name": "Versionsprüfung: PAI 0.1.0 liest Sicherungen des Trainers (Format 3)",
+   "ok": false,
+   "detail": "PAI lehnt ab: Nicht unterstützte Version 3 (unterstützt: 2) (bekannte Inkompatibilität, Anpassung in docs/PAI_INTEGRATION.md)"
+  },
+  {
+   "name": "PAI-Adapter und PAI-Validator akzeptieren die Hand-Datensätze des Trainers",
+   "ok": true,
+   "detail": "60 von 60 Händen, 0 Fehler"
+  },
+  {
+   "name": "Unabhängigkeit: PAI übernimmt keine Coach-Bewertungen des Trainers",
+   "ok": true
+  },
+  {
+   "name": "Kennzahlen VPIP/PFR: PAI und Trainer zählen auf denselben Händen gleich (unabhängige Implementierungen)",
+   "ok": true,
+   "detail": "12 Vergleiche, 0 Abweichungen"
+  },
+  {
+   "name": "Equity: PAI und Trainer stimmen auf denselben Spots überein (Abweichung ≤ 0,01)",
+   "ok": true,
+   "detail": "25 Spots, größte Abweichung 0.0000"
+  }
+ ]
+}

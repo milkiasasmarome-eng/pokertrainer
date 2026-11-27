@@ -1,5 +1,5 @@
 /* Getrennte Gegnergruppen (2.2, Arbeitspaket 5): Entwicklung (E), Validierung (V), abschließender Test (T).
-   Feste, vor allen Läufen festgelegte Aufteilung des 100er-Pools, je Spielstil geschichtet (50 % E, 25 % V, 25 % T),
+   Feste, vor allen Läufen festgelegte Aufteilung des 100er-Pools, je Spielstil geschichtet (50 % E, 25 % V, Rest T; je Stil gerundet: 52/26/22),
    Reihenfolge innerhalb eines Stils nach einer Prüfsumme der Kennung (Salz „gruppen-2.2“).
    Modelle des Coaches (z. B. die Aktions-Likelihoods der Range-Schätzung) werden nur an Gruppe E angepasst,
    an V ausgewählt und an T sowie an synthetischen, dem Coach unbekannten Strategien abschließend gemessen.

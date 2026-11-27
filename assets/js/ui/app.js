@@ -530,11 +530,13 @@ function nextHand() {
   S.shownBoard = 0; S.lastStreet = 0; showMsg('');
   if (S.training) {
     var tr = S.training, item = null, seed;
+    if (tr.test && (!tr.queue || !tr.queue.length)) { var done = tr.test; S.training = null; S.hand = null; render(); toast('Testphase abgeschlossen (' + done + '). Ergebnis unter Fortschritt.', 6000); location.hash = '#fortschritt'; return; }
     if (tr.queue && tr.queue.length) { item = tr.queue.shift(); seed = item.seed; tr.review = item.key; }
     else { tr.review = null; seed = (PT.rng.hashStr(tr.cat + '|' + Date.now() + '|' + tr.count) >>> 0); }
     // Adaptive Schwierigkeit: Gegnerfeld nach Kompetenz in dieser Kategorie
     var catNow = item ? item.cat : tr.cat, sp = S.prof && S.prof.spots[catNow], diff = S.table.cfg.difficulty;
     if (sp && sp.n >= 8) diff = sp.smooth >= 80 ? 'experte' : sp.smooth < 60 ? 'anfaenger' : 'fortgeschritten';
+    if (item && item.diff) diff = item.diff;  // Vorher-Nachher-Test: festes Gegnerfeld (vergleichbare Bedingungen)
     tr.difficulty = diff;
     var g = PT.training.generate(catNow, seed, { difficulty: diff, ts: Date.now() });
     if (!g) { showMsg('Für diese Kategorie konnte gerade keine passende Situation erzeugt werden. Bitte erneut versuchen.'); return; }
@@ -682,7 +684,8 @@ function gradeDecision(cur, chosen) {
       opptyp: opp ? opp.typ : null, training: cur.training, grade: g.grade, session: S.sessionId });
     if (cur.training && S.training && cur.target) {
       S.training.scores.push(g.score);
-      if (S.training.review) PT.training.srsReview(S.learning, S.training.review, g.score, Date.now());
+      if (S.training.review && /^pp:/.test(S.training.review)) PT.training.prePostRecord(S.learning, S.training.review, g.score, g.lossBB);
+      else if (S.training.review) PT.training.srsReview(S.learning, S.training.review, g.score, Date.now());
       renderTrainbar();
     }
     if (g.score <= 45) PT.training.srsAdd(S.learning, { key: 'd' + cur.seed, cat: cur.training || (a.spotTags[0] || 'preflop-open'), seed: cur.seed, view: { view: cur.view, opps: cur.opps }, label: a.situation }, Date.now());
@@ -784,7 +787,8 @@ PTUI.startTraining = function (cat, queue) {
   if (S.hand && !S.hand.done) { toast('Bitte erst die laufende Hand beenden.'); location.hash = '#tisch'; return; }
   if (!PT.training.hasScen(cat)) cat = 'preflop-open';  // nur bekannte Kategorien (Prüfung C6)
   var sc = PT.training.SCEN[cat];
-  S.training = { cat: cat, name: queue ? 'Wiederholung' : sc.name, count: 0, scores: [], queue: queue || null };
+  var test = queue && queue.length && /^pp:/.test(queue[0].key) ? (/:pre:/.test(queue[0].key) ? 'Vorher-Test' : 'Nachher-Test') : null;
+  S.training = { cat: cat, name: test || (queue ? 'Wiederholung' : sc.name), count: 0, scores: [], queue: queue || null, test: test };
   S.hand = null; location.hash = '#tisch'; render(); nextHand();
 };
 PTUI.stopTraining = function () { if (S.hand && !S.hand.done) { toast('Bitte erst die laufende Situation beenden.'); return; } S.training = null; S.hand = null; S.verdict = null; S.analysis = null; S.cur = null; render(); };

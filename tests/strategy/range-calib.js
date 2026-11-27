@@ -13,7 +13,7 @@ const B = PT.bots;
 
 function run(seed, hands, group, root, gto, filter) {
   const C = HS.loadEngine(root || path.join(__dirname, '..', '..'));
-  const comp = group.indexOf('synth') === 0 || group === 'mixed' ? group : 'bots';
+  const comp = /^(synth|final|mixed)/.test(group) ? group : 'bots';
   const cfg = Object.assign(PT.session.defaultConfig(), /^[EVT]$/.test(group) ? { pool: GROUPS[group] } : {});
   const db = PT.stats.newDb(), t = PT.session.newTable(cfg, db, seed), heroRec = PT.stats.newRecord('hero', 'Du');
   const rng = PT.makeRng('rcal|' + seed), recs = [];

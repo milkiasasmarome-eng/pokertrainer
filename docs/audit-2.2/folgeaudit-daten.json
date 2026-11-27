@@ -1,0 +1,215 @@
+{
+ "quelle": "tests/results/strategy.json (App 2.1.0, 2026-11-27T09:21:20.031Z)",
+ "laeufe": 241,
+ "haendeSumme": 602500,
+ "nachGruppeUndHeld": {
+  "gto | coach201-gto": {
+   "laeufe": 2,
+   "haende": 5000
+  },
+  "gto | coach21-gto": {
+   "laeufe": 2,
+   "haende": 5000
+  },
+  "kurz | coach201": {
+   "laeufe": 3,
+   "haende": 7500
+  },
+  "kurz | coach21": {
+   "laeufe": 3,
+   "haende": 7500
+  },
+  "kurz | pushfold": {
+   "laeufe": 3,
+   "haende": 7500
+  },
+  "unbekannt | bot": {
+   "laeufe": 12,
+   "haende": 30000
+  },
+  "unbekannt | coach201": {
+   "laeufe": 12,
+   "haende": 30000
+  },
+  "unbekannt | coach21": {
+   "laeufe": 12,
+   "haende": 30000
+  },
+  "zentral | bot": {
+   "laeufe": 48,
+   "haende": 120000
+  },
+  "zentral | coach201": {
+   "laeufe": 48,
+   "haende": 120000
+  },
+  "zentral | coach21": {
+   "laeufe": 48,
+   "haende": 120000
+  },
+  "zentral | potodds": {
+   "laeufe": 48,
+   "haende": 120000
+  }
+ },
+ "unabhaengigeKartenfolgen": {
+  "anzahlSeeds": 65,
+  "haende": 162500
+ },
+ "coachHaende": 325000,
+ "umgebungsPruefsummen": {
+  "bcf2e37cab9b": 241
+ },
+ "autokorrelationBlock100": {
+  "coach21": {
+   "lag1": 0.10811193582783357,
+   "paare": 1512
+  },
+  "alle": {
+   "lag1": 0.06066241485146679,
+   "paare": 5784
+  },
+  "lag5_alle": -0.034596644168288816
+ },
+ "vergleiche": [
+  {
+   "id": "v21-v201",
+   "diff": 14.03,
+   "ci": [
+    9.11,
+    18.85
+   ],
+   "haende": 120000,
+   "paare": 48,
+   "bloecke": 240,
+   "urteil": "belegt besser",
+   "geteiltMit": [
+    "v201-bot",
+    "v21-bot",
+    "v21-potodds"
+   ]
+  },
+  {
+   "id": "v21-bot",
+   "diff": 42.62,
+   "ci": [
+    35.7,
+    49.78
+   ],
+   "haende": 120000,
+   "paare": 48,
+   "bloecke": 240,
+   "urteil": "belegt besser",
+   "geteiltMit": [
+    "v201-bot",
+    "v21-v201",
+    "v21-potodds"
+   ]
+  },
+  {
+   "id": "v201-bot",
+   "diff": 28.59,
+   "ci": [
+    22,
+    35.18
+   ],
+   "haende": 120000,
+   "paare": 48,
+   "bloecke": 240,
+   "urteil": "belegt besser",
+   "geteiltMit": [
+    "v21-bot",
+    "v21-v201"
+   ]
+  },
+  {
+   "id": "v21-potodds",
+   "diff": 94.54,
+   "ci": [
+    84.13,
+    105.08
+   ],
+   "haende": 120000,
+   "paare": 48,
+   "bloecke": 240,
+   "urteil": "belegt besser",
+   "geteiltMit": [
+    "v21-v201",
+    "v21-bot"
+   ]
+  },
+  {
+   "id": "v21-v201-unbekannt",
+   "diff": 43.49,
+   "ci": [
+    28.23,
+    58.74
+   ],
+   "haende": 30000,
+   "paare": 12,
+   "bloecke": 60,
+   "urteil": "belegt besser",
+   "geteiltMit": [
+    "v21-bot-unbekannt"
+   ]
+  },
+  {
+   "id": "v21-bot-unbekannt",
+   "diff": 165.68,
+   "ci": [
+    128.85,
+    203.86
+   ],
+   "haende": 30000,
+   "paare": 12,
+   "bloecke": 60,
+   "urteil": "belegt besser",
+   "geteiltMit": [
+    "v21-v201-unbekannt"
+   ]
+  },
+  {
+   "id": "v21-v201-kurz",
+   "diff": -0.01,
+   "ci": [
+    -1.51,
+    1.72
+   ],
+   "haende": 7500,
+   "paare": 3,
+   "bloecke": 15,
+   "urteil": "zu wenig Blöcke",
+   "geteiltMit": [
+    "v21-pushfold"
+   ]
+  },
+  {
+   "id": "v21-pushfold",
+   "diff": 7.05,
+   "ci": [
+    4.72,
+    9.45
+   ],
+   "haende": 7500,
+   "paare": 3,
+   "bloecke": 15,
+   "urteil": "zu wenig Blöcke",
+   "geteiltMit": [
+    "v21-v201-kurz"
+   ]
+  },
+  {
+   "id": "v21-v201-gto",
+   "diff": -20.55,
+   "ci": [
+    -35.36,
+    -7.52
+   ],
+   "haende": 5000,
+   "paare": 2,
+   "bloecke": 10,
+   "urteil": "zu wenig Blöcke",
+   "geteiltMit": []
+  }
+ ]
+}

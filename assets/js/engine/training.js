@@ -231,6 +231,7 @@ function validLearning(L) {
   if (!Array.isArray(L.sessions) || L.sessions.length > 5000) return 'Sessions ungültig';
   if (!Array.isArray(L.goals) || L.goals.length > 20) return 'Ziele ungültig';
   for (var g = 0; g < L.goals.length; g++) if (!validGoal(L.goals[g])) return 'Ziel ' + (g + 1) + ' ungültig';
+  if (L.pp != null && (!Array.isArray(L.pp) || L.pp.length > PP_MAX || !L.pp.every(validPP))) return 'Vorher-Nachher-Tests ungültig';
   return null;
 }
 /** Gespeicherte Lerndaten reparieren statt verwerfen: ungültige Einträge werden entfernt, der Rest bleibt erhalten. */
@@ -242,6 +243,7 @@ function repairLearning(L) {
   if (validQuiz(L.quiz)) out.quiz = L.quiz; else removed++;
   if (Array.isArray(L.goals) && L.goals.length <= 20 && L.goals.every(validGoal)) out.goals = L.goals; else removed++;
   if (typeof L.created === 'number') out.created = L.created;
+  if (Array.isArray(L.pp)) { out.pp = []; L.pp.slice(-PP_MAX).forEach(function (t) { if (validPP(t)) out.pp.push(t); else removed++; }); }
   return { learning: out, removed: removed };
 }
 function mean(a) { return a.length ? a.reduce(function (s, x) { return s + x; }, 0) / a.length : null; }
@@ -280,6 +282,106 @@ function profile(L) {
   pri.sort(function (x, y) { return x.score - y.score; });
   out.priorities = pri;
   out.level = levelOf(out.all);
+  return out;
+}
+// ---------- 2.2: Lernwirkung messbar machen (Arbeitspaket 7) ----------
+/* Fehlerfelder: Zuordnung der Fehlerkategorien des Coaches zu den Feldern des Auftrags. Der EV-Verlust einer Entscheidung wird zu gleichen
+   Teilen auf ihre Kategorien verteilt (modellabhängige Schätzung, kein gemessener Verlust). */
+var AREAS = { betgroesse: 'Einsatzgröße', 'pot-odds': 'Pot Odds', draw: 'Pot Odds', mittelstark: 'Range-Einschätzung', 'zu-viel-call': 'Range-Einschätzung',
+  'zu-viel-fold': 'Range-Einschätzung', gegnertyp: 'Range-Einschätzung', 'zu-passiv': 'Aggression', 'zu-viel-bluff': 'Aggression',
+  'zu-viele-starthaende': 'Starthände und Position', position: 'Starthände und Position' };
+function errorAreas(L) {
+  var out = {}, D = L.decisions;
+  D.forEach(function (d) { if (!d.c.length) return; var share = d.l / d.c.length;
+    d.c.forEach(function (c) { var a = AREAS[c] || 'Sonstiges', o = out[a] || (out[a] = { area: a, n: 0, loss: 0, recent: 0 }); o.n++; o.loss += share; }); });
+  D.slice(-100).forEach(function (d) { d.c.forEach(function (c) { var a = AREAS[c] || 'Sonstiges'; if (out[a]) out[a].recent++; }); });
+  return Object.keys(out).map(function (k) { return out[k]; }).sort(function (a, b) { return b.loss - a.loss; });
+}
+/** Wiederkehrende Fehler: gleiche Situation (Spot) und gleiche Fehlerkategorie mindestens dreimal mit Bewertung ≤ 45 */
+function recurring(L) {
+  var g = {}, D = L.decisions;
+  D.forEach(function (d, i) { if (d.s > 45) return; (d.t.length ? d.t : ['ohne']).forEach(function (t) { d.c.forEach(function (c) {
+    var k = t + '|' + c, o = g[k] || (g[k] = { spot: t, cat: c, n: 0, loss: 0, last: 0, idx: [] }); o.n++; o.loss += d.l; o.last = Math.max(o.last, d.ts || 0); o.idx.push(i); }); }); });
+  var N = D.length;
+  return Object.keys(g).map(function (k) { var o = g[k]; o.recent = o.idx.filter(function (i) { return i >= N - 100; }).length; delete o.idx; return o; })
+    .filter(function (o) { return o.n >= 3; }).sort(function (a, b) { return b.n - a.n || b.loss - a.loss; });
+}
+/** Verbesserung in zuvor problematischen Situationen: je Spot die ersten 10 gegen die letzten 10 Entscheidungen (ab 20 Entscheidungen),
+    „zuvor problematisch“, wenn die ersten 10 im Mittel unter 60 lagen. Differenz mit 95-%-Intervall (Welch, Normalnäherung). */
+function improvement(L) {
+  var out = [];
+  Object.keys(C.SPOTS).forEach(function (t) {
+    var l = L.decisions.filter(function (d) { return d.t.indexOf(t) >= 0; }); if (l.length < 20) return;
+    var a = l.slice(0, 10).map(function (d) { return d.s; }), b = l.slice(-10).map(function (d) { return d.s; });
+    var ma = mean(a), mb = mean(b), sa = sd(a) || 0, sb = sd(b) || 0, ci = 1.96 * Math.sqrt(sa * sa / a.length + sb * sb / b.length);
+    out.push({ spot: t, name: C.SPOTS[t], n: l.length, before: ma, after: mb, diff: mb - ma, ci: ci, problem: ma < 60, sure: Math.abs(mb - ma) > ci });
+  });
+  return out.sort(function (x, y) { return (y.problem - x.problem) || (y.diff - x.diff); });
+}
+/* Vorher-Nachher-Test: feste Testsituationen aus denselben Generatoren und Kategorien, vorher und nachher mit verschiedenen, aber vorab
+   festgelegten Seeds (vergleichbare, nicht identische Situationen; gleiches Gegnerfeld „gemischt“). Ergebnis: mittlere Entscheidungsqualität
+   und EV-Verlust je Phase, Differenz mit 95-%-Intervall. Das misst die Entscheidungsqualität dieses Nutzers in diesen Kategorien; eine
+   allgemeine pädagogische Wirksamkeit ist damit nicht nachgewiesen. */
+var PP_MAX = 30, PP_PER = 4;
+function prePostNew(L, opts) {
+  opts = opts || {};
+  var prof = opts.profile || profile(L), cats = (opts.cats || prof.priorities.filter(function (p) { return !p.explore && hasScen(p.tag); }).slice(0, 3).map(function (p) { return p.tag; }));
+  if (!opts.cats) ['cbet', 'river-call', 'blind-defense'].forEach(function (c) { if (cats.length < 3 && cats.indexOf(c) < 0) cats.push(c); });
+  var id = 'pp' + ((opts.now || Date.now()) % 1e10), per = opts.per || PP_PER, test = { id: id, ts: opts.now || Date.now(), cats: cats, state: 'pre', pre: [], post: [] };
+  cats.forEach(function (c) { for (var i = 0; i < per; i++) ['pre', 'post'].forEach(function (ph) { test[ph].push({ cat: c, seed: PT.rng.hashStr(id + '|' + c + '|' + ph + '|' + i) >>> 0, s: null, l: null }); }); });
+  if (!Array.isArray(L.pp)) L.pp = [];
+  L.pp.push(test); if (L.pp.length > PP_MAX) L.pp.splice(0, L.pp.length - PP_MAX);
+  return test;
+}
+function prePostQueue(test, phase) { return test[phase].map(function (it, i) { return { key: 'pp:' + test.id + ':' + phase + ':' + i, cat: it.cat, seed: it.seed, diff: 'gemischt' }; }).filter(function (q, i) { return test[phase][i].s == null; }); }
+function prePostRecord(L, key, score, lossBB) {
+  var m = /^pp:([A-Za-z0-9]+):(pre|post):(\d+)$/.exec(key || ''); if (!m || !Array.isArray(L.pp)) return false;
+  var t = L.pp.filter(function (x) { return x.id === m[1]; })[0]; if (!t) return false;
+  var it = t[m[2]][+m[3]]; if (!it) return false;
+  it.s = Math.round(score); it.l = Math.round((lossBB || 0) * 100) / 100;
+  if (t.pre.every(function (x) { return x.s != null; }) && t.state === 'pre') t.state = 'training';
+  if (t.post.every(function (x) { return x.s != null; })) t.state = 'fertig';
+  return true;
+}
+function prePostResult(t) {
+  function ph(list) { var sc = list.filter(function (x) { return x.s != null; }); return { n: sc.length, score: mean(sc.map(function (x) { return x.s; })), sd: sd(sc.map(function (x) { return x.s; })), loss: mean(sc.map(function (x) { return x.l; })) }; }
+  var a = ph(t.pre), b = ph(t.post), res = { pre: a, post: b, byCat: {} };
+  if (a.n >= 2 && b.n >= 2) { res.diff = b.score - a.score; res.ci = 1.96 * Math.sqrt((a.sd || 0) * (a.sd || 0) / a.n + (b.sd || 0) * (b.sd || 0) / b.n); res.sure = Math.abs(res.diff) > res.ci; }
+  t.cats.forEach(function (c) { var x = ph(t.pre.filter(function (i) { return i.cat === c; })), y = ph(t.post.filter(function (i) { return i.cat === c; })); res.byCat[c] = { pre: x.score, post: y.score, n: Math.min(x.n, y.n) }; });
+  return res;
+}
+function validPP(t) {
+  if (!t || typeof t !== 'object' || Array.isArray(t) || typeof t.id !== 'string' || !/^pp[0-9]{1,12}$/.test(t.id) || typeof t.ts !== 'number' || ['pre', 'training', 'fertig'].indexOf(t.state) < 0) return false;
+  if (!Array.isArray(t.cats) || t.cats.length < 1 || t.cats.length > 6 || !t.cats.every(hasScen)) return false;
+  var okItem = function (it) { return it && typeof it === 'object' && hasScen(it.cat) && isInt(it.seed, 0, 4294967295) && (it.s == null || num(it.s, 0, 100)) && (it.l == null || num(it.l, -1e6, 1e6)); };
+  return ['pre', 'post'].every(function (ph) { return Array.isArray(t[ph]) && t[ph].length <= 40 && t[ph].every(okItem); });
+}
+// ---------- 2.2: Gegnergedächtnis – Belastbarkeit je Wert und Verhaltenshypothesen (Arbeitspaket 6) ----------
+/** Belastbarkeit eines Werts nach seinen tatsächlichen Gelegenheiten (nicht nach gespielten Händen) */
+function statReliability(nd) { var n = nd ? nd[1] : 0; return n < 20 ? 'unsicher' : n < 100 ? 'Tendenz' : 'belastbar'; }
+/** Verhaltenshypothesen: Abweichung vom Populationsmittel nur, wenn das 95-%-Wilson-Intervall den Mittelwert nicht enthält
+    (gestützt) bzw. wenn der Rohwert um mehr als 10 Prozentpunkte abweicht, das Intervall ihn aber noch enthält (Vermutung).
+    Aufgedeckte Bluffs (Bet oder Raise am River mit einer Hand unter dem 30. Perzentil) werden getrennt gezählt. */
+var HYP = { vpip: ['spielt mehr Starthände als der Durchschnitt', 'spielt weniger Starthände als der Durchschnitt'], pfr: ['erhöht preflop häufiger', 'erhöht preflop seltener'],
+  threeBet: ['3-Bettet häufig', '3-Bettet selten'], foldTo3Bet: ['gibt gegen 3-Bets oft auf', 'verteidigt gegen 3-Bets häufig'],
+  cbetFlop: ['setzt am Flop häufig nach (C-Bet)', 'setzt am Flop selten nach'], foldToCbet: ['foldet oft gegen C-Bets', 'verteidigt gegen C-Bets häufig'],
+  afq: ['spielt postflop aggressiv', 'spielt postflop passiv'], wtsd: ['geht oft zum Showdown', 'geht selten zum Showdown'] };
+function hypotheses(r) {
+  var out = [], P = PT.ranges.PRIOR;
+  Object.keys(HYP).forEach(function (k) {
+    var nd = r.stats[k]; if (!nd || nd[1] < 10) return;
+    var ci = S.wilson(nd), raw = nd[0] / nd[1], m = P[k]; if (!ci || m == null) return;
+    var hi = raw > m, sure = ci[0] > m || ci[1] < m;
+    if (sure || Math.abs(raw - m) > 0.1) out.push({ key: k, text: HYP[k][hi ? 0 : 1], level: sure ? 'gestützt' : 'Vermutung', raw: raw, prior: m, n: nd[1], ci: ci });
+  });
+  var bl = 0, sh = 0;
+  (r.shown || []).forEach(function (x) {
+    if (!x || typeof x.board !== 'string' || x.board.length < 10 || typeof x.cards !== 'string') return;
+    var b = PT.parseCards(x.board), c = PT.parseCards(x.cards); if (!b || !c || b.length < 5 || c.length !== 2) return;
+    sh++; var riv = x.actions && x.actions[3] ? String(x.actions[3]) : '';
+    if (/Bet|Raise/.test(riv) && B.percentile(c, b).p < 0.3) bl++;
+  });
+  if (bl >= 2) out.push({ key: 'riverBluff', text: 'zeigte am River nach Bet oder Raise mehrfach schwache Hände (' + bl + ' von ' + sh + ' aufgedeckten Blättern)', level: 'Vermutung', n: sh });
   return out;
 }
 function levelOf(all) {
@@ -527,5 +629,6 @@ function handText(h) {
 
 PT.training = { makeHandRecord: makeHandRecord, makeDecision: makeDecision, slimDecision: slimDecision, validHand: validHand, newLearning: newLearning, addDecision: addDecision, validLearning: validLearning, repairLearning: repairLearning, validView: validView, validSnap: validSnap,
   profile: profile, goalStatus: goalStatus, srsAdd: srsAdd, srsDue: srsDue, srsReview: srsReview, BOX_DAYS: BOX_DAYS, SCEN: SCEN, hasScen: hasScen, generate: generate,
-  quiz: quiz, QUIZ_TYPES: QUIZ_TYPES, handText: handText, levelOf: levelOf, defaultGoals: defaultGoals };
+  quiz: quiz, QUIZ_TYPES: QUIZ_TYPES, handText: handText, levelOf: levelOf, defaultGoals: defaultGoals,
+  AREAS: AREAS, errorAreas: errorAreas, recurring: recurring, improvement: improvement, prePostNew: prePostNew, prePostQueue: prePostQueue, prePostRecord: prePostRecord, prePostResult: prePostResult, validPP: validPP, statReliability: statReliability, hypotheses: hypotheses };
 })(typeof globalThis !== 'undefined' ? globalThis : (typeof self !== 'undefined' ? self : this));
