@@ -108,13 +108,18 @@ function solveMatrix(J, M, sizes, iters, opts) {
     return { vO: vO, vI: vI };
   }
   var oneO = new Float64Array(BO).fill(1), oneI = new Float64Array(BI).fill(1);
-  for (var t = 1; t <= iters; t++) { walk(T.root, oneO, oneI, 0, false, -1, t); walk(T.root, oneO, oneI, 1, false, -1, t); }
+  var done = iters, aborted = false;
+  for (var t = 1; t <= iters; t++) {
+    walk(T.root, oneO, oneI, 0, false, -1, t); walk(T.root, oneO, oneI, 1, false, -1, t);
+    // Zeitgrenze: nach mindestens 50 Iterationen abbrechen dürfen; Exploitability wird für die erreichte Iteration ehrlich ausgewiesen
+    if (opts && opts.deadline && t >= 50 && (t & 15) === 0 && PT.util.now() > opts.deadline) { done = t; aborted = true; break; }
+  }
   function sumv(v) { var s = 0; for (var i = 0; i < v.length; i++) s += v[i]; return s; }
   var val = walk(T.root, oneO, oneI, -1, true, -1, 0), gameV = sumv(val.vO);
   var brO = sumv(walk(T.root, oneO, oneI, -1, true, 0, 0).vO), brI = sumv(walk(T.root, oneO, oneI, -1, true, 1, 0).vI);
   var expl = (brO + brI) / 2; // ≥ 0; 0 im exakten Gleichgewicht (Einheit: Pot)
   var avgStrat = nodes.map(function (n) { var B = n.p === 0 ? BO : BI, out = []; for (var b = 0; b < B; b++) out.push(Array.from(strat(n, b, true))); return { name: n.name, p: n.p, acts: n.acts, s: out }; });
-  return { value: gameV, exploitability: expl, nodes: avgStrat, iters: iters, brO: brO, brI: brI, tree: T };
+  return { value: gameV, exploitability: expl, nodes: avgStrat, iters: done, aborted: aborted, brO: brO, brI: brI, tree: T };
 }
 /**
  * Unabhängige Prüfung: Wert und Best-Response-Werte fester Strategien (je Knoten-Name und Bucket eine Verteilung) in einem Spiel J/M.
@@ -186,7 +191,7 @@ function solveRiver(o) {
   for (i = 0; i < B; i++) for (j = 0; j < B; j++) { if (J[i][j] > 0) M[i][j] /= J[i][j]; tot += J[i][j]; }
   if (!(tot > 0)) return null;
   for (i = 0; i < B; i++) for (j = 0; j < B; j++) J[i][j] /= tot;
-  var sol = solveMatrix(J, M, sizes, iters, { raise: o.raise || false, stack: o.stack });
+  var sol = solveMatrix(J, M, sizes, iters, { raise: o.raise || false, stack: o.stack, deadline: o.deadline });
   sol.J = o.keepMatrix ? J : undefined; sol.M = o.keepMatrix ? M : undefined; sol.bO = o.keepMatrix ? bO : undefined; sol.bI = o.keepMatrix ? bI : undefined;
   var heroB = o.heroCombo != null ? (o.heroIsOOP ? bO.of[o.heroCombo] : bI.of[o.heroCombo]) : -1;
   sol.heroBucket = heroB; sol.buckets = B; sol.sizes = sizes; sol.ms = Math.round(PT.util.now() - t0);

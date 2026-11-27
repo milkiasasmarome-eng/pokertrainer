@@ -54,7 +54,7 @@ function comboEquities(hero, board, w, o) {
   // Kopie liefern: Aufrufer dürfen das Array nicht mit dem Cache teilen
   if (hit && ceUsable(hit, o)) return { e: Float32Array.from(hit.e), info: Object.assign({}, hit.info, { cached: true, iters: 0 }) };
   var res = comboEquitiesRaw(hero, board, w, o);
-  if (!res.info.failed && (!hit || ceBetter(res, hit))) { ceCache.delete(ck); ceCache.set(ck, { e: Float32Array.from(res.e), info: Object.assign({}, res.info) }); if (ceCache.size > 60) ceCache.delete(ceCache.keys().next().value); }
+  if (!res.info.failed && !res.info.aborted && (!hit || ceBetter(res, hit))) { ceCache.delete(ck); ceCache.set(ck, { e: Float32Array.from(res.e), info: Object.assign({}, res.info) }); if (ceCache.size > 60) ceCache.delete(ceCache.keys().next().value); }
   return res;
 }
 function comboEquitiesRaw(hero, board, w, o) {
@@ -83,8 +83,10 @@ function comboEquitiesRaw(hero, board, w, o) {
     subset = sh.slice(0, Math.max(0, allow)); perCombo = 1;
   }
   var allKs = ks; if (subset) ks = subset;
-  var rng = o.rng || PT.makeRng(), sampled = 0;
+  var rng = o.rng || PT.makeRng(), sampled = 0, doneN = ks.length;
   for (var q = 0; q < ks.length; q++) {
+    // Zeitgrenze (Abnahmekriterium „Deadline überall“): abbrechen, Rest über Klassenmittel, gekennzeichnet und nicht im Cache
+    if (o.deadline && (q & 7) === 0 && q > 0 && PT.util.now() > o.deadline) { doneN = q; info.aborted = true; break; }
     k = ks[q]; var a = C1[k], b = C2[k], s = 0, n = 0;
     oA[0] = a; oA[1] = b;
     if (need === 0) { var hs = evaluate(hA), os = evaluate(oA); s = hs > os ? 1 : hs === os ? 0.5 : 0; n = 1; }
@@ -109,6 +111,7 @@ function comboEquitiesRaw(hero, board, w, o) {
     info.evals += 2 * n;
     e[k] = n ? s / n : 0.5;
   }
+  if (info.aborted) { ks = ks.slice(0, doneN); if (!subset) subset = ks; }
   if (subset) {
     var cs = new Float64Array(169), cn = new Float64Array(169), gs = 0, gn = 0;
     ks.forEach(function (k3) { cs[CLS[k3]] += e[k3]; cn[CLS[k3]]++; gs += e[k3]; gn++; });
@@ -116,8 +119,9 @@ function comboEquitiesRaw(hero, board, w, o) {
     allKs.forEach(function (k3) { if (!done[k3]) e[k3] = cn[CLS[k3]] ? cs[CLS[k3]] / cn[CLS[k3]] : (gn ? gs / gn : 0.5); });
     info.partial = true;
   }
+  if (info.aborted) { info.method = exact ? 'exakt (abgebrochen, Rest genähert)' : 'Monte Carlo (abgebrochen, Rest genähert)'; info.se = Math.max(info.se || 0, 0.05); }
   if (!exact) {
-    info.method = 'Monte Carlo'; info.iters = sampled;
+    info.method = info.aborted ? info.method : 'Monte Carlo'; info.iters = sampled;
     if (o.budget) { o.budget.left -= sampled; o.budget.used += sampled; if (o.budget.calls) o.budget.calls.push(sampled); }
     info.se = 0.5 / Math.sqrt(Math.max(1, sampled));
   }
