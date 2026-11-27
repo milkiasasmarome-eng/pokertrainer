@@ -42,6 +42,7 @@ node tests/e2e.js                                  # Browser-Tests (Playwright +
 - Gespeicherte Hände nur über `PTUI.loadHands()` lesen (prüft mit `validHand`); neue Felder in Hand- oder Entscheidungsdatensätzen in `validHand` bzw. `validDecisionFields` (training.js) und in `docs/BENCHMARK_EXPORT.md` ergänzen.
 - Barrierefreiheit: `node tests/e2e.js <URL> --nur=a11y` muss grün bleiben (axe-core aus `tests/package.json`, `npm ci --prefix tests`). Live-Ansagen nur über `announce()`.
 - Vor dem Commit zusätzlich `node tools/check-version.js`; CI prüft außerdem `node tools/check-build.js`.
+- Prüfung C/D 2.1 (`docs/audit-2.1/PRUEFUNG_C_D.md`): Bereiche mit Knöpfen nur über `setHtml`/`PTUI.h.keepFocus` neu zeichnen (Fokus bleibt erhalten); Tischlayout-Änderungen mit `node tests/e2e.js <URL> --nur=cd` prüfen (Überdeckungen 320–1366 px); Importgrenze nur über `PT.stats.MAX_IMPORT`.
 
 ## Hinweise zu Coach und Strategie (2.1)
 - Das Reaktionsmodell postflop (exploitativ) ist ein an der Gegnerpopulation kalibriertes Schwellenmodell (`PT.ev.POP`, `popRespond`), gemittelt mit dem MDF-Modell. Wer Gegner-KI, Range-Schätzung oder Statistik ändert, muss neu kalibrieren: `node tests/strategy/sizing-study.js <Wurzel> <Seed> <Hände> bots base`, dann `node tests/strategy/fit-response.js base <Training> <Prüfung>` (siehe docs/STRATEGIE.md).
