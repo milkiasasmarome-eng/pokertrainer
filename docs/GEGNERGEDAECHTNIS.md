@@ -72,14 +72,14 @@ chg:    { <Wert aus den 7 geprüften>: [Beginn, ±1] }        // aktive Verände
 | Funktion | Ergebnis |
 |---|---|
 | `PT.stats.profile(rec)` | wie bisher (`hands`, 17 Werte in %, `af`, `bel`, `typ`) und zusätzlich: `recent` = `{ hands, halfLife, stats: { k: { rate, pct, n, d, neff, ci, sm, quality } } }`; `change` = `{ detected, keys: [{ key, label, dir, z, recent, older, long, since, ago, neff }], tested, z: { k: z oder null }, params }`; `cards` = `{ observed, unknown, from, counted, share }`; `est` = beste Schätzung je Wert (0–1); `estSrc` = `'kurzzeit'`, `'langzeit'` oder `'prior'`; `quality` = `'geschätzt'` oder `'unbekannt'` |
-| `PT.stats.effectiveStats(rec)` | `{ stats: { k: [Zähler, Nenner] }, changed: [k…], hands, longHands }` – bei erkannter Veränderung die Kurzzeitzähler, sonst die Langzeitzähler; direkt mit `PT.ranges.smooth(eff.stats)` nutzbar. `hands` ist bei Veränderung das Kurzzeit-Handgewicht (für Datenbasis/Unsicherheit). Funktioniert auch mit Format-2-Datensätzen (dann Langzeit). |
+| `PT.stats.effectiveStats(rec)` | `{ stats: { k: [Zähler, Nenner] }, changed: [k…], linked: [k…], hands, longHands }` – bei erkannter Veränderung die Kurzzeitzähler, sonst die Langzeitzähler; direkt mit `PT.ranges.smooth(eff.stats)` nutzbar. `hands` ist bei Veränderung das Kurzzeit-Handgewicht (für Datenbasis/Unsicherheit). Funktioniert auch mit Format-2-Datensätzen (dann Langzeit). |
 | `PT.stats.changeTest(nd, rc)` | z-Test eines Werts: `{ z, recent, older, long, s1, neff, old }` oder `null` (Mindestzahl nicht erreicht) |
 | `PT.stats.recentProfile(rec)`, `changeProfile(rec)` | Teilstücke von `profile` |
 | `PT.stats.MEMORY` | `{ HALF_LIFE, LAMBDA, H_MAX, CHANGE_KEYS, CHANGE: { zOn, zOff, minRecent, minOld, minExp, cc } }` |
 | `PT.stats.loadRecord(r)`, `recordVersion(r)`, `needsMigration(list)`, `migrateV2(r)`, `rawExport(list, version)` | Laden und Umwandeln beliebiger bekannter Formate, Sicherungsdateien alter Formate |
 | `PT.stats.setMemoryParams(o)` | nur für Messreihen (Parameterstudie), nicht in der App |
 
-**Vorschlag für den Coach** (nicht umgesetzt, `coach.js` gehört einem anderen Arbeitspaket): In `coach.oppStats(dbRec)` `var eff = S.effectiveStats(dbRec); raw = eff.stats; hands = eff.hands;` statt `dbRec.stats`/`dbRec.hands`; im Text bei `S.profile(dbRec).change.detected` die betroffenen Werte nennen („spielt zuletzt deutlich lockerer: VPIP 50 % statt 28 %“). Die Momentaufnahmen (`snapshotOpps`) enthalten die Format-3-Felder bereits.
+**Nutzung im Coach** (umgesetzt): `coach.oppStats(dbRec)` rechnet mit `S.effectiveStats(dbRec)` (`eff.stats`, `eff.hands`). Seit Prüfung B liefert `effectiveStats` zusätzlich `linked`: Werte mit gemeinsamem Nenner je Hand (VPIP, PFR), die wegen eines Alarms des Partnerwerts ebenfalls aus den Kurzzeitzählern kommen; `profile().est` folgt derselben Regel. Der frühere Vorschlag an dieser Stelle ist damit erledigt.
 
 ## 6. Gegner-KI: Anpassung an synthetische Heldenstrategien
 
@@ -175,7 +175,7 @@ Gewählt: H = 100, z_on = 3,75 – unter den untersuchten Kombinationen diejenig
 
 ## 9. Grenzen und offene Punkte
 
-- Der Coach nutzt die neue Schnittstelle noch nicht (Vorschlag in Abschnitt 5).
+- Der Coach nutzt die Schnittstelle (`coach.oppStats` über `PT.stats.effectiveStats`). Seit Prüfung B (Befund 9) gelten Werte mit gemeinsamem Nenner je Hand (VPIP, PFR) immer auf derselben Zeitskala: Schlägt einer Alarm, kommen beide aus den Kurzzeitwerten (`effectiveStats().linked`); zusätzlich ist PFR im Coach nie größer als VPIP.
 - Die Bots passen sich an die Langzeitwerte des Helden an, nicht an sein Kurzzeitgedächtnis; ein Held, der mitten in der Session umstellt, wird entsprechend langsamer ausgenutzt.
 - Postflop-Werte mit wenigen Gelegenheiten (C-Bet Flop, Fold gegen C-Bet) werden bei H = 100 kaum geprüft; eine längere Halbwertszeit nur für diese Werte wäre möglich, verlängert aber die Verzögerung.
 - Die Fehlalarmrate ist per Simulation kalibriert, nicht analytisch beschränkt.

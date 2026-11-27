@@ -252,13 +252,23 @@ function changeProfile(r) {
  * Werte für Coach und Gegnermodell: je Wert [Zähler, Nenner] wie in r.stats, bei erkannter Veränderung die Kurzzeitzähler.
  * Direkt mit PT.ranges.smooth nutzbar. Nur aus Beobachtungen am Tisch.
  */
+// Prüfer B, Befund 9: Werte mit gemeinsamem Nenner (je Hand) gehören zu einer Zeitskala. Schlägt einer Alarm, gelten für die ganze
+// Gruppe die Kurzzeitwerte; sonst entstünden unmögliche Kombinationen (z. B. VPIP kurzfristig unter PFR langfristig).
+var LINKED = [['vpip', 'pfr']];
+function linkedKeys(changedKeys) {
+  var out = changedKeys.slice();
+  LINKED.forEach(function (g) { if (g.some(function (k) { return out.indexOf(k) >= 0; })) g.forEach(function (k) { if (out.indexOf(k) < 0) out.push(k); }); });
+  return out;
+}
 function effectiveStats(r) {
   var st = r ? r.stats : emptyStats(), out = {}, changed = [], ch = r && r.recent && r.chg ? r.chg : {};
+  STATS.forEach(function (k) { if (Object.prototype.hasOwnProperty.call(ch, k) && changeTest(st[k], r.recent.stats[k], k)) changed.push(k); });  // wie profile().est
+  var use = linkedKeys(changed), linked = use.filter(function (k) { return changed.indexOf(k) < 0; });
   STATS.forEach(function (k) {
-    if (Object.prototype.hasOwnProperty.call(ch, k) && changeTest(st[k], r.recent.stats[k], k)) { out[k] = [r.recent.stats[k][0], r.recent.stats[k][1]]; changed.push(k); }  // wie profile().est
+    if (use.indexOf(k) >= 0) out[k] = [r.recent.stats[k][0], r.recent.stats[k][1]];
     else out[k] = [st[k][0], st[k][1]];
   });
-  return { stats: out, changed: changed, hands: r ? (changed.length ? Math.min(r.hands, Math.round(r.recent.h)) : r.hands) : 0, longHands: r ? r.hands : 0 };
+  return { stats: out, changed: changed, linked: linked, hands: r ? (changed.length ? Math.min(r.hands, Math.round(r.recent.h)) : r.hands) : 0, longHands: r ? r.hands : 0 };
 }
 function profile(r) {
   var o = { hands: r ? r.hands : 0 }, st = r ? r.stats : emptyStats();
@@ -272,8 +282,9 @@ function profile(r) {
   o.cards = { observed: c ? c.sd : (r ? r.shown.length : 0), unknown: c ? c.hid : null, from: c ? c.from : null, counted: !!c,
     share: c && c.sd + c.hid > 0 ? c.sd / (c.sd + c.hid) : null };
   o.est = {}; o.estSrc = {}; o.quality = {};
+  var useKeys = linkedKeys(o.change.keys.map(function (x) { return x.key; }));
   STATS.forEach(function (k) {
-    var pk = priorOf(k), useR = o.change.keys.some(function (x) { return x.key === k; }), nd = useR ? [r.recent.stats[k][0], r.recent.stats[k][1]] : st[k];
+    var pk = priorOf(k), useR = useKeys.indexOf(k) >= 0, nd = useR ? [r.recent.stats[k][0], r.recent.stats[k][1]] : st[k];
     o.est[k] = (nd[0] + pk[0] * pk[1]) / (nd[1] + pk[1]);
     o.estSrc[k] = useR ? 'kurzzeit' : st[k][1] > 0 ? 'langzeit' : 'prior';
     o.quality[k] = st[k][1] > 0 ? 'geschätzt' : 'unbekannt';

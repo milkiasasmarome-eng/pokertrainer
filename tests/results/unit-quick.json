@@ -1,9 +1,9 @@
 {
  "app": "2.0.1",
- "date": "2026-11-27T06:46:15.161Z",
+ "date": "2026-11-27T06:42:32.376Z",
  "node": "v22.23.5",
  "quick": true,
- "passed": 100,
+ "passed": 108,
  "failed": 0,
  "tests": [
   {
@@ -11,35 +11,35 @@
    "ok": true,
    "checks": 4,
    "notes": [],
-   "ms": 627
+   "ms": 658
   },
   {
    "name": "Handbewertung: 300.000 zufällige Sieben-Karten-Paare gegen Best-of-Five-Referenz",
    "ok": true,
    "checks": 2,
    "notes": [],
-   "ms": 1975
+   "ms": 2563
   },
   {
    "name": "Handbewertung: feste Testfälle (Kategorien und Vergleiche)",
    "ok": true,
    "checks": 32,
    "notes": [],
-   "ms": 0
+   "ms": 1
   },
   {
    "name": "Regeln: Blinds, Reihenfolge, Mindest-Raise, BB-Option, Walk",
    "ok": true,
    "checks": 27,
    "notes": [],
-   "ms": 4
+   "ms": 3
   },
   {
    "name": "Regeln: unvollständiger All-in öffnet nicht, mehrere Short All-ins öffnen kumuliert, Mindest-Raise bleibt",
    "ok": true,
    "checks": 11,
    "notes": [],
-   "ms": 1
+   "ms": 0
   },
   {
    "name": "Regeln: Wiedereröffnung nach vollem Raise, Re-Raise-Größen",
@@ -53,21 +53,21 @@
    "ok": true,
    "checks": 11,
    "notes": [],
-   "ms": 0
+   "ms": 1
   },
   {
    "name": "Regeln: Split Pot und Odd Chip (erster Gewinner links vom Button)",
    "ok": true,
    "checks": 6,
    "notes": [],
-   "ms": 1
+   "ms": 0
   },
   {
    "name": "Regeln: Heads-up-Hand, ungleiche Stacks, All-in auf Flop und Turn",
    "ok": true,
    "checks": 9,
    "notes": [],
-   "ms": 0
+   "ms": 1
   },
   {
    "name": "Regeln: kurzer Big Blind (All-in für weniger), Rake optional und konsistent",
@@ -81,16 +81,16 @@
    "ok": true,
    "checks": 2,
    "notes": [],
-   "ms": 282
+   "ms": 494
   },
   {
    "name": "Simulation: 10.000 Hände, Invarianten nach jeder Aktion, keine hängende Hand, Chipbilanz",
    "ok": true,
    "checks": 3,
    "notes": [
-    "{\"hands\":2000,\"actions\":17297,\"showdowns\":309,\"sidePots\":1,\"splitPots\":15,\"swaps\":66}"
+    "{\"hands\":2000,\"actions\":17309,\"showdowns\":324,\"sidePots\":1,\"splitPots\":13,\"swaps\":66}"
    ],
-   "ms": 906
+   "ms": 1320
   },
   {
    "name": "Fuzz: zufällige und ungültige Eingaben, zufällige Stacks (1–400 BB)",
@@ -99,21 +99,21 @@
    "notes": [
     "1500 Hände mit zufälligen Stacks"
    ],
-   "ms": 761
+   "ms": 1464
   },
   {
    "name": "Eigenschaft: gefoldete Spieler gewinnen nie, Gewinner sind berechtigt, keine Karte doppelt",
    "ok": true,
    "checks": 2,
    "notes": [],
-   "ms": 683
+   "ms": 834
   },
   {
    "name": "Zufall: getrennte Ströme; Coach an/aus ändert den Spielverlauf nicht",
    "ok": true,
    "checks": 3,
    "notes": [],
-   "ms": 1917
+   "ms": 2181
   },
   {
    "name": "Fairness: Bots und Coach sehen keine verdeckten Karten",
@@ -129,7 +129,7 @@
    "notes": [
     "AhAd vs KsKc: 81.26 %"
    ],
-   "ms": 818
+   "ms": 737
   },
   {
    "name": "Equity: Monte-Carlo gegen exakte Enumeration (Fehler ≤ 4 Standardfehler)",
@@ -141,7 +141,7 @@
     "8h9h Th7h2c AcAd: exakt 56.26 %, MC 56.37 % (SE 0.50, n 10256)",
     "AhKd Ks8c3d : exakt 88.28 %, MC 88.23 % (SE 0.38, n 7172)"
    ],
-   "ms": 889
+   "ms": 898
   },
   {
    "name": "Equity: Mehrgegner-Simulation (AA gegen KK gegen QQ) gegen exakte Enumeration",
@@ -150,7 +150,7 @@
    "notes": [
     "AA 3-Wege: exakt 66.46 % (195822 Boards), MC 67.25 %"
    ],
-   "ms": 109
+   "ms": 126
   },
   {
    "name": "Pot Odds und Side-Pot-Berechtigung: nur erreichbare Pots zählen",
@@ -164,7 +164,7 @@
    "ok": true,
    "checks": 3,
    "notes": [],
-   "ms": 81
+   "ms": 93
   },
   {
    "name": "Kombinatorik und Blocker",
@@ -178,7 +178,7 @@
    "ok": true,
    "checks": 6,
    "notes": [],
-   "ms": 0
+   "ms": 1
   },
   {
    "name": "Statistik: Zähler stimmen mit unabhängiger Kontrollzählung überein (VPIP, PFR, 3-Bet, Fold gegen 3-Bet, C-Bet, Fold gegen C-Bet, WTSD)",
@@ -187,37 +187,37 @@
    "notes": [
     "308 Zähler/Nenner-Paare verglichen"
    ],
-   "ms": 669
+   "ms": 714
   },
   {
    "name": "CFR+: analytisches River-Spiel (Bluff-Anteil b/(1+2b), Call-Häufigkeit 1/(1+b)), Exploitability ≈ 0",
    "ok": true,
    "checks": 13,
    "notes": [],
-   "ms": 86
+   "ms": 80
   },
   {
    "name": "Coach: Obergrenze von 5.000 Simulationen je Entscheidung, Antwortzeit, keine Ausnahme",
    "ok": true,
-   "checks": 298,
+   "checks": 275,
    "notes": [
-    "296 Analysen, max. 5000 Simulationen, max. 157 ms (Node, ein Kern)"
+    "273 Analysen, max. 5000 Simulationen, max. 139 ms (Node, ein Kern)"
    ],
-   "ms": 4502
+   "ms": 5080
   },
   {
    "name": "Coach: Bewertung nutzt nur Entscheidungsinformationen; sieben Stufen; Fehlerkategorien",
    "ok": true,
    "checks": 12,
    "notes": [],
-   "ms": 116
+   "ms": 125
   },
   {
    "name": "Training: alle 14 Kategorien erzeugen Situationen, reproduzierbar über Seeds",
    "ok": true,
    "checks": 28,
    "notes": [],
-   "ms": 102
+   "ms": 107
   },
   {
    "name": "Training: Quizfragen rechnen korrekt, Kompetenzprofil und Spaced Repetition",
@@ -231,21 +231,21 @@
    "ok": true,
    "checks": 6,
    "notes": [],
-   "ms": 603
+   "ms": 731
   },
   {
    "name": "Datenbank: Export und Import ergeben dieselbe Datenbank; 5.000 Gegner",
    "ok": true,
    "checks": 3,
    "notes": [],
-   "ms": 512
+   "ms": 536
   },
   {
    "name": "Import: beschädigte und manipulierte Dateien werden abgelehnt, bestehende Daten unverändert",
    "ok": true,
    "checks": 18,
    "notes": [],
-   "ms": 140
+   "ms": 139
   },
   {
    "name": "Migration: Datenbank aus Entwurf 2 (Version 1) und vollständige Sicherung",
@@ -259,154 +259,168 @@
    "ok": true,
    "checks": 79,
    "notes": [],
-   "ms": 39
+   "ms": 41
   },
   {
    "name": "Handhistorie: Datensätze sind gültig und exportierbar",
    "ok": true,
    "checks": 2,
    "notes": [],
-   "ms": 137
+   "ms": 143
   },
   {
    "name": "Sprachausgabe: nur der jüngste Tipp wird gesprochen, ältere brechen ab; ohne Sprachfunktion kein Fehler",
    "ok": true,
    "checks": 5,
    "notes": [],
-   "ms": 1
+   "ms": 0
   },
   {
    "name": "Regression Prüfer A: Check-Raise-Nenner, Replay mit Rake, Dead Money je Spieler, Stack 0, Heldenplatz",
    "ok": true,
    "checks": 9,
    "notes": [],
-   "ms": 19
+   "ms": 21
   },
   {
    "name": "Regression Prüfer A: EV-Call-Zweig mit Call-Range, Jam-Raise-Zweig, Monte-Carlo-Stoppregel",
    "ok": true,
    "checks": 3,
    "notes": [],
-   "ms": 192
+   "ms": 165
   },
   {
    "name": "Regression Prüfer C: Preflop nach Faustregel-Chart (kein 3-Bet/Open mit beliebigen Händen, kein Open-Limp)",
    "ok": true,
    "checks": 9,
    "notes": [],
-   "ms": 62
+   "ms": 48
   },
   {
    "name": "Regression Prüfer C: keine Multiway-Bluffs ohne Rückhalt, keine Flop-Overbets, Live-Tipp ≤ 5.000 Simulationen",
    "ok": true,
    "checks": 3,
    "notes": [],
-   "ms": 194
+   "ms": 177
   },
   {
    "name": "Regression Prüfer C: Importprüfung Lerndaten (XSS, __proto__, Ziele, Momentaufnahmen), Reparatur beim Laden",
    "ok": true,
    "checks": 7,
    "notes": [],
-   "ms": 22
+   "ms": 23
   },
   {
    "name": "Benchmark: neue Entscheidungsfelder werden erzeugt und streng geprüft (alte Datensätze bleiben gültig)",
    "ok": true,
    "checks": 46,
    "notes": [],
-   "ms": 1875
+   "ms": 2165
   },
   {
    "name": "Benchmark: Schema, Trennung Entscheidungszeitpunkt / später, keine persönlichen Daten, byteweise reproduzierbar",
    "ok": true,
    "checks": 10,
    "notes": [],
-   "ms": 144
+   "ms": 142
   },
   {
    "name": "Benchmark: Nachrechnung aus dem Export (gleicher Seed, gleiche Gegnerwerte) ergibt dieselbe Empfehlung und dieselben EV",
    "ok": true,
    "checks": 3,
    "notes": [],
-   "ms": 794
+   "ms": 808
   },
   {
    "name": "A1: Ergebnisse beider Modi unabhängig von der Reihenfolge; faire Budgetverteilung; erschöpftes Budget ohne ungültige Werte",
    "ok": true,
    "checks": 3,
    "notes": [],
-   "ms": 2039
+   "ms": 3488
   },
   {
    "name": "A6: Bayes-Beleg für Exploits (Beta-CDF, Monotonie in Stichprobe und Abweichung, kein Exploit ohne Beleg)",
    "ok": true,
    "checks": 6,
    "notes": [],
-   "ms": 12
+   "ms": 10
   },
   {
    "name": "Import: manipulierte Datenbank mit gültiger Prüfsumme (Typen, NaN-Ersatz, 1e308, negative Zahlen, HTML, __proto__) wird abgelehnt",
    "ok": true,
    "checks": 32,
    "notes": [],
-   "ms": 1220
+   "ms": 1254
   },
   {
    "name": "Import: Sicherung mit manipulierten Händen (Zeit 1e308, Ergebnis als Text, HTML in Namen, fremde Felder) wird abgelehnt",
    "ok": true,
    "checks": 16,
    "notes": [],
-   "ms": 183
+   "ms": 175
   },
   {
-   "name": "Import: Größenlimit PT.stats.MAX_IMPORT (keine Verarbeitung zu großer Dateien), große gültige Sicherung in vertretbarer Zeit",
+   "name": "Import: Größenlimit 60 MB (keine Verarbeitung zu großer Dateien), große gültige Sicherung in vertretbarer Zeit",
    "ok": true,
    "checks": 4,
    "notes": [],
-   "ms": 1565
+   "ms": 1335
   },
   {
    "name": "Rohsicherung: beschädigte lokale Daten werden gesichert, gültige Einträge beim Import übernommen, beschädigte übersprungen",
    "ok": true,
    "checks": 9,
    "notes": [],
-   "ms": 33
+   "ms": 38
   },
   {
    "name": "Statisch: kein Netzwerkzugriff im App-Code, CSP in Website und Offline-Datei, kein eval",
    "ok": true,
    "checks": 7,
    "notes": [],
-   "ms": 7
+   "ms": 9
+  },
+  {
+   "name": "Deadline: comboEquities bricht ab, kennzeichnet „abgebrochen“, nicht im Cache, keine Lücken",
+   "ok": true,
+   "checks": 4,
+   "notes": [],
+   "ms": 291
+  },
+  {
+   "name": "Deadline: River-Modellspiel bricht nach mindestens 50 Iterationen ab und meldet die erreichte Zahl",
+   "ok": true,
+   "checks": 3,
+   "notes": [],
+   "ms": 106
   },
   {
    "name": "Gegnergedächtnis: Abklingen mit Halbwertszeit in Händen, gewichtete Zähler und Testvarianz exakt",
    "ok": true,
    "checks": 6,
    "notes": [],
-   "ms": 59
+   "ms": 63
   },
   {
    "name": "Gegnergedächtnis: Erkennung veränderter Spielweise (Mindestzahl, Richtung, Hysterese, beste Schätzung, Coach-Schnittstelle)",
    "ok": true,
    "checks": 13,
    "notes": [],
-   "ms": 4
+   "ms": 3
   },
   {
    "name": "Datenformat 3: Export → Import identisch, 5.000 Gegner, strenge Prüfung, Migration aus Format 2 und 1",
    "ok": true,
    "checks": 49,
    "notes": [],
-   "ms": 2045
+   "ms": 1674
   },
   {
    "name": "Rückkehrer: Langzeitwerte und Kurzzeitgedächtnis bleiben über Archiv und Rückkehr erhalten und laufen weiter",
    "ok": true,
    "checks": 6,
    "notes": [],
-   "ms": 1309
+   "ms": 1335
   },
   {
    "name": "Fairness: Gedächtnis, Profil und Coach-Schnittstelle nutzen nur Beobachtetes, nie den internen Stil",
@@ -420,14 +434,14 @@
    "ok": true,
    "checks": 4,
    "notes": [],
-   "ms": 6709
+   "ms": 6436
   },
   {
    "name": "Gegnergedächtnis: synthetische Gegner wechseln mitten in der Session die Spielweise",
    "ok": true,
    "checks": 3,
    "notes": [],
-   "ms": 1859
+   "ms": 1877
   },
   {
    "name": "A2 potShare: Range durch bekannte Karten vollständig entfernt → Fehlschlag statt Zufallszahl",
@@ -462,21 +476,21 @@
    "ok": true,
    "checks": 3,
    "notes": [],
-   "ms": 8
+   "ms": 7
   },
   {
    "name": "A3 Cache: Stufen, Zeitabbruch, Mindestanzahl, exakt vor Monte Carlo",
    "ok": true,
    "checks": 7,
    "notes": [],
-   "ms": 53
+   "ms": 50
   },
   {
    "name": "A4 exactHU: sehr kleine Deadline → Abbruch, Monte-Carlo-Rückfall, nie „exakt“",
    "ok": true,
    "checks": 6,
    "notes": [],
-   "ms": 236
+   "ms": 287
   },
   {
    "name": "A4 potShare und Monte Carlo halten die Deadline",
@@ -490,42 +504,42 @@
    "ok": true,
    "checks": 4,
    "notes": [],
-   "ms": 14
+   "ms": 17
   },
   {
    "name": "A5 Range-Kennung: gleiche Verteilung in anderer Skalierung → gleiche Kennung; Format",
    "ok": true,
    "checks": 5,
    "notes": [],
-   "ms": 29
+   "ms": 39
   },
   {
    "name": "A5 Equity-Cache: verschiedene Verteilungen mit früher gleicher Kennung liefern ihre eigene Equity",
    "ok": true,
    "checks": 3,
    "notes": [],
-   "ms": 2
+   "ms": 3
   },
   {
    "name": "Handbewertung Referenz: Klassen der unabhängigen Referenz, alle 2.598.960 Fünf-Karten-Hände einzeln",
    "ok": true,
    "checks": 7,
    "notes": [],
-   "ms": 403
+   "ms": 494
   },
   {
    "name": "Handbewertung Referenz: geschichtete Sieben-, Sechs- und Fünf-Karten-Hände, Paarvergleiche, Invarianzen",
    "ok": true,
    "checks": 5,
    "notes": [],
-   "ms": 245
+   "ms": 236
   },
   {
    "name": "Handbewertung Referenz: die Prüfung erkennt eingebaute Fehler (Mutationsprobe)",
    "ok": true,
    "checks": 4,
    "notes": [],
-   "ms": 102
+   "ms": 99
   },
   {
    "name": "MC: Intervall für beschränkte Größen (Ränder, Split-lastig, Binomial)",
@@ -539,28 +553,28 @@
    "ok": true,
    "checks": 4,
    "notes": [],
-   "ms": 3
+   "ms": 2
   },
   {
    "name": "MC: keine Randverzerrung (Regression 2.0.1: exakt 0,9886, MC-Mittel 0,9903 auf Präzise)",
    "ok": true,
    "checks": 2,
    "notes": [],
-   "ms": 270
+   "ms": 240
   },
   {
    "name": "MC: Abdeckung der 95-%-Intervalle (Stichprobe der Referenzfälle, Stufe Schnell und Budget 1.000)",
    "ok": true,
    "checks": 6,
    "notes": [],
-   "ms": 650
+   "ms": 644
   },
   {
    "name": "Prüfer A 2.1: Cache nutzt Einträge nur nach Umfang, Ersetzung nach Umfang, Hash ohne Sammelkennung, seltene Tupel, Fehler nie 0",
    "ok": true,
    "checks": 7,
    "notes": [],
-   "ms": 174
+   "ms": 149
   },
   {
    "name": "Prüfer A 2.1: Veränderungstest robust (NaN) und AFq mit Design-Effekt",
@@ -570,53 +584,18 @@
    "ms": 0
   },
   {
-   "name": "Prüfung C1: Zahlenüberlauf (1e999 → Infinity) wird beim Import abgelehnt, Export→Import bleibt verlustfrei",
-   "ok": true,
-   "checks": 5,
-   "notes": [],
-   "ms": 1
-  },
-  {
-   "name": "Prüfung C4: Gegner-ID „__proto__“ wird abgelehnt (vorher gezählt, aber verschwunden), kein Prototyp verändert",
-   "ok": true,
-   "checks": 3,
-   "notes": [],
-   "ms": 1
-  },
-  {
-   "name": "Prüfung C14: Importgrenze deckt die größte eigene Sicherung (3.000 Hände) ab; Oberfläche nutzt dieselbe Grenze",
-   "ok": true,
-   "checks": 3,
-   "notes": [],
-   "ms": 2419
-  },
-  {
-   "name": "Prüfung C2: Archivfassung 2.0.1 (gleiche IndexedDB) wird nicht im selben Ursprung veröffentlicht",
-   "ok": true,
-   "checks": 2,
-   "notes": [],
-   "ms": 4
-  },
-  {
-   "name": "Prüfung C6: Trainingskategorie „constructor“ (aus Object.prototype) erzeugt keine Ausnahme",
-   "ok": true,
-   "checks": 3,
-   "notes": [],
-   "ms": 3
-  },
-  {
    "name": "Bewertung 2.1: Interpolierte Größe hat größere Unsicherheit als die Nachrechnung; Nachrechnung wird bevorzugt",
    "ok": true,
    "checks": 4,
    "notes": [],
-   "ms": 9
+   "ms": 21
   },
   {
    "name": "Bewertung 2.1: Abstand Empfehlung – höchster Modell-EV wird gemeldet (Preflop-Anker); kein „eindeutig“ bei Alternativen in der Unsicherheit",
    "ok": true,
    "checks": 2,
    "notes": [],
-   "ms": 1059
+   "ms": 1159
   },
   {
    "name": "Bewertung 2.1: Genäherte oder fehlgeschlagene EV-Werte werden gekennzeichnet, nicht als 0 gewertet, Unsicherheit erweitert",
@@ -630,21 +609,21 @@
    "ok": true,
    "checks": 48,
    "notes": [],
-   "ms": 495
+   "ms": 442
   },
   {
    "name": "CFR 2.1: analytische Spiele – dominierter Raise ändert die geschlossene Lösung nicht; Raise-Option nützt dem Erhöhenden",
    "ok": true,
    "checks": 11,
    "notes": [],
-   "ms": 91
+   "ms": 124
   },
   {
    "name": "CFR 2.1: River-Modell im Coach mit Raise-Option, Exploitability und Rechenzeit",
    "ok": true,
    "checks": 4,
    "notes": [],
-   "ms": 51
+   "ms": 60
   },
   {
    "name": "Prüfer A 5: comboEquities-Cache nur nach Umfang, Teilergebnis nie für größere Anfrage, Rückgabe als Kopie",
@@ -658,70 +637,147 @@
    "ok": true,
    "checks": 6,
    "notes": [],
-   "ms": 1
+   "ms": 3
   },
   {
    "name": "Prüfer A 4: ausgefallene Mehrgegner-Equity als Näherung gekennzeichnet, Unsicherheit erhöht",
    "ok": true,
    "checks": 3,
    "notes": [],
-   "ms": 65
+   "ms": 71
   },
   {
    "name": "Prüfer A 12: Bayes-Beleg vergleicht auf derselben Skala (Break-even in den größenunabhängigen Rohwert umgerechnet)",
    "ok": true,
    "checks": 3,
    "notes": [],
-   "ms": 3
+   "ms": 12
+  },
+  {
+   "name": "Prüfer B 1: Chart-Anker misst Fold am Chartgewicht (kein Fold mit Händen, die der Chart zu 100 % spielt)",
+   "ok": true,
+   "checks": 21,
+   "notes": [],
+   "ms": 77
+  },
+  {
+   "name": "Prüfer B 9: Kurzzeit- und Langzeitwerte nicht gemischt (VPIP ≥ PFR)",
+   "ok": true,
+   "checks": 5,
+   "notes": [],
+   "ms": 6
+  },
+  {
+   "name": "Prüfer B 12: respond.inner wird auch nach einer Ausnahme zurückgesetzt",
+   "ok": true,
+   "checks": 2,
+   "notes": [],
+   "ms": 16
+  },
+  {
+   "name": "Prüfer B 6: Ergebnis unabhängig von Reihenfolge der Modi, Cache-Zustand und Wiederholung (Seeds 77 und 991)",
+   "ok": true,
+   "checks": 2,
+   "notes": [],
+   "ms": 1195
+  },
+  {
+   "name": "Prüfer B 5: kein Exploit ohne eigene Beobachtung; Beleg auf der Fold-Rate, die das Modell verwendet",
+   "ok": true,
+   "checks": 4,
+   "notes": [],
+   "ms": 29
+  },
+  {
+   "name": "Prüfer B 8: Short Stack – keine Raises ab einem Drittel des effektiven Stacks außer All-in (Commitment)",
+   "ok": true,
+   "checks": 2,
+   "notes": [],
+   "ms": 20
+  },
+  {
+   "name": "Prüfer B 3: Gegner-KI – starke Hände folden je nach Stil gegen sehr große Einsätze, kleine Einsätze unverändert",
+   "ok": true,
+   "checks": 3,
+   "notes": [],
+   "ms": 35
+  },
+  {
+   "name": "Prüfer B 11: River-Lead in den Aggressor – Range wertlastig geschätzt, kein Raise mit dem Bluffcatcher",
+   "ok": true,
+   "checks": 4,
+   "notes": [],
+   "ms": 11
+  },
+  {
+   "name": "Prüfer B 2: frei gewählte Größen – große Verluste nie „Gut“/„Vertretbar“, Extrapolation nie Empfehlung",
+   "ok": true,
+   "checks": 5,
+   "notes": [],
+   "ms": 37
+  },
+  {
+   "name": "Prüfer B 7: gleichgewichtsnaher Modus – reiner Bluff gegen MDF-Verteidigung nicht strukturell −EV",
+   "ok": true,
+   "checks": 3,
+   "notes": [],
+   "ms": 6
+  },
+  {
+   "name": "Prüfer B 4: Callrange-Zusammensetzung scharf bei gleicher Fold-Rate (keine mit der Größe wachsende Überschätzung der Equity)",
+   "ok": true,
+   "checks": 4,
+   "notes": [],
+   "ms": 24
   },
   {
    "name": "Reaktionsmodell 2.1: Fold steigt mit der Einsatzgröße, Wahrscheinlichkeiten gültig, gleichgewichtsnaher Modus bleibt MDF",
    "ok": true,
    "checks": 10,
    "notes": [],
-   "ms": 11
+   "ms": 12
   },
   {
    "name": "Reaktionsmodell 2.1: Gegnerwerte verschieben die Schwelle in die richtige Richtung (Fold gegen C-Bet, WTSD)",
    "ok": true,
    "checks": 1,
    "notes": [],
-   "ms": 11
+   "ms": 17
   },
   {
    "name": "Reaktionsmodell 2.1: Callrange und Raiserange zerlegen die Weiterspielrange; Raise unmöglich, wenn der Gegner nur noch callen kann",
    "ok": true,
    "checks": 3,
    "notes": [],
-   "ms": 45
+   "ms": 49
   },
   {
    "name": "Vergleichsrahmen: Block-Bootstrap deckt den wahren Mittelwert ab, gepaarte Differenz identischer Läufe ist 0",
    "ok": true,
    "checks": 2,
    "notes": [],
-   "ms": 38
+   "ms": 36
   },
   {
    "name": "Vergleichsrahmen: All-in-Bereinigung reproduziert die Abrechnung und ändert River-Entscheidungen nicht",
    "ok": true,
    "checks": 3,
    "notes": [],
-   "ms": 808
+   "ms": 796
   },
   {
    "name": "Vergleichsrahmen: Berichtsaussagen werden aus den Daten gezählt (z. B. „in k von n Läufen vorn“) und geteilte Läufe gekennzeichnet",
    "ok": true,
    "checks": 4,
    "notes": [],
-   "ms": 25
+   "ms": 20
   },
   {
    "name": "Version: Website, PWA, Offline-Datei, CHANGELOG und Dokumentation einheitlich (tools/check-version.js)",
    "ok": true,
    "checks": 18,
    "notes": [],
-   "ms": 8
+   "ms": 4
   }
  ]
 }

@@ -55,6 +55,13 @@ function plan(name) {
     add('zentral', ['coach21', 'coach201', 'coach21-rein'], { comp: 'bots', difficulty: 'gemischt', startBB: 100 }, [7001, 7002], 2500);
     add('zentral', ['coach21', 'coach201', 'coach21-rein'], { comp: 'mixed', difficulty: 'gemischt', startBB: 40 }, [7011], 2500);
     add('zentral', ['coach21', 'coach201', 'coach21-rein'], { comp: 'bots', difficulty: 'experte', startBB: 200 }, [7021], 2500);
+  } else if (name === 'pruefb') {
+    // Prüfer B: kleiner gepaarter Vergleich neu gegen alt; mit PT_V201=<Arbeitsbaum vor den Korrekturen> steht „coach201“ für den alten Stand
+    add('zentral', ['coach21', 'coach201'], { comp: 'bots', difficulty: 'gemischt', startBB: 100 }, [7101, 7102], 2500);
+    add('zentral', ['coach21', 'coach201'], { comp: 'mixed', difficulty: 'gemischt', startBB: 40 }, [7111], 2500);
+  } else if (name === 'pruefb40') {
+    // Nachprüfung der 40-BB-Bedingung (halb synthetisch) mit weiteren Seeds
+    add('zentral', ['coach21', 'coach201'], { comp: 'mixed', difficulty: 'gemischt', startBB: 40 }, [7112, 7113], 2500);
   } else {
     add('zentral', ['coach21', 'coach201', 'bot'], { comp: 'bots', difficulty: 'gemischt', startBB: 100 }, [9001], 400);
     add('unbekannt', ['coach21', 'coach201'], { comp: 'synth:station', difficulty: 'gemischt', startBB: 100 }, [9002], 300);

@@ -50,9 +50,18 @@ function ceBetter(a, b) { // ist a mindestens so gut wie b?
 function comboEquities(hero, board, w, o) {
   o = o || {};
   var ck = PT.cardsStr(hero) + '|' + PT.cardsStr(board) + '|' + PT.cardsStr(o.dead || []) + '|' + R.hash(w) + '|' + (o.exactMax || 0);
+  // Prüfer B, Befund 6: Mit gekennzeichnetem Zufallsstrom (Coach) gilt ein Eintrag nur für denselben Strom und denselben Umfang; ein Treffer
+  // ist dann genau das Ergebnis einer frischen Rechnung und belastet das Budget mit dessen Umfang. So hängt kein Ergebnis davon ab,
+  // was vorher gerechnet wurde (Reihenfolge der Modi, Wiederholung, Nachrechnung).
+  var tagged = !!(o.rng && o.rng.tag);
+  if (tagged) ck += '|' + o.rng.tag + '|' + ceAllow(o);
   var hit = ceCache.get(ck);
   // Kopie liefern: Aufrufer dürfen das Array nicht mit dem Cache teilen
-  if (hit && ceUsable(hit, o)) return { e: Float32Array.from(hit.e), info: Object.assign({}, hit.info, { cached: true, iters: 0 }) };
+  if (hit && ceUsable(hit, o)) {
+    var nominal = tagged && hit.info.method === 'Monte Carlo' ? hit.info.iters : 0;
+    if (nominal && o.budget) { o.budget.left -= nominal; o.budget.used += nominal; }
+    return { e: Float32Array.from(hit.e), info: Object.assign({}, hit.info, { cached: true, iters: nominal }) };
+  }
   var res = comboEquitiesRaw(hero, board, w, o);
   if (!res.info.failed && !res.info.aborted && (!hit || ceBetter(res, hit))) { ceCache.delete(ck); ceCache.set(ck, { e: Float32Array.from(res.e), info: Object.assign({}, res.info) }); if (ceCache.size > 60) ceCache.delete(ceCache.keys().next().value); }
   return res;
@@ -195,7 +204,8 @@ function splitRange(w, sc, contFrac, raiseFrac) {
  * der Gegnerpopulation geschätzt (Maximum Likelihood, tests/strategy/fit-response.js; Daten und Prüfung auf getrennten Seeds: docs/STRATEGIE.md).
  * Keine verdeckten Karten, keine internen Spielstile. Modellannahme, kein Solver-Ergebnis.
  */
-var POP = { c0: [0, 0.2085, 0.0646, 0.2314], c1: [0, 1.7984, 2.2272, 2.09], c2: 0.0175, c3: -0.0599, tau: 0.1268, c4: -0.1845, taud: 0.015, lf: 0.01, lw: -0.1161, r0: 0.4171, r1: 0.9306, rd: 0.1749, lv: -0.0309, lp: -0.7881, blend: 0.5 };
+// Neu kalibriert nach Prüfer B (Gegner-KI B3, Lead-Ranges B11): Seeds 503/504, je 3.500 Hände, strategy.json responseFit.final
+var POP = { c0: [0, 0.1798, 0.0364, 0.258], c1: [0, 1.8703, 2.3214, 2.0446], c2: 0.0301, c3: -0.0772, tau: 0.1353, c4: -0.1876, taud: 0.015, lf: 0.0142, lw: -0.1309, r0: 0.364, r1: 0.9141, rd: 0.1525, lv: -0.0265, lp: -0.7811, blend: 0.5, tauC: 0.03 };
 function logit(p) { p = clamp(p, 0.01, 0.99); return Math.log(p / (1 - p)); }
 function sigm(z) { return 1 / (1 + Math.exp(-z)); }
 /** Anteil der Range, der bei Schwelle th weiterspielt */
@@ -227,6 +237,26 @@ function popRespond(opp, ctx, heroAdd, potBefore, nResp, kind, target) {
     contW[k] = x0 * pc; raiseW[k] = x0 * pr; callW[k] = x0 * (pc - pr);
   }
   if (!(W > 0)) return null;
+  if (P.tauC > 0 && P.tauC < P.tau) {
+    // Prüfer B, Befund 4: Zusammensetzung der Call- und Raiserange. Die Fold-Rate stammt aus dem kalibrierten Modell mit τ (τ enthält
+    // auch die Unsicherheit der Range-Schätzung, er ist nur über Fold/Weiter bestimmt). Welche Kombinationen weiterspielen, ist aus
+    // diesen Daten nicht bestimmbar. Annahme: Weiterspielen ist monoton in der Stärke. Unter allen monotonen Zusammensetzungen mit
+    // derselben Weiterspielquote ist die mit dem schärfsten Schnitt die stärkste Callrange – die vorsichtige Wahl für die eigene Bet
+    // (Value wird nicht gegen zu schwache Callranges überschätzt, was mit der Größe wächst). Umgesetzt mit Breite τc und einer
+    // Schwelle, die dieselbe Weiterspielquote ergibt; Draws und Raise-Anteile wie oben.
+    var share = Cn / W, loC = th - 0.8, hiC = th + 0.8;
+    var contC = function (t) { var c = 0; for (var q = 0; q < NC; q++) { var y = w[q]; if (!(y > 0)) continue; var pq = sigm((A.x[q] - t) / P.tauC); if (st < 3 && A.d[q]) pq = Math.max(pq, sigm((A.de[q] - price - P.c4) / P.taud)); c += y * pq; } return c / W; };
+    for (var it2 = 0; it2 < 26; it2++) { var md = (loC + hiC) / 2; if (contC(md) > share) loC = md; else hiC = md; }
+    var thC = (loC + hiC) / 2; Rs = 0;
+    for (var k3 = 0; k3 < NC; k3++) {
+      var y0 = w[k3]; if (!(y0 > 0)) continue;
+      var x3 = A.x[k3], dr3 = st < 3 && A.d[k3], pc3 = sigm((x3 - thC) / P.tauC);
+      if (dr3) pc3 = Math.max(pc3, sigm((A.de[k3] - price - P.c4) / P.taud));
+      var pr3 = canRaise ? Math.min(pc3, P.r0 * sigm((x3 - P.r1) / 0.02) + (dr3 ? P.rd : 0)) : 0;
+      Rs += y0 * pr3; contW[k3] = y0 * pc3; raiseW[k3] = y0 * pr3; callW[k3] = y0 * (pc3 - pr3);
+    }
+    Cn = share * W;
+  }
   var nObs = (opp.raw && opp.raw[st === 1 ? 'foldToCbet' : 'foldToCbetTurn'] ? opp.raw[st === 1 ? 'foldToCbet' : 'foldToCbetTurn'][1] : 0) + (opp.raw && opp.raw.wtsd ? opp.raw.wtsd[1] : 0);
   return { f: clamp(1 - Cn / W, 0, 1), c: Math.max(0, (Cn - Rs) / W), r: Rs / W, contW: contW, callW: callW, raiseW: raiseW,
     basis: 'Populationsmodell, angepasst an Gegnerwerte (' + nObs + ' Beobachtungen)', model: 'pop', theta: th, price: price };
@@ -242,13 +272,14 @@ function respond(opp, ctx, heroAdd, potBefore, nResp, kind) {
       // Modellmittelung: Fold-Rate = Mittel aus Populationsmodell und strukturellem Modell (MDF mit Korrekturen, Stand 2.0.1).
       // Grund: Das Populationsmodell ist an einem eher passiven Helden kalibriert; gegen einen aggressiven Helden (Gegner passen sich an)
       // und gegen unbekannte Strategien überschätzt es Folds bei großen Einsätzen (Validierung, docs/STRATEGIE.md).
-      respond.inner = true; var old = respond(opp, ctx, heroAdd, potBefore, nResp, kind); respond.inner = false;
+      // Prüfer B, Befund 12: Flag immer zurücksetzen, auch wenn der innere Aufruf eine Ausnahme wirft
+      var old; respond.inner = true; try { old = respond(opp, ctx, heroAdd, potBefore, nResp, kind); } finally { respond.inner = false; }
       var tf = POP.blend * old.f + (1 - POP.blend) * pr0.f, pr1 = popRespond(opp, ctx, heroAdd, potBefore, nResp, kind, tf);
       if (pr1) { pr1.basis = 'Populationsmodell gemittelt mit MDF-Modell, angepasst an Gegnerwerte'; return pr1; }
     }
     if (pr0) return pr0; }
   var mdf = potBefore / Math.max(1, potBefore + heroAdd), gtoDef = 1 - Math.pow(1 - mdf, 1 / Math.max(1, nResp));
-  var sm = opp.sm, prof = opp.prof, def = gtoDef, basis = 'MDF';
+  var sm = opp.sm, prof = opp.prof, def = gtoDef, basis = 'MDF', pfInfo = null;
   if (ctx.street === 0) {
     // Preflop: Fold-Wahrscheinlichkeit aus Chart/Modell, im exploitativen Modus mit Gegnerwerten gemischt
     var chartF = clamp(1 - gtoDef * 0.85, 0.1, 0.95), statF = null, nObs = 0, lk = opp.line ? opp.line.kind : 'none', raw = opp.raw || {};
@@ -266,10 +297,18 @@ function respond(opp, ctx, heroAdd, potBefore, nResp, kind) {
     } else if (lk === 'open' || lk === 'iso') { chartF = kind === 'jam' ? 0.62 : clamp(0.5 + 0.07 * (mult - 3), 0.38, 0.68); statF = clamp(sm.foldTo3Bet + 0.07 * (mult - 3), 0.05, 0.97); nObs = obs('foldTo3Bet'); }
     else if (lk === '3bet') { chartF = kind === 'jam' ? 0.6 : clamp(0.5 + 0.08 * (mult - 2.3), 0.38, 0.7); statF = clamp(sm.foldTo4Bet + 0.08 * (mult - 2.3), 0.05, 0.97); nObs = obs('foldTo4Bet'); }
     else if (lk === 'limp') { chartF = clamp(0.5 + 0.05 * (toBB - 4), 0.3, 0.75); statF = clamp(1 - sm.vpip * 0.8 + 0.05 * (toBB - 4), 0.1, 0.9); nObs = opp.hands; }
-    var f0 = chartF;
-    if (ctx.mode !== 'gto' && statF != null) { var wObs = nObs / (nObs + 25); f0 = chartF * (1 - wObs) + statF * wObs; basis = 'Gegnerwerte (' + nObs + ' Gelegenheiten)'; }
+    var f0 = chartF, wObs = 0;
+    if (ctx.mode !== 'gto' && statF != null) { wObs = nObs / (nObs + 25); f0 = chartF * (1 - wObs) + statF * wObs; basis = 'Gegnerwerte (' + nObs + ' Gelegenheiten)'; }
     else basis = 'Faustregel-Chart';
     def = clamp(1 - f0, 0.04, 0.96);
+    // Bestandteile der Fold-Rate für den Bayes-Beleg (Prüfer B, Befund 5): f = chartF·(1 − w) + g(Rate)·w, g = Größenanpassung der Statistik
+    var pfKey = null, pfG = null;
+    if (ctx.mode !== 'gto' && statF != null) {
+      if ((opp.pending || lk === 'none') && (kind === 'open' || kind === 'iso') && (opp.p.pos === 'SB' || opp.p.pos === 'BB')) { pfKey = 'foldToSteal'; pfG = { mul: Math.pow(clamp(toBB, 1.6, 8) / 2.5, 0.25) }; }
+      else if (lk === 'open' || lk === 'iso') { pfKey = 'foldTo3Bet'; pfG = { add: 0.07 * (mult - 3) }; }
+      else if (lk === '3bet') { pfKey = 'foldTo4Bet'; pfG = { add: 0.08 * (mult - 2.3) }; }
+    }
+    pfInfo = { chartF: chartF, statF: statF, w: wObs, n: nObs, key: pfKey, g: pfG };
   } else if (ctx.mode !== 'gto') {
     var adj = 0;
     if (kind === 'cbet') adj += (R.PRIOR.foldToCbet - sm.foldToCbet) * 0.9;
@@ -283,14 +322,18 @@ function respond(opp, ctx, heroAdd, potBefore, nResp, kind) {
     var fl = F.strong * (ctx.street === 3 ? clamp(1.15 - 0.15 * s0, 0.55, 1) : 1) + F.good * clamp(1.1 - 0.5 * s0, 0.12, 0.85) + F.draw * clamp(0.8 - 0.3 * s0, 0.1, 0.6);
     def = Math.max(def, clamp(fl * (ctx.mode === 'gto' ? 1 : 0.85 + 0.3 * prof.station), 0, 0.95));
   }
-  if (ctx.street > 0) {
+  // Prüfer B, Befund 7: Im gleichgewichtsnahen Modus gilt die Gleichgewichtsannahme MDF ohne die Populationskorrekturen (Overbet-/Raise-
+  // Korrektur und konservativer Abschlag). Diese machten jeden reinen Bluff strukturell −EV (Fold-Rate unter der Break-even-Rate),
+  // sodass der Modus praktisch nie bluffte; im Gleichgewicht ist ein Bluff gegen MDF-Verteidigung gerade indifferent.
+  var popAdj = ctx.mode !== 'gto';
+  if (ctx.street > 0 && popAdj) {
     // Korrektur für Overbets und Raises: polarisierte große Einsätze und Raises gegen eine gezeigte Bet werden seltener gefoldet,
     // als die reine MDF-Annahme für eine Einzelhand nahelegt (Modellannahme).
     var sz = heroAdd / Math.max(1, potBefore), alpha = sz <= 0.75 ? 1 : Math.max(0.7, 1 - 0.3 * (sz - 0.75));
     if (kind === 'raise' || kind === 'jam' && ctx.L.toCall > 0) alpha *= 0.85;
     def = 1 - (1 - def) * alpha;
   }
-  if (ctx.street > 0) {
+  if (ctx.street > 0 && popAdj) {
     // Konservative Fold-Schätzung: Die MDF-Annahme überschätzt Folds gegen Gegner, die nicht ausgewogen verteidigen
     // (Population der Computergegner: Fold gegen Turn-C-Bet beobachtet 34 % statt 43 % nach MDF). Im Multiway-Pot zusätzlich weniger Folds je Spieler.
     var cbObs = opp.raw && opp.raw.foldToCbet ? opp.raw.foldToCbet[1] : 0;
@@ -300,7 +343,7 @@ function respond(opp, ctx, heroAdd, potBefore, nResp, kind) {
   var raiseFrac = def * (ctx.mode === 'gto' ? 0.16 : clamp(0.08 + 0.22 * prof.aggr, 0.05, 0.35));
   if (opp.p.stack <= heroAdd) raiseFrac = 0;
   var sp = splitRange(opp.w, strengthScores(opp, ctx), def, raiseFrac);
-  return { f: 1 - def, c: def - raiseFrac, r: raiseFrac, contW: sp.contW, callW: sp.callW, raiseW: sp.raiseW, basis: basis };
+  return { f: 1 - def, c: def - raiseFrac, r: raiseFrac, contW: sp.contW, callW: sp.callW, raiseW: sp.raiseW, basis: basis, pf: ctx.street === 0 ? pfInfo : undefined };
 }
 
 // ---------- Equity Realization ----------
@@ -442,7 +485,7 @@ function evBet(ctx, to, kind) {
   // Ableitung nach Equity (für Unsicherheit): Anteil der Fälle mit Showdown-Beteiligung
   var dEdq = 0; branches.forEach(function (b) { if (b.eq != null) dEdq += b.p * b.pot * RzBet; });
   return { ev: total, dEdq: dEdq, parts: { to: to, add: a, pAllFold: allins.length ? 0 : pAllFold, pRaise: pRaise, evRaised: evRaised, branches: branches.slice(0, 8),
-    folds: R0.map(function (r, i) { return { name: resp[i].p.name, f: r.f, c: r.c, r: r.r, basis: r.basis }; }), realization: RzBet } };
+    folds: R0.map(function (r, i) { return { name: resp[i].p.name, f: r.f, c: r.c, r: r.r, basis: r.basis, pf: r.pf }; }), realization: RzBet } };
 }
 
 // ---------- Kandidaten-Größen ----------
@@ -472,6 +515,15 @@ function candidates(ctx) {
         [2.2, 2.6].forEach(function (x) { add(pre.lastTo * x, '4-Bet ' + String(x).replace('.', ',') + '×', '4bet'); });
       }
       if (ctx.eff <= 35 * bb || pre.rc >= 3 || (pre.rc === 2 && ctx.eff <= 60 * bb)) add(L.maxTo, 'All-in', 'jam');
+      // Prüfer B, Befund 8: Festlegung (Commitment). Ein Raise auf mindestens ein Drittel des effektiven Stacks S lässt gegen ein All-in
+      // nur noch einen Call von höchstens 2S/3 in einen Pot von mindestens 2S offen; benötigt wären höchstens 33 % Equity, die eine
+      // Raise-Hand gegen eine Shove-Range fast immer hat – der Held müsste praktisch immer callen. Ein solcher Raise ist schwächer als das
+      // All-in selbst (der Gegner behält die Wahl, schwache Hände zu folden und starke zu shoven) und wird durch das All-in ersetzt.
+      if (ctx.eff > 0) {
+        var commit = ctx.eff / 3, dropped = false;
+        out = out.filter(function (a) { var drop = (a.type === 'bet' || a.type === 'raise') && a.amount < L.maxTo && a.amount >= commit; if (drop) dropped = true; return !drop; });
+        if (dropped) add(L.maxTo, 'All-in', 'jam');
+      }
     } else if (L.isBet) {
       [[0.33, '⅓ Pot'], [0.5, '½ Pot'], [0.75, '¾ Pot'], [1.0, 'Pot'], [1.5, 'Overbet 1,5×']].forEach(function (x) {
         // Overbets nur auf Turn und River im Heads-up (Modellannahme: auf dem Flop und multiway kaum sinnvoll, Reaktionen dort schlecht belegt)
@@ -501,13 +553,18 @@ function evaluateAction(ctx, act) {
   var modelU = (r.dEdq || 0) * (ctx.eqRangeSpread || 0);
   if (act.type === 'bet' || act.type === 'raise') {
     // Unsicherheit der Reaktionsannahmen wächst mit der Einsatzgröße und der Zahl der Gegner
-    var szU = Math.max(1, ((act.amount || 0) - ctx.me.bet) / Math.max(1, ctx.pot)), nU = Math.max(1, ctx.opps.filter(function (o) { return !o.p.allIn; }).length);
+    // Prüfer B, Befund 2: Die Unsicherheit der Fold-Wahrscheinlichkeit ist eine Wahrscheinlichkeit und wächst nur bis zur doppelten Pot-Größe
+    // (höchstens foldUnc); die Wirkung auf den EV wächst über |Pot − EV| ohnehin linear mit der Größe. Früher wuchs sie mit szU unbegrenzt,
+    // die Unsicherheit also quadratisch, und neutralisierte große Verluste (z. B. All-in-Bluff mit 17-fachem Pot „Gut“).
+    var szU = Math.min(2, Math.max(1, ((act.amount || 0) - ctx.me.bet) / Math.max(1, ctx.pot))), nU = Math.max(1, ctx.opps.filter(function (o) { return !o.p.allIn; }).length);
     modelU += Math.abs(ctx.pot - (r.ev || 0)) * ctx.foldUnc * 0.5 * szU * Math.sqrt(nU) + 0.02 * ctx.pot;
   }
   r.uSim = simU; r.uModel = modelU; r.u = Math.sqrt(simU * simU + modelU * modelU);
   return r;
 }
 
+// PT.equity.cacheClear leert auch diesen Cache (Prüfer B, Befund 6)
+if (Q.onClear) Q.onClear(function () { ceCache.clear(); });
 PT.ev = { absStrength: absStrength, POP: POP, popRespond: popRespond, pfTable: pfTable, eqClass: eqClass, comboEquities: comboEquities, rangeEq: rangeEq, respond: respond, splitRange: splitRange,
   realization: realization, playability: playability, potOdds: potOdds, evCheck: evCheck, evCall: evCall, evBet: evBet, candidates: candidates, evaluateAction: evaluateAction, subsetEq: subsetEq };
 })(typeof globalThis !== 'undefined' ? globalThis : (typeof self !== 'undefined' ? self : this));

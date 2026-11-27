@@ -1,0 +1,431 @@
+{
+ "app": "2.0.1",
+ "date": "2026-11-27T06:55:13.800Z",
+ "node": "v22.23.5",
+ "cpus": 2,
+ "plan": "pruefb40",
+ "method": {
+  "primary": "All-in-bereinigte BB/100 (unverzerrt, vor den Hauptläufen festgelegt); Rohwerte zusätzlich",
+  "bootstrap": {
+   "blockHands": 500,
+   "reps": 2000,
+   "stratified": "je Lauf"
+  },
+  "verdict": "belegt, wenn das 95-%-Intervall der Differenz ganz über 0 liegt",
+  "stacks": "Alle Stacks werden vor jeder Hand auf die Starttiefe gesetzt",
+  "clock": "Uhr im Coach-Kontext fest (keine Zeitbremse), Rechenzeit außerhalb gemessen",
+  "streams": "Karten: deal; Gegner: bots; Tisch/Rotation: tisch; Coach: Tisch-Seed|Hand|Aktionszahl"
+ },
+ "versions": {
+  "v21": {
+   "root": ".",
+   "version": "2.0.1",
+   "coachHash": "8949f7882ad8"
+  },
+  "v201": {
+   "root": "/home/claude/wt-strategie",
+   "version": "2.0.1",
+   "coachHash": "4c1bb6fc140d"
+  },
+  "envHash": "9c5d94d79e60"
+ },
+ "heroes": {
+  "coach21": "Coach 2.1 (exploitativ)",
+  "coach201": "Coach 2.0.1 (exploitativ)",
+  "coach21-gto": "Coach 2.1 (gleichgewichtsnah)",
+  "coach21-rein": "Coach 2.1, reines Populationsmodell (Entwicklungsvariante)",
+  "coach201-gto": "Coach 2.0.1 (gleichgewichtsnah)",
+  "bot": "Gegner-KI als Held (Profil g004, Stil ausgeglichen)",
+  "potodds": "Referenz: Pot-Odds-Schwelle",
+  "pushfold": "Referenz: Push/Fold-Chart (≤ 20 BB), sonst Pot-Odds-Schwelle"
+ },
+ "runs": [
+  {
+   "id": "zentral_coach21_mixed_gemischt_40BB_s7112_2500",
+   "group": "zentral",
+   "hero": "coach21",
+   "cond": "mixed|gemischt|40",
+   "seed": 7112,
+   "hands": 2500,
+   "decisions": 3600,
+   "invalid": 0,
+   "bb100": 105.98,
+   "bb100Adj": 109.16,
+   "sdHand": 11.66,
+   "sdHandAdj": 9.3,
+   "allinHands": 104,
+   "avgMs": 27,
+   "maxMs": 319,
+   "maxIters": 5000,
+   "labels": {
+    "fold": 202,
+    "All-in": 93,
+    "check": 354,
+    "⅓": 67,
+    "¾": 35,
+    "Pot": 76,
+    "Overbet": 18,
+    "½": 35,
+    "Raise 2,5×": 4,
+    "call": 71,
+    "Raise Pot": 6,
+    "andere": 2
+   },
+   "preLabels": {
+    "fold": 1908,
+    "Open": 237,
+    "All-in": 31,
+    "call": 242,
+    "check": 55,
+    "3-Bet": 68,
+    "Iso-Raise": 94,
+    "4-Bet": 2
+   },
+   "classes": {
+    "klar": 1214,
+    "knapp": 1090,
+    "eindeutig": 428,
+    "mehrere": 868
+   },
+   "chartApplied": 790,
+   "chartGapBB": 385.78,
+   "wallMs": 100339,
+   "usedIn": [
+    "v21-v201"
+   ]
+  },
+  {
+   "id": "zentral_coach201_mixed_gemischt_40BB_s7112_2500",
+   "group": "zentral",
+   "hero": "coach201",
+   "cond": "mixed|gemischt|40",
+   "seed": 7112,
+   "hands": 2500,
+   "decisions": 3400,
+   "invalid": 0,
+   "bb100": 121.89,
+   "bb100Adj": 99.99,
+   "sdHand": 12.04,
+   "sdHandAdj": 8.96,
+   "allinHands": 114,
+   "avgMs": 19.1,
+   "maxMs": 182,
+   "maxIters": 5000,
+   "labels": {
+    "fold": 143,
+    "All-in": 119,
+    "¾": 45,
+    "Pot": 87,
+    "Overbet": 17,
+    "check": 219,
+    "⅓": 58,
+    "½": 33,
+    "Raise 2,5×": 6,
+    "call": 45,
+    "Raise Pot": 4
+   },
+   "preLabels": {
+    "fold": 1965,
+    "Open": 222,
+    "All-in": 37,
+    "call": 172,
+    "3-Bet": 96,
+    "check": 55,
+    "Iso-Raise": 74,
+    "4-Bet": 3
+   },
+   "classes": {
+    "klar": 1109,
+    "knapp": 970,
+    "eindeutig": 405,
+    "mehrere": 916
+   },
+   "chartApplied": 742,
+   "chartGapBB": 221.29,
+   "wallMs": 68097,
+   "usedIn": [
+    "v21-v201"
+   ]
+  },
+  {
+   "id": "zentral_coach21_mixed_gemischt_40BB_s7113_2500",
+   "group": "zentral",
+   "hero": "coach21",
+   "cond": "mixed|gemischt|40",
+   "seed": 7113,
+   "hands": 2500,
+   "decisions": 3561,
+   "invalid": 0,
+   "bb100": 50.26,
+   "bb100Adj": 68.48,
+   "sdHand": 11.88,
+   "sdHandAdj": 8.6,
+   "allinHands": 109,
+   "avgMs": 27.2,
+   "maxMs": 207,
+   "maxIters": 5000,
+   "labels": {
+    "¾": 36,
+    "check": 340,
+    "fold": 172,
+    "Pot": 79,
+    "Overbet": 19,
+    "All-in": 97,
+    "⅓": 70,
+    "½": 22,
+    "call": 63,
+    "Raise 2,5×": 3,
+    "Raise Pot": 2,
+    "Raise 3,5×": 2
+   },
+   "preLabels": {
+    "fold": 1989,
+    "Open": 217,
+    "call": 226,
+    "All-in": 32,
+    "3-Bet": 53,
+    "check": 59,
+    "Iso-Raise": 79,
+    "4-Bet": 1
+   },
+   "classes": {
+    "klar": 1169,
+    "knapp": 1177,
+    "mehrere": 759,
+    "eindeutig": 456
+   },
+   "chartApplied": 671,
+   "chartGapBB": 508.95,
+   "wallMs": 100201,
+   "usedIn": [
+    "v21-v201"
+   ]
+  },
+  {
+   "id": "zentral_coach201_mixed_gemischt_40BB_s7113_2500",
+   "group": "zentral",
+   "hero": "coach201",
+   "cond": "mixed|gemischt|40",
+   "seed": 7113,
+   "hands": 2500,
+   "decisions": 3418,
+   "invalid": 0,
+   "bb100": 49.09,
+   "bb100Adj": 58.95,
+   "sdHand": 12.2,
+   "sdHandAdj": 8.25,
+   "allinHands": 118,
+   "avgMs": 19.3,
+   "maxMs": 268,
+   "maxIters": 5000,
+   "labels": {
+    "Pot": 91,
+    "check": 242,
+    "fold": 141,
+    "¾": 50,
+    "Overbet": 18,
+    "All-in": 98,
+    "call": 53,
+    "½": 23,
+    "⅓": 48,
+    "Raise 3,5×": 4,
+    "Raise Pot": 1,
+    "Raise 2,5×": 4
+   },
+   "preLabels": {
+    "fold": 2031,
+    "3-Bet": 72,
+    "Open": 200,
+    "call": 185,
+    "All-in": 35,
+    "check": 59,
+    "Iso-Raise": 62,
+    "4-Bet": 1
+   },
+   "classes": {
+    "klar": 1070,
+    "knapp": 1118,
+    "mehrere": 794,
+    "eindeutig": 434,
+    "unsicher": 2
+   },
+   "chartApplied": 592,
+   "chartGapBB": 225.88,
+   "wallMs": 69200,
+   "usedIn": [
+    "v21-v201"
+   ]
+  }
+ ],
+ "absolute": [
+  {
+   "group": "zentral",
+   "hero": "coach201",
+   "heroName": "Coach 2.0.1 (exploitativ)",
+   "cond": "mixed|gemischt|40",
+   "condName": "halb Gegner-KI, halb synthetisch, 40 BB",
+   "startBB": 40,
+   "runs": [
+    "zentral_coach201_mixed_gemischt_40BB_s7112_2500",
+    "zentral_coach201_mixed_gemischt_40BB_s7113_2500"
+   ],
+   "seeds": [
+    7112,
+    7113
+   ],
+   "adj": {
+    "bb100": 79.47,
+    "lo": 46.43,
+    "hi": 114.49,
+    "se": 17.13,
+    "hands": 5000,
+    "blocks": 10
+   },
+   "raw": {
+    "bb100": 85.49,
+    "lo": 56.45,
+    "hi": 113.6,
+    "se": 14.58,
+    "hands": 5000,
+    "blocks": 10
+   },
+   "decisions": 6818,
+   "invalid": 0
+  },
+  {
+   "group": "zentral",
+   "hero": "coach21",
+   "heroName": "Coach 2.1 (exploitativ)",
+   "cond": "mixed|gemischt|40",
+   "condName": "halb Gegner-KI, halb synthetisch, 40 BB",
+   "startBB": 40,
+   "runs": [
+    "zentral_coach21_mixed_gemischt_40BB_s7112_2500",
+    "zentral_coach21_mixed_gemischt_40BB_s7113_2500"
+   ],
+   "seeds": [
+    7112,
+    7113
+   ],
+   "adj": {
+    "bb100": 88.82,
+    "lo": 57.89,
+    "hi": 119.39,
+    "se": 15.23,
+    "hands": 5000,
+    "blocks": 10
+   },
+   "raw": {
+    "bb100": 78.12,
+    "lo": 46.46,
+    "hi": 109.57,
+    "se": 15.89,
+    "hands": 5000,
+    "blocks": 10
+   },
+   "decisions": 7161,
+   "invalid": 0
+  }
+ ],
+ "comparisons": [
+  {
+   "id": "v21-v201",
+   "title": "Coach 2.1 gegen Coach 2.0.1 (Hauptvergleich)",
+   "group": "zentral",
+   "a": "coach21",
+   "b": "coach201",
+   "aName": "Coach 2.1 (exploitativ)",
+   "bName": "Coach 2.0.1 (exploitativ)",
+   "adj": {
+    "diff": 9.35,
+    "lo": -1.98,
+    "hi": 21.55,
+    "se": 6,
+    "hands": 5000,
+    "pairs": 2,
+    "blocks": 10
+   },
+   "raw": {
+    "diff": -7.37,
+    "lo": -29.56,
+    "hi": 11.62,
+    "se": 10.5,
+    "hands": 5000,
+    "pairs": 2,
+    "blocks": 10
+   },
+   "decisionsA": 7161,
+   "decisionsB": 6818,
+   "invalidA": 0,
+   "invalidB": 0,
+   "seeds": [
+    7112,
+    7113
+   ],
+   "runsA": [
+    "zentral_coach21_mixed_gemischt_40BB_s7112_2500",
+    "zentral_coach21_mixed_gemischt_40BB_s7113_2500"
+   ],
+   "runsB": [
+    "zentral_coach201_mixed_gemischt_40BB_s7112_2500",
+    "zentral_coach201_mixed_gemischt_40BB_s7113_2500"
+   ],
+   "verdict": "zu wenig Blöcke",
+   "aAhead": 2,
+   "split": {
+    "stack": [
+     {
+      "value": "40 BB",
+      "diff": 9.35,
+      "lo": -2.24,
+      "hi": 21.55,
+      "se": 6,
+      "hands": 5000,
+      "pairs": 2,
+      "blocks": 10,
+      "rawDiff": -7.37,
+      "aAhead": 2
+     }
+    ],
+    "comp": [
+     {
+      "value": "halb Gegner-KI, halb synthetisch",
+      "diff": 9.35,
+      "lo": -2.24,
+      "hi": 21.55,
+      "se": 6,
+      "hands": 5000,
+      "pairs": 2,
+      "blocks": 10,
+      "rawDiff": -7.37,
+      "aAhead": 2
+     }
+    ],
+    "cond": [
+     {
+      "value": "mixed|gemischt|40",
+      "diff": 9.35,
+      "lo": -2.24,
+      "hi": 21.55,
+      "se": 6,
+      "hands": 5000,
+      "pairs": 2,
+      "blocks": 10,
+      "rawDiff": -7.37,
+      "aAhead": 2
+     }
+    ]
+   },
+   "sharedRuns": [],
+   "sharedWith": []
+  }
+ ],
+ "shared": [],
+ "totals": {
+  "runs": 4,
+  "hands": 10000,
+  "coachDecisions": 13979,
+  "invalidCoach": 0,
+  "cpuSeconds": 338
+ }
+}

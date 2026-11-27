@@ -9,6 +9,1129 @@
    "test": [
     "504"
    ],
+   "nTrain": 5758,
+   "nTest": 6428,
+   "params": {
+    "c0_1": 0.2147,
+    "c0_2": 0.0582,
+    "c0_3": 0.2611,
+    "c1_1": 1.707,
+    "c1_2": 2.1993,
+    "c1_3": 1.9287,
+    "c2": 0.0331,
+    "c3": -0.0452,
+    "tau": 0.1236,
+    "c4": -0.1836,
+    "taud": 0.015,
+    "lf": -0.0256,
+    "lw": -0.1133,
+    "r0": 0.5661,
+    "r1": 0.945,
+    "rd": 0.2488,
+    "lv": -0.0288,
+    "lp": -0.5848
+   },
+   "vector": [
+    0.2147,
+    0.0582,
+    0.2611,
+    1.707,
+    2.1993,
+    1.9287,
+    0.0331,
+    -0.0452,
+    0.1236,
+    -0.1836,
+    0.015,
+    -0.0256,
+    -0.1133,
+    0.5661,
+    0.945,
+    0.2488,
+    -0.0288,
+    -0.5848
+   ],
+   "logLoss": {
+    "trainNew": 0.7791,
+    "trainOld": 0.9275,
+    "testNew": 0.7709,
+    "testOld": 0.8944
+   },
+   "calibTest": {
+    "bySize": [
+     {
+      "key": "0.33",
+      "n": 1159,
+      "obsFold": 0.327,
+      "newFold": 0.329,
+      "oldFold": 0.264,
+      "obsRaise": 0.044,
+      "newRaise": 0.064
+     },
+     {
+      "key": "0.5",
+      "n": 1158,
+      "obsFold": 0.47,
+      "newFold": 0.435,
+      "oldFold": 0.347,
+      "obsRaise": 0.048,
+      "newRaise": 0.064
+     },
+     {
+      "key": "0.75",
+      "n": 1156,
+      "obsFold": 0.54,
+      "newFold": 0.539,
+      "oldFold": 0.438,
+      "obsRaise": 0.05,
+      "newRaise": 0.064
+     },
+     {
+      "key": "1",
+      "n": 1151,
+      "obsFold": 0.599,
+      "newFold": 0.611,
+      "oldFold": 0.471,
+      "obsRaise": 0.053,
+      "newRaise": 0.064
+     },
+     {
+      "key": "1.5",
+      "n": 1140,
+      "obsFold": 0.718,
+      "newFold": 0.707,
+      "oldFold": 0.474,
+      "obsRaise": 0.055,
+      "newRaise": 0.063
+     },
+     {
+      "key": "r2.5",
+      "n": 332,
+      "obsFold": 0.349,
+      "newFold": 0.347,
+      "oldFold": 0.35,
+      "obsRaise": 0.142,
+      "newRaise": 0.151
+     },
+     {
+      "key": "r3.5",
+      "n": 332,
+      "obsFold": 0.41,
+      "newFold": 0.43,
+      "oldFold": 0.365,
+      "obsRaise": 0.114,
+      "newRaise": 0.151
+     }
+    ],
+    "byStreetSize": [
+     {
+      "key": "St1 HU 0.33",
+      "n": 402,
+      "obsFold": 0.286,
+      "newFold": 0.281,
+      "oldFold": 0.213,
+      "obsRaise": 0.057,
+      "newRaise": 0.074
+     },
+     {
+      "key": "St1 HU 0.5",
+      "n": 402,
+      "obsFold": 0.448,
+      "newFold": 0.38,
+      "oldFold": 0.301,
+      "obsRaise": 0.057,
+      "newRaise": 0.074
+     },
+     {
+      "key": "St1 HU 0.75",
+      "n": 402,
+      "obsFold": 0.51,
+      "newFold": 0.479,
+      "oldFold": 0.4,
+      "obsRaise": 0.062,
+      "newRaise": 0.074
+     },
+     {
+      "key": "St1 HU 1",
+      "n": 402,
+      "obsFold": 0.557,
+      "newFold": 0.545,
+      "oldFold": 0.444,
+      "obsRaise": 0.062,
+      "newRaise": 0.074
+     },
+     {
+      "key": "St1 HU 1.5",
+      "n": 402,
+      "obsFold": 0.664,
+      "newFold": 0.626,
+      "oldFold": 0.468,
+      "obsRaise": 0.072,
+      "newRaise": 0.074
+     },
+     {
+      "key": "St1 HU r2.5",
+      "n": 152,
+      "obsFold": 0.342,
+      "newFold": 0.301,
+      "oldFold": 0.351,
+      "obsRaise": 0.171,
+      "newRaise": 0.164
+     },
+     {
+      "key": "St1 HU r3.5",
+      "n": 152,
+      "obsFold": 0.382,
+      "newFold": 0.366,
+      "oldFold": 0.377,
+      "obsRaise": 0.145,
+      "newRaise": 0.164
+     },
+     {
+      "key": "St1 MW 0.33",
+      "n": 180,
+      "obsFold": 0.261,
+      "newFold": 0.327,
+      "oldFold": 0.404,
+      "obsRaise": 0.006,
+      "newRaise": 0.068
+     },
+     {
+      "key": "St1 MW 0.5",
+      "n": 180,
+      "obsFold": 0.45,
+      "newFold": 0.43,
+      "oldFold": 0.479,
+      "obsRaise": 0.017,
+      "newRaise": 0.068
+     },
+     {
+      "key": "St1 MW 0.75",
+      "n": 180,
+      "obsFold": 0.544,
+      "newFold": 0.528,
+      "oldFold": 0.552,
+      "obsRaise": 0.017,
+      "newRaise": 0.068
+     },
+     {
+      "key": "St1 MW 1",
+      "n": 180,
+      "obsFold": 0.578,
+      "newFold": 0.591,
+      "oldFold": 0.559,
+      "obsRaise": 0.017,
+      "newRaise": 0.068
+     },
+     {
+      "key": "St1 MW 1.5",
+      "n": 180,
+      "obsFold": 0.656,
+      "newFold": 0.665,
+      "oldFold": 0.525,
+      "obsRaise": 0.017,
+      "newRaise": 0.068
+     },
+     {
+      "key": "St1 MW r2.5",
+      "n": 57,
+      "obsFold": 0.298,
+      "newFold": 0.368,
+      "oldFold": 0.411,
+      "obsRaise": 0.035,
+      "newRaise": 0.138
+     },
+     {
+      "key": "St1 MW r3.5",
+      "n": 57,
+      "obsFold": 0.316,
+      "newFold": 0.435,
+      "oldFold": 0.412,
+      "obsRaise": 0.035,
+      "newRaise": 0.138
+     },
+     {
+      "key": "St2 HU 0.33",
+      "n": 263,
+      "obsFold": 0.247,
+      "newFold": 0.237,
+      "oldFold": 0.212,
+      "obsRaise": 0.068,
+      "newRaise": 0.073
+     },
+     {
+      "key": "St2 HU 0.5",
+      "n": 263,
+      "obsFold": 0.357,
+      "newFold": 0.348,
+      "oldFold": 0.298,
+      "obsRaise": 0.076,
+      "newRaise": 0.073
+     },
+     {
+      "key": "St2 HU 0.75",
+      "n": 261,
+      "obsFold": 0.429,
+      "newFold": 0.464,
+      "oldFold": 0.397,
+      "obsRaise": 0.08,
+      "newRaise": 0.073
+     },
+     {
+      "key": "St2 HU 1",
+      "n": 260,
+      "obsFold": 0.496,
+      "newFold": 0.556,
+      "oldFold": 0.44,
+      "obsRaise": 0.085,
+      "newRaise": 0.073
+     },
+     {
+      "key": "St2 HU 1.5",
+      "n": 257,
+      "obsFold": 0.654,
+      "newFold": 0.707,
+      "oldFold": 0.463,
+      "obsRaise": 0.086,
+      "newRaise": 0.073
+     },
+     {
+      "key": "St2 HU r2.5",
+      "n": 66,
+      "obsFold": 0.273,
+      "newFold": 0.277,
+      "oldFold": 0.314,
+      "obsRaise": 0.197,
+      "newRaise": 0.177
+     },
+     {
+      "key": "St2 HU r3.5",
+      "n": 66,
+      "obsFold": 0.364,
+      "newFold": 0.405,
+      "oldFold": 0.326,
+      "obsRaise": 0.121,
+      "newRaise": 0.176
+     },
+     {
+      "key": "St2 MW 0.33",
+      "n": 86,
+      "obsFold": 0.267,
+      "newFold": 0.308,
+      "oldFold": 0.406,
+      "obsRaise": 0,
+      "newRaise": 0.063
+     },
+     {
+      "key": "St2 MW 0.5",
+      "n": 86,
+      "obsFold": 0.488,
+      "newFold": 0.424,
+      "oldFold": 0.475,
+      "obsRaise": 0.012,
+      "newRaise": 0.063
+     },
+     {
+      "key": "St2 MW 0.75",
+      "n": 86,
+      "obsFold": 0.523,
+      "newFold": 0.538,
+      "oldFold": 0.543,
+      "obsRaise": 0.012,
+      "newRaise": 0.063
+     },
+     {
+      "key": "St2 MW 1",
+      "n": 86,
+      "obsFold": 0.593,
+      "newFold": 0.624,
+      "oldFold": 0.547,
+      "obsRaise": 0.012,
+      "newRaise": 0.063
+     },
+     {
+      "key": "St2 MW 1.5",
+      "n": 86,
+      "obsFold": 0.814,
+      "newFold": 0.772,
+      "oldFold": 0.51,
+      "obsRaise": 0.012,
+      "newRaise": 0.063
+     },
+     {
+      "key": "St2 MW r2.5",
+      "n": 16,
+      "obsFold": 0.438,
+      "newFold": 0.392,
+      "oldFold": 0.411,
+      "obsRaise": 0.188,
+      "newRaise": 0.106
+     },
+     {
+      "key": "St2 MW r3.5",
+      "n": 16,
+      "obsFold": 0.563,
+      "newFold": 0.504,
+      "oldFold": 0.413,
+      "obsRaise": 0.188,
+      "newRaise": 0.106
+     },
+     {
+      "key": "St3 HU 0.33",
+      "n": 178,
+      "obsFold": 0.539,
+      "newFold": 0.516,
+      "oldFold": 0.213,
+      "obsRaise": 0.039,
+      "newRaise": 0.033
+     },
+     {
+      "key": "St3 HU 0.5",
+      "n": 177,
+      "obsFold": 0.627,
+      "newFold": 0.628,
+      "oldFold": 0.298,
+      "obsRaise": 0.04,
+      "newRaise": 0.033
+     },
+     {
+      "key": "St3 HU 0.75",
+      "n": 177,
+      "obsFold": 0.695,
+      "newFold": 0.73,
+      "oldFold": 0.395,
+      "obsRaise": 0.034,
+      "newRaise": 0.033
+     },
+     {
+      "key": "St3 HU 1",
+      "n": 173,
+      "obsFold": 0.792,
+      "newFold": 0.793,
+      "oldFold": 0.437,
+      "obsRaise": 0.04,
+      "newRaise": 0.032
+     },
+     {
+      "key": "St3 HU 1.5",
+      "n": 165,
+      "obsFold": 0.891,
+      "newFold": 0.863,
+      "oldFold": 0.433,
+      "obsRaise": 0.036,
+      "newRaise": 0.03
+     },
+     {
+      "key": "St3 HU r2.5",
+      "n": 31,
+      "obsFold": 0.484,
+      "newFold": 0.526,
+      "oldFold": 0.272,
+      "obsRaise": 0.097,
+      "newRaise": 0.12
+     },
+     {
+      "key": "St3 HU r3.5",
+      "n": 31,
+      "obsFold": 0.613,
+      "newFold": 0.619,
+      "oldFold": 0.279,
+      "obsRaise": 0.097,
+      "newRaise": 0.12
+     },
+     {
+      "key": "St3 MW 0.33",
+      "n": 50,
+      "obsFold": 0.66,
+      "newFold": 0.584,
+      "oldFold": 0.384,
+      "obsRaise": 0.04,
+      "newRaise": 0.022
+     },
+     {
+      "key": "St3 MW 0.5",
+      "n": 50,
+      "obsFold": 0.72,
+      "newFold": 0.694,
+      "oldFold": 0.447,
+      "obsRaise": 0.04,
+      "newRaise": 0.022
+     },
+     {
+      "key": "St3 MW 0.75",
+      "n": 50,
+      "obsFold": 0.82,
+      "newFold": 0.787,
+      "oldFold": 0.513,
+      "obsRaise": 0.04,
+      "newRaise": 0.022
+     },
+     {
+      "key": "St3 MW 1",
+      "n": 50,
+      "obsFold": 0.9,
+      "newFold": 0.839,
+      "oldFold": 0.522,
+      "obsRaise": 0.06,
+      "newRaise": 0.022
+     },
+     {
+      "key": "St3 MW 1.5",
+      "n": 50,
+      "obsFold": 0.96,
+      "newFold": 0.893,
+      "oldFold": 0.464,
+      "obsRaise": 0.04,
+      "newRaise": 0.021
+     },
+     {
+      "key": "St3 MW r2.5",
+      "n": 10,
+      "obsFold": 0.7,
+      "newFold": 0.767,
+      "oldFold": 0.369,
+      "obsRaise": 0,
+      "newRaise": 0.04
+     },
+     {
+      "key": "St3 MW r3.5",
+      "n": 10,
+      "obsFold": 0.8,
+      "newFold": 0.832,
+      "oldFold": 0.348,
+      "obsRaise": 0,
+      "newRaise": 0.039
+     }
+    ],
+    "byHud": [
+     {
+      "key": "LAG",
+      "n": 976,
+      "obsFold": 0.527,
+      "newFold": 0.541,
+      "oldFold": 0.395,
+      "obsRaise": 0.079,
+      "newRaise": 0.077
+     },
+     {
+      "key": "Nit",
+      "n": 107,
+      "obsFold": 0.738,
+      "newFold": 0.548,
+      "oldFold": 0.366,
+      "obsRaise": 0.009,
+      "newRaise": 0.094
+     },
+     {
+      "key": "TAG",
+      "n": 937,
+      "obsFold": 0.554,
+      "newFold": 0.535,
+      "oldFold": 0.394,
+      "obsRaise": 0.084,
+      "newRaise": 0.084
+     },
+     {
+      "key": "loose-passiv",
+      "n": 1395,
+      "obsFold": 0.398,
+      "newFold": 0.456,
+      "oldFold": 0.374,
+      "obsRaise": 0.032,
+      "newRaise": 0.064
+     },
+     {
+      "key": "sehr loose",
+      "n": 719,
+      "obsFold": 0.565,
+      "newFold": 0.512,
+      "oldFold": 0.455,
+      "obsRaise": 0.035,
+      "newRaise": 0.066
+     },
+     {
+      "key": "unbekannt",
+      "n": 2294,
+      "obsFold": 0.538,
+      "newFold": 0.516,
+      "oldFold": 0.388,
+      "obsRaise": 0.064,
+      "newRaise": 0.073
+     }
+    ]
+   }
+  },
+  "final": {
+   "label": "base",
+   "comp": "bots",
+   "train": [
+    "503",
+    "504"
+   ],
+   "test": [
+    "504"
+   ],
+   "nTrain": 12186,
+   "nTest": 6428,
+   "params": {
+    "c0_1": 0.1798,
+    "c0_2": 0.0364,
+    "c0_3": 0.258,
+    "c1_1": 1.8703,
+    "c1_2": 2.3214,
+    "c1_3": 2.0446,
+    "c2": 0.0301,
+    "c3": -0.0772,
+    "tau": 0.1353,
+    "c4": -0.1876,
+    "taud": 0.015,
+    "lf": 0.0142,
+    "lw": -0.1309,
+    "r0": 0.364,
+    "r1": 0.9141,
+    "rd": 0.1525,
+    "lv": -0.0265,
+    "lp": -0.7811
+   },
+   "vector": [
+    0.1798,
+    0.0364,
+    0.258,
+    1.8703,
+    2.3214,
+    2.0446,
+    0.0301,
+    -0.0772,
+    0.1353,
+    -0.1876,
+    0.015,
+    0.0142,
+    -0.1309,
+    0.364,
+    0.9141,
+    0.1525,
+    -0.0265,
+    -0.7811
+   ],
+   "logLoss": {
+    "trainNew": 0.772,
+    "trainOld": 0.9101,
+    "testNew": 0.7629,
+    "testOld": 0.8944
+   },
+   "calibTest": {
+    "bySize": [
+     {
+      "key": "0.33",
+      "n": 1159,
+      "obsFold": 0.327,
+      "newFold": 0.326,
+      "oldFold": 0.264,
+      "obsRaise": 0.044,
+      "newRaise": 0.057
+     },
+     {
+      "key": "0.5",
+      "n": 1158,
+      "obsFold": 0.47,
+      "newFold": 0.435,
+      "oldFold": 0.347,
+      "obsRaise": 0.048,
+      "newRaise": 0.057
+     },
+     {
+      "key": "0.75",
+      "n": 1156,
+      "obsFold": 0.54,
+      "newFold": 0.542,
+      "oldFold": 0.438,
+      "obsRaise": 0.05,
+      "newRaise": 0.057
+     },
+     {
+      "key": "1",
+      "n": 1151,
+      "obsFold": 0.599,
+      "newFold": 0.614,
+      "oldFold": 0.471,
+      "obsRaise": 0.053,
+      "newRaise": 0.056
+     },
+     {
+      "key": "1.5",
+      "n": 1140,
+      "obsFold": 0.718,
+      "newFold": 0.712,
+      "oldFold": 0.474,
+      "obsRaise": 0.055,
+      "newRaise": 0.056
+     },
+     {
+      "key": "r2.5",
+      "n": 332,
+      "obsFold": 0.349,
+      "newFold": 0.338,
+      "oldFold": 0.35,
+      "obsRaise": 0.142,
+      "newRaise": 0.135
+     },
+     {
+      "key": "r3.5",
+      "n": 332,
+      "obsFold": 0.41,
+      "newFold": 0.421,
+      "oldFold": 0.365,
+      "obsRaise": 0.114,
+      "newRaise": 0.135
+     }
+    ],
+    "byStreetSize": [
+     {
+      "key": "St1 HU 0.33",
+      "n": 402,
+      "obsFold": 0.286,
+      "newFold": 0.28,
+      "oldFold": 0.213,
+      "obsRaise": 0.057,
+      "newRaise": 0.068
+     },
+     {
+      "key": "St1 HU 0.5",
+      "n": 402,
+      "obsFold": 0.448,
+      "newFold": 0.383,
+      "oldFold": 0.301,
+      "obsRaise": 0.057,
+      "newRaise": 0.068
+     },
+     {
+      "key": "St1 HU 0.75",
+      "n": 402,
+      "obsFold": 0.51,
+      "newFold": 0.486,
+      "oldFold": 0.4,
+      "obsRaise": 0.062,
+      "newRaise": 0.068
+     },
+     {
+      "key": "St1 HU 1",
+      "n": 402,
+      "obsFold": 0.557,
+      "newFold": 0.556,
+      "oldFold": 0.444,
+      "obsRaise": 0.062,
+      "newRaise": 0.068
+     },
+     {
+      "key": "St1 HU 1.5",
+      "n": 402,
+      "obsFold": 0.664,
+      "newFold": 0.64,
+      "oldFold": 0.468,
+      "obsRaise": 0.072,
+      "newRaise": 0.068
+     },
+     {
+      "key": "St1 HU r2.5",
+      "n": 152,
+      "obsFold": 0.342,
+      "newFold": 0.298,
+      "oldFold": 0.351,
+      "obsRaise": 0.171,
+      "newRaise": 0.148
+     },
+     {
+      "key": "St1 HU r3.5",
+      "n": 152,
+      "obsFold": 0.382,
+      "newFold": 0.365,
+      "oldFold": 0.377,
+      "obsRaise": 0.145,
+      "newRaise": 0.148
+     },
+     {
+      "key": "St1 MW 0.33",
+      "n": 180,
+      "obsFold": 0.261,
+      "newFold": 0.318,
+      "oldFold": 0.404,
+      "obsRaise": 0.006,
+      "newRaise": 0.061
+     },
+     {
+      "key": "St1 MW 0.5",
+      "n": 180,
+      "obsFold": 0.45,
+      "newFold": 0.424,
+      "oldFold": 0.479,
+      "obsRaise": 0.017,
+      "newRaise": 0.061
+     },
+     {
+      "key": "St1 MW 0.75",
+      "n": 180,
+      "obsFold": 0.544,
+      "newFold": 0.527,
+      "oldFold": 0.552,
+      "obsRaise": 0.017,
+      "newRaise": 0.061
+     },
+     {
+      "key": "St1 MW 1",
+      "n": 180,
+      "obsFold": 0.578,
+      "newFold": 0.593,
+      "oldFold": 0.559,
+      "obsRaise": 0.017,
+      "newRaise": 0.061
+     },
+     {
+      "key": "St1 MW 1.5",
+      "n": 180,
+      "obsFold": 0.656,
+      "newFold": 0.671,
+      "oldFold": 0.525,
+      "obsRaise": 0.017,
+      "newRaise": 0.061
+     },
+     {
+      "key": "St1 MW r2.5",
+      "n": 57,
+      "obsFold": 0.298,
+      "newFold": 0.351,
+      "oldFold": 0.411,
+      "obsRaise": 0.035,
+      "newRaise": 0.122
+     },
+     {
+      "key": "St1 MW r3.5",
+      "n": 57,
+      "obsFold": 0.316,
+      "newFold": 0.421,
+      "oldFold": 0.412,
+      "obsRaise": 0.035,
+      "newRaise": 0.122
+     },
+     {
+      "key": "St2 HU 0.33",
+      "n": 263,
+      "obsFold": 0.247,
+      "newFold": 0.232,
+      "oldFold": 0.212,
+      "obsRaise": 0.068,
+      "newRaise": 0.062
+     },
+     {
+      "key": "St2 HU 0.5",
+      "n": 263,
+      "obsFold": 0.357,
+      "newFold": 0.343,
+      "oldFold": 0.298,
+      "obsRaise": 0.076,
+      "newRaise": 0.062
+     },
+     {
+      "key": "St2 HU 0.75",
+      "n": 261,
+      "obsFold": 0.429,
+      "newFold": 0.461,
+      "oldFold": 0.397,
+      "obsRaise": 0.08,
+      "newRaise": 0.062
+     },
+     {
+      "key": "St2 HU 1",
+      "n": 260,
+      "obsFold": 0.496,
+      "newFold": 0.551,
+      "oldFold": 0.44,
+      "obsRaise": 0.085,
+      "newRaise": 0.061
+     },
+     {
+      "key": "St2 HU 1.5",
+      "n": 257,
+      "obsFold": 0.654,
+      "newFold": 0.702,
+      "oldFold": 0.463,
+      "obsRaise": 0.086,
+      "newRaise": 0.061
+     },
+     {
+      "key": "St2 HU r2.5",
+      "n": 66,
+      "obsFold": 0.273,
+      "newFold": 0.264,
+      "oldFold": 0.314,
+      "obsRaise": 0.197,
+      "newRaise": 0.153
+     },
+     {
+      "key": "St2 HU r3.5",
+      "n": 66,
+      "obsFold": 0.364,
+      "newFold": 0.387,
+      "oldFold": 0.326,
+      "obsRaise": 0.121,
+      "newRaise": 0.153
+     },
+     {
+      "key": "St2 MW 0.33",
+      "n": 86,
+      "obsFold": 0.267,
+      "newFold": 0.292,
+      "oldFold": 0.406,
+      "obsRaise": 0,
+      "newRaise": 0.049
+     },
+     {
+      "key": "St2 MW 0.5",
+      "n": 86,
+      "obsFold": 0.488,
+      "newFold": 0.409,
+      "oldFold": 0.475,
+      "obsRaise": 0.012,
+      "newRaise": 0.049
+     },
+     {
+      "key": "St2 MW 0.75",
+      "n": 86,
+      "obsFold": 0.523,
+      "newFold": 0.525,
+      "oldFold": 0.543,
+      "obsRaise": 0.012,
+      "newRaise": 0.049
+     },
+     {
+      "key": "St2 MW 1",
+      "n": 86,
+      "obsFold": 0.593,
+      "newFold": 0.609,
+      "oldFold": 0.547,
+      "obsRaise": 0.012,
+      "newRaise": 0.049
+     },
+     {
+      "key": "St2 MW 1.5",
+      "n": 86,
+      "obsFold": 0.814,
+      "newFold": 0.756,
+      "oldFold": 0.51,
+      "obsRaise": 0.012,
+      "newRaise": 0.049
+     },
+     {
+      "key": "St2 MW r2.5",
+      "n": 16,
+      "obsFold": 0.438,
+      "newFold": 0.358,
+      "oldFold": 0.411,
+      "obsRaise": 0.188,
+      "newRaise": 0.09
+     },
+     {
+      "key": "St2 MW r3.5",
+      "n": 16,
+      "obsFold": 0.563,
+      "newFold": 0.468,
+      "oldFold": 0.413,
+      "obsRaise": 0.188,
+      "newRaise": 0.09
+     },
+     {
+      "key": "St3 HU 0.33",
+      "n": 178,
+      "obsFold": 0.539,
+      "newFold": 0.524,
+      "oldFold": 0.213,
+      "obsRaise": 0.039,
+      "newRaise": 0.032
+     },
+     {
+      "key": "St3 HU 0.5",
+      "n": 177,
+      "obsFold": 0.627,
+      "newFold": 0.639,
+      "oldFold": 0.298,
+      "obsRaise": 0.04,
+      "newRaise": 0.032
+     },
+     {
+      "key": "St3 HU 0.75",
+      "n": 177,
+      "obsFold": 0.695,
+      "newFold": 0.741,
+      "oldFold": 0.395,
+      "obsRaise": 0.034,
+      "newRaise": 0.032
+     },
+     {
+      "key": "St3 HU 1",
+      "n": 173,
+      "obsFold": 0.792,
+      "newFold": 0.803,
+      "oldFold": 0.437,
+      "obsRaise": 0.04,
+      "newRaise": 0.031
+     },
+     {
+      "key": "St3 HU 1.5",
+      "n": 165,
+      "obsFold": 0.891,
+      "newFold": 0.87,
+      "oldFold": 0.433,
+      "obsRaise": 0.036,
+      "newRaise": 0.029
+     },
+     {
+      "key": "St3 HU r2.5",
+      "n": 31,
+      "obsFold": 0.484,
+      "newFold": 0.524,
+      "oldFold": 0.272,
+      "obsRaise": 0.097,
+      "newRaise": 0.114
+     },
+     {
+      "key": "St3 HU r3.5",
+      "n": 31,
+      "obsFold": 0.613,
+      "newFold": 0.615,
+      "oldFold": 0.279,
+      "obsRaise": 0.097,
+      "newRaise": 0.114
+     },
+     {
+      "key": "St3 MW 0.33",
+      "n": 50,
+      "obsFold": 0.66,
+      "newFold": 0.58,
+      "oldFold": 0.384,
+      "obsRaise": 0.04,
+      "newRaise": 0.023
+     },
+     {
+      "key": "St3 MW 0.5",
+      "n": 50,
+      "obsFold": 0.72,
+      "newFold": 0.692,
+      "oldFold": 0.447,
+      "obsRaise": 0.04,
+      "newRaise": 0.023
+     },
+     {
+      "key": "St3 MW 0.75",
+      "n": 50,
+      "obsFold": 0.82,
+      "newFold": 0.787,
+      "oldFold": 0.513,
+      "obsRaise": 0.04,
+      "newRaise": 0.023
+     },
+     {
+      "key": "St3 MW 1",
+      "n": 50,
+      "obsFold": 0.9,
+      "newFold": 0.839,
+      "oldFold": 0.522,
+      "obsRaise": 0.06,
+      "newRaise": 0.023
+     },
+     {
+      "key": "St3 MW 1.5",
+      "n": 50,
+      "obsFold": 0.96,
+      "newFold": 0.892,
+      "oldFold": 0.464,
+      "obsRaise": 0.04,
+      "newRaise": 0.022
+     },
+     {
+      "key": "St3 MW r2.5",
+      "n": 10,
+      "obsFold": 0.7,
+      "newFold": 0.756,
+      "oldFold": 0.369,
+      "obsRaise": 0,
+      "newRaise": 0.043
+     },
+     {
+      "key": "St3 MW r3.5",
+      "n": 10,
+      "obsFold": 0.8,
+      "newFold": 0.823,
+      "oldFold": 0.348,
+      "obsRaise": 0,
+      "newRaise": 0.043
+     }
+    ],
+    "byHud": [
+     {
+      "key": "LAG",
+      "n": 976,
+      "obsFold": 0.527,
+      "newFold": 0.555,
+      "oldFold": 0.395,
+      "obsRaise": 0.079,
+      "newRaise": 0.068
+     },
+     {
+      "key": "Nit",
+      "n": 107,
+      "obsFold": 0.738,
+      "newFold": 0.567,
+      "oldFold": 0.366,
+      "obsRaise": 0.009,
+      "newRaise": 0.088
+     },
+     {
+      "key": "TAG",
+      "n": 937,
+      "obsFold": 0.554,
+      "newFold": 0.551,
+      "oldFold": 0.394,
+      "obsRaise": 0.084,
+      "newRaise": 0.076
+     },
+     {
+      "key": "loose-passiv",
+      "n": 1395,
+      "obsFold": 0.398,
+      "newFold": 0.43,
+      "oldFold": 0.374,
+      "obsRaise": 0.032,
+      "newRaise": 0.056
+     },
+     {
+      "key": "sehr loose",
+      "n": 719,
+      "obsFold": 0.565,
+      "newFold": 0.515,
+      "oldFold": 0.455,
+      "obsRaise": 0.035,
+      "newRaise": 0.057
+     },
+     {
+      "key": "unbekannt",
+      "n": 2294,
+      "obsFold": 0.538,
+      "newFold": 0.518,
+      "oldFold": 0.388,
+      "obsRaise": 0.064,
+      "newRaise": 0.065
+     }
+    ]
+   }
+  },
+  "holdout_vorPruefungB": {
+   "label": "base",
+   "comp": "bots",
+   "train": [
+    "503"
+   ],
+   "test": [
+    "504"
+   ],
    "nTrain": 4915,
    "nTest": 5531,
    "params": {
@@ -561,7 +1684,7 @@
     ]
    }
   },
-  "final": {
+  "final_vorPruefungB": {
    "label": "base",
    "comp": "bots",
    "train": [
