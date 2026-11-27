@@ -37,4 +37,13 @@ module.exports = function (T) {
     const r2 = PT.dataport.parseImport(dbFile([a, rec('constructor', 'Kon')]));
     ok(r2.ok && Object.keys(r2.db.opps).length === 2, 'ID „constructor“ ist ein normaler eigener Schlüssel und bleibt erhalten');
   });
+
+  test('Prüfung C6: Trainingskategorie „constructor“ (aus Object.prototype) erzeugt keine Ausnahme', () => {
+    ok(!PT.training.hasScen('constructor') && !PT.training.hasScen('__proto__') && !PT.training.hasScen(5) && PT.training.hasScen('preflop-open'), 'hasScen prüft nur eigene Kategorien');
+    let g = null, err = null;
+    try { g = PT.training.generate('constructor', 1, { difficulty: 'gemischt', ts: 1 }); } catch (e) { err = e; }
+    ok(!err && g && g.hand, 'generate fällt auf eine bekannte Kategorie zurück' + (err ? ': ' + err.message : ''));
+    const src = fs.readFileSync(path.join(ROOT, 'assets/js/ui/views.js'), 'utf8') + fs.readFileSync(path.join(ROOT, 'assets/js/ui/app.js'), 'utf8');
+    ok(!/SCEN\[x\.cat\]\s*\?/.test(src) && /hasScen\(cat\)/.test(src), 'Oberfläche nutzt die Prüfung (Wiederholung und Trainingsstart)');
+  });
 };

@@ -629,7 +629,7 @@ function gradeDecision(cur, chosen) {
     var dec = PT.training.makeDecision({ idx: cur.idx, street: cur.street, pos: cur.pos, view: cur.view, opps: cur.opps, seed: cur.seed, chosen: chosen, extra: a._extra || null }, a, g);
     S.handDecisions.push(dec);
     var opp = a.opponents.filter(function (o) { return o.name === a.mainOpp; })[0];
-    var tagsD = a.spotTags.slice(); if (cur.training && cur.target && tagsD.indexOf(cur.training) < 0 && PT.coach.SPOTS[cur.training]) tagsD.push(cur.training);  // Zielentscheidung zählt für ihre Trainingskategorie
+    var tagsD = a.spotTags.slice(); if (cur.training && cur.target && tagsD.indexOf(cur.training) < 0 && Object.prototype.hasOwnProperty.call(PT.coach.SPOTS, cur.training)) tagsD.push(cur.training);  // Zielentscheidung zählt für ihre Trainingskategorie
     PT.training.addDecision(S.learning, { ts: Date.now(), score: g.score, lossBB: g.lossBB, st: cur.street, pos: cur.pos, tags: tagsD, cats: g.cats,
       opptyp: opp ? opp.typ : null, training: cur.training, grade: g.grade, session: S.sessionId });
     if (cur.training && S.training && cur.target) {
@@ -733,7 +733,8 @@ function route() {
 PTUI.route = route;
 PTUI.startTraining = function (cat, queue) {
   if (S.hand && !S.hand.done) { toast('Bitte erst die laufende Hand beenden.'); location.hash = '#tisch'; return; }
-  var sc = PT.training.SCEN[cat] || PT.training.SCEN['preflop-open'];
+  if (!PT.training.hasScen(cat)) cat = 'preflop-open';  // nur bekannte Kategorien (Prüfung C6)
+  var sc = PT.training.SCEN[cat];
   S.training = { cat: cat, name: queue ? 'Wiederholung' : sc.name, count: 0, scores: [], queue: queue || null };
   S.hand = null; location.hash = '#tisch'; render(); nextHand();
 };

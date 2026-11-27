@@ -5019,10 +5019,12 @@ var SCEN = {
 function hasDraw(h) { var d = PT.ranges.drawInfo(h.p[0].cards[0], h.p[0].cards[1], h.board); return d.strong && (PT.eval.evaluate(h.p[0].cards.concat(h.board)) >> 20) <= 1; }
 function weakRiver(h) { return PT.bots.percentile(h.p[0].cards, h.board).p < 0.55; }
 function strongHand(h) { return PT.bots.percentile(h.p[0].cards, h.board).p >= 0.88; }
+/** Bekannte Trainingskategorie (nur eigene Schlüssel: „constructor“ aus importierten Lerndaten ist keine Kategorie, Prüfung C6). */
+function hasScen(cat) { return typeof cat === 'string' && Object.prototype.hasOwnProperty.call(SCEN, cat); }
 /** Führt Aktionen bis zum Zielspot aus. Gibt {hand, ok} zurück. Held sitzt immer auf Platz 0. */
 function generate(cat, seed, opts) {
   opts = opts || {};
-  var sc = SCEN[cat] || SCEN['preflop-open'], rng0 = PT.makeRng('szenario|' + cat + '|' + (seed >>> 0));
+  var sc = (hasScen(cat) && SCEN[cat]) || SCEN['preflop-open'], rng0 = PT.makeRng('szenario|' + cat + '|' + (seed >>> 0));
   var cfg = PT.session.defaultConfig(); cfg.difficulty = opts.difficulty || 'gemischt';
   for (var attempt = 0, maxAtt = sc.any ? 240 : 80; attempt < maxAtt; attempt++) {
     var r = PT.makeRng('szenario|' + cat + '|' + (seed >>> 0) + '|' + attempt);
@@ -5207,7 +5209,7 @@ function handText(h) {
 }
 
 PT.training = { makeHandRecord: makeHandRecord, makeDecision: makeDecision, slimDecision: slimDecision, validHand: validHand, newLearning: newLearning, addDecision: addDecision, validLearning: validLearning, repairLearning: repairLearning, validView: validView, validSnap: validSnap,
-  profile: profile, goalStatus: goalStatus, srsAdd: srsAdd, srsDue: srsDue, srsReview: srsReview, BOX_DAYS: BOX_DAYS, SCEN: SCEN, generate: generate,
+  profile: profile, goalStatus: goalStatus, srsAdd: srsAdd, srsDue: srsDue, srsReview: srsReview, BOX_DAYS: BOX_DAYS, SCEN: SCEN, hasScen: hasScen, generate: generate,
   quiz: quiz, QUIZ_TYPES: QUIZ_TYPES, handText: handText, levelOf: levelOf, defaultGoals: defaultGoals };
 })(typeof globalThis !== 'undefined' ? globalThis : (typeof self !== 'undefined' ? self : this));
 
@@ -6308,7 +6310,7 @@ function gradeDecision(cur, chosen) {
     var dec = PT.training.makeDecision({ idx: cur.idx, street: cur.street, pos: cur.pos, view: cur.view, opps: cur.opps, seed: cur.seed, chosen: chosen, extra: a._extra || null }, a, g);
     S.handDecisions.push(dec);
     var opp = a.opponents.filter(function (o) { return o.name === a.mainOpp; })[0];
-    var tagsD = a.spotTags.slice(); if (cur.training && cur.target && tagsD.indexOf(cur.training) < 0 && PT.coach.SPOTS[cur.training]) tagsD.push(cur.training);  // Zielentscheidung zählt für ihre Trainingskategorie
+    var tagsD = a.spotTags.slice(); if (cur.training && cur.target && tagsD.indexOf(cur.training) < 0 && Object.prototype.hasOwnProperty.call(PT.coach.SPOTS, cur.training)) tagsD.push(cur.training);  // Zielentscheidung zählt für ihre Trainingskategorie
     PT.training.addDecision(S.learning, { ts: Date.now(), score: g.score, lossBB: g.lossBB, st: cur.street, pos: cur.pos, tags: tagsD, cats: g.cats,
       opptyp: opp ? opp.typ : null, training: cur.training, grade: g.grade, session: S.sessionId });
     if (cur.training && S.training && cur.target) {
@@ -6412,7 +6414,8 @@ function route() {
 PTUI.route = route;
 PTUI.startTraining = function (cat, queue) {
   if (S.hand && !S.hand.done) { toast('Bitte erst die laufende Hand beenden.'); location.hash = '#tisch'; return; }
-  var sc = PT.training.SCEN[cat] || PT.training.SCEN['preflop-open'];
+  if (!PT.training.hasScen(cat)) cat = 'preflop-open';  // nur bekannte Kategorien (Prüfung C6)
+  var sc = PT.training.SCEN[cat];
   S.training = { cat: cat, name: queue ? 'Wiederholung' : sc.name, count: 0, scores: [], queue: queue || null };
   S.hand = null; location.hash = '#tisch'; render(); nextHand();
 };
@@ -6780,7 +6783,7 @@ views.training = function (el) {
   el.innerHTML = html;
   el.onclick = function (e) {
     var b = e.target.closest('[data-train]'); if (b) { PTUI.startTraining(b.getAttribute('data-train')); return; }
-    if (e.target.closest('[data-review]')) { var q = PT.training.srsDue(S.learning, Date.now()).slice(0, 20); if (q.length) PTUI.startTraining(q[0].cat, q.map(function (x) { return { key: x.key, cat: PT.training.SCEN[x.cat] ? x.cat : 'preflop-open', seed: x.seed }; })); return; }
+    if (e.target.closest('[data-review]')) { var q = PT.training.srsDue(S.learning, Date.now()).slice(0, 20); if (q.length) PTUI.startTraining(PT.training.hasScen(q[0].cat) ? q[0].cat : 'preflop-open', q.map(function (x) { return { key: x.key, cat: PT.training.hasScen(x.cat) ? x.cat : 'preflop-open', seed: x.seed }; })); return; }
     var qa = e.target.closest('[data-qa]'); if (qa && quizState && quizState.answered == null) {
       quizState.answered = +qa.getAttribute('data-qa');
       var right = quizState.answered === quizState.q.ok, Q = S.learning.quiz;

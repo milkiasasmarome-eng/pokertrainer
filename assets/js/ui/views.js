@@ -44,7 +44,7 @@ views.training = function (el) {
   el.innerHTML = html;
   el.onclick = function (e) {
     var b = e.target.closest('[data-train]'); if (b) { PTUI.startTraining(b.getAttribute('data-train')); return; }
-    if (e.target.closest('[data-review]')) { var q = PT.training.srsDue(S.learning, Date.now()).slice(0, 20); if (q.length) PTUI.startTraining(q[0].cat, q.map(function (x) { return { key: x.key, cat: PT.training.SCEN[x.cat] ? x.cat : 'preflop-open', seed: x.seed }; })); return; }
+    if (e.target.closest('[data-review]')) { var q = PT.training.srsDue(S.learning, Date.now()).slice(0, 20); if (q.length) PTUI.startTraining(PT.training.hasScen(q[0].cat) ? q[0].cat : 'preflop-open', q.map(function (x) { return { key: x.key, cat: PT.training.hasScen(x.cat) ? x.cat : 'preflop-open', seed: x.seed }; })); return; }
     var qa = e.target.closest('[data-qa]'); if (qa && quizState && quizState.answered == null) {
       quizState.answered = +qa.getAttribute('data-qa');
       var right = quizState.answered === quizState.q.ok, Q = S.learning.quiz;
