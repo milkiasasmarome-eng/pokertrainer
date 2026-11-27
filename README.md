@@ -24,6 +24,12 @@ Daten (Gegnerdatenbank, Handhistorie, Lernfortschritt) bleiben im jeweiligen Bro
 - **Lernen:** Handhistorie mit Filter und Export, Replayer mit „damals bekannt / später bekannt“ und „Entscheidung erneut treffen“, Fehlerdatenbank, Kompetenzprofil, 14 Trainingskategorien, Spaced Repetition, Wissensquiz, Lernziele.
 - **Analyse:** Range-Matrix 13 × 13 (Open, Verteidigung, 3-/4-Bet, Push/Fold, geschätzte Gegner-Range), Gegnerdatenbank mit 17 Werten, Stichprobengröße, Intervallen und geglätteten Werten.
 
+- **Neu in 2.1:** Gegnergedächtnis mit Langzeit- und Kurzzeitwerten und Erkennung von Stilwechseln (Datenformat 3, automatische Migration mit Sicherung); Benchmark-Export je Entscheidung für unabhängige Offline-Auswertungen (`docs/BENCHMARK_EXPORT.md`); Startüberwachung mit Wiederherstellung; Exploits nur mit Bayes-Beleg; an der Gegnerpopulation kalibriertes Reaktionsmodell.
+
+## Qualität und Prüfung
+
+Alle Zahlen stammen aus ausgeführten Tests: [Testbericht](docs/TESTBERICHT.md), [mathematische Validierung](docs/VALIDIERUNG_MATHE.md), [Strategievergleich](docs/STRATEGIE.md), [Audit-Protokoll](docs/AUDIT.md), [Barrierefreiheit](docs/BARRIEREFREIHEIT.md). Offene rechtliche Punkte (Anbieterkennzeichnung, Lizenz): [RECHTLICHES.md](docs/RECHTLICHES.md). Das Repository hat bewusst noch keine Lizenz.
+
 ## Projektstruktur
 
 ```

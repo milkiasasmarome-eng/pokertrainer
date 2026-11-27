@@ -65,3 +65,32 @@ Zwei getrennte Prüfagenten haben 2.0.0 ohne Kenntnis der Entwicklungsnotizen ge
 | C12 | mittel | Phone: Tipp unter den Aktionen; Tablet: Einsatzchip verdeckt; Marker über Namen; Handliste abgeschnitten | Kurz-Tipp über den Aktionen, Chips über Karten, Marker seitlich, scrollbare Tabelle |
 | C13 | mittel | Service Worker: Cache nur nach Versionsnummer, Navigation lieferte überall index.html | Cache je Inhaltsprüfsumme, frisches Laden, nur App-Seite aus dem Cache |
 | C14–C17 | gering | Fehlerkategorien, 5.000-Grenze bei Präzise, Kontrast, Kleinkram | korrigiert (Live-Tipp immer ≤ 5.000) |
+
+## Folgeaudit 2.1 (Version 2.1.0)
+
+Grundlage: externe statische Prüfung von 2.0.1 (Hypothesen A1–A6, Monte-Carlo-Abdeckung, Unabhängigkeit der Handbewertungsprüfung), danach vier getrennte Prüfagenten auf dem Stand 2.1. Jede Hypothese wurde zuerst mit einem Reproduktionstest geprüft; nur bestätigte Befunde wurden korrigiert. Ausführliche Berichte: `docs/VALIDIERUNG_MATHE.md` (A2–A5, Monte Carlo, Handbewertung, Prüfer A), `docs/audit-2.1/PRUEFUNG_B.md` (Strategie), `docs/audit-2.1/PRUEFUNG_C_D.md` (Architektur, Sicherheit, Datenbank, Oberfläche, Barrierefreiheit, PWA), `docs/STRATEGIE.md`.
+
+### Externe Befunde A1–A6
+
+| Nr. | Ergebnis | Nachweis | Korrektur | Regressionstest |
+|---|---|---|---|---|
+| A1 Budget beider Modi | bestätigt | gemeinsames Budget: der zuerst gerechnete Modus verbrauchte mehr; Nachprüfung (Prüfer B, B6) fand zusätzlich Reihenfolgeabhängigkeit über Cache-Treffer bei Mehrgegner-All-ins (Call 23,69 gegen 23,07 BB) | gemeinsame Zwischenergebnisse (Ranges, Equity je Kombination), gleiche Budget- und Zeitanteile, eigene Zufallsströme je Modus, Cache nur für denselben Strom und Umfang, Treffer belasten das Budget mit dem Nennumfang | `tests/unit/coach-a1-budget.js`, `strategie-pruefer-b.js` (Seeds 77 und 991, Reihenfolge vertauscht) |
+| A2 leere Ranges | bestätigt | `potShare` lieferte bei leerer Range 176 Chips, bei unmöglicher Verteilung still 0 | gekennzeichneter Fehlschlag bis in EV-Engine und Coach, nie als 0 | `mathe-a2-leer.js` |
+| A3 Cache-Schlüssel | bestätigt | Analyse mit Budget 300 ersetzte später eine mit 5.000 (SE 0,029 statt ≤ 0,01) | Nutzung nur nach Art und Umfang (exakt oder genügend Stichproben) | `mathe-a3-cache.js` |
+| A4 Zeitgrenzen | bestätigt | Deadline 5 ms: exakte Enumeration lief 318 ms und meldete „exakt“; `potShare` ohne Deadline | Deadline in Enumeration, Side-Pot-Simulation, Equity je Kombination und River-Modellspiel; Abbruch gekennzeichnet, nie „exakt“, nicht im Cache | `mathe-a4-zeit.js`, `deadline-ueberall.js` |
+| A5 Range-Kennung | bestätigt | 476 von 500 leicht gestörten Verteilungen erhielten eine vergebene Kennung; Cache lieferte falsche Equity (0,0398) | Kennung aus den exakten Gewichten (normiert, mit Kartenentfernung und Modellversion) | `mathe-a5-hash.js` |
+| A6 starre 20 Beobachtungen | bestätigt | Grenze ohne Bezug zu Gelegenheiten, Abweichungsstärke und Unsicherheit; Nachprüfung (B5) fand Exploits allein aus dem Prior | Beta-Posterior der tatsächlich verwendeten Fold-Rate mit skeptischem Prior an der Break-even-Schwelle; Exploit nur bei ausreichender Posterior-Wahrscheinlichkeit und mindestens einer eigenen Beobachtung | `coach-a6-bayes.js`, `strategie-pruefer-b.js` |
+| Monte-Carlo-Abdeckung | bestätigt | Präzise, Equity 0,98864: Mittel 0,99027 (z = 6,2), Abdeckung 84–89 % | unverzerrte Stoppregel, Intervall für Equity mit geteilten Pots; Abdeckung je Stufe gegen exakte Enumeration im Toleranzband (siehe Testbericht) | `mathe-mc.js` |
+| Handbewertung: Unabhängigkeit | teilweise bestätigt | Die 133.784.560 Sieben-Karten-Kombinationen prüften nur Kategorienhäufigkeiten | unabhängige Referenz; jede der 2.598.960 Fünf-Karten-Hände individuell; gezielte Kicker-, Gleichstands-, Straight-/Flush-, Full-House-, Board-spielt-, Permutations- und Farbinvarianz-Tests | `mathe-eval.js` |
+| Widerspruch im Abschlussbericht 2.0.1 | bestätigt | Der Chat-Abschlussbericht nannte „1 von 6“ Läufen mit Vorsprung des Bots; laut Tabelle waren es 2 (exploitativ Seed 23 und 24). Außerdem nutzten die beiden gleichgewichtsnahen Läufe dieselben Bot-Vergleichsläufe wie die exploitativen Seeds 21/22 und waren keine unabhängigen Stichproben | Zusammenfassungen werden jetzt automatisch aus den Rohdaten erzeugt (`tools/report-strategy.js`), mehrfach genutzte Vergleichsläufe sind gekennzeichnet | – |
+
+### Prüfagenten auf dem Stand 2.1
+
+| Prüfer | Bereich | Befunde | Ergebnis |
+|---|---|---|---|
+| A | Mathematik, Equity, Statistik | 12 (Cache-Auswahl, SE-Untergrenzen, seltene Mehrgegner-Verteilungen, Range-Kennung, Bayes-Skala u. a.) | alle behoben (VALIDIERUNG_MATHE.md, STRATEGIE.md) |
+| B | Coach-Strategie, Einsatzgrößen, Gegner-KI | 12, davon 5 schwer | 9 behoben, 2 teilweise (B4 Größenwahl, B11 River-Equity nach Lead), 1 Doku (PRUEFUNG_B.md) |
+| C | Architektur, Performance, Sicherheit, Datenbank | 17 Hypothesen: 10 bestätigt und behoben, 7 widerlegt | PRUEFUNG_C_D.md |
+| D | Oberfläche, Barrierefreiheit, PWA, Deployment | 12 Hypothesen: 10 bestätigt (9 behoben, 1 Versionsstand im Release erledigt), 2 widerlegt | PRUEFUNG_C_D.md |
+
+Ein echter Screenreader-Test war in der Prüfumgebung nicht ausführbar (Orca lief nicht zuverlässig); ersatzweise liefen axe-core, der Barrierefreiheitsbaum von Chromium, ein Mitschnitt aller Live-Ansagen und Prüfungen der Fokusführung.

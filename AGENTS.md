@@ -48,3 +48,9 @@ node tests/e2e.js                                  # Browser-Tests (Playwright +
 - Das Reaktionsmodell postflop (exploitativ) ist ein an der Gegnerpopulation kalibriertes Schwellenmodell (`PT.ev.POP`, `popRespond`), gemittelt mit dem MDF-Modell. Wer Gegner-KI, Range-Schätzung oder Statistik ändert, muss neu kalibrieren: `node tests/strategy/sizing-study.js <Wurzel> <Seed> <Hände> bots base`, dann `node tests/strategy/fit-response.js base <Training> <Prüfung>` (siehe docs/STRATEGIE.md).
 - Strategische Vergleiche nur über `tests/strategy/compare.js` (gepaarte Seeds, Block-Bootstrap, All-in-Bereinigung); Bericht mit `node tools/report-strategy.js`. Eine Verbesserung gilt erst als belegt, wenn das 95-%-Intervall der Differenz über 0 liegt.
 
+
+## Hinweise aus der Prüfung B (2.1)
+- Preflop-Anker: Jede Aktion (auch Fold) wird am Chartgewicht gemessen (`coach.chartWeight`); Ausnahme ist reiner Call/Fold gegen ein All-in.
+- Exploit-Beleg (`coach.preflopAnchor`): Posterior der tatsächlich im Modell verwendeten Fold-Rate, skeptischer Prior an der Break-even-Schwelle, mindestens eine eigene Beobachtung.
+- Gegner-KI: Calls hängen von Einsatzgröße und Stil ab. Nach jeder Änderung an `bots.js` Kalibrierung prüfen (`node tests/long.js calib`) und das Populationsmodell neu anpassen (siehe oben).
+- Caches (`equity`, `ev.comboEquities`) nur für denselben Zufallsstrom und Umfang; `PT.equity.cacheClear()` leert beide. Analysen müssen unabhängig von der Reihenfolge der Modi bleiben (`tests/unit/strategie-pruefer-b.js`).
