@@ -90,6 +90,24 @@ module.exports = function (T) {
     ok(/spätere Aktionen/.test(PT.events.validate(x) || ''), 'zukünftige Aktion im beobachteten Zustand erkannt');
   });
 
+  test('2.2 Prüfer C: Vorher-Nachher-Test abschließbar (C-1), Ereignisstrom ohne Seeds und robuste Prüfung (C-4/C-5), strenge Testdaten (C-6)', () => {
+    const L = PT.training.newLearning(); let bad = 0, n = 0;
+    for (let k = 0; k < 6; k++) { const t = PT.training.prePostNew(L, { now: 1000 + k, cats: ['river-call', 'cbet', 'allin'] });
+      ['pre', 'post'].forEach(ph => t[ph].forEach(it => { n++; if (!PT.training.generate(it.cat, it.seed, { difficulty: 'gemischt', ts: 0 })) bad++; })); }
+    eq(bad, 0, 'alle ' + n + ' Testsituationen erzeugbar');
+    const ev = PT.events.build(require('../app-sim.js')(PT, 6, 2203));
+    ok(ev.payload.every(h => !h.handRecord || (h.handRecord.seed == null && h.handRecord.no == null && h.handRecord.ts === 0 && h.handRecord.id === h.handId)), 'Handdatensatz ohne Seed, Handnummer, Zeitstempel');
+    const bad1 = JSON.parse(JSON.stringify(ev)); bad1.payload.push(null); bad1.contentHash = PT.util.fnv1a(JSON.stringify(bad1.payload));
+    ok(typeof PT.events.validate(bad1) === 'string', 'payload mit null: Meldung statt Ausnahme');
+    const bad2 = JSON.parse(JSON.stringify(ev)), e2 = bad2.payload.find(h => h.events.some(e => e.complete)).events.find(e => e.complete);
+    e2.recommendations.pai = { action: 'x' }; bad2.contentHash = PT.util.fnv1a(JSON.stringify(bad2.payload)); ok(/pai/.test(PT.events.validate(bad2) || ''), 'gefüllter PAI-Kanal abgelehnt');
+    const bad3 = JSON.parse(JSON.stringify(ev)), e3 = bad3.payload.find(h => h.events.some(e => e.complete)).events.find(e => e.complete);
+    e3.observed.hole = ['As', 'Ad']; bad3.contentHash = PT.util.fnv1a(JSON.stringify(bad3.payload)); ok(/unbekanntes Feld/.test(PT.events.validate(bad3) || ''), 'unbekanntes Feld abgelehnt');
+    const t = L.pp[0], x = JSON.parse(JSON.stringify(L)); x.pp[0].extra = 1; ok(!!PT.training.validLearning(x), 'Zusatzfeld im Test abgelehnt');
+    const y = JSON.parse(JSON.stringify(L)); y.pp.push(JSON.parse(JSON.stringify(t))); ok(!!PT.training.validLearning(y), 'doppelte Test-ID abgelehnt');
+    const z = JSON.parse(JSON.stringify(L)); z.pp[0].state = 'fertig'; ok(!!PT.training.validLearning(z), 'Zustand „fertig“ ohne Ergebnisse abgelehnt');
+  });
+
   test('2.2 F1: Berichtsurteil folgt der Blockregel (unter 20 Blöcken kein Beleg, auch wenn das Intervall 0 ausschließt)', () => {
     const { verdictText } = require('../../tools/report-22.js');
     ok(/zu wenig/.test(verdictText({ adj: { lo: -35, hi: -7, blocks: 10 } })), '10 Blöcke: zu wenig');

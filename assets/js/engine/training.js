@@ -231,7 +231,7 @@ function validLearning(L) {
   if (!Array.isArray(L.sessions) || L.sessions.length > 5000) return 'Sessions ungültig';
   if (!Array.isArray(L.goals) || L.goals.length > 20) return 'Ziele ungültig';
   for (var g = 0; g < L.goals.length; g++) if (!validGoal(L.goals[g])) return 'Ziel ' + (g + 1) + ' ungültig';
-  if (L.pp != null && (!Array.isArray(L.pp) || L.pp.length > PP_MAX || !L.pp.every(validPP))) return 'Vorher-Nachher-Tests ungültig';
+  if (L.pp != null && !validPPList(L.pp)) return 'Vorher-Nachher-Tests ungültig';
   return null;
 }
 /** Gespeicherte Lerndaten reparieren statt verwerfen: ungültige Einträge werden entfernt, der Rest bleibt erhalten. */
@@ -243,7 +243,7 @@ function repairLearning(L) {
   if (validQuiz(L.quiz)) out.quiz = L.quiz; else removed++;
   if (Array.isArray(L.goals) && L.goals.length <= 20 && L.goals.every(validGoal)) out.goals = L.goals; else removed++;
   if (typeof L.created === 'number') out.created = L.created;
-  if (Array.isArray(L.pp)) { out.pp = []; L.pp.slice(-PP_MAX).forEach(function (t) { if (validPP(t)) out.pp.push(t); else removed++; }); }
+  if (Array.isArray(L.pp)) { out.pp = []; var seen = {}; L.pp.slice(-PP_MAX).forEach(function (t) { if (validPP(t) && !seen[t.id]) { seen[t.id] = 1; out.pp.push(t); } else removed++; }); }
   return { learning: out, removed: removed };
 }
 function mean(a) { return a.length ? a.reduce(function (s, x) { return s + x; }, 0) / a.length : null; }
@@ -327,6 +327,10 @@ function improvement(L) {
     var ma = mean(a), mb = mean(b), w = welch(a, b);
     out.push({ spot: t, name: C.SPOTS[t], n: l.length, before: ma, after: mb, diff: mb - ma, ci: w.ci, problem: mean(sel) < 60, sure: isFinite(w.ci) && Math.abs(mb - ma) > w.ci });
   });
+  // Prüfer C 2.2: viele Situationen gleichzeitig → Holm-Korrektur für „eindeutig“ (p aus der Normalnäherung der Welch-Statistik)
+  var byP = out.filter(function (x) { return isFinite(x.ci) && x.ci > 0; }).map(function (x) { x.p = 2 * (1 - normCdf(Math.abs(x.diff) / (x.ci / 1.96))); return x; }).sort(function (a, b) { return a.p - b.p; });
+  var stop = false; out.forEach(function (x) { x.sure = false; });
+  byP.forEach(function (x, i) { if (!stop && x.p <= 0.05 / (byP.length - i)) x.sure = true; else stop = true; });
   return out.sort(function (x, y) { return (y.problem - x.problem) || (y.diff - x.diff); });
 }
 /* Vorher-Nachher-Test: feste Testsituationen aus denselben Generatoren und Kategorien, vorher und nachher mit verschiedenen, aber vorab
@@ -339,7 +343,9 @@ function prePostNew(L, opts) {
   var prof = opts.profile || profile(L), cats = (opts.cats || prof.priorities.filter(function (p) { return !p.explore && hasScen(p.tag); }).slice(0, 3).map(function (p) { return p.tag; }));
   if (!opts.cats) ['cbet', 'river-call', 'blind-defense'].forEach(function (c) { if (cats.length < 3 && cats.indexOf(c) < 0) cats.push(c); });
   var id = 'pp' + ((opts.now || Date.now()) % 1e10), per = opts.per || PP_PER, test = { id: id, ts: opts.now || Date.now(), cats: cats, state: 'pre', pre: [], post: [] };
-  cats.forEach(function (c) { for (var i = 0; i < per; i++) ['pre', 'post'].forEach(function (ph) { test[ph].push({ cat: c, seed: PT.rng.hashStr(id + '|' + c + '|' + ph + '|' + i) >>> 0, s: null, l: null }); }); });
+  // Prüfer C 2.2 (C-1): nur Seeds, für die der Generator eine Situation erzeugt (sonst ließe sich der Test nie abschließen)
+  var okSeed = function (c, base) { for (var k = 0; k < 25; k++) { var sd = PT.rng.hashStr(base + (k ? '|' + k : '')) >>> 0; if (opts.noCheck || generate(c, sd, { difficulty: 'gemischt', ts: 0 })) return sd; } return null; };
+  cats.forEach(function (c) { for (var i = 0; i < per; i++) ['pre', 'post'].forEach(function (ph) { var sd = okSeed(c, id + '|' + c + '|' + ph + '|' + i); if (sd != null) test[ph].push({ cat: c, seed: sd, s: null, l: null }); }); });
   if (!Array.isArray(L.pp)) L.pp = [];
   L.pp.push(test); if (L.pp.length > PP_MAX) L.pp.splice(0, L.pp.length - PP_MAX);
   return test;
@@ -364,12 +370,18 @@ function prePostResult(t) {
   t.cats.forEach(function (c) { var x = ph(t.pre.filter(function (i) { return i.cat === c; })), y = ph(t.post.filter(function (i) { return i.cat === c; })); res.byCat[c] = { pre: x.score, post: y.score, n: Math.min(x.n, y.n) }; });
   return res;
 }
+var PP_KEYS = ['id', 'ts', 'state', 'cats', 'pre', 'post'], PP_ITEM = ['cat', 'seed', 's', 'l'];
 function validPP(t) {
-  if (!t || typeof t !== 'object' || Array.isArray(t) || typeof t.id !== 'string' || !/^pp[0-9]{1,12}$/.test(t.id) || typeof t.ts !== 'number' || ['pre', 'training', 'fertig'].indexOf(t.state) < 0) return false;
+  if (!t || typeof t !== 'object' || Array.isArray(t) || Object.keys(t).some(function (k) { return PP_KEYS.indexOf(k) < 0; }) || typeof t.id !== 'string' || !/^pp[0-9]{1,12}$/.test(t.id) || typeof t.ts !== 'number' || ['pre', 'training', 'fertig'].indexOf(t.state) < 0) return false;
   if (!Array.isArray(t.cats) || t.cats.length < 1 || t.cats.length > 6 || !t.cats.every(hasScen)) return false;
-  var okItem = function (it) { return it && typeof it === 'object' && hasScen(it.cat) && isInt(it.seed, 0, 4294967295) && (it.s == null || num(it.s, 0, 100)) && (it.l == null || num(it.l, -1e6, 1e6)); };
-  return ['pre', 'post'].every(function (ph) { return Array.isArray(t[ph]) && t[ph].length <= 40 && t[ph].every(okItem); });
+  var okItem = function (it) { return it && typeof it === 'object' && !Array.isArray(it) && Object.keys(it).every(function (k) { return PP_ITEM.indexOf(k) >= 0; }) && t.cats.indexOf(it.cat) >= 0 && hasScen(it.cat) && isInt(it.seed, 0, 4294967295) && (it.s == null || num(it.s, 0, 100)) && (it.l == null || num(it.l, -1e6, 1e6)); };
+  if (!['pre', 'post'].every(function (ph) { return Array.isArray(t[ph]) && t[ph].length >= 1 && t[ph].length <= 40 && t[ph].every(okItem); })) return false;
+  var done = function (ph) { return t[ph].every(function (x) { return x.s != null; }); };
+  if (t.state === 'fertig' && !(done('pre') && done('post'))) return false;
+  if (t.state === 'training' && !done('pre')) return false;
+  return true;
 }
+function validPPList(a) { if (!Array.isArray(a) || a.length > PP_MAX || !a.every(validPP)) return false; var ids = {}; return a.every(function (t) { if (ids[t.id]) return false; ids[t.id] = 1; return true; }); }
 // ---------- 2.2: Gegnergedächtnis – Belastbarkeit je Wert und Verhaltenshypothesen (Arbeitspaket 6) ----------
 /** Belastbarkeit eines Werts nach seinen tatsächlichen Gelegenheiten (nicht nach gespielten Händen) */
 function statReliability(nd) { var n = nd ? nd[1] : 0; return n < 20 ? 'unsicher' : n < 100 ? 'Tendenz' : 'belastbar'; }
@@ -393,7 +405,7 @@ function hypotheses(r) {
   cand.sort(function (a, b) { return a.p - b.p; });
   var stop = false;
   cand.forEach(function (c, i) { var sure = !stop && c.p <= 0.05 / (cand.length - i); if (!sure) stop = true;
-    if (sure || Math.abs(c.raw - c.m) > 0.1) out.push({ key: c.key, text: HYP[c.key][c.raw > c.m ? 0 : 1], level: sure ? 'gestützt' : 'Vermutung', raw: c.raw, prior: c.m, n: c.n, ci: c.ci, p: c.p }); });
+    if (sure || (c.n >= 30 && Math.abs(c.raw - c.m) > 0.1)) out.push({ key: c.key, text: HYP[c.key][c.raw > c.m ? 0 : 1], level: sure ? 'gestützt' : 'Vermutung', raw: c.raw, prior: c.m, n: c.n, ci: c.ci, p: c.p }); });
   var bl = 0, sh = 0;
   (r.shown || []).forEach(function (x) {
     if (!x || typeof x.board !== 'string' || x.board.length < 10 || typeof x.cards !== 'string') return;

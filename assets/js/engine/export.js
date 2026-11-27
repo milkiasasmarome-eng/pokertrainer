@@ -215,7 +215,9 @@ function buildEvents(hands) {
   var out = Object.keys(byHand).sort().map(function (k) {
     var h = recs[k] || null, x = byHand[k];
     x.afterHand = h ? { board: (h.board || []).slice(), shown: (h.shown || []).map(function (s) { return { seat: s.seat, cards: s.cards }; }), heroNet: h.heroNet, showdown: !!h.showdown } : null;
-    x.handRecord = h ? strip(h) : null;
+    // Prüfer C 2.2 (C-4): ohne Tisch-Seed, Handnummer, Trainings-Seed, Sitzung, Zeitstempel und Coach-Bewertungen; sonst ließen sich verdeckte
+    // Karten (auch künftiger Hände) aus dem Seed nachbauen. Die ID ist die nicht sprechende Hand-ID des Exports.
+    if (h) { var hr = strip(h); ['seed', 'no', 'tseed', 'session', 'decisions', 'training'].forEach(function (k) { delete hr[k]; }); hr.id = k; hr.ts = 0; x.handRecord = hr; } else x.handRecord = null;
     return x;
   });
   var body = JSON.stringify(out);
@@ -223,20 +225,35 @@ function buildEvents(hands) {
     separation: 'observed: nur zum Entscheidungszeitpunkt beobachtbare Informationen. recommendations: je Engine getrennt, keine Engine sieht die Empfehlung der anderen. afterHand und handRecord: erst nach der Hand bekannt; nur für Auswertung und Gedächtnis, nie für die Entscheidung derselben Hand.',
     hands: out.length, events: b.decisions.length, contentHash: U.fnv1a(body), payload: out };
 }
+var OBS_KEYS = ['street', 'heroSeat', 'position', 'holeCards', 'board', 'button', 'blinds', 'potTotal', 'toCall', 'stacks', 'actions', 'legal', 'opponents', 'publicView'];
+var STACK_KEYS = ['seat', 'name', 'position', 'stack', 'bet', 'committed', 'start', 'folded', 'allIn', 'hero'];
+/** Prüfer C 2.2 (C-5): Positivlisten, Abgleich von publicView mit Board und Aktionen, leerer PAI-Kanal, Typprüfungen ohne Ausnahmen */
 function validateEvents(o) {
-  if (!o || o.format !== EV_FORMAT) return 'kein Ereignisstrom';
+  try { return validateEvents0(o); } catch (e) { return 'Struktur ungültig (' + String(e && e.message || e).slice(0, 80) + ')'; }
+}
+function validateEvents0(o) {
+  if (!o || typeof o !== 'object' || o.format !== EV_FORMAT) return 'kein Ereignisstrom';
   if (o.schemaVersion !== EV_SCHEMA) return 'unbekannte Schema-Version';
   if (!Array.isArray(o.payload) || U.fnv1a(JSON.stringify(o.payload)) !== o.contentHash) return 'Prüfsumme stimmt nicht';
   for (var i = 0; i < o.payload.length; i++) {
     var hnd = o.payload[i];
+    if (!hnd || typeof hnd !== 'object' || !Array.isArray(hnd.events)) return 'Hand ' + (i + 1) + ': Ereignisse fehlen';
+    if (hnd.handRecord && ['seed', 'no', 'tseed', 'session'].some(function (k) { return hnd.handRecord[k] != null; })) return 'Hand ' + (i + 1) + ': Seed oder Sitzung im Handdatensatz';
     for (var j = 0; j < hnd.events.length; j++) {
-      var e = hnd.events[j], k = e.observed, n = 'Hand ' + (i + 1) + ', Ereignis ' + (j + 1) + ': ';
-      if (!e.recommendations || Object.keys(e.recommendations).some(function (c) { return CHANNELS.indexOf(c) < 0; })) return n + 'unbekannter Kanal';
-      if (!e.complete || !k) continue;
-      if (k.publicView.players.some(function (q) { return q.cards; })) return n + 'verdeckte Karten im beobachteten Zustand';
-      if (!isInt(e.actionIndex, 0, 400) || k.actions.length !== e.actionIndex) return n + 'spätere Aktionen im beobachteten Zustand';
-      if ([0, 3, 4, 5][STREETS.indexOf(k.street)] !== k.board.length) return n + 'Board passt nicht zur Straße';
-      if (JSON.stringify(k).indexOf('"style"') >= 0 || JSON.stringify(k).indexOf('"P"') >= 0) return n + 'interne Gegnerparameter';
+      var e = hnd.events[j], n = 'Hand ' + (i + 1) + ', Ereignis ' + (j + 1) + ': ';
+      if (!e || typeof e !== 'object' || !e.recommendations || typeof e.recommendations !== 'object') return n + 'Struktur';
+      if (Object.keys(e.recommendations).some(function (c) { return CHANNELS.indexOf(c) < 0; })) return n + 'unbekannter Kanal';
+      if (e.recommendations.pai !== null) return n + 'Kanal „pai“ wird vom Trainer nicht gefüllt';
+      var k = e.observed;
+      if (!e.complete) { if (k != null) return n + 'unvollständiges Ereignis mit Zustand'; continue; }
+      if (!k || typeof k !== 'object' || Object.keys(k).some(function (x) { return OBS_KEYS.indexOf(x) < 0; })) return n + 'unbekanntes Feld im beobachteten Zustand';
+      if (!Array.isArray(k.stacks) || k.stacks.some(function (q) { return !q || Object.keys(q).some(function (x) { return STACK_KEYS.indexOf(x) < 0; }); })) return n + 'unbekanntes Feld bei den Stacks';
+      var pv = k.publicView; if (!pv || !Array.isArray(pv.players) || !Array.isArray(pv.board) || !Array.isArray(pv.actions)) return n + 'Spielzustand fehlt';
+      if (PT.training && PT.training.validView && PT.training.validView(pv, pv.players.length) !== true) return n + 'Spielzustand ungültig';
+      if (pv.players.some(function (q) { return q.cards; })) return n + 'verdeckte Karten im beobachteten Zustand';
+      if (!isInt(e.actionIndex, 0, 400) || k.actions.length !== e.actionIndex || pv.actions.length !== e.actionIndex) return n + 'spätere Aktionen im beobachteten Zustand';
+      if ([0, 3, 4, 5][STREETS.indexOf(k.street)] !== k.board.length || pv.board.length !== k.board.length) return n + 'Board passt nicht zur Straße';
+      if (!Array.isArray(k.holeCards) || k.holeCards.length !== 2 || pv.cards.length !== 2) return n + 'eigene Karten';
     }
   }
   return null;

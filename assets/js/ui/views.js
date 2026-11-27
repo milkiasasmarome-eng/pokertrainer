@@ -476,7 +476,7 @@ views.fortschritt = function (el) {
       tile(prof.trend ? (prof.trend.diff >= 0 ? '+' : '') + num(prof.trend.diff, 1) : '–', prof.trend ? 'Veränderung: letzte ' + prof.trend.window + ' gegenüber den ' + prof.trend.window + ' davor' + (prof.trend.ci != null ? ' (± ' + num(prof.trend.ci, 1) + ')' : '') : 'Trend ab 40 Entscheidungen', prof.trend && prof.trend.ci != null && Math.abs(prof.trend.diff) > prof.trend.ci ? (prof.trend.diff > 0 ? 'good' : 'bad') : '') +
       tile(esc(levelName(prof.level)), 'eingeschätzter Erfahrungsstand (steuert die automatische Erklärtiefe)') + '</div></div>';
     html += '<div class="grid2"><div class="panel"><h3>Entwicklung der Entscheidungsqualität</h3>' + spark(prof.sessions) + '<p class="small">Mittelwerte je Block aus 25 Entscheidungen.</p></div>' +
-      '<div class="panel"><h3>Häufigste Fehlerkategorien</h3>' + (catRows.length ? '<table class="grid" style="table-layout:fixed"><tbody>' + catRows.map(function (c) { return '<tr><td>' + esc(PT.coach.MISTAKES[c] || c) + '</td><td class="n">' + prof.cats[c] + '</td><td style="width:40%">' + meterRaw(prof.cats[c] / Math.max(1, prof.cats[catRows[0]])) + '</td></tr>'; }).join('') + '</tbody></table>' : '<p class="muted">Noch keine Fehler erfasst.</p>') + '</div></div>';
+      '<div class="panel"><h3>Häufigste Fehlerkategorien</h3>' + (catRows.length ? '<table class="grid" style="table-layout:fixed"><tbody>' + catRows.map(function (c) { return '<tr><td>' + esc(ownName(PT.coach.MISTAKES, c)) + '</td><td class="n">' + prof.cats[c] + '</td><td style="width:40%">' + meterRaw(prof.cats[c] / Math.max(1, prof.cats[catRows[0]])) + '</td></tr>'; }).join('') + '</tbody></table>' : '<p class="muted">Noch keine Fehler erfasst.</p>') + '</div></div>';
     html += '<div class="grid2"><div class="panel"><h3>Nach Position</h3>' + table3(PT.stats.POSITIONS.map(function (p) { return [p, prof.positions[p]]; })) + '</div>' +
       '<div class="panel"><h3>Nach Straße</h3>' + table3([0, 1, 2, 3].map(function (s) { return [PT.rules.STREET_NAME[s], prof.streets[s]]; })) + '</div></div>';
     html += '<div class="grid2"><div class="panel"><h3>Nach Situation</h3>' + table3(Object.keys(PT.coach.SPOTS).map(function (t) { return [PT.coach.SPOTS[t], prof.spots[t], t]; }), true) + '</div>' +
@@ -489,7 +489,7 @@ views.fortschritt = function (el) {
     el.innerHTML = html;
     el.onclick = function (e) {
       var b = e.target.closest('[data-train]'); if (b) { PTUI.startTraining(b.getAttribute('data-train')); return; }
-      var pn = e.target.closest('[data-ppnew]'); if (pn) { var t = PT.training.prePostNew(L, { profile: prof }); PTUI.persistLearning(); var q = PT.training.prePostQueue(t, 'pre'); PTUI.startTraining(q[0].cat, q); return; }
+      var pn = e.target.closest('[data-ppnew]'); if (pn) { if (!PTUI.canStartTraining()) { H.toast('Bitte erst die laufende Hand beenden.'); return; } var t = PT.training.prePostNew(L, { profile: prof }); PTUI.persistLearning(); var q = PT.training.prePostQueue(t, 'pre'); if (q.length) PTUI.startTraining(q[0].cat, q); return; }
       var pg = e.target.closest('[data-pprun]'); if (pg) { var id = pg.getAttribute('data-pprun'), ph = pg.getAttribute('data-phase'), tt = (L.pp || []).filter(function (x) { return x.id === id; })[0];
         if (tt) { var q2 = PT.training.prePostQueue(tt, ph); if (q2.length) PTUI.startTraining(q2[0].cat, q2); } }
     };
@@ -499,11 +499,11 @@ views.fortschritt = function (el) {
 /** 2.2: Fehlerfelder, wiederkehrende Fehler, Verbesserung in zuvor schwachen Situationen, Vorher-Nachher-Test */
 function learnPanels(L, prof) {
   var areas = PT.training.errorAreas(L), rec = PT.training.recurring(L).slice(0, 6), imp = PT.training.improvement(L).slice(0, 8), tests = (L.pp || []).slice(-3).reverse();
-  var sp = function (t) { return PT.coach.SPOTS[t] || (t === 'ohne' ? 'ohne Spot-Kennzeichnung' : t); };
+  var sp = function (t) { return t === 'ohne' ? 'ohne Spot-Kennzeichnung' : ownName(PT.coach.SPOTS, t); };
   var h = '<div class="grid2"><div class="panel"><h3>Fehlerfelder</h3>' + (areas.length ? '<div class="scroll"><table class="grid"><thead><tr><th scope="col">Feld</th><th class="n" scope="col">Fehler</th><th class="n" scope="col">davon letzte 100</th><th class="n" scope="col">geschätzter EV-Verlust</th></tr></thead><tbody>' +
     areas.map(function (a) { return '<tr><td>' + esc(a.area) + '</td><td class="n">' + a.n + '</td><td class="n">' + a.recent + '</td><td class="n">' + num(a.loss, 1) + ' BB</td></tr>'; }).join('') + '</tbody></table></div>' : '<p class="muted">Noch keine Fehler erfasst.</p>') +
     '<p class="small">Der EV-Verlust ist eine Modellschätzung des Coaches (Faustregel, kein Solver-Ergebnis) und wird zu gleichen Teilen auf die Fehlerkategorien einer Entscheidung verteilt.</p>' +
-    '<h3>Wiederkehrende Fehler</h3>' + (rec.length ? '<ul>' + rec.map(function (r) { return '<li><b>' + esc(sp(r.spot)) + '</b>: ' + esc(PT.coach.MISTAKES[r.cat] || r.cat) + ' – ' + r.n + '-mal (' + r.recent + ' in den letzten 100 Entscheidungen)' +
+    '<h3>Wiederkehrende Fehler</h3>' + (rec.length ? '<ul>' + rec.map(function (r) { return '<li><b>' + esc(sp(r.spot)) + '</b>: ' + esc(ownName(PT.coach.MISTAKES, r.cat)) + ' – ' + r.n + '-mal (' + r.recent + ' in den letzten 100 Entscheidungen)' +
       (PT.training.hasScen(r.spot) ? ' <button class="btn" type="button" data-train="' + esc(r.spot) + '">Gezielt üben</button>' : '') + '</li>'; }).join('') + '</ul>' : '<p class="muted">Kein Fehler kam bisher mindestens dreimal in derselben Situation vor.</p>') + '</div>';
   h += '<div class="panel"><h3>Verbesserung in zuvor schwachen Situationen</h3>' + (imp.length ? '<div class="scroll"><table class="grid"><thead><tr><th scope="col">Situation</th><th class="n" scope="col">vorher (11.–20.)</th><th class="n" scope="col">letzte 10</th><th class="n" scope="col">Differenz</th></tr></thead><tbody>' +
     imp.map(function (x) { return '<tr><td>' + esc(x.name) + (x.problem ? ' <span class="small">(zuvor schwach)</span>' : '') + '</td><td class="n">' + n0(x.before) + '</td><td class="n">' + n0(x.after) + '</td><td class="n ' + (x.sure ? (x.diff > 0 ? 'good' : 'bad') : '') + '">' + (x.diff >= 0 ? '+' : '') + num(x.diff, 1) + ' ± ' + num(x.ci, 1) + '</td></tr>'; }).join('') + '</tbody></table></div>' :
@@ -519,6 +519,8 @@ function learnPanels(L, prof) {
     '<button class="btn" type="button" data-ppnew="1">Neuen Vorher-Nachher-Test starten</button></div></div>';
   return h;
 }
+/** Name aus einer Tabelle nur für eigene Schlüssel (Prüfer C 2.2: importierte Werte wie „constructor“) */
+function ownName(map, k) { return Object.prototype.hasOwnProperty.call(map, k) ? map[k] : String(k); }
 function levelName(l) { return { einsteiger: 'Einsteiger', fortgeschritten: 'Fortgeschritten', experte: 'Experte' }[l] || l; }
 function tile(v, label, cls) { return '<div class="box stattile"><b class="' + (cls || '') + '">' + v + '</b><span>' + label + '</span></div>'; }
 function meterRaw(f) { return '<div class="meter warn"><i style="width:' + Math.round(100 * Math.max(0, Math.min(1, f))) + '%"></i></div>'; }

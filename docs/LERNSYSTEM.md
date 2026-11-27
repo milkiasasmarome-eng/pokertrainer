@@ -10,7 +10,7 @@ Neu in 2.2 ausgewertet (`assets/js/engine/training.js`, Ansicht „Fortschritt�
 |---|---|---|
 | Fehlerfelder | `errorAreas` | Einsatzgröße, Pot Odds (inkl. Draws), Range-Einschätzung (mittelstarke Hände, zu viele Calls/Folds, Gegnertyp), Aggression, Starthände und Position; Anzahl, davon letzte 100, geschätzter EV-Verlust (zu gleichen Teilen auf die Kategorien einer Entscheidung verteilt) |
 | Wiederkehrende Fehler | `recurring` | gleiche Situation und gleiche Fehlerkategorie mindestens dreimal mit Bewertung ≤ 45; Knopf „Gezielt üben“ startet die passende Trainingskategorie |
-| Verbesserung in zuvor schwachen Situationen | `improvement` | je Situation erste 10 gegen letzte 10 Entscheidungen (ab 20), „zuvor schwach“ bei Mittel < 60, Differenz mit 95-%-Intervall (Welch) |
+| Verbesserung in zuvor schwachen Situationen | `improvement` | ab 30 Entscheidungen je Situation: die ersten 10 bestimmen „zuvor schwach“ (Mittel < 60), verglichen werden die Entscheidungen 11–20 mit den letzten 10 (getrennt, sonst entstünde Scheinverbesserung durch Regression zur Mitte; Prüfer A 2.2), Differenz mit 95-%-Intervall (Welch, t-Quantil); „eindeutig“ nach Holm-Korrektur über alle Situationen |
 | Fehler nach Position und Straße, Entwicklung der Qualität | `profile` (seit 2.0) | Tabellen und Verlauf je 25 Entscheidungen |
 
 ## 2. Gezielte Übungen und Wiederholung
@@ -21,9 +21,12 @@ Neu in 2.2 ausgewertet (`assets/js/engine/training.js`, Ansicht „Fortschritt�
 ## 3. Vorher-Nachher-Test
 
 - `prePostNew` legt je Kategorie (Standard: die drei schwächsten) vier Testsituationen für „vorher“ und vier für „nachher“ an; die Seeds sind vorab
-  festgelegt und verschieden (vergleichbare, nicht identische Situationen), das Gegnerfeld ist fest („gemischt“, keine adaptive Schwierigkeit).
+  festgelegt, verschieden (vergleichbare, nicht identische Situationen) und so gewählt, dass der Generator für jeden Seed eine Situation erzeugt;
+  das Gegnerfeld ist fest („gemischt“, keine adaptive Schwierigkeit). Während des Tests gibt es weder Tipp noch Urteil, bewertet wird immer
+  exploitativ mit Stufe Standard (Prüfer C 2.2); die eigenen Einstellungen gelten danach wieder. Die Bewertung wird der Situation zugeordnet, in der
+  die Entscheidung fiel, auch wenn sie erst nach dem Wechsel zur nächsten Situation fertig wird.
 - Ablauf in der Oberfläche: Vorher-Test → Training der Kategorien → Nachher-Test. Ergebnis: mittlere Bewertung und EV-Verlust je Phase, Differenz mit
-  95-%-Intervall, je Kategorie. Gespeichert in den Lerndaten (`L.pp`, streng geprüft und reparierbar, in Sicherungen enthalten).
+  95-%-Intervall (Welch, t-Quantil; Urteil erst, wenn beide Phasen vollständig sind), je Kategorie. Gespeichert in den Lerndaten (`L.pp`, streng geprüft und reparierbar, in Sicherungen enthalten).
 
 ## 4. Was das System nachweist – und was nicht
 

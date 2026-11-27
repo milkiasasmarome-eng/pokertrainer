@@ -214,7 +214,8 @@ function canWrite(quiet) {
 }
 PTUI.canWrite = canWrite;
 // legacyDone bleibt bei jedem Speichern erhalten (sonst würde die Migration aus Entwurf 2 bei jedem Start erneut angeboten)
-function metaRecord() { var m = { k: 'state', v: 2, table: S.table, settings: S.settings, heroRec: S.heroRec, app: PT.VERSION, saved: Date.now() }; if (S.legacyDone) m.legacyDone = true; return m; }
+function metaRecord() { var st = S.testSaved ? Object.assign({}, S.settings, S.testSaved) : S.settings;  // Testeinstellungen nie speichern (Prüfer C 2.2)
+  var m = { k: 'state', v: 2, table: S.table, settings: st, heroRec: S.heroRec, app: PT.VERSION, saved: Date.now() }; if (S.legacyDone) m.legacyDone = true; return m; }
 function persist(changedIds) {
   if (S.readonly) return Promise.resolve();
   var seen = {}, recs = (changedIds || []).filter(function (id) { if (seen[id] || !S.db.opps[id]) return false; seen[id] = 1; return true; }).map(function (id) { return S.db.opps[id]; });
@@ -530,7 +531,7 @@ function nextHand() {
   S.shownBoard = 0; S.lastStreet = 0; showMsg('');
   if (S.training) {
     var tr = S.training, item = null, seed;
-    if (tr.test && (!tr.queue || !tr.queue.length)) { var done = tr.test; S.training = null; S.hand = null; render(); toast('Testphase abgeschlossen (' + done + '). Ergebnis unter Fortschritt.', 6000); location.hash = '#fortschritt'; return; }
+    if (tr.test && (!tr.queue || !tr.queue.length)) { var done = tr.test; restoreTestSettings(); S.training = null; S.hand = null; render(); toast('Testphase abgeschlossen (' + done + '). Ergebnis unter Fortschritt.', 6000); location.hash = '#fortschritt'; return; }
     if (tr.queue && tr.queue.length) { item = tr.queue.shift(); seed = item.seed; tr.review = item.key; }
     else { tr.review = null; seed = (PT.rng.hashStr(tr.cat + '|' + Date.now() + '|' + tr.count) >>> 0); }
     // Adaptive Schwierigkeit: Gegnerfeld nach Kompetenz in dieser Kategorie
@@ -607,7 +608,7 @@ function onHeroTurn() {
   S.decisionNo++;
   var id = S.decisionNo, view = PT.bots.publicView(h, 0), opps = snapshotOpps(h);
   var seed = PT.rng.hashStr((S.table ? S.table.seed : 0) + '|' + h.no + '|' + h.actions.length + '|' + (h.isTraining ? 'T' + S.training.seed : 'P'));
-  S.cur = { id: id, view: view, opps: opps, seed: seed, t0: performance.now(), street: h.street, idx: h.actions.length, pos: h.p[0].pos, training: h.isTraining ? S.training.curCat : null, target: h.isTraining && S.training.target };
+  S.cur = { id: id, view: view, opps: opps, seed: seed, t0: performance.now(), street: h.street, idx: h.actions.length, pos: h.p[0].pos, training: h.isTraining ? S.training.curCat : null, target: h.isTraining && S.training.target, review: h.isTraining ? S.training.review : null };
   if (h.isTraining) S.training.target = false;
   S.analysis = null; S.lastStreet = h.street;
   var L = h.legal(0);
@@ -682,10 +683,11 @@ function gradeDecision(cur, chosen) {
     var tagsD = a.spotTags.slice(); if (cur.training && cur.target && tagsD.indexOf(cur.training) < 0 && Object.prototype.hasOwnProperty.call(PT.coach.SPOTS, cur.training)) tagsD.push(cur.training);  // Zielentscheidung zählt für ihre Trainingskategorie
     PT.training.addDecision(S.learning, { ts: Date.now(), score: g.score, lossBB: g.lossBB, st: cur.street, pos: cur.pos, tags: tagsD, cats: g.cats,
       opptyp: opp ? opp.typ : null, training: cur.training, grade: g.grade, session: S.sessionId });
+    // Prüfer C 2.2 (C-3): Schlüssel der Zielsituation zum Entscheidungszeitpunkt (cur.review), nicht beim Eintreffen der Bewertung
+    if (cur.training && cur.target && cur.review && /^pp:/.test(cur.review)) PT.training.prePostRecord(S.learning, cur.review, g.score, g.lossBB);
     if (cur.training && S.training && cur.target) {
       S.training.scores.push(g.score);
-      if (S.training.review && /^pp:/.test(S.training.review)) PT.training.prePostRecord(S.learning, S.training.review, g.score, g.lossBB);
-      else if (S.training.review) PT.training.srsReview(S.learning, S.training.review, g.score, Date.now());
+      if (cur.review && !/^pp:/.test(cur.review)) PT.training.srsReview(S.learning, cur.review, g.score, Date.now());
       renderTrainbar();
     }
     if (g.score <= 45) PT.training.srsAdd(S.learning, { key: 'd' + cur.seed, cat: cur.training || (a.spotTags[0] || 'preflop-open'), seed: cur.seed, view: { view: cur.view, opps: cur.opps }, label: a.situation }, Date.now());
@@ -783,15 +785,20 @@ function route() {
   if (name === 'tisch') render();
 }
 PTUI.route = route;
+PTUI.canStartTraining = function () { return !(S.hand && !S.hand.done); };
 PTUI.startTraining = function (cat, queue) {
   if (S.hand && !S.hand.done) { toast('Bitte erst die laufende Hand beenden.'); location.hash = '#tisch'; return; }
   if (!PT.training.hasScen(cat)) cat = 'preflop-open';  // nur bekannte Kategorien (Prüfung C6)
   var sc = PT.training.SCEN[cat];
   var test = queue && queue.length && /^pp:/.test(queue[0].key) ? (/:pre:/.test(queue[0].key) ? 'Vorher-Test' : 'Nachher-Test') : null;
+  // Prüfer C 2.2 (C-2): Im Vorher-Nachher-Test kein Tipp vor und kein Urteil nach der Entscheidung (sonst misst der Test die Empfehlung),
+  // Bewertung immer exploitativ mit Stufe Standard; die Einstellungen werden danach wiederhergestellt (nicht gespeichert)
+  if (test) { S.testSaved = { tipMode: S.settings.tipMode, smode: S.settings.smode, level: S.settings.level }; S.settings.tipMode = 'aus'; S.settings.smode = 'exploit'; S.settings.level = 'standard'; }
   S.training = { cat: cat, name: test || (queue ? 'Wiederholung' : sc.name), count: 0, scores: [], queue: queue || null, test: test };
   S.hand = null; location.hash = '#tisch'; render(); nextHand();
 };
-PTUI.stopTraining = function () { if (S.hand && !S.hand.done) { toast('Bitte erst die laufende Situation beenden.'); return; } S.training = null; S.hand = null; S.verdict = null; S.analysis = null; S.cur = null; render(); };
+function restoreTestSettings() { if (S.testSaved) { S.settings.tipMode = S.testSaved.tipMode; S.settings.smode = S.testSaved.smode; S.settings.level = S.testSaved.level; S.testSaved = null; } }
+PTUI.stopTraining = function () { if (S.hand && !S.hand.done) { toast('Bitte erst die laufende Situation beenden.'); return; } restoreTestSettings(); S.training = null; S.hand = null; S.verdict = null; S.analysis = null; S.cur = null; render(); };
 
 // ---------- Bedienung ----------
 function bind() {
