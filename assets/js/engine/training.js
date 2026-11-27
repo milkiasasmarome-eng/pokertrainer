@@ -238,12 +238,15 @@ function validLearning(L) {
 function repairLearning(L) {
   if (!L || typeof L !== 'object' || Array.isArray(L) || L.v !== 1) return null;
   var out = newLearning(), removed = 0;
-  if (Array.isArray(L.decisions)) L.decisions.slice(-DEC_MAX).forEach(function (d) { if (validDecision(d)) out.decisions.push(d); else removed++; });
-  if (Array.isArray(L.srs)) L.srs.slice(-300).forEach(function (it) { if (validSrs(it)) out.srs.push(it); else removed++; });
+  // 2.3 (Prüfbefund C-7): jede verworfene oder gekürzte Struktur zählt; gleiche Grenzen wie validLearning (Entscheidungen DEC_MAX, Wiederholungen 1.000, Sessions 5.000)
+  if (Array.isArray(L.decisions)) { removed += Math.max(0, L.decisions.length - DEC_MAX); L.decisions.slice(-DEC_MAX).forEach(function (d) { if (validDecision(d)) out.decisions.push(d); else removed++; }); } else if (L.decisions != null) removed++;
+  if (Array.isArray(L.srs)) { removed += Math.max(0, L.srs.length - 1000); L.srs.slice(-1000).forEach(function (it) { if (validSrs(it)) out.srs.push(it); else removed++; }); } else if (L.srs != null) removed++;
+  if (Array.isArray(L.sessions)) { removed += Math.max(0, L.sessions.length - 5000); L.sessions.slice(-5000).forEach(function (x) { if (x && typeof x === 'object' && !Array.isArray(x)) out.sessions.push(x); else removed++; }); } else if (L.sessions != null) removed++;
   if (validQuiz(L.quiz)) out.quiz = L.quiz; else removed++;
   if (Array.isArray(L.goals) && L.goals.length <= 20 && L.goals.every(validGoal)) out.goals = L.goals; else removed++;
   if (typeof L.created === 'number') out.created = L.created;
-  if (Array.isArray(L.pp)) { out.pp = []; var seen = {}; L.pp.slice(-PP_MAX).forEach(function (t) { if (validPP(t) && !seen[t.id]) { seen[t.id] = 1; out.pp.push(t); } else removed++; }); }
+  if (Array.isArray(L.pp)) { out.pp = []; var seen = {}; removed += Math.max(0, L.pp.length - PP_MAX); L.pp.slice(-PP_MAX).forEach(function (t) { if (validPP(t) && !seen[t.id]) { seen[t.id] = 1; out.pp.push(t); } else removed++; }); }
+  else if (L.pp != null) removed++;
   return { learning: out, removed: removed };
 }
 function mean(a) { return a.length ? a.reduce(function (s, x) { return s + x; }, 0) / a.length : null; }

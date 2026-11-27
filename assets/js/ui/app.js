@@ -120,6 +120,7 @@ function newWorker() {
 function runJob(kind, input) {
   if (kind === 'analyze') return PT.coach.analyze(input);
   if (kind === 'import') return PT.dataport.parseImport(input.text);
+  if (kind === 'events' || kind === 'bench') return PT.benchmark.exportJob(kind, input.hands);
   throw new Error('unbekannter Auftrag');
 }
 /**

@@ -12,6 +12,7 @@ self.onmessage = function (e) {
   try {
     if (m.kind === 'analyze') self.postMessage({ id: m.id, ok: true, result: self.PT.coach.analyze(m.input) });
     // Prüfung einer Importdatei (Datenbank, Sicherung, Rohsicherung) ohne Blockade der Oberfläche
+    else if (m.kind === 'events' || m.kind === 'bench') self.postMessage({ id: m.id, ok: true, result: self.PT.benchmark.exportJob(m.kind, m.input && m.input.hands) });
     else if (m.kind === 'import') self.postMessage({ id: m.id, ok: true, result: self.PT.dataport.parseImport(m.input && m.input.text) });
     else self.postMessage({ id: m.id, ok: false, error: 'unbekannter Auftrag' });
   } catch (err) {

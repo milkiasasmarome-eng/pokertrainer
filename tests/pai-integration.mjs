@@ -69,6 +69,35 @@ for (const h of ev.payload) for (const e of h.events) { if (!e.complete || e.obs
   let pe = null; try { const r = paiEq({ players: [k.holeCards.join(''), 'random'], board: k.board.join('') }); pe = r && r.equity ? r.equity[0] : null; } catch (er) { pe = null; }
   if (pe == null || pt.eq == null) continue; n++; maxd = Math.max(maxd, Math.abs(pe - pt.eq)); }
 check('Equity: PAI und Trainer stimmen auf denselben Spots überein (Abweichung ≤ 0,01)', n >= 5 && maxd <= 0.01, n + ' Spots, größte Abweichung ' + maxd.toFixed(4));
+// 2.3 (Arbeitspaket 8): zusätzliche Regressionstests
+// (7) Reproduzierbarkeit: gleiche Seeds → identischer Ereignisstrom (Prüfsumme)
+const ev2 = PT.events.build(sim(PT, 60, 22022));
+check('Reproduzierbarkeit: gleiche Seeds ergeben denselben Ereignisstrom', ev2.contentHash === ev.contentHash && ev2.events === ev.events, ev.contentHash + ' / ' + ev2.contentHash);
+// (8) Fehlerbehandlung: beschädigter Ereignisstrom (Prüfsumme) und unbekannte Sicherungsversion werden abgelehnt, ohne Ausnahme im Trainer
+const broken = JSON.parse(JSON.stringify(ev)); broken.payload[0].events.length = 0;
+let bErr = null; try { bErr = PT.events.validate(broken); } catch (e) { bErr = 'Ausnahme: ' + e.message; }
+check('Fehlerbehandlung: veränderter Ereignisstrom wird mit Meldung abgelehnt', typeof bErr === 'string' && !/^Ausnahme/.test(bErr), bErr);
+let v4err = null; try { fromPokerTrainerBackup(Object.assign({}, backupV3, { version: 4 })); } catch (e) { v4err = e.message; }
+check('Fehlerbehandlung: PAI lehnt unbekannte Sicherungsversion 4 mit Meldung ab', !!v4err, v4err);
+// (9) Datenintegrität und Leckage: PAI übernimmt je Hand alle Aktionen und das Board; fremde Karten nur, wenn sie aufgedeckt wurden
+let integ = 0, leakPai = 0; conv.hands.forEach((h, i) => { const src = hands[i]; if (h.actions.length !== src.actions.length || h.board.join('') !== (src.board || []).join('')) integ++;
+  const shownSeats = new Set((src.shown || []).map(x => x.seat)); (h.shown || []).forEach(x => { if (!shownSeats.has(x.seat)) leakPai++; }); if (JSON.stringify(h).indexOf('"cards":[') >= 0 && !(h.shown || []).length && !h.heroCards) leakPai++; });
+check('Datenintegrität: Aktionen und Board je Hand vollständig übernommen', integ === 0, integ + ' Abweichungen in ' + conv.hands.length + ' Händen');
+check('Keine Datenleckage: PAI erhält fremde Karten nur aus aufgedeckten Blättern', leakPai === 0, leakPai + ' Funde');
+// (10) Kompatibilität nach dem Änderungsauftrag (docs/PAI_AENDERUNGSAUFTRAG.md): Kopie von PAI mit der beschriebenen Änderung, das PAI-Repository bleibt unverändert
+let patchedOk = null, patchedDetail = '';
+try {
+  const os = await import('os'); const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'pai-auftrag-'));
+  fs.cpSync(path.join(PAI, 'src'), path.join(tmp, 'src'), { recursive: true }); fs.copyFileSync(path.join(PAI, 'package.json'), path.join(tmp, 'package.json'));
+  const f = path.join(tmp, 'src', 'data', 'adapters', 'pokertrainer.js'); const src0 = fs.readFileSync(f, 'utf8');
+  const src1 = src0.replace("if (json.version !== 2) throw new Error(`Nicht unterstützte Version ${json.version} (unterstützt: 2)`);",
+    "if (![2, 3].includes(json.version)) throw new Error(`Nicht unterstützte Version ${json.version} (unterstützt: 2, 3)`);");
+  if (src1 === src0) { patchedOk = false; patchedDetail = 'Stelle für den Änderungsauftrag nicht gefunden (PAI geändert?)'; }
+  else { fs.writeFileSync(f, src1); const P2 = await import(pathToFileURL(f).href); const r3 = P2.fromPokerTrainerBackup(backupV3); let r4 = null; try { P2.fromPokerTrainerBackup(Object.assign({}, backupV3, { version: 4 })); } catch (e) { r4 = e.message; }
+    patchedOk = r3.errors.length === 0 && r3.hands.length === hands.length && !!r4; patchedDetail = r3.hands.length + ' von ' + hands.length + ' Händen aus Format 3, Version 4 abgelehnt: ' + !!r4; }
+  fs.rmSync(tmp, { recursive: true, force: true });
+} catch (e) { patchedOk = false; patchedDetail = e.message; }
+check('Nach Änderungsauftrag (Kopie von PAI): Format 3 wird gelesen, unbekannte Versionen weiter abgelehnt', patchedOk, patchedDetail);
 const out = { date: new Date().toISOString(), pokertrainer: PT.VERSION, pai: paiVersion, paiRoot: path.basename(PAI), results };
 fs.writeFileSync(path.join(HERE, 'results', 'pai-integration.json'), JSON.stringify(out, null, 1));
 console.log(results.filter(r => r.ok).length + ' von ' + results.length + ' bestanden');

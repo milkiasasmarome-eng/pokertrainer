@@ -1,5 +1,5 @@
 {
- "date": "2026-11-27T14:59:28.738Z",
+ "date": "2026-11-27T15:55:06.213Z",
  "pokertrainer": "2.2.0",
  "pai": "0.1.0",
  "paiRoot": "assist",
@@ -46,6 +46,36 @@
    "name": "Equity: PAI und Trainer stimmen auf denselben Spots überein (Abweichung ≤ 0,01)",
    "ok": true,
    "detail": "25 Spots, größte Abweichung 0.0000"
+  },
+  {
+   "name": "Reproduzierbarkeit: gleiche Seeds ergeben denselben Ereignisstrom",
+   "ok": true,
+   "detail": "5f75d2d9 / 5f75d2d9"
+  },
+  {
+   "name": "Fehlerbehandlung: veränderter Ereignisstrom wird mit Meldung abgelehnt",
+   "ok": true,
+   "detail": "Prüfsumme stimmt nicht"
+  },
+  {
+   "name": "Fehlerbehandlung: PAI lehnt unbekannte Sicherungsversion 4 mit Meldung ab",
+   "ok": true,
+   "detail": "Nicht unterstützte Version 4 (unterstützt: 2)"
+  },
+  {
+   "name": "Datenintegrität: Aktionen und Board je Hand vollständig übernommen",
+   "ok": true,
+   "detail": "0 Abweichungen in 60 Händen"
+  },
+  {
+   "name": "Keine Datenleckage: PAI erhält fremde Karten nur aus aufgedeckten Blättern",
+   "ok": true,
+   "detail": "0 Funde"
+  },
+  {
+   "name": "Nach Änderungsauftrag (Kopie von PAI): Format 3 wird gelesen, unbekannte Versionen weiter abgelehnt",
+   "ok": true,
+   "detail": "60 von 60 Händen aus Format 3, Version 4 abgelehnt: true"
   }
  ]
 }

@@ -90,8 +90,14 @@ views.analyse = function (el, arg) {
     var r = e.target.closest('tr[data-hid]'); if (r) { var h = hist.list.filter(function (x) { return x.id === r.getAttribute('data-hid'); })[0]; if (h) openReplay(h); return; }
     var x = e.target.closest('[data-hx]'); if (x) { var f = filtered(), kind = x.getAttribute('data-hx');
       if (kind === 'json') H.download('PokerTrainer_Haende_' + H.today() + '.json', JSON.stringify({ format: 'PokerTrainer-Hands', version: 1, app: PT.VERSION, count: f.length, hands: f }));
-      else if (kind === 'bench') { var bt = PT.benchmark.exportText(f), bo = JSON.parse(bt); H.download('PokerTrainer_Benchmark_v' + PT.benchmark.SCHEMA + '_' + H.today() + '.json', bt); H.toast('Benchmark-Export: ' + bo.count + ' Entscheidungen aus ' + bo.hands + ' Händen.'); }
-      else if (kind === 'events') { /* einmal serialisieren (Prüfer D 2.2, D-2) */ var eo = PT.events.build(f), et = JSON.stringify(eo) + '\n'; H.download('PokerTrainer_Ereignisse_v' + PT.events.SCHEMA + '_' + H.today() + '.json', et); H.toast('Ereignisstrom: ' + eo.events + ' Entscheidungen aus ' + eo.hands + ' Händen.'); }
+      else if (kind === 'bench' || kind === 'events') {
+        // 2.3 (Prüfbefund D-2): Aufbau und Serialisierung in einem eigenen Worker, die Oberfläche bleibt bedienbar; Zähler ohne erneutes Parsen
+        x.disabled = true; H.toast(kind === 'bench' ? 'Benchmark-Export wird erstellt …' : 'Ereignisstrom wird erstellt …');
+        PTUI.offThread(kind, { hands: f }, 300000).then(function (r) {
+          if (kind === 'bench') { H.download('PokerTrainer_Benchmark_v' + PT.benchmark.SCHEMA + '_' + H.today() + '.json', r.text); H.toast('Benchmark-Export: ' + r.count + ' Entscheidungen aus ' + r.hands + ' Händen.'); }
+          else { H.download('PokerTrainer_Ereignisse_v' + PT.events.SCHEMA + '_' + H.today() + '.json', r.text); H.toast('Ereignisstrom: ' + r.count + ' Entscheidungen aus ' + r.hands + ' Händen.'); }
+        }, function (e) { H.toast('Export nicht möglich: ' + (e && e.message || e)); }).then(function () { x.disabled = false; });
+      }
       else H.download('PokerTrainer_Haende_' + H.today() + '.txt', f.map(PT.training.handText).join('\n\n'), 'text/plain');
       return; }
     var st = e.target.closest('[data-step]'); if (st) { stepTo(st.getAttribute('data-step')); return; }

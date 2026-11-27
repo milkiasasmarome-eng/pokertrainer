@@ -1,0 +1,15 @@
+Siegel der abschließenden Testgruppe 2.3 (final23)
+Datum: 2026-11-27
+KEYS (10):
+f23:textur
+f23:spr
+f23:geschichte
+f23:mehrweg
+f23:tilt
+f23:limper
+f23:balance
+f23:initiative
+f23:fluss
+f23:verlauf
+SHA-256 index.js: 11b99fa38e5d7cc51fc980bca7481a243721797649b1c68e7e9f121765523d2c
+Erstellt von einem unabhängigen Prüfagenten; Inhalt dem Entwickler bis zu den abschließenden Tests unbekannt.

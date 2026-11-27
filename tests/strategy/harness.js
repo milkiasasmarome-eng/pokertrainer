@@ -8,6 +8,8 @@ const PT = require('../load.js').load();            // Umgebung: Regeln, Gegner-
 const { loadEngine } = require('./engine-vm.js');
 const STRAT = require('./strategies.js').make(PT);
 const SYNTH_KEYS = Object.keys(STRAT.SYNTH), FINAL_KEYS = Object.keys(STRAT.FINAL);
+const S23 = require('./synth23.js').make(PT);                 // 2.3: parametrische Gruppen E/Tr/Va/Ka
+let F23 = null; function final23() { if (F23 === null) { try { F23 = require('./final23/index.js').make(PT); } catch (e) { F23 = false; } } return F23 || null; }  // 2.3: abschließende Testgruppe (Prüfagent)
 const clone = o => JSON.parse(JSON.stringify(o));
 const BLOCK = 100;
 // River-Modellspiel (nur Erklärtext) in Massensimulationen auslassen; PT_COACH_FULL=1 rechnet es mit (für Zeitmessungen)
@@ -18,6 +20,8 @@ function synthFor(id, comp) {
   if (comp === 'bots' || !comp) return null;
   const h = PT.rng.hashStr(id + '|synth');
   if (comp === 'mixed' && (h >>> 8) % 2 === 0) return null;
+  if (comp.indexOf('p23:') === 0) return S23.forSeat(id, comp);
+  if (comp.indexOf('f23') === 0) { const F = final23(); return F ? F.forSeat(id, comp) : null; }
   if (comp.indexOf('synth:') === 0) return comp.slice(6);
   if (comp.indexOf('final:') === 0) return comp.slice(6);
   if (comp === 'final') return FINAL_KEYS[h % FINAL_KEYS.length];
@@ -58,7 +62,8 @@ function sizeLabel(a, v) {
 /** Entscheidung eines Gegners (Gegner-KI oder synthetische Strategie), nur aus seiner öffentlichen Sicht */
 function oppDecision(h, s, comp, heroRec) {
   const q = h.p[s], sy = synthFor(q.id, comp);
-  if (sy) return (STRAT.SYNTH[sy] || STRAT.FINAL[sy])(PT.bots.publicView(h, s), h.botRng, { handNo: h.no, salt: PT.rng.hashStr(q.id) % 2 });
+  if (sy) { const fn = STRAT.SYNTH[sy] || STRAT.FINAL[sy] || S23.get(sy) || (final23() && final23().get(sy)); if (!fn) throw new Error('Strategie fehlt: ' + sy);
+    return fn(PT.bots.publicView(h, s), h.botRng, { handNo: h.no, salt: PT.rng.hashStr(q.id) % 2 }); }
   return PT.bots.decideFor(h, s, h.botRng, { heroStats: PT.session.heroCtx(heroRec) });
 }
 /** Führt eine Gegneraktion aus; ungültige Aktionen fallen wie in session.botAct auf Check/Call zurück */

@@ -83,17 +83,22 @@ function decisionOut(h, d, seq) {
  * Baut den Benchmark-Export aus Handdatensätzen (PT.training.makeHandRecord). Ungültige Datensätze werden übersprungen.
  * Gleiche Eingabe → byteweise gleiche Ausgabe (kein Exportzeitpunkt im Inhalt).
  */
-function build(hands) {
+function build(hands, opt) {
   var list = (hands || []).filter(function (h) { return PT.training && !PT.training.validHand(h); });
   list.sort(function (a, b) { return a.ts !== b.ts ? a.ts - b.ts : (a.id < b.id ? -1 : a.id > b.id ? 1 : 0); });
   var decisions = [], skipped = (hands || []).length - list.length;
   list.forEach(function (h) { (h.decisions || []).slice().sort(function (a, b) { return a.i - b.i; }).forEach(function (d, k) { decisions.push(decisionOut(h, d, k + 1)); }); });
-  var body = JSON.stringify(decisions);
+  var body = opt && opt.noHash ? null : JSON.stringify(decisions);   // 2.3 (D-2): ohne Prüfsumme, wenn der Aufrufer sie verwirft
   return { format: FORMAT, schemaVersion: SCHEMA, software: { name: 'PokerTrainer', version: PT.VERSION }, modelVersion: modelVersion(),
     units: { money: 'Cent Spielgeld (blinds.bb = 1 Big Blind)', equity: 'Anteil 0–1', ev: 'Cent, Erwartungswert der Aktion gegenüber Fold ab dem Entscheidungszeitpunkt' },
-    separation: SEPARATION, hands: list.length, skippedHands: skipped, count: decisions.length, contentHash: U.fnv1a(body), decisions: decisions };
+    separation: SEPARATION, hands: list.length, skippedHands: skipped, count: decisions.length, contentHash: body == null ? null : U.fnv1a(body), decisions: decisions };
 }
 function exportText(hands) { return JSON.stringify(build(hands), null, 1) + '\n'; }
+/** 2.3 (Prüfbefund D-2): Export als Auftrag für einen eigenen Worker; liefert Text und Zähler, damit die Oberfläche nicht erneut parsen muss. */
+function exportJob(kind, hands) {
+  if (kind === 'events') { var e = buildEvents(hands); return { text: JSON.stringify(e) + '\n', hands: e.hands, count: e.events }; }
+  var b = build(hands); return { text: JSON.stringify(b, null, 1) + '\n', hands: b.hands, count: b.count };
+}
 
 /** Strukturprüfung eines Benchmark-Exports (für Empfänger und Tests). Gibt null oder eine Fehlerbeschreibung zurück. */
 function validate(o) {
@@ -201,7 +206,7 @@ function parseImport(text) {
    Spieler, keine internen Gegnerparameter, keine zukünftigen Ereignisse im Entscheidungsabschnitt (validateEvents prüft das). */
 var EV_FORMAT = 'PokerTrainer-Ereignisse', EV_SCHEMA = 1, CHANNELS = ['pokertrainer-coach', 'pai'];
 function buildEvents(hands) {
-  var b = build(hands), byHand = {}, recs = {};
+  var b = build(hands, { noHash: true }), byHand = {}, recs = {};
   (hands || []).forEach(function (h) { if (PT.training && !PT.training.validHand(h)) recs[handId(h)] = h; });
   b.decisions.forEach(function (d) {
     var e = byHand[d.handId] || (byHand[d.handId] = { handId: d.handId, events: [] });
@@ -260,6 +265,6 @@ function validateEvents0(o) {
 }
 PT.events = { FORMAT: EV_FORMAT, SCHEMA: EV_SCHEMA, CHANNELS: CHANNELS, build: buildEvents, validate: validateEvents,
   text: function (hands) { return JSON.stringify(buildEvents(hands)) + '\n'; } };
-PT.benchmark = { FORMAT: FORMAT, SCHEMA: SCHEMA, build: build, exportText: exportText, validate: validate, coachInput: coachInput, handId: handId, modelVersion: modelVersion, SEPARATION: SEPARATION };
+PT.benchmark = { FORMAT: FORMAT, SCHEMA: SCHEMA, build: build, exportText: exportText, exportJob: exportJob, validate: validate, coachInput: coachInput, handId: handId, modelVersion: modelVersion, SEPARATION: SEPARATION };
 PT.dataport = { parseImport: parseImport, rawToBackup: rawToBackup, RAW: RAW, allFinite: allFinite };
 })(typeof globalThis !== 'undefined' ? globalThis : (typeof self !== 'undefined' ? self : this));
