@@ -12,6 +12,7 @@ const root = process.argv[2] || path.join(__dirname, '..', '..'), seed = +(proce
 const C = HS.loadEngine(root);
 if (/^base/.test(label) && C.ev.POP) C.ev.POP.off = true;   // Basislauf: Reaktionsmodell wie 2.0.1 (MDF mit Korrekturen)
 if (/^v21p/.test(label) && C.ev.POP) C.ev.POP.blend = 0;    // reines Populationsmodell (ohne Mittelung), nur zum Vergleich
+if (/^v21b/.test(label) && C.ev.POP) C.ev.POP.tauC = 0;     // Zusammensetzung wie vor Prüfer B (weich mit τ), nur zum Vergleich
 const FRACS = [0.33, 0.5, 0.75, 1.0, 1.5], RAISES = [2.5, 3.5];
 const outDir = path.join(__dirname, '..', 'results', 'sizing-study'); fs.mkdirSync(outDir, { recursive: true });
 const outFile = path.join(outDir, label + '-' + comp + '-' + seed + '.json');

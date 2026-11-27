@@ -180,4 +180,16 @@ module.exports = function (T) {
     // Fold-Rate gleichgewichtsnah = MDF ohne Populationskorrekturen (heads-up, keine starke Untergrenze)
     const f = pot.parts.folds[0].f, mdfF = 1 - a.pot / (a.pot + (pot.amount - 0)); ok(Math.abs(f - mdfF) < 0.02 || f > mdfF, 'Fold-Rate ' + f.toFixed(3) + ' ≥ 1 − MDF ' + mdfF.toFixed(3));
   });
+  test('Prüfer B 4: Callrange-Zusammensetzung scharf bei gleicher Fold-Rate (keine mit der Größe wachsende Überschätzung der Equity)', () => {
+    const h = T.spot('BTN', 'AhKd', 'Kc8s4d2h', [['H', 'raise', 2.5], ['BB', 'call'], ['BB', 'check'], ['H', 'bet', 2], ['BB', 'call'], ['BB', 'check']]);
+    const old = PT.ev.POP.tauC, run = tc => { PT.ev.POP.tauC = tc; PT.equity.cacheClear(); const a = coach(h, 'exploit'); PT.ev.POP.tauC = old; return a.actions.filter(x => x.type === 'bet' && !x.allin).sort((p, q) => p.amount - q.amount); };
+    const soft = run(0), sharp = run(old);
+    ok(old > 0 && old < PT.ev.POP.tau, 'τc (' + old + ') kleiner als τ (' + PT.ev.POP.tau + ')');
+    let sameF = true, lower = true;
+    soft.forEach((x, i) => { const y = sharp[i], e0 = x.parts.branches.find(b => b.eq != null).eq, e1 = y.parts.branches.find(b => b.eq != null).eq;
+      if (Math.abs(x.parts.folds[0].f - y.parts.folds[0].f) > 0.002) sameF = false; if (!(e1 <= e0 + 0.005)) lower = false; });
+    ok(sameF, 'Fold-Rate je Größe unverändert'); ok(lower, 'Equity gegen die Callrange nicht höher als mit weicher Zusammensetzung (Toleranz 0,005: Equity ist nur näherungsweise monoton in der Stärke)');
+    const big = soft.length - 1, d0 = soft[0].parts.branches.find(b => b.eq != null).eq - sharp[0].parts.branches.find(b => b.eq != null).eq, d1 = soft[big].parts.branches.find(b => b.eq != null).eq - sharp[big].parts.branches.find(b => b.eq != null).eq;
+    ok(d1 >= d0, 'Abschlag wächst mit der Größe (⅓: ' + d0.toFixed(3) + ', größte: ' + d1.toFixed(3) + ')');
+  });
 };

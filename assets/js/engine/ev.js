@@ -205,7 +205,7 @@ function splitRange(w, sc, contFrac, raiseFrac) {
  * Keine verdeckten Karten, keine internen Spielstile. Modellannahme, kein Solver-Ergebnis.
  */
 // Neu kalibriert nach Prüfer B (Gegner-KI B3, Lead-Ranges B11): Seeds 503/504, je 3.500 Hände, strategy.json responseFit.final
-var POP = { c0: [0, 0.1798, 0.0364, 0.258], c1: [0, 1.8703, 2.3214, 2.0446], c2: 0.0301, c3: -0.0772, tau: 0.1353, c4: -0.1876, taud: 0.015, lf: 0.0142, lw: -0.1309, r0: 0.364, r1: 0.9141, rd: 0.1525, lv: -0.0265, lp: -0.7811, blend: 0.5 };
+var POP = { c0: [0, 0.1798, 0.0364, 0.258], c1: [0, 1.8703, 2.3214, 2.0446], c2: 0.0301, c3: -0.0772, tau: 0.1353, c4: -0.1876, taud: 0.015, lf: 0.0142, lw: -0.1309, r0: 0.364, r1: 0.9141, rd: 0.1525, lv: -0.0265, lp: -0.7811, blend: 0.5, tauC: 0.03 };
 function logit(p) { p = clamp(p, 0.01, 0.99); return Math.log(p / (1 - p)); }
 function sigm(z) { return 1 / (1 + Math.exp(-z)); }
 /** Anteil der Range, der bei Schwelle th weiterspielt */
@@ -237,6 +237,26 @@ function popRespond(opp, ctx, heroAdd, potBefore, nResp, kind, target) {
     contW[k] = x0 * pc; raiseW[k] = x0 * pr; callW[k] = x0 * (pc - pr);
   }
   if (!(W > 0)) return null;
+  if (P.tauC > 0 && P.tauC < P.tau) {
+    // Prüfer B, Befund 4: Zusammensetzung der Call- und Raiserange. Die Fold-Rate stammt aus dem kalibrierten Modell mit τ (τ enthält
+    // auch die Unsicherheit der Range-Schätzung, er ist nur über Fold/Weiter bestimmt). Welche Kombinationen weiterspielen, ist aus
+    // diesen Daten nicht bestimmbar. Annahme: Weiterspielen ist monoton in der Stärke. Unter allen monotonen Zusammensetzungen mit
+    // derselben Weiterspielquote ist die mit dem schärfsten Schnitt die stärkste Callrange – die vorsichtige Wahl für die eigene Bet
+    // (Value wird nicht gegen zu schwache Callranges überschätzt, was mit der Größe wächst). Umgesetzt mit Breite τc und einer
+    // Schwelle, die dieselbe Weiterspielquote ergibt; Draws und Raise-Anteile wie oben.
+    var share = Cn / W, loC = th - 0.8, hiC = th + 0.8;
+    var contC = function (t) { var c = 0; for (var q = 0; q < NC; q++) { var y = w[q]; if (!(y > 0)) continue; var pq = sigm((A.x[q] - t) / P.tauC); if (st < 3 && A.d[q]) pq = Math.max(pq, sigm((A.de[q] - price - P.c4) / P.taud)); c += y * pq; } return c / W; };
+    for (var it2 = 0; it2 < 26; it2++) { var md = (loC + hiC) / 2; if (contC(md) > share) loC = md; else hiC = md; }
+    var thC = (loC + hiC) / 2; Rs = 0;
+    for (var k3 = 0; k3 < NC; k3++) {
+      var y0 = w[k3]; if (!(y0 > 0)) continue;
+      var x3 = A.x[k3], dr3 = st < 3 && A.d[k3], pc3 = sigm((x3 - thC) / P.tauC);
+      if (dr3) pc3 = Math.max(pc3, sigm((A.de[k3] - price - P.c4) / P.taud));
+      var pr3 = canRaise ? Math.min(pc3, P.r0 * sigm((x3 - P.r1) / 0.02) + (dr3 ? P.rd : 0)) : 0;
+      Rs += y0 * pr3; contW[k3] = y0 * pc3; raiseW[k3] = y0 * pr3; callW[k3] = y0 * (pc3 - pr3);
+    }
+    Cn = share * W;
+  }
   var nObs = (opp.raw && opp.raw[st === 1 ? 'foldToCbet' : 'foldToCbetTurn'] ? opp.raw[st === 1 ? 'foldToCbet' : 'foldToCbetTurn'][1] : 0) + (opp.raw && opp.raw.wtsd ? opp.raw.wtsd[1] : 0);
   return { f: clamp(1 - Cn / W, 0, 1), c: Math.max(0, (Cn - Rs) / W), r: Rs / W, contW: contW, callW: callW, raiseW: raiseW,
     basis: 'Populationsmodell, angepasst an Gegnerwerte (' + nObs + ' Beobachtungen)', model: 'pop', theta: th, price: price };
