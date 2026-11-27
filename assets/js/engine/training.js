@@ -292,9 +292,12 @@ var AREAS = { betgroesse: 'Einsatzgröße', 'pot-odds': 'Pot Odds', draw: 'Pot O
   'zu-viele-starthaende': 'Starthände und Position', position: 'Starthände und Position' };
 function errorAreas(L) {
   var out = {}, D = L.decisions;
+  // Prüfer A 2.2 (A-12): je Entscheidung jedes Feld nur einmal zählen
+  var areasOf = function (d) { var u = []; d.c.forEach(function (c) { var a = AREAS[c] || 'Sonstiges'; if (u.indexOf(a) < 0) u.push(a); }); return u; };
   D.forEach(function (d) { if (!d.c.length) return; var share = d.l / d.c.length;
-    d.c.forEach(function (c) { var a = AREAS[c] || 'Sonstiges', o = out[a] || (out[a] = { area: a, n: 0, loss: 0, recent: 0 }); o.n++; o.loss += share; }); });
-  D.slice(-100).forEach(function (d) { d.c.forEach(function (c) { var a = AREAS[c] || 'Sonstiges'; if (out[a]) out[a].recent++; }); });
+    d.c.forEach(function (c) { var a = AREAS[c] || 'Sonstiges', o = out[a] || (out[a] = { area: a, n: 0, loss: 0, recent: 0 }); o.loss += share; });
+    areasOf(d).forEach(function (a) { out[a].n++; }); });
+  D.slice(-100).forEach(function (d) { areasOf(d).forEach(function (a) { if (out[a]) out[a].recent++; }); });
   return Object.keys(out).map(function (k) { return out[k]; }).sort(function (a, b) { return b.loss - a.loss; });
 }
 /** Wiederkehrende Fehler: gleiche Situation (Spot) und gleiche Fehlerkategorie mindestens dreimal mit Bewertung ≤ 45 */
@@ -308,13 +311,21 @@ function recurring(L) {
 }
 /** Verbesserung in zuvor problematischen Situationen: je Spot die ersten 10 gegen die letzten 10 Entscheidungen (ab 20 Entscheidungen),
     „zuvor problematisch“, wenn die ersten 10 im Mittel unter 60 lagen. Differenz mit 95-%-Intervall (Welch, Normalnäherung). */
+/** Zweiseitiges 97,5-%-Quantil der t-Verteilung (Cornish-Fisher-Näherung, Fehler < 0,01 ab df = 2) */
+function tq(df) { if (!(df > 0)) return Infinity; var z = 1.959964, z3 = z * z * z, z5 = z3 * z * z; return z + (z3 + z) / (4 * df) + (5 * z5 + 16 * z3 + 3 * z) / (96 * df * df); }
+/** Welch-Intervall (Halbbreite, 95 %) für zwei Stichproben */
+function welch(a, b) { var sa = sd(a) || 0, sb = sd(b) || 0, va = sa * sa / a.length, vb = sb * sb / b.length, se = Math.sqrt(va + vb);
+  if (!(se > 0)) return { ci: Infinity, se: 0 };
+  var df = (va + vb) * (va + vb) / ((a.length > 1 ? va * va / (a.length - 1) : 0) + (b.length > 1 ? vb * vb / (b.length - 1) : 0) || 1); return { ci: tq(df) * se, se: se, df: df }; }
+/* Prüfer A 2.2 (A-4): Auswahl („zuvor schwach“) und Vorher-Messung getrennt, sonst entsteht Verbesserung allein durch Regression zur Mitte.
+   Entscheidungen 1–10 bestimmen „zuvor schwach“, 11–20 sind „vorher“, die letzten 10 „nachher“ (ab 30 Entscheidungen; sonst nicht berichtet). */
 function improvement(L) {
   var out = [];
   Object.keys(C.SPOTS).forEach(function (t) {
-    var l = L.decisions.filter(function (d) { return d.t.indexOf(t) >= 0; }); if (l.length < 20) return;
-    var a = l.slice(0, 10).map(function (d) { return d.s; }), b = l.slice(-10).map(function (d) { return d.s; });
-    var ma = mean(a), mb = mean(b), sa = sd(a) || 0, sb = sd(b) || 0, ci = 1.96 * Math.sqrt(sa * sa / a.length + sb * sb / b.length);
-    out.push({ spot: t, name: C.SPOTS[t], n: l.length, before: ma, after: mb, diff: mb - ma, ci: ci, problem: ma < 60, sure: Math.abs(mb - ma) > ci });
+    var l = L.decisions.filter(function (d) { return d.t.indexOf(t) >= 0; }); if (l.length < 30) return;
+    var sel = l.slice(0, 10).map(function (d) { return d.s; }), a = l.slice(10, 20).map(function (d) { return d.s; }), b = l.slice(-10).map(function (d) { return d.s; });
+    var ma = mean(a), mb = mean(b), w = welch(a, b);
+    out.push({ spot: t, name: C.SPOTS[t], n: l.length, before: ma, after: mb, diff: mb - ma, ci: w.ci, problem: mean(sel) < 60, sure: isFinite(w.ci) && Math.abs(mb - ma) > w.ci });
   });
   return out.sort(function (x, y) { return (y.problem - x.problem) || (y.diff - x.diff); });
 }
@@ -346,7 +357,10 @@ function prePostRecord(L, key, score, lossBB) {
 function prePostResult(t) {
   function ph(list) { var sc = list.filter(function (x) { return x.s != null; }); return { n: sc.length, score: mean(sc.map(function (x) { return x.s; })), sd: sd(sc.map(function (x) { return x.s; })), loss: mean(sc.map(function (x) { return x.l; })) }; }
   var a = ph(t.pre), b = ph(t.post), res = { pre: a, post: b, byCat: {} };
-  if (a.n >= 2 && b.n >= 2) { res.diff = b.score - a.score; res.ci = 1.96 * Math.sqrt((a.sd || 0) * (a.sd || 0) / a.n + (b.sd || 0) * (b.sd || 0) / b.n); res.sure = Math.abs(res.diff) > res.ci; }
+  // Prüfer A 2.2 (A-13): Urteil erst bei vollständigen Phasen, Welch-Intervall mit t-Quantil; ohne Streuung kein Intervall und kein Urteil
+  var complete = t.pre.every(function (x) { return x.s != null; }) && t.post.every(function (x) { return x.s != null; });
+  if (complete && a.n >= 2 && b.n >= 2) { var w = welch(t.pre.map(function (x) { return x.s; }), t.post.map(function (x) { return x.s; })); res.diff = b.score - a.score; res.ci = isFinite(w.ci) ? w.ci : null; res.sure = res.ci != null && Math.abs(res.diff) > res.ci; }
+  res.complete = complete;
   t.cats.forEach(function (c) { var x = ph(t.pre.filter(function (i) { return i.cat === c; })), y = ph(t.post.filter(function (i) { return i.cat === c; })); res.byCat[c] = { pre: x.score, post: y.score, n: Math.min(x.n, y.n) }; });
   return res;
 }
@@ -366,14 +380,20 @@ var HYP = { vpip: ['spielt mehr Starthände als der Durchschnitt', 'spielt wenig
   threeBet: ['3-Bettet häufig', '3-Bettet selten'], foldTo3Bet: ['gibt gegen 3-Bets oft auf', 'verteidigt gegen 3-Bets häufig'],
   cbetFlop: ['setzt am Flop häufig nach (C-Bet)', 'setzt am Flop selten nach'], foldToCbet: ['foldet oft gegen C-Bets', 'verteidigt gegen C-Bets häufig'],
   afq: ['spielt postflop aggressiv', 'spielt postflop passiv'], wtsd: ['geht oft zum Showdown', 'geht selten zum Showdown'] };
+function normCdf(z) { var t = 1 / (1 + 0.2316419 * Math.abs(z)), d = 0.3989423 * Math.exp(-z * z / 2), p = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274)))); return z > 0 ? 1 - p : p; }
 function hypotheses(r) {
-  var out = [], P = PT.ranges.PRIOR;
+  // Prüfer A 2.2 (A-14): Bezug ist das Populationsmittel der Gegner-KI (LIK.ref), gestützt nur nach Holm-Korrektur über alle geprüften Werte
+  var out = [], tab = PT.ranges.likelihoodTable && PT.ranges.likelihoodTable(), P = (tab && tab.ref) || PT.ranges.PRIOR, cand = [];
   Object.keys(HYP).forEach(function (k) {
     var nd = r.stats[k]; if (!nd || nd[1] < 10) return;
-    var ci = S.wilson(nd), raw = nd[0] / nd[1], m = P[k]; if (!ci || m == null) return;
-    var hi = raw > m, sure = ci[0] > m || ci[1] < m;
-    if (sure || Math.abs(raw - m) > 0.1) out.push({ key: k, text: HYP[k][hi ? 0 : 1], level: sure ? 'gestützt' : 'Vermutung', raw: raw, prior: m, n: nd[1], ci: ci });
+    var raw = nd[0] / nd[1], m = P[k]; if (m == null) return;
+    var z = (raw - m) / Math.sqrt(m * (1 - m) / nd[1]), pv = 2 * (1 - normCdf(Math.abs(z)));
+    cand.push({ key: k, raw: raw, m: m, n: nd[1], ci: S.wilson(nd), p: pv });
   });
+  cand.sort(function (a, b) { return a.p - b.p; });
+  var stop = false;
+  cand.forEach(function (c, i) { var sure = !stop && c.p <= 0.05 / (cand.length - i); if (!sure) stop = true;
+    if (sure || Math.abs(c.raw - c.m) > 0.1) out.push({ key: c.key, text: HYP[c.key][c.raw > c.m ? 0 : 1], level: sure ? 'gestützt' : 'Vermutung', raw: c.raw, prior: c.m, n: c.n, ci: c.ci, p: c.p }); });
   var bl = 0, sh = 0;
   (r.shown || []).forEach(function (x) {
     if (!x || typeof x.board !== 'string' || x.board.length < 10 || typeof x.cards !== 'string') return;

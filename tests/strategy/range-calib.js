@@ -41,7 +41,7 @@ function run(seed, hands, group, root, gto, filter) {
         let oppAggPrev = false; v.actions.forEach(a => { if (a.st === v.street - 1 && a.s === q.seat && (a.t === 'bet' || a.t === 'raise')) oppAggPrev = true; });
         const tex = PT.ranges.analyzeBoard(v.board);
         const ip = PT.POS_ORDER_POST[v.players[s].pos] > PT.POS_ORDER_POST[v.players[q.seat].pos];
-        if (ref != null) recs.push({ st: v.street, fk: L.toCall > 0 ? (last ? last.t : 'bet') : 'keine', f: +f.toFixed(3), lead: lead ? 1 : 0, ref: +ref.toFixed(4), tr: +tr.toFixed(4),
+        if (ref != null) recs.push({ h: i + 1, st: v.street, fk: L.toCall > 0 ? (last ? last.t : 'bet') : 'keine', f: +f.toFixed(3), lead: lead ? 1 : 0, ref: +ref.toFixed(4), tr: +tr.toFixed(4),
           style: q.isHero ? 'held' : (B.styleOf(q.id) || '?') + (HS.synthFor(q.id, comp) ? ':' + HS.synthFor(q.id, comp) : ''), hands: st.hands, agp: oppAggPrev ? 1 : 0,
           paired: tex.paired ? 1 : 0, wet: +(tex.wet || 0).toFixed(2), mono: tex.suitMax >= 3 ? 1 : 0, ip: ip ? 1 : 0, w: +PT.ranges.total(rg.w).toFixed(1) });
       }

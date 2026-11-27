@@ -5,14 +5,21 @@
 const fs = require('fs');
 const { sizeBucket } = require('./equity-calib.js');
 const args = process.argv.slice(2), jsonOut = args.indexOf('--json') >= 0 ? args.splice(args.indexOf('--json'), 2)[1] : null;
-const recs = []; args.forEach(f => { const r = JSON.parse(fs.readFileSync(f, 'utf8')); r.recs.forEach(x => { x.src = r.group; if (x.est == null) { x.est = x.ref; delete x.ref; } recs.push(x); }); });
+const recs = []; args.forEach(f => { const r = JSON.parse(fs.readFileSync(f, 'utf8')); r.recs.forEach(x => { x.src = r.group + '|' + r.seed; if (x.est == null) { x.est = x.ref; delete x.ref; } recs.push(x); }); });
 const ST = { 1: 'Flop', 2: 'Turn', 3: 'River' };
+function ciCluster(list, fn) {
+  if (!list.length || list[0].h == null) return null;
+  const C = new Map(); let S = 0, N = 0;
+  list.forEach(r => { const k = r.src + '|' + r.h, v = fn(r), c = C.get(k) || [0, 0]; c[0] += v; c[1] += 1; C.set(k, c); S += v; N++; });
+  const m = S / N, k = C.size; if (k < 2) return [NaN, NaN]; let q = 0; C.forEach(([s, n]) => { q += (s - m * n) * (s - m * n); });
+  const se = Math.sqrt(k / (k - 1) * q) / N; return [m - 1.96 * se, m + 1.96 * se];
+}
 function ci(xs) { if (xs.length < 2) return [NaN, NaN]; const m = xs.reduce((a, b) => a + b, 0) / xs.length; const sd = Math.sqrt(xs.reduce((a, b) => a + (b - m) * (b - m), 0) / (xs.length - 1)); const se = sd / Math.sqrt(xs.length); return [m - 1.96 * se, m + 1.96 * se]; }
 function summary(list) {
   const n = list.length, est = list.map(r => r.est), tr = list.map(r => r.tr), d = list.map(r => r.est - r.tr);
   const withRef = list.filter(r => r.ref != null), mathE = withRef.map(r => r.est - r.ref), rangeE = withRef.map(r => r.ref - r.tr);
   const mean = xs => xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : NaN;
-  return { n, est: mean(est), true: mean(tr), bias: mean(d), biasCI: ci(d), nRef: withRef.length, mathErr: mean(mathE), mathAbs: mean(mathE.map(Math.abs)), rangeErr: mean(rangeE), rangeCI: ci(rangeE),
+  return { n, est: mean(est), true: mean(tr), bias: mean(d), biasCI: ciCluster(list, r => r.est - r.tr) || ci(d), nRef: withRef.length, mathErr: mean(mathE), mathAbs: mean(mathE.map(Math.abs)), rangeErr: mean(rangeE), rangeCI: ciCluster(withRef, r => r.ref - r.tr) || ci(rangeE),
     brier: mean(list.map(r => (r.est - r.tr) ** 2)) };
 }
 const groups = {

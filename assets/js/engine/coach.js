@@ -35,17 +35,20 @@ function preInfo(v) {
 }
 function lineOf(v, seat) {
   var pre = v.actions.filter(function (a) { return a.st === 0 && a.t !== 'sb' && a.t !== 'bb'; });
-  var rc = 0, limpers = 0, callers = 0, opener = -1, last = null, rcAt = 0, lastTo = v.bb, openerPos = null, sq = false;
+  var rc = 0, limpers = 0, callers = 0, opener = -1, last = null, rcAt = 0, lastTo = v.bb, openerPos = null, sq = false, myAllin = false, openAllin = false;
   pre.forEach(function (a) {
-    if (a.s === seat) { last = a.t; rcAt = rc; sq = callers > 0 && rc === 1; }
-    if (a.t === 'raise' || a.t === 'bet') { rc++; if (rc === 1) { opener = a.s; openerPos = v.players[a.s].pos; } lastTo = a.a; callers = 0; }
+    if (a.s === seat) { last = a.t; rcAt = rc; sq = callers > 0 && rc === 1; myAllin = !!a.ai; }
+    if (a.t === 'raise' || a.t === 'bet') { rc++; if (rc === 1) { opener = a.s; openerPos = v.players[a.s].pos; openAllin = !!a.ai; } lastTo = a.a; callers = 0; }
     else if (a.t === 'call') { if (rc === 0) limpers++; else callers++; }
   });
   var pos = v.players[seat].pos, sizeBB = lastTo / v.bb, kind = 'none';
   if (last === 'raise' || last === 'bet') kind = rcAt === 0 ? (limpers > 0 ? 'iso' : 'open') : rcAt === 1 ? '3bet' : rcAt === 2 ? '4bet' : '5bet';
   else if (last === 'call') kind = rcAt === 0 ? 'limp' : rcAt === 1 ? 'call' : rcAt === 2 ? (seat === opener ? 'call3' : 'call3') : 'call4';
   else if (last === 'check') kind = 'check';
-  return { kind: kind, pos: pos, opener: openerPos, sizeBB: sizeBB, squeeze: sq };
+  // 2.2 (Prüfer A, A-5): All-in-Kennzeichen und effektiver Stack zu Beginn der Hand zwischen dem Spieler und dem Opener (Jam-Ranges nur für echte All-ins)
+  var st0 = function (q) { return q.start != null ? q.start : q.stack + q.total; }, me0 = st0(v.players[seat]);
+  var effBB = (opener >= 0 && opener !== seat ? Math.min(me0, st0(v.players[opener])) : (function () { var m = 0; v.players.forEach(function (q) { if (q.seat !== seat) m = Math.max(m, st0(q)); }); return Math.min(me0, m); })()) / v.bb;
+  return { kind: kind, pos: pos, opener: openerPos, sizeBB: sizeBB, squeeze: sq, allin: myAllin, openAllin: openAllin, effBB: effBB };
 }
 var LINE_TEXT = { open: 'Open-Raise', iso: 'Iso-Raise', limp: 'Limp', call: 'Call gegen Raise', '3bet': '3-Bet', call3: 'Call gegen 3-Bet', '4bet': '4-Bet', call4: 'Call gegen 4-Bet',
   '5bet': '5-Bet', check: 'Check im Big Blind', none: 'noch keine Aktion' };
@@ -66,7 +69,8 @@ function buildRange(v, seat, st, gto, pfaSeat) {
   var line = lineOf(v, seat), sm = gto ? R.smooth(null) : st.sm, prof = R.profileOf(sm);
   var w = R.preflopRange(line, sm, gto);
   R.removeDead(w, v.cards.concat(v.board));
-  if (v.street > 0) R.narrowPostflop(w, v.actions, seat, v.board, prof, pfaSeat, v.street, { sm: sm });
+  // Prüfer B 2.2 (B-9): Der gleichgewichtsnahe Modus nutzt nicht die an der Gegner-KI angepasste Tabelle, sondern das ausgewogene Faustregelmodell
+  if (v.street > 0) R.narrowPostflop(w, v.actions, seat, v.board, prof, pfaSeat, v.street, gto ? { legacy: true } : { sm: sm });
   return { w: w, line: line, sm: sm, prof: prof };
 }
 function heroRangeFor(v) {
@@ -361,7 +365,8 @@ function analyzeMode(input, v, mode, level, L0, budget, rng, deadline, set, prep
 function heroChart(v, ctx, pre) {
   var me = ctx.me, pos = me.pos, ci = H.classIdx(v.cards[0], v.cards[1]), effBB = ctx.eff / ctx.bb, ch, kind;
   if (pre.rc === 0 && pre.limpers === 0) {
-    if (effBB <= 15) { ch = R.chart('push', { pos: pos, bb: effBB }); kind = 'Push-or-Fold-Chart (' + Math.round(effBB) + ' BB effektiv)'; }
+    // Prüfer B 2.2 (B-5): Der Chart des Push/Fold-Modellspiels bestimmt die Handauswahl; die Größe (All-in oder kleines Open) wählt das EV-Modell
+    if (effBB <= 15) { ch = R.chart('push', { pos: pos, bb: effBB }); kind = 'Handauswahl nach Push/Fold-Modellspiel (' + Math.round(effBB) + ' BB effektiv), Größe nach EV'; }
     else { ch = R.chart('rfi', { pos: pos }); kind = 'Open-Raise-Chart ' + pos; }
   } else if (pre.rc === 0) { ch = R.chart('iso', { pos: pos }); kind = 'Chart gegen Limper (' + pos + ')'; }
   else if (pre.rc === 1) { var op = v.players[pre.opener].pos; ch = R.chart('vsOpen', { pos: pos, opener: op, sizeBB: pre.lastTo / v.bb, squeeze: pre.callers > 0 }); kind = 'Chart ' + pos + ' gegen Open ' + op; }

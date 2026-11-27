@@ -2,6 +2,43 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [2.2.0] – 2026-11-27
+
+Strategische Überarbeitung mit Folgeaudit, getrennten Gegnergruppen, vor den Tests festgelegten Kriterien und Berichten aus Rohdaten.
+Ergebnisse: `docs/ERGEBNISSE_2.2.md` (automatisch), Bewertung: `docs/TESTBERICHT_2.2.md`, Folgeaudit: `docs/audit-2.2/FOLGEAUDIT.md`.
+
+### Folgeaudit
+- Status des zwölften Befunds von Prüfer B (B10, Dokumentation) geklärt; Aufschlüsselung der 602.500 Hände (241 Läufe, 162.500 unabhängige Kartenfolgen);
+  identische Gegnerbedingungen innerhalb des 2.1-Vergleichs bestätigt, berichtsübergreifende Zahlen als nicht vergleichbar gekennzeichnet;
+  Unabhängigkeit der 500er-Blöcke geprüft (Autokorrelation Lag 5 ≈ −0,03); gleichgewichtsnahe „Regression“ und 15 BB als nicht belegt (zu wenig Blöcke) eingeordnet.
+
+### Strategie
+- **Range-Schätzung:** datenbasierte Aktions-Likelihoods nach absoluter Stärke, Lage, Einsatzgröße, Draw und Mehrgegner (angepasst an Gegnergruppe E),
+  dynamisch angepasst an die beobachteten Werte des Gegners (Bet-Anteil, Fold gegen Einsätze, C-Bet, WTSD). Ursache der River-Abweichung 2.1:
+  Likelihood relativ zur bereits verengten Range.
+- **Reaktionsmodell:** Fold/Call/Raise je Kombination aus derselben Tabelle, gemittelt mit dem 2.1-Modell; Fold-Raten je Größe auf Validierungs- und
+  Testgruppe kalibriert. Keine erzwungenen Größenhäufigkeiten.
+- **Short Stack:** gelöstes Push/Fold-Modellspiel (6–25 BB, Exploitability ≤ 0,0042 BB je Hand) für Push-Charts, Jam-Ranges der Gegner und Calls gegen Jams.
+- **Datenlage nach Gelegenheiten** statt nach Händen in der Unsicherheit des Coaches.
+
+### Gegner-KI
+- Feste Eigenheiten je Gegner: Größenempfindlichkeit (Calling Stations kaum, andere stark), Positionsspiel, Phasenwechsel der Spielweise, seltene Linien
+  (River-Overbet-Bluff, Check-Raise-Bluff am Turn); Push-Charts aus dem Modellspiel. Gegnergruppen für Entwicklung, Validierung und Test;
+  sechs abschließend unbekannte Teststrategien. Unveränderte Gegner-KI 2.1 als Referenzumgebung für getrennte Vergleiche.
+
+### Gegnergedächtnis und Lernen
+- Belastbarkeit je Wert nach Gelegenheiten, Verhaltenshypothesen („gestützt“/„Vermutung“) getrennt von Beobachtungen.
+- Fehlerfelder, wiederkehrende Fehler mit gezielter Übung, Verbesserung in zuvor schwachen Situationen, Vorher-Nachher-Test mit vergleichbaren
+  Situationen (Lerndaten-Feld `pp`, geprüft und reparierbar). Messmöglichkeit, kein Nachweis von Lernwirkung.
+
+### Integration
+- Ereignisstrom „PokerTrainer-Ereignisse“ (Schema 1) mit getrennten Empfehlungskanälen für PokerTrainer-Coach und PAI, Prüfung auf Beobachtbarkeit;
+  gemeinsame Integrationstests mit PAI 0.1.0 (Hand-Datensätze, Kennzahlen, Equity übereinstimmend; Sicherungsversion 3 von PAI noch nicht unterstützt).
+
+### Vergleiche und Berichte
+- Plan `v22` (154 Läufe, Hauptvergleich 100.000 Hände je Held), Referenzumgebung, Testgruppe, unbekannte Strategien, Stacktiefen, gleichgewichtsnaher Modus.
+- Kalibrierungsstudien `range-calib.js`, `equity-calib.js`, `calib-report.js`; Berichtsgenerator `tools/report-22.js`; Folgeaudit-Daten `tools/folgeaudit-2.1.js`.
+
 ## [2.1.0] – 2026-11-27
 
 Folgeaudit mit Überprüfung der externen Befunde A1–A6, vier unabhängigen Prüfagenten (A Mathematik, B Strategie, C Architektur/Sicherheit/Datenbank, D Oberfläche/Barrierefreiheit/PWA), statistisch abgesicherten Strategievergleichen und neuem Gegnergedächtnis. Details: `docs/AUDIT.md`, `docs/TESTBERICHT.md`, `docs/VALIDIERUNG_MATHE.md`, `docs/STRATEGIE.md`, `docs/audit-2.1/`.

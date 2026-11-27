@@ -35,7 +35,9 @@ module.exports = function (T) {
   test('2.2 AP4: Push/Fold-Modellspiel – Lösung mit kleiner Exploitability, Charts monoton in Position und Stack', () => {
     const P = R.PF_TABLE(); ok(!!P, 'Lösung eingebettet');
     Object.keys(P.expl).forEach(S => ok(P.expl[S] <= 0.005, S + ' BB: Exploitability ' + P.expl[S] + ' BB/Hand ≤ 0,005'));
-    const width = (pos, bb) => { const ch = R.chart('push', { pos, bb }); let s = 0, t = 0; for (let i = 0; i < 169; i++) { const w = PT.hands.CLS_W ? PT.hands.CLS_W[i] : 1; s += ch[i].raise * w; t += w; } return s / t; };
+    const CW = new Float64Array(169); for (let k = 0; k < 1326; k++) CW[PT.hands.CLS[k]]++;
+    const width = (pos, bb) => { const ch = R.chart('push', { pos, bb }); let s = 0; for (let i = 0; i < 169; i++) s += ch[i].raise * CW[i]; return s / 1326; };  // kombinationsgewichtet (B-8)
+    const aa0 = PT.hands.classIdx(PT.parseCards('AsAh')[0], PT.parseCards('AsAh')[1]); ok(R.chart('push', { pos: 'UTG', bb: 10, scale: 0.5 })[aa0].raise === 1, 'A-1: Skalierung lässt AA bei 1');
     ok(width('UTG', 10) < width('CO', 10) && width('CO', 10) < width('BTN', 10) && width('BTN', 10) < width('SB', 10), 'Position: UTG < CO < BTN < SB');
     ok(width('BTN', 8) > width('BTN', 15) && width('BTN', 15) > width('BTN', 25), 'Stack: 8 > 15 > 25 BB');
     const aa = PT.hands.classIdx(PT.parseCards('AsAh')[0], PT.parseCards('AsAh')[1]), t72 = PT.hands.classIdx(PT.parseCards('7s2h')[0], PT.parseCards('7s2h')[1]);
@@ -65,7 +67,7 @@ module.exports = function (T) {
 
   test('2.2 AP7: Lernsystem – Fehlerfelder, wiederkehrende Fehler, Verbesserung, Vorher-Nachher-Test mit Prüfung und Reparatur', () => {
     const L = PT.training.newLearning();
-    for (let i = 0; i < 40; i++) PT.training.addDecision(L, { ts: i, score: i < 20 ? 35 : 85, lossBB: i < 20 ? 2 : 0.1, st: 1, pos: 'BTN', tags: ['cbet'], cats: i < 20 ? ['betgroesse', 'pot-odds'] : [], grade: i < 20 ? 'Fehler' : 'Gut' });
+    for (let i = 0; i < 40; i++) PT.training.addDecision(L, { ts: i, score: (i < 20 ? 35 : 85) + (i % 2 ? 5 : -5), lossBB: i < 20 ? 2 : 0.1, st: 1, pos: 'BTN', tags: ['cbet'], cats: i < 20 ? ['betgroesse', 'pot-odds'] : [], grade: i < 20 ? 'Fehler' : 'Gut' });
     const ar = PT.training.errorAreas(L); ok(ar.length === 2 && ar.every(a => a.n === 20), 'Fehlerfelder Einsatzgröße und Pot Odds je 20');
     const rc = PT.training.recurring(L); ok(rc.length === 2 && rc[0].n === 20, 'wiederkehrend: ' + rc.map(x => x.cat + ' ' + x.n).join(', '));
     const im = PT.training.improvement(L).filter(x => x.spot === 'cbet')[0]; ok(im && im.problem && im.sure && im.diff === 50, 'Verbesserung in zuvor schwacher Situation: +' + (im && im.diff));

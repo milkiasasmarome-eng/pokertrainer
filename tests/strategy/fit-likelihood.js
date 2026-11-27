@@ -47,6 +47,20 @@ function collect(seed, hands, group) {
     }
     PT.session.finishHand(t, db, h, heroRec);
   }
+  // Prüfer A 2.2 (A-3): Bezugswerte der Population ohne Prober (Gegner-KI gegen Gegner-KI, Gruppe E, neue Datenbank)
+  const db2 = PT.stats.newDb(), t2 = PT.session.newTable(cfg, db2, seed + 7), hr2 = PT.stats.newRecord('hero', 'Du');
+  for (let i = 0; i < Math.min(60000, Math.round(hands / 5)); i++) {
+    t2.seats.forEach(s => { s.stack = 10000; });
+    const h = PT.session.startHand(t2, i + 1); let guard = 0;
+    while (!h.done) { if (++guard > 400) throw new Error('Hand hängt'); const s = h.toAct;
+      const a = s === 0 ? B.decide(B.publicView(h, s), heroId, h.botRng, null) : B.decideFor(h, s, h.botRng, { heroStats: PT.session.heroCtx(hr2) });
+      let r = PT.session.act(t2, h, s, a); if (!r.ok) { const L = h.legal(s); PT.session.act(t2, h, s, L.canCheck ? { type: 'check' } : { type: 'call' }); } }
+    PT.session.finishHand(t2, db2, h, hr2);
+  }
+  const ref = { stats: {}, agg: { bet: 0, check: 0, fold: 0, call: 0, raise: 0 } };
+  Object.values(db2.opps).forEach(r => { Object.keys(r.stats).forEach(k => { const x = ref.stats[k] = ref.stats[k] || [0, 0]; x[0] += r.stats[k][0]; x[1] += r.stats[k][1]; });
+    Object.keys(ref.agg).forEach(k => { ref.agg[k] += r.agg[k] || 0; }); });
+  counts.__ref = ref;
   return counts;
 }
 if (require.main === module) {

@@ -291,7 +291,8 @@ function postflop(v, P, rng, ctx) {
       } else if (ip && (cls === 'air') && v.street === 1) pB = Math.max(pB, P.float * mw);
       if (hsI.aggrPrev >= 0 && hsI.aggrPrev !== v.seat && !v.players[hsI.aggrPrev].folded && !(PT.POS_ORDER_POST[v.players[hsI.aggrPrev].pos] < PT.POS_ORDER_POST[me.pos])) pB *= 0.5;
     }
-    if (P.rare > 0 && v.street === 3 && cls === 'air' && L.canRaise && rng() < P.rare) return bet('overbet');   // seltene Linie: River-Overbet-Bluff
+    // seltene Linie: River-Overbet-Bluff, nur als Aggressor oder in Position, mit Mehrspielerfaktor (Prüfer B 2.2, B-7)
+    if (P.rare > 0 && v.street === 3 && cls === 'air' && L.canRaise && (isPfa || ip) && rng() < P.rare * mw) return bet('overbet');
     if (rng() < clamp(pB, 0, 0.98)) {
       if (v.street === 3 && cls === 'monster' && rng() < P.over_b * 3) return bet('overbet');
       if (v.street >= 2 && (cls === 'air') && P.skill > 0.6 && rng() < P.over_b) return bet('overbet');
@@ -307,7 +308,8 @@ function postflop(v, P, rng, ctx) {
   // Prüfer B, Befund 3: Die Schwelle steigt auch oberhalb von 1,6 Pot weiter (logarithmisch); früher war sie dort konstant, sodass ein
   // 17-facher Pot-Shove wie eine 1,6-Pot-Bet behandelt wurde.
   var ss = P.sizeSens || 1;
-  var t0 = clamp(0.57 + 0.2 * ss * (Math.min(f, 1.6) - 0.66) + 0.132 + 0.08 * ss * Math.log(Math.max(1, f / 1.6)) - 0.3 * bluffy + (v.street - 1) * 0.06 + (v.raises >= 2 ? 0.1 : 0) + (nOpp > 1 ? 0.04 : 0) - (phaseAgg > 0 ? 0.04 : phaseAgg < 0 ? -0.04 : 0), 0.35, 0.97);
+  // Größenempfindlichkeit um ⅓ Pot zentriert (Prüfer B 2.2, B-7): Calling Stations folden gegen kleine Einsätze nicht häufiger, gegen große seltener
+  var t0 = clamp(0.57 + 0.2 * ss * (Math.min(f, 1.6) - 0.33) + 0.066 + 0.08 * ss * Math.log(Math.max(1, f / 1.6)) - 0.3 * bluffy + (v.street - 1) * 0.06 + (v.raises >= 2 ? 0.1 : 0) + (nOpp > 1 ? 0.04 : 0) - (phaseAgg > 0 ? 0.04 : phaseAgg < 0 ? -0.04 : 0), 0.35, 0.97);
   var eq = clamp((p - t0) / Math.max(0.05, 1 - t0), 0, 1);
   if (di.strong && v.street < 3) {
     var outs = (di.fd ? 9 : 0) + (di.oesd ? 8 : di.gut ? 4 : 0) - (di.fd && di.so ? 2 : 0);
@@ -330,7 +332,7 @@ function postflop(v, P, rng, ctx) {
     if (cls === 'monster') pr2 = (1 - P.slow * 0.6) * (hsI.iCheckedThis ? 0.5 + P.cr * 3 : 0.6);
     else if (cls === 'strong' && strongCont) pr2 = (hsI.iCheckedThis ? P.cr * 2.2 : P.cr * 1.5) * (v.raises >= 2 ? 0.2 : 1);
     else if (di.strong && v.street < 3) pr2 = P.cr * 1.4 * P.semi * 2 * (v.raises >= 2 ? 0.1 : 1);
-    else if (cls === 'air' && v.raises === 1) pr2 = P.cr * 0.4 * P.bluff * 2 * bluffMul + (P.rare > 0 && v.street === 2 ? P.rare : 0);  // seltene Linie: Check-Raise-Bluff am Turn
+    else if (cls === 'air' && v.raises === 1) pr2 = P.cr * 0.4 * P.bluff * 2 * bluffMul + (P.rare > 0 && v.street === 2 && hsI.iCheckedThis ? P.rare : 0);  // seltene Linie: Check-Raise-Bluff am Turn (nur nach eigenem Check, B-7)
     if (spr < 1.5 && (cls === 'monster' || (cls === 'strong' && strongCont))) return { type: 'allin' };
     if (rng() < clamp(pr2 * mw, 0, 0.9)) return raiseTo(v, L, v.cur * (v.street === 3 ? 2.8 : 3) + (pot - v.cur - me.bet) * 0.25);
   }

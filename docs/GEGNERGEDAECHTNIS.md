@@ -186,3 +186,16 @@ Gewählt: H = 100, z_on = 3,75 – unter den untersuchten Kombinationen diejenig
 - **Import mit anderer Halbwertszeit:** Dabei werden nicht nur das Kurzzeitgedächtnis, sondern auch die Kartenzähler (sd/hid) und die Veränderungsmarken (chg) zurückgesetzt. Der Kopfwert der Halbwertszeit ist wie alle Kopfwerte nicht durch die Prüfsumme geschützt; die Prüfsumme schützt die Gegnerdatensätze.
 - **Fehlalarm über lange Zeiträume:** Das Ziel gilt je 1.000 Hände. Über 5.000 Hände eines Gegners ergibt sich hochgerechnet eine Fehlalarmwahrscheinlichkeit von etwa 15–18 % (nicht gemessen).
 - **NaN-Zähler** (nur bei beschädigten Daten im Speicher möglich): der Test liefert kein Ergebnis statt z = NaN.
+
+## Ergänzungen 2.2 (Arbeitspaket 6)
+
+- **Trennung der Informationsarten** in der Gegneransicht: beobachtete Aktionen (Zähler/Nenner je Wert), aufgedeckte Hände (Showdowns), unbekannt
+  gebliebene Karten (gespielte Hände ohne Showdown), statistische Schätzungen (geglättete Werte, Kurzzeitgedächtnis), **Verhaltenshypothesen**
+  (neu, ausdrücklich als Deutung gekennzeichnet) und nachhaltige Strategieveränderungen (Wechselerkennung seit 2.1).
+- **Belastbarkeit je Wert nach Gelegenheiten** (`PT.training.statReliability`: unter 20 unsicher, 20–99 Tendenz, ab 100 belastbar). Die Angabe am
+  Platz nach gespielten Händen bleibt, weil die Projektanweisung sie für die Live-Anzeige vorschreibt.
+- **Coach:** Datenlage und Unsicherheit der Fold-Schätzung nach den Postflop-Gelegenheiten des Gegners (Aktionszähler), nicht nach Händen.
+- **Hypothesen:** Abweichung vom Durchschnitt der Computergegner (Bezugswerte aus der Entwicklungsgruppe, Gegner-KI gegen Gegner-KI); „gestützt“ nur
+  nach Holm-Korrektur über alle geprüften Werte, sonst „Vermutung“ bei mehr als 10 Prozentpunkten Abweichung; aufgedeckte River-Bluffs getrennt gezählt.
+- **Wiederkehr nach Pausen, Neustart, Migration:** unverändert durch `tests/unit/gedaechtnis.js` und `tests/e2e-gedaechtnis.js` geprüft; 2.2 ändert das
+  Datenformat der Datenbank nicht (Format 3), daher keine Migration beim Umstieg von 2.1.

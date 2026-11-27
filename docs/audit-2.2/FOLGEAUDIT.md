@@ -45,9 +45,10 @@ Die Zahl ist richtig gezählt, beschreibt aber **Helden-Hände über alle Helden
 ## 2.4 Konfidenzintervalle und Unabhängigkeit
 
 - Verfahren: Block-Bootstrap mit 500er-Blöcken, je Lauf geschichtet, 2.000 Wiederholungen; Paare werden als Differenz gebootstrappt.
-- **Unabhängigkeit der Blöcke geprüft:** Autokorrelation der 100-Hände-Blocksummen innerhalb der Läufe (je Lauf zentriert): Lag 1 = 0,06 (alle Läufe;
-  Coach 2.1: 0,11), Lag 5 (Abstand zweier 500er-Blöcke) = −0,03. Kurzfristige Abhängigkeit (Tischbesetzung, Anpassung) besteht, ist bei 500er-Blöcken
-  praktisch verschwunden. Die Intervalle sind für Vergleiche mit **mindestens 20 Blöcken** belastbar.
+- **Unabhängigkeit der Blöcke geprüft:** Autokorrelation der 100-Hände-Blocksummen innerhalb der Läufe (je Lauf zentriert; die Zentrierung erzeugt
+  bei 25 Blöcken eine Nullerwartung von ≈ −0,04, per Permutation bestimmt und abgezogen, Prüfer A 2.2, A-11): Lag 1 bereinigt 0,10 (alle Läufe;
+  Coach 2.1: 0,15), Lag 5 (Abstand zweier 500er-Blöcke) bereinigt 0,004. Kurzfristige Abhängigkeit (Tischbesetzung, Anpassung) besteht; benachbarte
+  500er-Blöcke korrelieren danach nur noch mit etwa 0,02. Die Intervalle sind für Vergleiche mit **mindestens 20 Blöcken** belastbar.
 - **Nicht belastbar** waren deshalb zwei Aussagen des 2.1-Berichts, obwohl die 95-%-Intervalle 0 ausschlossen:
   - gleichgewichtsnaher Modus „−20,6 BB/100 [−35,4; −7,5]“: 2 Paare, **10 Blöcke** → nach der eigenen Regel „zu wenig Blöcke“. Eine Regression ist
     damit **nicht nachgewiesen**, aber auch nicht ausgeschlossen. 2.2 misst neu (H6, 4 Paare je Gegenmodus, 20 Blöcke je Paarung).

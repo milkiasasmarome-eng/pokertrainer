@@ -67,7 +67,7 @@ function run(seed, hands, group, root, mode) {
     const dead = []; h.p.forEach(q => q.cards.forEach(c => dead.push(c)));
     const tr = runoutsEq(v.cards, active.map(q => q.cards), v.board, dead, rng, 0);
     const fc = facing(v);
-    const r = { st: v.street, n: active.length, est: +an.equity.eq.toFixed(4), tr: +tr.toFixed(4), fk: fc.kind, f: +fc.f.toFixed(3), lead: fc.lead ? 1 : 0, best: an.actions[0].type, ip: an.ip ? 1 : 0 };
+    const r = { h: h.no, st: v.street, n: active.length, est: +an.equity.eq.toFixed(4), tr: +tr.toFixed(4), fk: fc.kind, f: +fc.f.toFixed(3), lead: fc.lead ? 1 : 0, best: an.actions[0].type, ip: an.ip ? 1 : 0 };
     if (active.length === 1) {
       const q = active[0], st = C.coach._intern.oppStats(db.opps[q.id] ? JSON.parse(JSON.stringify(db.opps[q.id])) : null);
       const vv = HS.clone(v), rg = C.coach._intern.buildRange(vv, q.seat, st, mode === 'gto', vv.pfa);

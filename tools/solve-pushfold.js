@@ -1,7 +1,7 @@
 /* Push/Fold-Modellspiel (2.2, Arbeitspakete 3 und 4): vereinfachtes Gleichgewicht für kurze effektive Stacks im 6-max.
    Spiel: Blinds 0,5/1 BB, alle Spieler mit S BB. Wer als Erster freiwillig handelt, geht All-in oder foldet (kein Limp, kein Minraise).
    Nach einem All-in entscheiden die Spieler dahinter der Reihe nach Call oder Fold; nach dem ersten Call folden alle übrigen
-   (keine Mehrspieler-All-ins). Equity aus der Preflop-Tabelle der App (169 × 169 Klassen, exakt über alle Boards berechnet);
+   (keine Mehrspieler-All-ins). Equity aus der Preflop-Tabelle der App (169 × 169 Klassen, Monte Carlo mit 12.000 Stichproben je Paar, Standardfehler ≈ 0,45 Pp.);
    Kartenentfernung zwischen den Spielern wird vernachlässigt. Lösung: fiktives Spiel (gemittelte beste Antworten), danach
    Exploitability = Summe der Gewinne bester Antworten aller Plätze gegen das Profil (BB je Hand).
    Ergebnis: Jam-Anteil je Position und Klasse sowie Call-Anteil je (Jammer, Caller) und Klasse, für mehrere Stacktiefen.
@@ -41,7 +41,7 @@ function solve(S, iters) {
       expl += rq * g2; } }
   return { S, jam, call, exploitability: expl, detail };
 }
-const STACKS = [6, 8, 10, 12, 15, 18, 20, 25];
+const STACKS = [3, 4.5, 6, 8, 10, 12, 15, 18, 20, 25];
 if (require.main === module) {
   const args = process.argv.slice(2), it = +(args[args.indexOf('--iter') + 1] || 3000);
   if (!(EQ[0] > 0)) throw new Error('Preflop-Equity-Tabelle nicht verfügbar (PT.ev.eqClass)');
@@ -56,7 +56,7 @@ if (require.main === module) {
   console.log('Rechenzeit ' + ((Date.now() - t0) / 1000).toFixed(1) + ' s');
   fs.writeFileSync(path.join(__dirname, '..', 'tests', 'results', 'pushfold-solution.json'), JSON.stringify(res));
   if (args.includes('--write')) {
-    // Kompakt: je Stack, Position bzw. Paar eine Zeichenkette mit 169 Zeichen 0–9 (Anteil in Zehnteln, gerundet)
+    // Kompakt: je Stack, Position bzw. Paar eine Zeichenkette mit 169 Ziffern 0–9 (Anteil · 9, gerundet)
     const enc = a => a.map(x => Math.min(9, Math.round(x * 9))).join('');
     const slim = { v: 1, stacks: STACKS, jam: {}, call: {}, expl: {} };
     STACKS.forEach(S => { slim.expl[S] = res[S].exploitability; slim.jam[S] = {}; slim.call[S] = {}; Object.keys(res[S].jam).forEach(p => { slim.jam[S][p] = enc(res[S].jam[p]); }); Object.keys(res[S].call).forEach(k => { slim.call[S][k] = enc(res[S].call[k]); }); });

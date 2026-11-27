@@ -6,18 +6,28 @@
 const fs = require('fs'), path = require('path');
 const files = process.argv.slice(2).filter(a => !a.startsWith('--'));
 const OUT_FIRST = ['x', 'bs', 'bl', 'bo'], OUT_FACE = ['f', 'c', 'r'], ALPHA = 8;
-const counts = {};
-files.forEach(f => { const c = JSON.parse(fs.readFileSync(f, 'utf8')); Object.entries(c).forEach(([k, v]) => { const t = counts[k] = counts[k] || {}; Object.entries(v).forEach(([o, n]) => { t[o] = (t[o] || 0) + n; }); }); });
+const counts = {}; let refRaw = null;
+files.forEach(f => { const c = JSON.parse(fs.readFileSync(f, 'utf8')); if (c.__ref) { refRaw = c.__ref; delete c.__ref; }
+  Object.entries(c).forEach(([k, v]) => { const t = counts[k] = counts[k] || {}; Object.entries(v).forEach(([o, n]) => { t[o] = (t[o] || 0) + n; }); }); });
 const add = (map, k, v) => { const t = map[k] = map[k] || {}; Object.entries(v).forEach(([o, n]) => { t[o] = (t[o] || 0) + n; }); };
-const lvl1 = {}, lvl2 = {};   // ohne Draw; ohne Draw und ohne Mehrgegner
-Object.entries(counts).forEach(([k, v]) => { const [st, kind, mw, dr, xb] = k.split('|'); add(lvl1, [st, kind, mw, '*', xb].join('|'), v); add(lvl2, [st, kind, '*', '*', xb].join('|'), v); });
+const c1 = {}, c2 = {};   // ohne Draw; ohne Draw und ohne Mehrgegner
+Object.entries(counts).forEach(([k, v]) => { const [st, kind, mw, dr, xb] = k.split('|'); add(c1, [st, kind, mw, '*', xb].join('|'), v); add(c2, [st, kind, '*', '*', xb].join('|'), v); });
 const outs = kind => /^(s[1-6]|rr)$/.test(kind) ? OUT_FACE : OUT_FIRST;
-function post(c, prior, os) { const n = os.reduce((s, o) => s + (c[o] || 0), 0), d = {}; os.forEach(o => { d[o] = ((c[o] || 0) + ALPHA * prior[o]) / (n + ALPHA); }); return { d, n }; }
-const table = { v: 1, alpha: ALPHA, source: 'tests/strategy/fit-likelihood.js, Gruppe E', c: {}, n: {} };
+function post(c, prior, os) { const n = os.reduce((s, o) => s + Math.max(0, c[o] || 0), 0), d = {}; os.forEach(o => { d[o] = (Math.max(0, c[o] || 0) + ALPHA * prior[o]) / (n + ALPHA); }); return { d, n }; }
+const minus = (a, b) => { const o = {}; Object.keys(a).forEach(k => { o[k] = (a[k] || 0) - ((b && b[k]) || 0); }); return o; };
+const uni = os => { const u = {}; os.forEach(o => { u[o] = 1 / os.length; }); return u; };
+const table = { v: 2, alpha: ALPHA, source: 'tests/strategy/fit-likelihood.js, Gruppe E', c: {}, n: {} };
 const round = d => { const o = {}; Object.keys(d).forEach(k => { o[k] = +d[k].toFixed(4); }); return o; };
-Object.entries(lvl2).forEach(([k, v]) => { const os = outs(k.split('|')[1]), uni = {}; os.forEach(o => { uni[o] = 1 / os.length; }); lvl2[k] = post(v, uni, os); });
-Object.entries(lvl1).forEach(([k, v]) => { const p = k.split('|'), os = outs(p[1]); const par = lvl2[[p[0], p[1], '*', '*', p[4]].join('|')].d; lvl1[k] = post(v, par, os); table.c[[p[0], p[1], p[2]].join('|') + '|*|' + p[4]] = round(lvl1[k].d); table.n[[p[0], p[1], p[2]].join('|') + '|*|' + p[4]] = lvl1[k].n; });
-Object.entries(counts).forEach(([k, v]) => { const p = k.split('|'), os = outs(p[1]); const par = lvl1[[p[0], p[1], p[2], '*', p[4]].join('|')].d; const r = post(v, par, os); table.c[k] = round(r.d); table.n[k] = r.n; });
+// Prüfer A 2.2 (A-9): Prior einer Zelle aus der Elternzelle OHNE die eigenen Zählungen (Leave-one-out), damit α = 8 wirklich 8 Beobachtungen entspricht
+const lvl1 = {};
+Object.entries(c2).forEach(([k, v]) => { const os = outs(k.split('|')[1]); const r = post(v, uni(os), os); table.c[k] = round(r.d); table.n[k] = r.n; });
+Object.entries(c1).forEach(([k, v]) => { const p = k.split('|'), os = outs(p[1]), pk = [p[0], p[1], '*', '*', p[4]].join('|');
+  const prior = post(minus(c2[pk], v), uni(os), os).d; const r = post(v, prior, os); lvl1[k] = r; table.c[k] = round(r.d); table.n[k] = r.n; lvl1[k].prior = prior; });
+Object.entries(counts).forEach(([k, v]) => { const p = k.split('|'), os = outs(p[1]), pk = [p[0], p[1], p[2], '*', p[4]].join('|');
+  const prior = post(minus(c1[pk], v), lvl1[pk].prior, os).d; const r = post(v, prior, os); table.c[k] = round(r.d); table.n[k] = r.n; });
+// Bezugswerte der Population (A-3)
+if (refRaw) { table.ref = {}; Object.keys(refRaw.stats).forEach(k => { const x = refRaw.stats[k]; if (x[1] > 0) table.ref[k] = +(x[0] / x[1]).toFixed(4); });
+  const g = refRaw.agg; table.ref.aggFirst = +(g.bet / Math.max(1, g.bet + g.check)).toFixed(4); table.ref.aggFold = +(g.fold / Math.max(1, g.fold + g.call + g.raise)).toFixed(4); }
 // Familien (Straße|Lage|Mehrgegner): Grundhäufigkeiten der Population, Verteilung der Stärkeklassen und Ergebnis je Klasse
 table.fam = {};
 Object.entries(lvl1).forEach(([k, r]) => { const p = k.split('|'), fam = [p[0], p[1], p[2]].join('|'), xb = +p[4];
@@ -35,7 +45,7 @@ table.total = total;
 console.log('Zellen ' + Object.keys(table.c).length + ', Beobachtungen ' + total);
 if (process.argv.includes('--check')) { console.log(JSON.stringify(table).length + ' Zeichen'); process.exit(0); }
 const f = path.join(__dirname, '..', 'assets', 'js', 'engine', 'ranges.js'), src = fs.readFileSync(f, 'utf8');
-const slim = { v: 1, alpha: ALPHA, total, c: table.c, fam: table.fam, pool: table.pool };
+const slim = { v: 2, alpha: ALPHA, total, c: table.c, fam: table.fam, pool: table.pool, ref: table.ref || null };
 const next = src.replace(/\/\*LIK-START\*\/[\s\S]*?\/\*LIK-END\*\//, '/*LIK-START*/' + JSON.stringify(slim) + '/*LIK-END*/');
 if (next === src && src.indexOf('/*LIK-START*/') < 0) throw new Error('Block nicht gefunden');
 fs.writeFileSync(f, next);

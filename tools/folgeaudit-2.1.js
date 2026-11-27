@@ -25,6 +25,14 @@ out.autokorrelationBlock100 = { coach21: acf(runs.filter(r => r.job.hero === 'co
 function acfLag(list, L) { list = demean(list); const xs = [], ys = []; list.forEach(b => { for (let i = L; i < b.length; i++) { xs.push(b[i - L]); ys.push(b[i]); } }); const m = a => a.reduce((s, x) => s + x, 0) / a.length, mx = m(xs), my = m(ys);
   let c = 0, vx = 0, vy = 0; xs.forEach((x, i) => { c += (x - mx) * (ys[i] - my); vx += (x - mx) ** 2; vy += (ys[i] - my) ** 2; }); return c / Math.sqrt(vx * vy); }
 out.autokorrelationBlock100.lag5_alle = acfLag(runs.map(r => r.blocksAdj), 5);
+// Prüfer A 2.2 (A-11): Nullerwartung nach Zentrierung je Lauf (≈ −1/25) per Permutation der Blöcke innerhalb der Läufe; berichtet wird die Differenz
+{ let r = 12345; const rnd = () => { r = (r * 1103515245 + 12345) % 2147483648; return r / 2147483648; };
+  const perm = b => { const a = b.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); const t = a[i]; a[i] = a[j]; a[j] = t; } return a; };
+  const nul = (list, f) => { let s = 0; for (let k = 0; k < 200; k++) s += f(list.map(perm)); return s / 200; };
+  const all = runs.map(r => r.blocksAdj), c21 = runs.filter(r => r.job.hero === 'coach21').map(r => r.blocksAdj);
+  const n1a = nul(all, l => acf(l).lag1), n1c = nul(c21, l => acf(l).lag1), n5 = nul(all, l => acfLag(l, 5));
+  out.autokorrelationBlock100.nullerwartung = { lag1_alle: n1a, lag1_coach21: n1c, lag5_alle: n5 };
+  out.autokorrelationBlock100.bereinigt = { lag1_alle: out.autokorrelationBlock100.alle.lag1 - n1a, lag1_coach21: out.autokorrelationBlock100.coach21.lag1 - n1c, lag5_alle: out.autokorrelationBlock100.lag5_alle - n5 }; }
 // 4) Vergleiche: Blöcke, geteilte Läufe, Urteil
 out.vergleiche = S.comparisons.map(c => ({ id: c.id, diff: c.adj.diff, ci: [c.adj.lo, c.adj.hi], haende: c.adj.hands, paare: c.adj.pairs, bloecke: c.adj.blocks, urteil: c.verdict, geteiltMit: c.sharedWith }));
 fs.writeFileSync(path.join(__dirname, '..', 'docs', 'audit-2.2', 'folgeaudit-daten.json'), JSON.stringify(out, null, 1));
