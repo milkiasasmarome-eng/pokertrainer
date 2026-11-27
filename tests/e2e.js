@@ -4,7 +4,7 @@
    Werkzeuge: npm --prefix tests ci (Playwright, axe-core). Browser: CHROME=Pfad, CHROME= (leer) für das Chromium von Playwright.
    Teile: diese Datei (Grundfunktionen), tests/e2e/robust.js (Start, Sicherheit, Daten), tests/e2e/a11y.js (Barrierefreiheit),
    tests/e2e/pruefung-cd.js (Regressionen der Prüfung 2.1, Prüfer C und D).
-   Ergebnis: tests/results/e2e.json, Screenshots in tests/results/screens/, Barrierefreiheit in tests/results/a11y/ */
+   Ergebnis: tests/results/e2e.json (Teilläufe mit --nur: e2e-teil.json), Screenshots in tests/results/screens/, Barrierefreiheit in tests/results/a11y/ */
 'use strict';
 const path = require('path'), fs = require('fs'), http = require('http');
 const LOCAL_PW = path.join(__dirname, 'node_modules', 'playwright');
@@ -419,7 +419,7 @@ async function playHand(page, policy) {
 
   await browser.close(); updServer.close(); fs.rmSync(UPD_DIR, { recursive: true, force: true });
   const out = { base: BASE, date: new Date().toISOString(), passed: results.filter(r => r.ok).length, failed: results.filter(r => !r.ok).length, perf, tests: results };
-  fs.writeFileSync(path.join(OUT, /127\.0\.0\.1|localhost/.test(BASE) ? 'e2e.json' : 'e2e-live.json'), JSON.stringify(out, null, 1));
+  fs.writeFileSync(path.join(OUT, /127\.0\.0\.1|localhost/.test(BASE) ? (ONLY ? 'e2e-teil.json' : 'e2e.json') : (ONLY ? 'e2e-live-teil.json' : 'e2e-live.json')), JSON.stringify(out, null, 1));
   console.log('\n' + out.passed + ' bestanden, ' + out.failed + ' fehlgeschlagen · ' + JSON.stringify(perf));
   process.exit(out.failed ? 1 : 0);
 })();

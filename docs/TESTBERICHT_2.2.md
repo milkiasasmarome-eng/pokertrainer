@@ -109,7 +109,7 @@ wenn ein Kriterium verfehlt wird.
 | Oberfläche und Barrierefreiheit | 10 % | 9,5 | 9,3 | 9,3 | 52/52 Browsertests mit axe-core; schwerer Befund E-1 behoben; kein echter Screenreader-Test |
 | Performance | 5 % | 9,8 | 9,8 | 9,8 | P95 51,5 ms (Kriterium ≤ 1.000 ms), Maximum 331 ms, Browser-Tipp ≤ 201 ms |
 | Sicherheit und Datenschutz | 10 % | 9,8 | 9,6 | 9,6 | Ereignisstrom mit Positivlisten und Beobachtbarkeitsprüfung; Befunde C-4/C-5/D-4 behoben; keine weitere unabhängige Prüfung danach |
-| Dokumentation, Tests, Deployment | 5 % | 9,8 | 9,7 | 9,7 | Berichte aus Rohdaten, Kriterien vorab, Syntaxtest; CI auf dem Zweig noch nicht gelaufen |
+| Dokumentation, Tests, Deployment | 5 % | 9,8 | 9,7 | 9,7 | Berichte aus Rohdaten, Kriterien vorab, Syntaxtest; CI auf dem Zweig grün (Pull Request #2: Schnelltests, Build, Browsertests); Teilläufe überschrieben einmal das Gesamtergebnis (behoben) |
 | **Gesamt** | 100 % | **≥ 9,5** | **9,47** | **9,42** | |
 
 **Das Ziel 9,5 ist nicht erreicht. 2.2 liegt in der Gesamtnote unter 2.1.0.** Ursache ist die belegte Regression gegen unbekannte Strategien (H4).
