@@ -50,9 +50,18 @@ function ceBetter(a, b) { // ist a mindestens so gut wie b?
 function comboEquities(hero, board, w, o) {
   o = o || {};
   var ck = PT.cardsStr(hero) + '|' + PT.cardsStr(board) + '|' + PT.cardsStr(o.dead || []) + '|' + R.hash(w) + '|' + (o.exactMax || 0);
+  // Prüfer B, Befund 6: Mit gekennzeichnetem Zufallsstrom (Coach) gilt ein Eintrag nur für denselben Strom und denselben Umfang; ein Treffer
+  // ist dann genau das Ergebnis einer frischen Rechnung und belastet das Budget mit dessen Umfang. So hängt kein Ergebnis davon ab,
+  // was vorher gerechnet wurde (Reihenfolge der Modi, Wiederholung, Nachrechnung).
+  var tagged = !!(o.rng && o.rng.tag);
+  if (tagged) ck += '|' + o.rng.tag + '|' + ceAllow(o);
   var hit = ceCache.get(ck);
   // Kopie liefern: Aufrufer dürfen das Array nicht mit dem Cache teilen
-  if (hit && ceUsable(hit, o)) return { e: Float32Array.from(hit.e), info: Object.assign({}, hit.info, { cached: true, iters: 0 }) };
+  if (hit && ceUsable(hit, o)) {
+    var nominal = tagged && hit.info.method === 'Monte Carlo' ? hit.info.iters : 0;
+    if (nominal && o.budget) { o.budget.left -= nominal; o.budget.used += nominal; }
+    return { e: Float32Array.from(hit.e), info: Object.assign({}, hit.info, { cached: true, iters: nominal }) };
+  }
   var res = comboEquitiesRaw(hero, board, w, o);
   if (!res.info.failed && !res.info.aborted && (!hit || ceBetter(res, hit))) { ceCache.delete(ck); ceCache.set(ck, { e: Float32Array.from(res.e), info: Object.assign({}, res.info) }); if (ceCache.size > 60) ceCache.delete(ceCache.keys().next().value); }
   return res;
@@ -509,6 +518,8 @@ function evaluateAction(ctx, act) {
   return r;
 }
 
+// PT.equity.cacheClear leert auch diesen Cache (Prüfer B, Befund 6)
+if (Q.onClear) Q.onClear(function () { ceCache.clear(); });
 PT.ev = { absStrength: absStrength, POP: POP, popRespond: popRespond, pfTable: pfTable, eqClass: eqClass, comboEquities: comboEquities, rangeEq: rangeEq, respond: respond, splitRange: splitRange,
   realization: realization, playability: playability, potOdds: potOdds, evCheck: evCheck, evCall: evCall, evBet: evBet, candidates: candidates, evaluateAction: evaluateAction, subsetEq: subsetEq };
 })(typeof globalThis !== 'undefined' ? globalThis : (typeof self !== 'undefined' ? self : this));

@@ -1870,7 +1870,9 @@ function cachePut(k, v) {
   cache.delete(k); cache.set(k, v);
   if (cache.size > CACHE_MAX) cache.delete(cache.keys().next().value);
 }
-function cacheClear() { cache.clear(); }
+var clearHooks = [];
+function onClear(fn) { clearHooks.push(fn); }
+function cacheClear() { cache.clear(); clearHooks.forEach(function (fn) { fn(); }); }
 /**
  * req: {seT (Ziel-SE der Stufe), minN (Mindestanzahl), nMax (höchstens mögliche Stichproben der Anfrage), exactPossible}
  * Nutzbar: exakt; oder (Anfrage würde nicht exakt rechnen) und n ≥ minN und
@@ -1999,9 +2001,12 @@ function equity(o) {
   var nMax = Math.min(L.maxIter, o.budget ? Math.max(0, o.budget.left) : L.maxIter);
   var req = { seT: L.se, minN: o.minIter || 0, nMax: nMax, exactPossible: exactPossible };
   var key = o.cache === false ? null : ['eq', PT.cardsStr(hero), PT.cardsStr(board), PT.cardsStr(o.dead || []), ranges.map(PT.ranges.hash).join(',')].join('|');
+  // Prüfer B, Befund 6: gekennzeichneter Strom (Coach) → Eintrag nur für denselben Strom und dieselbe Anfrage; Treffer melden den Nennumfang
+  var tagged = !!(o.rng && o.rng.tag);
+  if (key && tagged) key += '|' + o.rng.tag + '|' + nMax + '|' + (o.minIter || 0);
   if (key) {
     var hit = cacheGet(key);
-    if (hit && usable(hit, req)) { var cp = Object.assign({}, hit); cp.cached = true; cp.iters = 0; return cp; }
+    if (hit && usable(hit, req)) { var cp = Object.assign({}, hit); cp.cached = true; cp.iters = tagged ? (hit.iters || 0) : 0; return cp; }
   }
   var res = null, exAb = null;
   if (exactPossible) {
@@ -2189,7 +2194,7 @@ function potShare(o) {
 }
 
 PT.equity = { LEVELS: LEVELS, equity: equity, exactHU: exactHU, exactCost: exactCost, potShare: potShare, prepRange: prepRange, summarize: summarize,
-  planSize: planSize, usable: usable, cacheClear: cacheClear, cacheSize: function () { return cache.size; } };
+  planSize: planSize, usable: usable, cacheClear: cacheClear, onClear: onClear, cacheSize: function () { return cache.size; } };
 })(typeof globalThis !== 'undefined' ? globalThis : (typeof self !== 'undefined' ? self : this));
 
 /* assets/js/engine/stats.js */
@@ -3265,9 +3270,18 @@ function ceBetter(a, b) { // ist a mindestens so gut wie b?
 function comboEquities(hero, board, w, o) {
   o = o || {};
   var ck = PT.cardsStr(hero) + '|' + PT.cardsStr(board) + '|' + PT.cardsStr(o.dead || []) + '|' + R.hash(w) + '|' + (o.exactMax || 0);
+  // Prüfer B, Befund 6: Mit gekennzeichnetem Zufallsstrom (Coach) gilt ein Eintrag nur für denselben Strom und denselben Umfang; ein Treffer
+  // ist dann genau das Ergebnis einer frischen Rechnung und belastet das Budget mit dessen Umfang. So hängt kein Ergebnis davon ab,
+  // was vorher gerechnet wurde (Reihenfolge der Modi, Wiederholung, Nachrechnung).
+  var tagged = !!(o.rng && o.rng.tag);
+  if (tagged) ck += '|' + o.rng.tag + '|' + ceAllow(o);
   var hit = ceCache.get(ck);
   // Kopie liefern: Aufrufer dürfen das Array nicht mit dem Cache teilen
-  if (hit && ceUsable(hit, o)) return { e: Float32Array.from(hit.e), info: Object.assign({}, hit.info, { cached: true, iters: 0 }) };
+  if (hit && ceUsable(hit, o)) {
+    var nominal = tagged && hit.info.method === 'Monte Carlo' ? hit.info.iters : 0;
+    if (nominal && o.budget) { o.budget.left -= nominal; o.budget.used += nominal; }
+    return { e: Float32Array.from(hit.e), info: Object.assign({}, hit.info, { cached: true, iters: nominal }) };
+  }
   var res = comboEquitiesRaw(hero, board, w, o);
   if (!res.info.failed && !res.info.aborted && (!hit || ceBetter(res, hit))) { ceCache.delete(ck); ceCache.set(ck, { e: Float32Array.from(res.e), info: Object.assign({}, res.info) }); if (ceCache.size > 60) ceCache.delete(ceCache.keys().next().value); }
   return res;
@@ -3724,6 +3738,8 @@ function evaluateAction(ctx, act) {
   return r;
 }
 
+// PT.equity.cacheClear leert auch diesen Cache (Prüfer B, Befund 6)
+if (Q.onClear) Q.onClear(function () { ceCache.clear(); });
 PT.ev = { absStrength: absStrength, POP: POP, popRespond: popRespond, pfTable: pfTable, eqClass: eqClass, comboEquities: comboEquities, rangeEq: rangeEq, respond: respond, splitRange: splitRange,
   realization: realization, playability: playability, potOdds: potOdds, evCheck: evCheck, evCall: evCall, evBet: evBet, candidates: candidates, evaluateAction: evaluateAction, subsetEq: subsetEq };
 })(typeof globalThis !== 'undefined' ? globalThis : (typeof self !== 'undefined' ? self : this));
@@ -4070,7 +4086,7 @@ function analyze(input) {
   // Die Reihenfolge der Modi verändert die Ergebnisse dadurch nicht.
   var seedBase = String(input.seed != null ? input.seed : 'coach'), rest = budget.left, tNow = U.now(), tRest = Math.max(0, deadline - tNow);
   var order = input._order || ['exploit', 'gto'], shareB = {}, shareT = {};
-  shareB.exploit = Math.floor(rest / 2); shareB.gto = rest - shareB.exploit;
+  shareB.exploit = shareB.gto = Math.floor(rest / 2);  // gleich groß (Prüfer B, Befund 6), sonst hängt der Umfang einer Stichprobe vom Modus ab
   order.forEach(function (mode, i) {
     var bm = { left: shareB[mode], used: 0, calls: budget.calls, scale: scale, seedBase: seedBase + '|' + mode };
     var dl = U.now() + (i === 0 ? tRest / 2 : Math.max(0, deadline - U.now()));
@@ -4091,8 +4107,9 @@ function analyze(input) {
 }
 /** Zufallsstrom aus Seed und Inhalt (Ranges) statt aus dem Modus: gleiche Eingaben ergeben in beiden Modi dieselben Stichproben */
 function rngFor(budget, tag, ranges) {
-  var base = (budget.seedBase || 'coach').replace(/\|(exploit|gto)$/, '');
-  return PT.makeRng(base + '|' + tag + '|' + ranges.map(R.hash).join(','));
+  var base = (budget.seedBase || 'coach').replace(/\|(exploit|gto)$/, ''), t = base + '|' + tag + '|' + ranges.map(R.hash).join(',');
+  // Kennung des Stroms (Prüfer B, Befund 6): Caches liefern nur Ergebnisse desselben Stroms und Umfangs und belasten das Budget mit dem Nennumfang
+  var r = PT.makeRng(t); r.tag = t; return r;
 }
 /** Ranges beider Modi und eine gemeinsame Equity je Kombination (Vereinigung der Träger) */
 function prepare(input, v, L0, budget, rng, deadlineAll) {
@@ -4116,7 +4133,8 @@ function prepare(input, v, L0, budget, rng, deadlineAll) {
   seats.forEach(function (k) {
     var o = out[k], u = new Float64Array(NC);
     for (var i = 0; i < NC; i++) { var a = o.ex.w[i], b = o.gto.w[i], c = o.defW ? o.defW[i] : 0; if (a > 0 || b > 0 || c > 0) u[i] = 1; }
-    var ce = X.comboEquities(v.cards, v.board, u, { budget: budget, rng: rng, exactMax: L0.exactMax, maxIter: share, deadline: deadlineAll });
+    var tg = String(input.seed != null ? input.seed : 'coach') + '|ce|' + R.hash(u), rc = PT.makeRng(tg); rc.tag = tg;
+    var ce = X.comboEquities(v.cards, v.board, u, { budget: budget, rng: rc, exactMax: L0.exactMax, maxIter: share, deadline: deadlineAll });
     o.e = ce.e; o.eqInfo = ce.info;
     o.floor = { ex: floorParts(o.ex.w, v.board), gto: floorParts(o.gto.w, v.board) };
   });

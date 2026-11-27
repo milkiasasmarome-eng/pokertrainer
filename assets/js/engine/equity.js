@@ -66,7 +66,9 @@ function cachePut(k, v) {
   cache.delete(k); cache.set(k, v);
   if (cache.size > CACHE_MAX) cache.delete(cache.keys().next().value);
 }
-function cacheClear() { cache.clear(); }
+var clearHooks = [];
+function onClear(fn) { clearHooks.push(fn); }
+function cacheClear() { cache.clear(); clearHooks.forEach(function (fn) { fn(); }); }
 /**
  * req: {seT (Ziel-SE der Stufe), minN (Mindestanzahl), nMax (höchstens mögliche Stichproben der Anfrage), exactPossible}
  * Nutzbar: exakt; oder (Anfrage würde nicht exakt rechnen) und n ≥ minN und
@@ -195,9 +197,12 @@ function equity(o) {
   var nMax = Math.min(L.maxIter, o.budget ? Math.max(0, o.budget.left) : L.maxIter);
   var req = { seT: L.se, minN: o.minIter || 0, nMax: nMax, exactPossible: exactPossible };
   var key = o.cache === false ? null : ['eq', PT.cardsStr(hero), PT.cardsStr(board), PT.cardsStr(o.dead || []), ranges.map(PT.ranges.hash).join(',')].join('|');
+  // Prüfer B, Befund 6: gekennzeichneter Strom (Coach) → Eintrag nur für denselben Strom und dieselbe Anfrage; Treffer melden den Nennumfang
+  var tagged = !!(o.rng && o.rng.tag);
+  if (key && tagged) key += '|' + o.rng.tag + '|' + nMax + '|' + (o.minIter || 0);
   if (key) {
     var hit = cacheGet(key);
-    if (hit && usable(hit, req)) { var cp = Object.assign({}, hit); cp.cached = true; cp.iters = 0; return cp; }
+    if (hit && usable(hit, req)) { var cp = Object.assign({}, hit); cp.cached = true; cp.iters = tagged ? (hit.iters || 0) : 0; return cp; }
   }
   var res = null, exAb = null;
   if (exactPossible) {
@@ -385,5 +390,5 @@ function potShare(o) {
 }
 
 PT.equity = { LEVELS: LEVELS, equity: equity, exactHU: exactHU, exactCost: exactCost, potShare: potShare, prepRange: prepRange, summarize: summarize,
-  planSize: planSize, usable: usable, cacheClear: cacheClear, cacheSize: function () { return cache.size; } };
+  planSize: planSize, usable: usable, cacheClear: cacheClear, onClear: onClear, cacheSize: function () { return cache.size; } };
 })(typeof globalThis !== 'undefined' ? globalThis : (typeof self !== 'undefined' ? self : this));

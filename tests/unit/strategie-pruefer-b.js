@@ -50,4 +50,32 @@ module.exports = function (T) {
     const a = coach(T.spot('BTN', '9s8s', 'Th7c2d', [['H', 'raise', 2.5], ['BB', 'call'], ['BB', 'check']]), 'exploit');
     ok(/Populationsmodell/.test(a.actions.find(x => x.type === 'bet').parts.folds[0].basis), 'Populationsmodell bleibt aktiv');
   });
+  test('Prüfer B 6: Ergebnis unabhängig von Reihenfolge der Modi, Cache-Zustand und Wiederholung (Seeds 77 und 991)', () => {
+    let n = 0, diff = 0, mw = 0;
+    for (const seed of [77, 991]) {
+      const db = PT.stats.newDb(), heroRec = PT.stats.newRecord('hero', 'Du'), t = PT.session.newTable(PT.session.defaultConfig(), db, seed), list = [];
+      for (let i = 0; list.length < (T.QUICK ? 18 : 50) && i < 300; i++) {
+        const h = PT.session.startHand(t, i);
+        while (!h.done) {
+          if (h.p[h.toAct].isHero) { list.push({ view: PT.bots.publicView(h, 0), opps: JSON.parse(JSON.stringify(db.opps)) }); const L = h.legal(0); PT.session.act(t, h, 0, L.canCall && L.callAmt <= 300 ? { type: 'call' } : L.canCheck ? { type: 'check' } : { type: 'fold' }); }
+          else PT.session.botAct(t, h, heroRec);
+        }
+        PT.session.finishHand(t, db, h, heroRec);
+      }
+      list.forEach((s, i) => {
+        const run = order => PT.coach.analyze({ view: s.view, opps: s.opps, settings: { mode: 'exploit', level: 'standard' }, seed: seed * 1000 + i, live: true, skipModel: true, _order: order });
+        const sig = a => a.actions.map(x => x.label + ':' + x.ev.toFixed(6)).join('|') + '#' + a.otherMode.actions.map(x => x.label + ':' + (x.ev || 0).toFixed(6)).join('|') + '#' + a.iters;
+        PT.equity.cacheClear(); const cold = sig(run(['exploit', 'gto']));
+        const warm = sig(run(['gto', 'exploit'])), again = sig(run(['exploit', 'gto']));
+        n++; if (cold !== warm || cold !== again) diff++;
+        if (s.view.players.filter(q => !q.folded && q.seat !== 0).length > 1) mw++;
+      });
+    }
+    ok(diff === 0, n + ' Entscheidungen (' + mw + ' Multiway): kalt, umgekehrt und wiederholt gleich (' + diff + ' verschieden)');
+    // cacheClear leert auch den Cache der Equity je Kombination
+    const hero = C('AhKd'), board = C('Qs7c2d'), w = PT.ranges.removeDead(PT.ranges.full(), hero.concat(board));
+    const o = () => ({ budget: { left: 2000, used: 0 }, rng: PT.makeRng('b6'), exactMax: 1000, maxIter: 2000 });
+    PT.ev.comboEquities(hero, board, w, o()); const hit = PT.ev.comboEquities(hero, board, w, o()); PT.equity.cacheClear(); const miss = PT.ev.comboEquities(hero, board, w, o());
+    ok(hit.info.cached && !miss.info.cached, 'PT.equity.cacheClear leert ev.comboEquities-Cache');
+  });
 };

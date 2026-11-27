@@ -128,7 +128,7 @@ function analyze(input) {
   // Die Reihenfolge der Modi verändert die Ergebnisse dadurch nicht.
   var seedBase = String(input.seed != null ? input.seed : 'coach'), rest = budget.left, tNow = U.now(), tRest = Math.max(0, deadline - tNow);
   var order = input._order || ['exploit', 'gto'], shareB = {}, shareT = {};
-  shareB.exploit = Math.floor(rest / 2); shareB.gto = rest - shareB.exploit;
+  shareB.exploit = shareB.gto = Math.floor(rest / 2);  // gleich groß (Prüfer B, Befund 6), sonst hängt der Umfang einer Stichprobe vom Modus ab
   order.forEach(function (mode, i) {
     var bm = { left: shareB[mode], used: 0, calls: budget.calls, scale: scale, seedBase: seedBase + '|' + mode };
     var dl = U.now() + (i === 0 ? tRest / 2 : Math.max(0, deadline - U.now()));
@@ -149,8 +149,9 @@ function analyze(input) {
 }
 /** Zufallsstrom aus Seed und Inhalt (Ranges) statt aus dem Modus: gleiche Eingaben ergeben in beiden Modi dieselben Stichproben */
 function rngFor(budget, tag, ranges) {
-  var base = (budget.seedBase || 'coach').replace(/\|(exploit|gto)$/, '');
-  return PT.makeRng(base + '|' + tag + '|' + ranges.map(R.hash).join(','));
+  var base = (budget.seedBase || 'coach').replace(/\|(exploit|gto)$/, ''), t = base + '|' + tag + '|' + ranges.map(R.hash).join(',');
+  // Kennung des Stroms (Prüfer B, Befund 6): Caches liefern nur Ergebnisse desselben Stroms und Umfangs und belasten das Budget mit dem Nennumfang
+  var r = PT.makeRng(t); r.tag = t; return r;
 }
 /** Ranges beider Modi und eine gemeinsame Equity je Kombination (Vereinigung der Träger) */
 function prepare(input, v, L0, budget, rng, deadlineAll) {
@@ -174,7 +175,8 @@ function prepare(input, v, L0, budget, rng, deadlineAll) {
   seats.forEach(function (k) {
     var o = out[k], u = new Float64Array(NC);
     for (var i = 0; i < NC; i++) { var a = o.ex.w[i], b = o.gto.w[i], c = o.defW ? o.defW[i] : 0; if (a > 0 || b > 0 || c > 0) u[i] = 1; }
-    var ce = X.comboEquities(v.cards, v.board, u, { budget: budget, rng: rng, exactMax: L0.exactMax, maxIter: share, deadline: deadlineAll });
+    var tg = String(input.seed != null ? input.seed : 'coach') + '|ce|' + R.hash(u), rc = PT.makeRng(tg); rc.tag = tg;
+    var ce = X.comboEquities(v.cards, v.board, u, { budget: budget, rng: rc, exactMax: L0.exactMax, maxIter: share, deadline: deadlineAll });
     o.e = ce.e; o.eqInfo = ce.info;
     o.floor = { ex: floorParts(o.ex.w, v.board), gto: floorParts(o.gto.w, v.board) };
   });
