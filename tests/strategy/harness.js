@@ -90,7 +90,8 @@ function runMatch(opts) {
   const db = PT.stats.newDb(), heroRec = PT.stats.newRecord('hero', 'Du');
   const t = PT.session.newTable(cfg, db, seed);
   const hero = opts.hero, C = hero.kind === 'coach' ? loadEngine(hero.root) : null;
-  if (C && hero.popBlend != null && C.ev.POP) C.ev.POP.blend = hero.popBlend;   // Variante des Reaktionsmodells (nur Entwicklungsvergleich)
+  if (C && hero.popBlend != null && C.ev.POP) C.ev.POP.blend = hero.popBlend;
+  if (C && hero.abl && C.ranges.ABL) Object.assign(C.ranges.ABL, hero.abl);   // 2.3: Ablation / Strategievariante   // Variante des Reaktionsmodells (nur Entwicklungsvergleich)
   const SH = opts.shadow ? loadEngine(opts.shadow.root) : null;
   const out = { seed, hands: 0, startBB: cfg.startBB, comp: opts.comp || 'bots', difficulty: cfg.difficulty, hero: hero.kind === 'coach' ? 'coach:' + hero.mode : hero.kind,
     blocks: [], blocksAdj: [], sumSq: 0, sumSqAdj: 0, decisions: 0, invalid: 0, allinHands: 0, ms: 0, maxMs: 0, maxIters: 0,

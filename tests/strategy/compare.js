@@ -9,6 +9,7 @@ const { Worker, isMainThread, parentPort, workerData } = require('worker_threads
 const ROOT = path.join(__dirname, '..', '..');
 const V201 = process.env.PT_V201 || path.join(ROOT, '..', 'wt-v201');
 const V210 = process.env.PT_V210 || path.join(ROOT, '..', 'wt-v210');   // 2.2: Coach 2.1.0 und unveränderte Gegner-KI 2.1 (Referenzumgebung)
+const V220 = process.env.PT_V220 || path.join(ROOT, '..', 'wt-v220');   // 2.3: gesicherter Stand 2.2.0
 const ENV_ROOT = { neu: ROOT, ref: V210 };
 const RUNS = path.join(ROOT, 'tests', 'results', 'strategy-runs');
 
@@ -34,6 +35,15 @@ const HEROES = {
   'coach201-gto': { kind: 'coach', root: V201, mode: 'gto', name: 'Coach 2.0.1 (gleichgewichtsnah)' },
   'coach22': { kind: 'coach', root: ROOT, mode: 'exploit', name: 'Coach 2.2 (exploitativ)' },
   'coach22-gto': { kind: 'coach', root: ROOT, mode: 'gto', name: 'Coach 2.2 (gleichgewichtsnah)' },
+  // 2.3 Ablation (Arbeitspaket 1): Coach 2.2 mit einzelnen Komponenten im Stand 2.1
+  'abl-R': { kind: 'coach', root: ROOT, mode: 'exploit', abl: { rangeLegacy: true }, name: 'Ablation: Range-Eingrenzung 2.1' },
+  'abl-S': { kind: 'coach', root: ROOT, mode: 'exploit', abl: { respLegacy: true }, name: 'Ablation: Reaktionsmodell 2.1' },
+  'abl-A': { kind: 'coach', root: ROOT, mode: 'exploit', abl: { noAdapt: true }, name: 'Ablation: ohne Gegneranpassung der Tabelle' },
+  'abl-D': { kind: 'coach', root: ROOT, mode: 'exploit', abl: { dataHands: true }, name: 'Ablation: Datenlage nach Händen (2.1)' },
+  'abl-RS': { kind: 'coach', root: ROOT, mode: 'exploit', abl: { rangeLegacy: true, respLegacy: true }, name: 'Ablation: Range und Reaktion 2.1' },
+  'abl-RSD': { kind: 'coach', root: ROOT, mode: 'exploit', abl: { rangeLegacy: true, respLegacy: true, dataHands: true }, name: 'Ablation: Range, Reaktion, Datenlage 2.1' },
+  'coach220': { kind: 'coach', root: V220, mode: 'exploit', name: 'Coach 2.2.0 (exploitativ)' },
+  'coach220-gto': { kind: 'coach', root: V220, mode: 'gto', name: 'Coach 2.2.0 (gleichgewichtsnah)' },
   'coach210': { kind: 'coach', root: V210, mode: 'exploit', name: 'Coach 2.1.0 (exploitativ)' },
   'coach210-gto': { kind: 'coach', root: V210, mode: 'gto', name: 'Coach 2.1.0 (gleichgewichtsnah)' },
   'bot': { kind: 'bot', id: 'g004', name: 'Gegner-KI als Held (Profil g004, Stil ausgeglichen)' },
@@ -51,6 +61,13 @@ function plan(name) {
   const add = (group, heroes, cond, seeds, hands) => seeds.forEach(sd => heroes.forEach(hk => jobs.push({ group, hero: hk, comp: cond.comp, difficulty: cond.difficulty, startBB: cond.startBB, seed: sd, hands })));
   // Läufe zu je 2.500 Händen (Zwischenspeicherung je Lauf; ein Neustart wiederholt höchstens die laufenden Jobs).
   // Reihenfolge: zuerst die gepaarten Coach-Läufe des Hauptvergleichs, Seed für Seed, damit Teilergebnisse ausgewogen sind.
+  if (name === 'abl23') {
+    // 2.3 Arbeitspaket 1: Ablation. Seeds 23001 ff. nur für diese Studie. Regressionsset = frühere FINAL-Strategien (nicht mehr unberührt).
+    const G = (group, heroes, cond, seeds) => seeds.forEach(sd => heroes.forEach(hk => jobs.push({ group, hero: hk, comp: cond.comp, difficulty: 'gemischt', startBB: 100, seed: sd, hands: 2500, env: 'neu', pool: cond.pool || null })));
+    const HS = ['coach22', 'abl-R', 'abl-S', 'abl-A', 'abl-D', 'abl-RS', 'abl-RSD', 'coach210'];
+    ['polar', 'sizetell', 'trapper', 'ipaggro', 'nitlag', 'minraiser'].forEach((k, i) => G('a1final', HS, { comp: 'final:' + k }, [23001 + i]));
+    G('a1V', HS, { comp: 'bots', pool: 'V' }, [23101, 23102, 23103, 23104]);
+  }
   if (name === 'v22') {
     // 2.2: Plan vor den Läufen festgelegt (docs/ABNAHMEKRITERIEN_2.2.md). Seeds 22001 ff. kommen in keiner Entwicklung vor.
     const G = (group, heroes, cond, seeds, env) => seeds.forEach(sd => heroes.forEach(hk => jobs.push({ group, hero: hk, comp: cond.comp, difficulty: cond.difficulty, startBB: cond.startBB, seed: sd, hands: 2500, env: env || 'neu', pool: cond.pool || null })));
@@ -99,9 +116,10 @@ async function main() {
   if (!fs.existsSync(path.join(V201, 'assets', 'js', 'engine', 'coach.js'))) throw new Error('Coach 2.0.1 fehlt: git -C <repo> worktree add ' + V201 + ' sicherung-2.0.1');
   const envHash = hashFiles(ROOT, ENV_MODULES), hashes = { [ROOT]: hashFiles(ROOT, COACH_MODULES), [V201]: hashFiles(V201, COACH_MODULES) };
   if (fs.existsSync(path.join(V210, 'assets'))) hashes[V210] = hashFiles(V210, COACH_MODULES);
+  if (fs.existsSync(path.join(V220, 'assets'))) hashes[V220] = hashFiles(V220, COACH_MODULES);
   const envHashOf = j => j.env === 'ref' ? 'ref-' + hashFiles(V210, ENV_MODULES) : envHash;
   const jobs = plan(planName).filter(j => !only || jobId(j).indexOf(only) >= 0);
-  const keyOf = j => { const H = HEROES[j.hero]; return { env: envHashOf(j), coach: H.kind === 'coach' ? hashes[H.root] : null }; };
+  const keyOf = j => { const H = HEROES[j.hero]; return { env: envHashOf(j), coach: H.kind === 'coach' ? hashes[H.root] + (H.abl ? '|' + JSON.stringify(H.abl) : '') : null }; };
   const fileOf = j => path.join(RUNS, jobId(j) + '.json');
   const cached = j => { try { const r = JSON.parse(fs.readFileSync(fileOf(j), 'utf8')), k = keyOf(j); return r.key && r.key.env === k.env && r.key.coach === k.coach ? r : null; } catch (e) { return null; } };
   const todo = args.includes('--aggregate') ? [] : jobs.filter(j => !cached(j));
@@ -165,6 +183,13 @@ function aggregate(planName, runs, h) {
       res.split[key] = Object.keys(parts).sort((x, y) => key === 'stack' ? parseFloat(x) - parseFloat(y) : x < y ? -1 : x > y ? 1 : 0).map((v, i) => Object.assign({ value: v }, one(parts[v], true, 31 + i), { rawDiff: one(parts[v], false, 31 + i).diff, aAhead: parts[v].filter(([ra, rb]) => ra.sumBBAdj > rb.sumBBAdj).length }));
     });
     comparisons.push(res);
+  }
+  if (planName === 'abl23') {
+    ['abl-R', 'abl-S', 'abl-A', 'abl-D', 'abl-RS', 'abl-RSD', 'coach210'].forEach(b => {
+      compare('a1final-' + b, 'Ablation, Regressionsset (frühere FINAL): Coach 2.2 gegen ' + HEROES[b].name, 'a1final', 'coach22', b, ['comp']);
+      compare('a1V-' + b, 'Ablation, Validierungsgruppe V: Coach 2.2 gegen ' + HEROES[b].name, 'a1V', 'coach22', b, []);
+    });
+    ['abl-RSD'].forEach(b => { compare('a1final-210-' + b, 'Restprüfung Regressionsset: ' + HEROES[b].name + ' gegen 2.1.0', 'a1final', b, 'coach210', ['comp']); compare('a1V-210-' + b, 'Restprüfung V: ' + HEROES[b].name + ' gegen 2.1.0', 'a1V', b, 'coach210', []); });
   }
   if (planName === 'v22') {
     compare('h1', 'H1: Coach 2.2 gegen 2.1.0, Gegner-KI 2.2, gemischt, 100 BB (Hauptvergleich)', 'h1', 'coach22', 'coach210', []);

@@ -70,7 +70,7 @@ function buildRange(v, seat, st, gto, pfaSeat) {
   var w = R.preflopRange(line, sm, gto);
   R.removeDead(w, v.cards.concat(v.board));
   // Prüfer B 2.2 (B-9): Der gleichgewichtsnahe Modus nutzt nicht die an der Gegner-KI angepasste Tabelle, sondern das ausgewogene Faustregelmodell
-  if (v.street > 0) R.narrowPostflop(w, v.actions, seat, v.board, prof, pfaSeat, v.street, gto ? { legacy: true } : { sm: sm });
+  if (v.street > 0) R.narrowPostflop(w, v.actions, seat, v.board, prof, pfaSeat, v.street, gto || R.ABL.rangeLegacy ? { legacy: true } : { sm: sm });
   return { w: w, line: line, sm: sm, prof: prof };
 }
 function heroRangeFor(v) {
@@ -267,14 +267,14 @@ function analyzeMode(input, v, mode, level, L0, budget, rng, deadline, set, prep
     if (eqTight != null && eqLoose != null) { eqTight *= relScale; eqLoose *= relScale; spread = Math.abs(eqLoose - eqTight) / 2; }
     // 2.2 (Arbeitspaket 6): Datenlage nach tatsächlichen Gelegenheiten (Postflop-Entscheidungen des Gegners), nicht nach gespielten Händen
     var nOppDec = mainOpp.agg ? mainOpp.agg.n : null;
-    var dataW = nOppDec != null ? (nOppDec < 60 ? 1 : nOppDec < 300 ? 0.75 : 0.5) : (mainOpp.hands < 100 ? 1 : mainOpp.hands < 500 ? 0.75 : 0.5);
+    var dataW = nOppDec != null && !R.ABL.dataHands ? (nOppDec < 60 ? 1 : nOppDec < 300 ? 0.75 : 0.5) : (mainOpp.hands < 100 ? 1 : mainOpp.hands < 500 ? 0.75 : 0.5);
     if (gto) dataW = 0.75;
     spread *= dataW;
   }
   ctx.eqRangeSpread = spread;
   // Unsicherheit der Fold-Schätzung nach Gelegenheiten gegen Einsätze (Fold gegen C-Bet und alle Einsätze postflop)
   var nFold = mainOpp && mainOpp.agg ? mainOpp.agg.nFace : null;
-  ctx.foldUnc = gto ? 0.08 : (mainOpp ? (nFold != null ? (nFold < 30 ? 0.14 : nFold < 150 ? 0.1 : 0.06) : (mainOpp.hands < 100 ? 0.14 : mainOpp.hands < 500 ? 0.1 : 0.06)) : 0.1);
+  ctx.foldUnc = gto ? 0.08 : (mainOpp ? (nFold != null && !R.ABL.dataHands ? (nFold < 30 ? 0.14 : nFold < 150 ? 0.1 : 0.06) : (mainOpp.hands < 100 ? 0.14 : mainOpp.hands < 500 ? 0.1 : 0.06)) : 0.1);
   // Aktionen bewerten
   var cands = X.candidates(ctx);
   (input.extra || []).forEach(function (amt) {

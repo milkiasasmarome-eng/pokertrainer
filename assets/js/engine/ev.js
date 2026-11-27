@@ -293,7 +293,7 @@ function likRespond(opp, ctx, heroAdd, potBefore, nResp) {
  * Rückgabe: {f, c, r} (Wahrscheinlichkeiten), contW/callW/raiseW (Ranges), basis (Text)
  */
 function respond(opp, ctx, heroAdd, potBefore, nResp, kind) {
-  if (ctx.street > 0 && ctx.mode !== 'gto' && !POP.off && !POP.tabOff && !respond.inner) {
+  if (ctx.street > 0 && ctx.mode !== 'gto' && !POP.off && !POP.tabOff && !R.ABL.respLegacy && !respond.inner) {
     var tr = likRespond(opp, ctx, heroAdd, potBefore, nResp);
     if (tr && POP.tabBlend > 0 && POP.tabBlend < 1) {
       // Modellmittelung (2.2): Mischung aus Aktionstabelle und Reaktionsmodell 2.1 (Populationsmodell gemittelt mit MDF). Die Tabelle

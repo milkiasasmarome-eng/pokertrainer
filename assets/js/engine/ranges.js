@@ -443,6 +443,7 @@ function famTransform(fam, sm, facing, cache) {
   return res;
 }
 function oppAdjust(d, facing, xa, prof, fam, sm, cache) {
+  if (ABL.noAdapt) return d;   // 2.3: Ablation/Strategievariante ohne Anpassung an den einzelnen Gegner
   var T = sm && fam ? famTransform(fam, sm, facing, cache) : null;
   if (!T) return d;
   var out = {}, k, os = facing ? ['c', 'r'] : ['bs', 'bl', 'bo'], A = 0;
@@ -465,6 +466,8 @@ function aggRates(agg) {
   var K = 30, n1 = (agg.bet || 0) + (agg.check || 0), n2 = (agg.fold || 0) + (agg.call || 0) + (agg.raise || 0), pf = LIK.ref ? LIK.ref.aggFirst : LIK.pool.first, pd = LIK.ref ? LIK.ref.aggFold : LIK.pool.fold;
   return { first: ((agg.bet || 0) + K * pf) / (n1 + K), fold: ((agg.fold || 0) + K * pd) / (n2 + K), n1: n1, n2: n2 };
 }
+/** 2.3: Schalter für Ablationsstudien und Strategievarianten (nur Vergleichsläufe; im Trainer alle aus). */
+var ABL = {};
 function setLikelihoodTable(t) { LIK = t; }
 function likelihoodTable() { return LIK; }
 /** Wendet alle Postflop-Aktionen eines Spielers bis einschließlich Straße `upto` an. */
@@ -618,6 +621,6 @@ PT.ranges = { empty: empty, full: full, band: band, bandClass: bandClass, fromCl
   PRIOR: PRIOR, PRIOR_K: PRIOR_K, smooth: smooth, preflopRange: preflopRange, profileOf: profileOf,
   drawInfo: drawInfo, rangeStrength: rangeStrength, likelihood: likelihood, narrowPostflop: narrowPostflop, isLead: isLead, leadLikelihood: leadLikelihood,
   analyzeBoard: analyzeBoard, handFeatures: handFeatures,
-  xaBucket: xaBucket, sizeKey: sizeKey, scaleWidth: scaleWidth, cellAt: cellAt, actionCell: actionCell, actionOutcome: actionOutcome, likDist: likDist, oppAdjust: oppAdjust, aggRates: aggRates,
+  ABL: ABL, xaBucket: xaBucket, sizeKey: sizeKey, scaleWidth: scaleWidth, cellAt: cellAt, actionCell: actionCell, actionOutcome: actionOutcome, likDist: likDist, oppAdjust: oppAdjust, aggRates: aggRates,
   setLikelihoodTable: setLikelihoodTable, likelihoodTable: likelihoodTable, OUT_FIRST: OUT_FIRST, OUT_FACE: OUT_FACE, XA_EDGES: XA_EDGES, pfRow: pfRow, PF_TABLE: function () { return PF; } };
 })(typeof globalThis !== 'undefined' ? globalThis : (typeof self !== 'undefined' ? self : this));
