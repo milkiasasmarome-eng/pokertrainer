@@ -1,15 +1,15 @@
 {
  "ok": true,
  "before": {
-  "sw.js": "47e27badfe66b2d1c5c69d62e40e9bdd9d94a6559d87848bcab7aa7904540fbf",
-  "dist/PokerTrainer_2.0.html": "2e3a28ac69f6aeebdb38561a1afbf2b0f57c6e95b7cd7948705836b01c65189d"
+  "sw.js": "130e854e0ec89f15a5a2e24f9e3edfa9549473368be5faead92ac2b4f6d328db",
+  "dist/PokerTrainer_2.0.html": "831029b0958566079293e9bfa734e636167c4103a5ddcac0faba6cba08beed87"
  },
  "first": {
-  "sw.js": "47e27badfe66b2d1c5c69d62e40e9bdd9d94a6559d87848bcab7aa7904540fbf",
-  "dist/PokerTrainer_2.0.html": "2e3a28ac69f6aeebdb38561a1afbf2b0f57c6e95b7cd7948705836b01c65189d"
+  "sw.js": "130e854e0ec89f15a5a2e24f9e3edfa9549473368be5faead92ac2b4f6d328db",
+  "dist/PokerTrainer_2.0.html": "831029b0958566079293e9bfa734e636167c4103a5ddcac0faba6cba08beed87"
  },
  "second": {
-  "sw.js": "47e27badfe66b2d1c5c69d62e40e9bdd9d94a6559d87848bcab7aa7904540fbf",
-  "dist/PokerTrainer_2.0.html": "2e3a28ac69f6aeebdb38561a1afbf2b0f57c6e95b7cd7948705836b01c65189d"
+  "sw.js": "130e854e0ec89f15a5a2e24f9e3edfa9549473368be5faead92ac2b4f6d328db",
+  "dist/PokerTrainer_2.0.html": "831029b0958566079293e9bfa734e636167c4103a5ddcac0faba6cba08beed87"
  }
 }
