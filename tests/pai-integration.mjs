@@ -112,3 +112,6 @@ check('Nach Änderungsauftrag (Kopie von PAI): Format 3 wird gelesen, unbekannte
 const out = { date: new Date().toISOString(), pokertrainer: PT.VERSION, pai: paiVersion, paiRoot: path.basename(PAI), results };
 fs.writeFileSync(path.join(HERE, 'results', 'pai-integration.json'), JSON.stringify(out, null, 1));
 console.log(results.filter(r => r.ok).length + ' von ' + results.length + ' bestanden');
+// 2.3 (Prüfbefund E23-11): Exit-Code ≠ 0 bei Fehlern, die nicht ausdrücklich an PAI hängen (Versionsprüfung Format 3, validateHand für gefoldete Plätze)
+const paiDep = r => /^Versionsprüfung: PAI|^Hinweis PAI/.test(r.name);
+if (results.some(r => !r.ok && !paiDep(r))) process.exitCode = 1;
