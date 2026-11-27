@@ -1,6 +1,6 @@
 {
  "app": "2.2.0",
- "date": "2026-11-27T19:06:53.347Z",
+ "date": "2026-11-27T19:30:46.297Z",
  "node": "v22.23.5",
  "cpus": 2,
  "plan": "sel23",
@@ -58,6 +58,9 @@
   "t-zr": "Abstimmung: C, empfindlich, Vorwissen 0,5, Reaktion robust vorab",
   "varC5": "Variante C5: hybrid mit robuster Entscheidungsregel",
   "varCz": "Variante C (abgestimmt auf Tr23): hybrid, empfindlichere Schwellen",
+  "t-zsq": "Abstimmung: C empfindlich, Reaktion quadratisch",
+  "t-z1": "Abstimmung: C sehr empfindlich",
+  "varCz1": "Variante C (abgestimmt auf Tr23/E): hybrid, sehr empfindliche Schwellen",
   "varC2": "Variante C2: hybride Range, Reaktionsmodell 2.1",
   "abl-R": "Ablation: Range-Eingrenzung 2.1",
   "abl-S": "Ablation: Reaktionsmodell 2.1",
@@ -128,7 +131,8 @@
     "selVa-varA-coach210",
     "selVa-varC-varA",
     "selVa-varB-varA",
-    "selVa-varCz-varA"
+    "selVa-varCz-varA",
+    "selVa-varCz1-varA"
    ]
   },
   {
@@ -188,7 +192,8 @@
     "selVa-varC2-varB",
     "selVa-varC3-varB",
     "selVa-varC5-varB",
-    "selVa-varCz-varB"
+    "selVa-varCz-varB",
+    "selVa-varCz1-varB"
    ]
   },
   {
@@ -306,7 +311,8 @@
     "selVa-varC2-coach210",
     "selVa-varC3-coach210",
     "selVa-varC5-coach210",
-    "selVa-varCz-coach210"
+    "selVa-varCz-coach210",
+    "selVa-varCz1-coach210"
    ]
   },
   {
@@ -580,6 +586,62 @@
    ]
   },
   {
+   "id": "selVa_varCz1_p23-Va_gemischt_100BB_s23201_2500",
+   "group": "selVa",
+   "hero": "varCz1",
+   "cond": "p23:Va|gemischt|100",
+   "seed": 23201,
+   "hands": 2500,
+   "decisions": 3483,
+   "invalid": 0,
+   "bb100": 119.87,
+   "bb100Adj": 155.15,
+   "sdHand": 21.21,
+   "sdHandAdj": 17.74,
+   "allinHands": 55,
+   "avgMs": 25.1,
+   "maxMs": 253,
+   "maxIters": 5000,
+   "labels": {
+    "½": 44,
+    "check": 343,
+    "Overbet": 41,
+    "fold": 132,
+    "Pot": 78,
+    "call": 89,
+    "All-in": 54,
+    "¾": 30,
+    "⅓": 77,
+    "Raise 2,5×": 5,
+    "andere": 3,
+    "Raise Pot": 11,
+    "Raise 3,5×": 1
+   },
+   "preLabels": {
+    "fold": 1964,
+    "call": 235,
+    "Open": 276,
+    "3-Bet": 82,
+    "All-in": 7,
+    "4-Bet": 11
+   },
+   "classes": {
+    "mehrere": 960,
+    "klar": 936,
+    "knapp": 1161,
+    "eindeutig": 425,
+    "unsicher": 1
+   },
+   "chartApplied": 561,
+   "chartGapBB": 255.35,
+   "wallMs": 90173,
+   "usedIn": [
+    "selVa-varCz1-coach210",
+    "selVa-varCz1-varB",
+    "selVa-varCz1-varA"
+   ]
+  },
+  {
    "id": "selVa_varA_p23-Va_gemischt_100BB_s23202_2500",
    "group": "selVa",
    "hero": "varA",
@@ -631,7 +693,8 @@
     "selVa-varA-coach210",
     "selVa-varC-varA",
     "selVa-varB-varA",
-    "selVa-varCz-varA"
+    "selVa-varCz-varA",
+    "selVa-varCz1-varA"
    ]
   },
   {
@@ -691,7 +754,8 @@
     "selVa-varC2-varB",
     "selVa-varC3-varB",
     "selVa-varC5-varB",
-    "selVa-varCz-varB"
+    "selVa-varCz-varB",
+    "selVa-varCz1-varB"
    ]
   },
   {
@@ -805,7 +869,8 @@
     "selVa-varC2-coach210",
     "selVa-varC3-coach210",
     "selVa-varC5-coach210",
-    "selVa-varCz-coach210"
+    "selVa-varCz-coach210",
+    "selVa-varCz1-coach210"
    ]
   },
   {
@@ -1078,6 +1143,60 @@
    ]
   },
   {
+   "id": "selVa_varCz1_p23-Va_gemischt_100BB_s23202_2500",
+   "group": "selVa",
+   "hero": "varCz1",
+   "cond": "p23:Va|gemischt|100",
+   "seed": 23202,
+   "hands": 2500,
+   "decisions": 3513,
+   "invalid": 0,
+   "bb100": 178.96,
+   "bb100Adj": 209.84,
+   "sdHand": 24.15,
+   "sdHandAdj": 20.63,
+   "allinHands": 52,
+   "avgMs": 25.2,
+   "maxMs": 295,
+   "maxIters": 5000,
+   "labels": {
+    "check": 368,
+    "Pot": 87,
+    "½": 43,
+    "All-in": 57,
+    "call": 77,
+    "fold": 130,
+    "⅓": 77,
+    "Overbet": 37,
+    "¾": 43,
+    "Raise Pot": 9,
+    "Raise 2,5×": 3,
+    "Raise 3,5×": 1
+   },
+   "preLabels": {
+    "fold": 1936,
+    "Open": 322,
+    "call": 211,
+    "3-Bet": 94,
+    "All-in": 6,
+    "4-Bet": 12
+   },
+   "classes": {
+    "klar": 984,
+    "mehrere": 985,
+    "eindeutig": 442,
+    "knapp": 1102
+   },
+   "chartApplied": 574,
+   "chartGapBB": 253.59,
+   "wallMs": 91412,
+   "usedIn": [
+    "selVa-varCz1-coach210",
+    "selVa-varCz1-varB",
+    "selVa-varCz1-varA"
+   ]
+  },
+  {
    "id": "selVa_varA_p23-Va_gemischt_100BB_s23203_2500",
    "group": "selVa",
    "hero": "varA",
@@ -1128,7 +1247,8 @@
     "selVa-varA-coach210",
     "selVa-varC-varA",
     "selVa-varB-varA",
-    "selVa-varCz-varA"
+    "selVa-varCz-varA",
+    "selVa-varCz1-varA"
    ]
   },
   {
@@ -1187,7 +1307,8 @@
     "selVa-varC2-varB",
     "selVa-varC3-varB",
     "selVa-varC5-varB",
-    "selVa-varCz-varB"
+    "selVa-varCz-varB",
+    "selVa-varCz1-varB"
    ]
   },
   {
@@ -1300,7 +1421,8 @@
     "selVa-varC2-coach210",
     "selVa-varC3-coach210",
     "selVa-varC5-coach210",
-    "selVa-varCz-coach210"
+    "selVa-varCz-coach210",
+    "selVa-varCz1-coach210"
    ]
   },
   {
@@ -1570,6 +1692,60 @@
    ]
   },
   {
+   "id": "selVa_varCz1_p23-Va_gemischt_100BB_s23203_2500",
+   "group": "selVa",
+   "hero": "varCz1",
+   "cond": "p23:Va|gemischt|100",
+   "seed": 23203,
+   "hands": 2500,
+   "decisions": 3478,
+   "invalid": 0,
+   "bb100": 138.87,
+   "bb100Adj": 145.17,
+   "sdHand": 22,
+   "sdHandAdj": 17.67,
+   "allinHands": 49,
+   "avgMs": 24.3,
+   "maxMs": 205,
+   "maxIters": 5000,
+   "labels": {
+    "check": 352,
+    "Overbet": 30,
+    "All-in": 52,
+    "⅓": 59,
+    "¾": 29,
+    "Pot": 93,
+    "fold": 162,
+    "½": 35,
+    "call": 63,
+    "Raise 2,5×": 3,
+    "Raise Pot": 3,
+    "Raise 3,5×": 2
+   },
+   "preLabels": {
+    "fold": 1979,
+    "3-Bet": 71,
+    "Open": 319,
+    "call": 216,
+    "All-in": 4,
+    "4-Bet": 6
+   },
+   "classes": {
+    "mehrere": 1029,
+    "klar": 871,
+    "knapp": 1132,
+    "eindeutig": 446
+   },
+   "chartApplied": 506,
+   "chartGapBB": 218.84,
+   "wallMs": 87120,
+   "usedIn": [
+    "selVa-varCz1-coach210",
+    "selVa-varCz1-varB",
+    "selVa-varCz1-varA"
+   ]
+  },
+  {
    "id": "selVa_varA_p23-Va_gemischt_100BB_s23204_2500",
    "group": "selVa",
    "hero": "varA",
@@ -1620,7 +1796,8 @@
     "selVa-varA-coach210",
     "selVa-varC-varA",
     "selVa-varB-varA",
-    "selVa-varCz-varA"
+    "selVa-varCz-varA",
+    "selVa-varCz1-varA"
    ]
   },
   {
@@ -1679,7 +1856,8 @@
     "selVa-varC2-varB",
     "selVa-varC3-varB",
     "selVa-varC5-varB",
-    "selVa-varCz-varB"
+    "selVa-varCz-varB",
+    "selVa-varCz1-varB"
    ]
   },
   {
@@ -1792,7 +1970,8 @@
     "selVa-varC2-coach210",
     "selVa-varC3-coach210",
     "selVa-varC5-coach210",
-    "selVa-varCz-coach210"
+    "selVa-varCz-coach210",
+    "selVa-varCz1-coach210"
    ]
   },
   {
@@ -2065,6 +2244,59 @@
    ]
   },
   {
+   "id": "selVa_varCz1_p23-Va_gemischt_100BB_s23204_2500",
+   "group": "selVa",
+   "hero": "varCz1",
+   "cond": "p23:Va|gemischt|100",
+   "seed": 23204,
+   "hands": 2500,
+   "decisions": 3547,
+   "invalid": 0,
+   "bb100": 144.55,
+   "bb100Adj": 186.97,
+   "sdHand": 24.1,
+   "sdHandAdj": 19.49,
+   "allinHands": 62,
+   "avgMs": 25.2,
+   "maxMs": 255,
+   "maxIters": 5000,
+   "labels": {
+    "Pot": 107,
+    "check": 327,
+    "fold": 178,
+    "call": 70,
+    "⅓": 58,
+    "¾": 40,
+    "Overbet": 36,
+    "All-in": 68,
+    "Raise Pot": 10,
+    "½": 29,
+    "Raise 2,5×": 4
+   },
+   "preLabels": {
+    "fold": 1959,
+    "4-Bet": 19,
+    "All-in": 8,
+    "Open": 300,
+    "call": 243,
+    "3-Bet": 91
+   },
+   "classes": {
+    "mehrere": 937,
+    "klar": 997,
+    "knapp": 1160,
+    "eindeutig": 453
+   },
+   "chartApplied": 507,
+   "chartGapBB": 267.89,
+   "wallMs": 92087,
+   "usedIn": [
+    "selVa-varCz1-coach210",
+    "selVa-varCz1-varB",
+    "selVa-varCz1-varA"
+   ]
+  },
+  {
    "id": "selVa_varA_p23-Va_gemischt_100BB_s23205_2500",
    "group": "selVa",
    "hero": "varA",
@@ -2117,7 +2349,8 @@
     "selVa-varA-coach210",
     "selVa-varC-varA",
     "selVa-varB-varA",
-    "selVa-varCz-varA"
+    "selVa-varCz-varA",
+    "selVa-varCz1-varA"
    ]
   },
   {
@@ -2176,7 +2409,8 @@
     "selVa-varC2-varB",
     "selVa-varC3-varB",
     "selVa-varC5-varB",
-    "selVa-varCz-varB"
+    "selVa-varCz-varB",
+    "selVa-varCz1-varB"
    ]
   },
   {
@@ -2292,7 +2526,8 @@
     "selVa-varC2-coach210",
     "selVa-varC3-coach210",
     "selVa-varC5-coach210",
-    "selVa-varCz-coach210"
+    "selVa-varCz-coach210",
+    "selVa-varCz1-coach210"
    ]
   },
   {
@@ -2568,6 +2803,61 @@
    ]
   },
   {
+   "id": "selVa_varCz1_p23-Va_gemischt_100BB_s23205_2500",
+   "group": "selVa",
+   "hero": "varCz1",
+   "cond": "p23:Va|gemischt|100",
+   "seed": 23205,
+   "hands": 2500,
+   "decisions": 3510,
+   "invalid": 0,
+   "bb100": 281.68,
+   "bb100Adj": 251.47,
+   "sdHand": 26.4,
+   "sdHandAdj": 22.03,
+   "allinHands": 60,
+   "avgMs": 24.6,
+   "maxMs": 210,
+   "maxIters": 5000,
+   "labels": {
+    "check": 342,
+    "fold": 173,
+    "Pot": 93,
+    "Overbet": 39,
+    "All-in": 63,
+    "⅓": 61,
+    "call": 78,
+    "½": 30,
+    "Raise 3,5×": 4,
+    "Raise 2,5×": 4,
+    "¾": 33,
+    "Raise Pot": 7,
+    "andere": 1
+   },
+   "preLabels": {
+    "fold": 1924,
+    "Open": 335,
+    "call": 208,
+    "3-Bet": 98,
+    "4-Bet": 12,
+    "All-in": 5
+   },
+   "classes": {
+    "mehrere": 982,
+    "knapp": 1095,
+    "klar": 961,
+    "eindeutig": 472
+   },
+   "chartApplied": 569,
+   "chartGapBB": 276.84,
+   "wallMs": 89017,
+   "usedIn": [
+    "selVa-varCz1-coach210",
+    "selVa-varCz1-varB",
+    "selVa-varCz1-varA"
+   ]
+  },
+  {
    "id": "selVa_varA_p23-Va_gemischt_100BB_s23206_2500",
    "group": "selVa",
    "hero": "varA",
@@ -2619,7 +2909,8 @@
     "selVa-varA-coach210",
     "selVa-varC-varA",
     "selVa-varB-varA",
-    "selVa-varCz-varA"
+    "selVa-varCz-varA",
+    "selVa-varCz1-varA"
    ]
   },
   {
@@ -2679,7 +2970,8 @@
     "selVa-varC2-varB",
     "selVa-varC3-varB",
     "selVa-varC5-varB",
-    "selVa-varCz-varB"
+    "selVa-varCz-varB",
+    "selVa-varCz1-varB"
    ]
   },
   {
@@ -2793,7 +3085,8 @@
     "selVa-varC2-coach210",
     "selVa-varC3-coach210",
     "selVa-varC5-coach210",
-    "selVa-varCz-coach210"
+    "selVa-varCz-coach210",
+    "selVa-varCz1-coach210"
    ]
   },
   {
@@ -3066,6 +3359,60 @@
    ]
   },
   {
+   "id": "selVa_varCz1_p23-Va_gemischt_100BB_s23206_2500",
+   "group": "selVa",
+   "hero": "varCz1",
+   "cond": "p23:Va|gemischt|100",
+   "seed": 23206,
+   "hands": 2500,
+   "decisions": 3551,
+   "invalid": 0,
+   "bb100": 225.45,
+   "bb100Adj": 250.95,
+   "sdHand": 25.32,
+   "sdHandAdj": 21.58,
+   "allinHands": 60,
+   "avgMs": 24.3,
+   "maxMs": 224,
+   "maxIters": 5000,
+   "labels": {
+    "½": 35,
+    "⅓": 67,
+    "check": 346,
+    "Pot": 92,
+    "Overbet": 36,
+    "call": 85,
+    "fold": 147,
+    "All-in": 68,
+    "Raise 3,5×": 2,
+    "Raise 2,5×": 10,
+    "¾": 28,
+    "Raise Pot": 15
+   },
+   "preLabels": {
+    "3-Bet": 72,
+    "fold": 1966,
+    "Open": 325,
+    "call": 234,
+    "4-Bet": 15,
+    "All-in": 8
+   },
+   "classes": {
+    "mehrere": 963,
+    "knapp": 1186,
+    "klar": 910,
+    "eindeutig": 492
+   },
+   "chartApplied": 474,
+   "chartGapBB": 236.65,
+   "wallMs": 89420,
+   "usedIn": [
+    "selVa-varCz1-coach210",
+    "selVa-varCz1-varB",
+    "selVa-varCz1-varA"
+   ]
+  },
+  {
    "id": "selV_varA_bots_gemischt_100BB_poolV_s23211_2500",
    "group": "selV",
    "hero": "varA",
@@ -3119,7 +3466,8 @@
     "selV-varA-coach210",
     "selV-varC-varA",
     "selV-varB-varA",
-    "selV-varCz-varA"
+    "selV-varCz-varA",
+    "selV-varCz1-varA"
    ]
   },
   {
@@ -3180,7 +3528,8 @@
     "selV-varC2-varB",
     "selV-varC3-varB",
     "selV-varC5-varB",
-    "selV-varCz-varB"
+    "selV-varCz-varB",
+    "selV-varCz1-varB"
    ]
   },
   {
@@ -3298,7 +3647,8 @@
     "selV-varC2-coach210",
     "selV-varC3-coach210",
     "selV-varC5-coach210",
-    "selV-varCz-coach210"
+    "selV-varCz-coach210",
+    "selV-varCz1-coach210"
    ]
   },
   {
@@ -3579,6 +3929,62 @@
    ]
   },
   {
+   "id": "selV_varCz1_bots_gemischt_100BB_poolV_s23211_2500",
+   "group": "selV",
+   "hero": "varCz1",
+   "cond": "bots|gemischt|100|V",
+   "seed": 23211,
+   "hands": 2500,
+   "decisions": 3522,
+   "invalid": 0,
+   "bb100": 130.76,
+   "bb100Adj": 118.9,
+   "sdHand": 12.81,
+   "sdHandAdj": 11.17,
+   "allinHands": 20,
+   "avgMs": 22.2,
+   "maxMs": 200,
+   "maxIters": 4760,
+   "labels": {
+    "⅓": 127,
+    "Raise 2,5×": 21,
+    "fold": 111,
+    "Pot": 134,
+    "Overbet": 44,
+    "Raise Pot": 8,
+    "½": 59,
+    "check": 280,
+    "¾": 73,
+    "call": 64,
+    "All-in": 24,
+    "Raise 3,5×": 2
+   },
+   "preLabels": {
+    "Iso-Raise": 23,
+    "call": 189,
+    "fold": 1844,
+    "3-Bet": 108,
+    "Open": 360,
+    "4-Bet": 7,
+    "check": 42,
+    "All-in": 2
+   },
+   "classes": {
+    "klar": 987,
+    "knapp": 1305,
+    "mehrere": 936,
+    "eindeutig": 294
+   },
+   "chartApplied": 725,
+   "chartGapBB": 242.33,
+   "wallMs": 80659,
+   "usedIn": [
+    "selV-varCz1-coach210",
+    "selV-varCz1-varB",
+    "selV-varCz1-varA"
+   ]
+  },
+  {
    "id": "selV_varA_bots_gemischt_100BB_poolV_s23212_2500",
    "group": "selV",
    "hero": "varA",
@@ -3630,7 +4036,8 @@
     "selV-varA-coach210",
     "selV-varC-varA",
     "selV-varB-varA",
-    "selV-varCz-varA"
+    "selV-varCz-varA",
+    "selV-varCz1-varA"
    ]
   },
   {
@@ -3690,7 +4097,8 @@
     "selV-varC2-varB",
     "selV-varC3-varB",
     "selV-varC5-varB",
-    "selV-varCz-varB"
+    "selV-varCz-varB",
+    "selV-varCz1-varB"
    ]
   },
   {
@@ -3805,7 +4213,8 @@
     "selV-varC2-coach210",
     "selV-varC3-coach210",
     "selV-varC5-coach210",
-    "selV-varCz-coach210"
+    "selV-varCz-coach210",
+    "selV-varCz1-coach210"
    ]
   },
   {
@@ -4081,6 +4490,61 @@
    ]
   },
   {
+   "id": "selV_varCz1_bots_gemischt_100BB_poolV_s23212_2500",
+   "group": "selV",
+   "hero": "varCz1",
+   "cond": "bots|gemischt|100|V",
+   "seed": 23212,
+   "hands": 2500,
+   "decisions": 3500,
+   "invalid": 0,
+   "bb100": 45.9,
+   "bb100Adj": 50.3,
+   "sdHand": 11.47,
+   "sdHandAdj": 10.14,
+   "allinHands": 21,
+   "avgMs": 22.7,
+   "maxMs": 217,
+   "maxIters": 5000,
+   "labels": {
+    "check": 301,
+    "fold": 100,
+    "¾": 89,
+    "Pot": 131,
+    "⅓": 137,
+    "½": 65,
+    "call": 44,
+    "Overbet": 38,
+    "All-in": 26,
+    "Raise 2,5×": 6,
+    "Raise Pot": 4
+   },
+   "preLabels": {
+    "fold": 1838,
+    "call": 159,
+    "Open": 329,
+    "Iso-Raise": 75,
+    "4-Bet": 13,
+    "3-Bet": 108,
+    "check": 36,
+    "All-in": 1
+   },
+   "classes": {
+    "mehrere": 877,
+    "knapp": 1351,
+    "klar": 979,
+    "eindeutig": 293
+   },
+   "chartApplied": 681,
+   "chartGapBB": 205.43,
+   "wallMs": 81844,
+   "usedIn": [
+    "selV-varCz1-coach210",
+    "selV-varCz1-varB",
+    "selV-varCz1-varA"
+   ]
+  },
+  {
    "id": "selV_varA_bots_gemischt_100BB_poolV_s23213_2500",
    "group": "selV",
    "hero": "varA",
@@ -4135,7 +4599,8 @@
     "selV-varA-coach210",
     "selV-varC-varA",
     "selV-varB-varA",
-    "selV-varCz-varA"
+    "selV-varCz-varA",
+    "selV-varCz1-varA"
    ]
   },
   {
@@ -4196,7 +4661,8 @@
     "selV-varC2-varB",
     "selV-varC3-varB",
     "selV-varC5-varB",
-    "selV-varCz-varB"
+    "selV-varCz-varB",
+    "selV-varCz1-varB"
    ]
   },
   {
@@ -4315,7 +4781,8 @@
     "selV-varC2-coach210",
     "selV-varC3-coach210",
     "selV-varC5-coach210",
-    "selV-varCz-coach210"
+    "selV-varCz-coach210",
+    "selV-varCz1-coach210"
    ]
   },
   {
@@ -4600,6 +5067,63 @@
    ]
   },
   {
+   "id": "selV_varCz1_bots_gemischt_100BB_poolV_s23213_2500",
+   "group": "selV",
+   "hero": "varCz1",
+   "cond": "bots|gemischt|100|V",
+   "seed": 23213,
+   "hands": 2500,
+   "decisions": 3378,
+   "invalid": 0,
+   "bb100": 47.02,
+   "bb100Adj": 51.81,
+   "sdHand": 10.29,
+   "sdHandAdj": 9.17,
+   "allinHands": 12,
+   "avgMs": 22.5,
+   "maxMs": 181,
+   "maxIters": 5000,
+   "labels": {
+    "½": 53,
+    "fold": 91,
+    "⅓": 111,
+    "check": 235,
+    "Pot": 126,
+    "call": 52,
+    "Overbet": 37,
+    "¾": 71,
+    "All-in": 15,
+    "Raise 2,5×": 10,
+    "Raise Pot": 6,
+    "Raise 3,5×": 4
+   },
+   "preLabels": {
+    "fold": 1917,
+    "3-Bet": 119,
+    "Open": 283,
+    "call": 154,
+    "check": 35,
+    "Iso-Raise": 48,
+    "4-Bet": 9,
+    "All-in": 2
+   },
+   "classes": {
+    "mehrere": 883,
+    "klar": 909,
+    "knapp": 1286,
+    "eindeutig": 298,
+    "unsicher": 2
+   },
+   "chartApplied": 659,
+   "chartGapBB": 220.13,
+   "wallMs": 78476,
+   "usedIn": [
+    "selV-varCz1-coach210",
+    "selV-varCz1-varB",
+    "selV-varCz1-varA"
+   ]
+  },
+  {
    "id": "selV_varA_bots_gemischt_100BB_poolV_s23214_2500",
    "group": "selV",
    "hero": "varA",
@@ -4653,7 +5177,8 @@
     "selV-varA-coach210",
     "selV-varC-varA",
     "selV-varB-varA",
-    "selV-varCz-varA"
+    "selV-varCz-varA",
+    "selV-varCz1-varA"
    ]
   },
   {
@@ -4713,7 +5238,8 @@
     "selV-varC2-varB",
     "selV-varC3-varB",
     "selV-varC5-varB",
-    "selV-varCz-varB"
+    "selV-varCz-varB",
+    "selV-varCz1-varB"
    ]
   },
   {
@@ -4831,7 +5357,8 @@
     "selV-varC2-coach210",
     "selV-varC3-coach210",
     "selV-varC5-coach210",
-    "selV-varCz-coach210"
+    "selV-varCz-coach210",
+    "selV-varCz1-coach210"
    ]
   },
   {
@@ -5112,6 +5639,62 @@
    ]
   },
   {
+   "id": "selV_varCz1_bots_gemischt_100BB_poolV_s23214_2500",
+   "group": "selV",
+   "hero": "varCz1",
+   "cond": "bots|gemischt|100|V",
+   "seed": 23214,
+   "hands": 2500,
+   "decisions": 3490,
+   "invalid": 0,
+   "bb100": 17.67,
+   "bb100Adj": 3.04,
+   "sdHand": 13.22,
+   "sdHandAdj": 11.83,
+   "allinHands": 22,
+   "avgMs": 22,
+   "maxMs": 213,
+   "maxIters": 5000,
+   "labels": {
+    "Pot": 134,
+    "⅓": 130,
+    "fold": 88,
+    "Raise Pot": 8,
+    "Overbet": 40,
+    "call": 64,
+    "check": 278,
+    "¾": 80,
+    "Raise 2,5×": 14,
+    "All-in": 22,
+    "½": 56,
+    "Raise 3,5×": 1
+   },
+   "preLabels": {
+    "fold": 1873,
+    "call": 172,
+    "Open": 329,
+    "4-Bet": 10,
+    "Iso-Raise": 41,
+    "3-Bet": 116,
+    "check": 29,
+    "All-in": 5
+   },
+   "classes": {
+    "knapp": 1227,
+    "mehrere": 1024,
+    "klar": 946,
+    "eindeutig": 293
+   },
+   "chartApplied": 646,
+   "chartGapBB": 185.33,
+   "wallMs": 79233,
+   "usedIn": [
+    "selV-varCz1-coach210",
+    "selV-varCz1-varB",
+    "selV-varCz1-varA"
+   ]
+  },
+  {
    "id": "selReg_varA_final-polar_gemischt_100BB_s23221_2500",
    "group": "selReg",
    "hero": "varA",
@@ -5165,7 +5748,8 @@
     "selReg-varA-coach210",
     "selReg-varC-varA",
     "selReg-varB-varA",
-    "selReg-varCz-varA"
+    "selReg-varCz-varA",
+    "selReg-varCz1-varA"
    ]
   },
   {
@@ -5227,7 +5811,8 @@
     "selReg-varC2-varB",
     "selReg-varC3-varB",
     "selReg-varC5-varB",
-    "selReg-varCz-varB"
+    "selReg-varCz-varB",
+    "selReg-varCz1-varB"
    ]
   },
   {
@@ -5345,7 +5930,8 @@
     "selReg-varC2-coach210",
     "selReg-varC3-coach210",
     "selReg-varC5-coach210",
-    "selReg-varCz-coach210"
+    "selReg-varCz-coach210",
+    "selReg-varCz1-coach210"
    ]
   },
   {
@@ -5631,6 +6217,62 @@
    ]
   },
   {
+   "id": "selReg_varCz1_final-polar_gemischt_100BB_s23221_2500",
+   "group": "selReg",
+   "hero": "varCz1",
+   "cond": "final:polar|gemischt|100",
+   "seed": 23221,
+   "hands": 2500,
+   "decisions": 3250,
+   "invalid": 0,
+   "bb100": 19.11,
+   "bb100Adj": 14.79,
+   "sdHand": 14.46,
+   "sdHandAdj": 12.86,
+   "allinHands": 23,
+   "avgMs": 23.4,
+   "maxMs": 242,
+   "maxIters": 5000,
+   "labels": {
+    "Pot": 87,
+    "Overbet": 40,
+    "All-in": 27,
+    "check": 224,
+    "fold": 75,
+    "½": 54,
+    "⅓": 110,
+    "call": 34,
+    "¾": 43,
+    "Raise 2,5×": 19,
+    "Raise Pot": 6
+   },
+   "preLabels": {
+    "fold": 1925,
+    "call": 147,
+    "Open": 332,
+    "3-Bet": 57,
+    "check": 27,
+    "Iso-Raise": 33,
+    "4-Bet": 4,
+    "All-in": 6
+   },
+   "classes": {
+    "klar": 975,
+    "mehrere": 1034,
+    "eindeutig": 289,
+    "knapp": 951,
+    "unsicher": 1
+   },
+   "chartApplied": 650,
+   "chartGapBB": 182.82,
+   "wallMs": 78245,
+   "usedIn": [
+    "selReg-varCz1-coach210",
+    "selReg-varCz1-varB",
+    "selReg-varCz1-varA"
+   ]
+  },
+  {
    "id": "selReg_varA_final-trapper_gemischt_100BB_s23222_2500",
    "group": "selReg",
    "hero": "varA",
@@ -5684,7 +6326,8 @@
     "selReg-varA-coach210",
     "selReg-varC-varA",
     "selReg-varB-varA",
-    "selReg-varCz-varA"
+    "selReg-varCz-varA",
+    "selReg-varCz1-varA"
    ]
   },
   {
@@ -5746,7 +6389,8 @@
     "selReg-varC2-varB",
     "selReg-varC3-varB",
     "selReg-varC5-varB",
-    "selReg-varCz-varB"
+    "selReg-varCz-varB",
+    "selReg-varCz1-varB"
    ]
   },
   {
@@ -5864,7 +6508,8 @@
     "selReg-varC2-coach210",
     "selReg-varC3-coach210",
     "selReg-varC5-coach210",
-    "selReg-varCz-coach210"
+    "selReg-varCz-coach210",
+    "selReg-varCz1-coach210"
    ]
   },
   {
@@ -6144,6 +6789,62 @@
    ]
   },
   {
+   "id": "selReg_varCz1_final-trapper_gemischt_100BB_s23222_2500",
+   "group": "selReg",
+   "hero": "varCz1",
+   "cond": "final:trapper|gemischt|100",
+   "seed": 23222,
+   "hands": 2500,
+   "decisions": 3503,
+   "invalid": 0,
+   "bb100": 110.33,
+   "bb100Adj": 114.15,
+   "sdHand": 17.48,
+   "sdHandAdj": 15.86,
+   "allinHands": 29,
+   "avgMs": 25.5,
+   "maxMs": 241,
+   "maxIters": 5000,
+   "labels": {
+    "Pot": 93,
+    "Overbet": 40,
+    "All-in": 43,
+    "check": 351,
+    "call": 61,
+    "⅓": 76,
+    "fold": 130,
+    "¾": 39,
+    "½": 43,
+    "Raise 2,5×": 4,
+    "Raise Pot": 5,
+    "andere": 1
+   },
+   "preLabels": {
+    "fold": 2012,
+    "Open": 263,
+    "call": 185,
+    "3-Bet": 68,
+    "Iso-Raise": 47,
+    "All-in": 10,
+    "4-Bet": 5,
+    "check": 27
+   },
+   "classes": {
+    "klar": 1050,
+    "mehrere": 901,
+    "knapp": 1129,
+    "eindeutig": 423
+   },
+   "chartApplied": 549,
+   "chartGapBB": 256.37,
+   "wallMs": 92094,
+   "usedIn": [
+    "selReg-varCz1-coach210",
+    "selReg-varCz1-varB",
+    "selReg-varCz1-varA"
+   ]
+  },
+  {
    "id": "selReg_varA_final-ipaggro_gemischt_100BB_s23223_2500",
    "group": "selReg",
    "hero": "varA",
@@ -6194,7 +6895,8 @@
     "selReg-varA-coach210",
     "selReg-varC-varA",
     "selReg-varB-varA",
-    "selReg-varCz-varA"
+    "selReg-varCz-varA",
+    "selReg-varCz1-varA"
    ]
   },
   {
@@ -6253,7 +6955,8 @@
     "selReg-varC2-varB",
     "selReg-varC3-varB",
     "selReg-varC5-varB",
-    "selReg-varCz-varB"
+    "selReg-varCz-varB",
+    "selReg-varCz1-varB"
    ]
   },
   {
@@ -6365,7 +7068,8 @@
     "selReg-varC2-coach210",
     "selReg-varC3-coach210",
     "selReg-varC5-coach210",
-    "selReg-varCz-coach210"
+    "selReg-varCz-coach210",
+    "selReg-varCz1-coach210"
    ]
   },
   {
@@ -6630,6 +7334,59 @@
     "selReg-varCz-coach210",
     "selReg-varCz-varB",
     "selReg-varCz-varA"
+   ]
+  },
+  {
+   "id": "selReg_varCz1_final-ipaggro_gemischt_100BB_s23223_2500",
+   "group": "selReg",
+   "hero": "varCz1",
+   "cond": "final:ipaggro|gemischt|100",
+   "seed": 23223,
+   "hands": 2500,
+   "decisions": 3552,
+   "invalid": 0,
+   "bb100": 34.46,
+   "bb100Adj": 48.47,
+   "sdHand": 17.27,
+   "sdHandAdj": 15.59,
+   "allinHands": 25,
+   "avgMs": 24.3,
+   "maxMs": 239,
+   "maxIters": 5000,
+   "labels": {
+    "check": 334,
+    "fold": 170,
+    "Pot": 113,
+    "⅓": 117,
+    "call": 31,
+    "Overbet": 44,
+    "¾": 63,
+    "All-in": 49,
+    "½": 45
+   },
+   "preLabels": {
+    "3-Bet": 67,
+    "Open": 358,
+    "4-Bet": 11,
+    "call": 185,
+    "fold": 1881,
+    "check": 36,
+    "All-in": 7,
+    "Iso-Raise": 41
+   },
+   "classes": {
+    "knapp": 1076,
+    "klar": 1071,
+    "mehrere": 1057,
+    "eindeutig": 348
+   },
+   "chartApplied": 668,
+   "chartGapBB": 325.92,
+   "wallMs": 88704,
+   "usedIn": [
+    "selReg-varCz1-coach210",
+    "selReg-varCz1-varB",
+    "selReg-varCz1-varA"
    ]
   }
  ],
@@ -7212,6 +7969,102 @@
   },
   {
    "group": "selReg",
+   "hero": "varCz1",
+   "heroName": "Variante C (abgestimmt auf Tr23/E): hybrid, sehr empfindliche Schwellen",
+   "cond": "final:ipaggro|gemischt|100",
+   "condName": "abschließend unbekannt: Positionsspieler, 100 BB",
+   "startBB": 100,
+   "runs": [
+    "selReg_varCz1_final-ipaggro_gemischt_100BB_s23223_2500"
+   ],
+   "seeds": [
+    23223
+   ],
+   "adj": {
+    "bb100": 48.47,
+    "lo": 24.25,
+    "hi": 72.69,
+    "se": 12.53,
+    "hands": 2500,
+    "blocks": 5
+   },
+   "raw": {
+    "bb100": 34.46,
+    "lo": 13.86,
+    "hi": 60,
+    "se": 11.59,
+    "hands": 2500,
+    "blocks": 5
+   },
+   "decisions": 3552,
+   "invalid": 0
+  },
+  {
+   "group": "selReg",
+   "hero": "varCz1",
+   "heroName": "Variante C (abgestimmt auf Tr23/E): hybrid, sehr empfindliche Schwellen",
+   "cond": "final:polar|gemischt|100",
+   "condName": "abschließend unbekannt: Polarisierer, 100 BB",
+   "startBB": 100,
+   "runs": [
+    "selReg_varCz1_final-polar_gemischt_100BB_s23221_2500"
+   ],
+   "seeds": [
+    23221
+   ],
+   "adj": {
+    "bb100": 14.79,
+    "lo": -7.37,
+    "hi": 43.06,
+    "se": 13.61,
+    "hands": 2500,
+    "blocks": 5
+   },
+   "raw": {
+    "bb100": 19.11,
+    "lo": -29.71,
+    "hi": 74.65,
+    "se": 27.32,
+    "hands": 2500,
+    "blocks": 5
+   },
+   "decisions": 3250,
+   "invalid": 0
+  },
+  {
+   "group": "selReg",
+   "hero": "varCz1",
+   "heroName": "Variante C (abgestimmt auf Tr23/E): hybrid, sehr empfindliche Schwellen",
+   "cond": "final:trapper|gemischt|100",
+   "condName": "abschließend unbekannt: Fallensteller, 100 BB",
+   "startBB": 100,
+   "runs": [
+    "selReg_varCz1_final-trapper_gemischt_100BB_s23222_2500"
+   ],
+   "seeds": [
+    23222
+   ],
+   "adj": {
+    "bb100": 114.15,
+    "lo": 48.71,
+    "hi": 191.63,
+    "se": 36.21,
+    "hands": 2500,
+    "blocks": 5
+   },
+   "raw": {
+    "bb100": 110.33,
+    "lo": 50.19,
+    "hi": 170.47,
+    "se": 31.49,
+    "hands": 2500,
+    "blocks": 5
+   },
+   "decisions": 3503,
+   "invalid": 0
+  },
+  {
+   "group": "selReg",
    "hero": "varCz",
    "heroName": "Variante C (abgestimmt auf Tr23): hybrid, empfindlichere Schwellen",
    "cond": "final:ipaggro|gemischt|100",
@@ -7225,17 +8078,17 @@
    ],
    "adj": {
     "bb100": 48.3,
-    "lo": 22.77,
+    "lo": 22.29,
     "hi": 73.82,
-    "se": 13.37,
+    "se": 13.36,
     "hands": 2500,
     "blocks": 5
    },
    "raw": {
     "bb100": 33.17,
     "lo": 11.59,
-    "hi": 62.51,
-    "se": 13.28,
+    "hi": 63.3,
+    "se": 13.45,
     "hands": 2500,
     "blocks": 5
    },
@@ -7258,16 +8111,16 @@
    "adj": {
     "bb100": 10.95,
     "lo": -11.6,
-    "hi": 39.11,
-    "se": 13.29,
+    "hi": 39.98,
+    "se": 13.55,
     "hands": 2500,
     "blocks": 5
    },
    "raw": {
     "bb100": 15.04,
-    "lo": -37.53,
-    "hi": 73.21,
-    "se": 27.65,
+    "lo": -33.48,
+    "hi": 76.95,
+    "se": 28.19,
     "hands": 2500,
     "blocks": 5
    },
@@ -7291,7 +8144,7 @@
     "bb100": 105.51,
     "lo": 40.6,
     "hi": 182.65,
-    "se": 36.04,
+    "se": 35.39,
     "hands": 2500,
     "blocks": 5
    },
@@ -7299,7 +8152,7 @@
     "bb100": 101.58,
     "lo": 42.08,
     "hi": 161.07,
-    "se": 31.07,
+    "se": 30.65,
     "hands": 2500,
     "blocks": 5
    },
@@ -7321,17 +8174,17 @@
    ],
    "adj": {
     "bb100": 51.97,
-    "lo": 22.87,
+    "lo": 23.2,
     "hi": 80.75,
-    "se": 15,
+    "se": 14.86,
     "hands": 2500,
     "blocks": 5
    },
    "raw": {
     "bb100": 36.84,
-    "lo": 13.4,
+    "lo": 10.72,
     "hi": 69.43,
-    "se": 14.86,
+    "se": 15.16,
     "hands": 2500,
     "blocks": 5
    },
@@ -7353,17 +8206,17 @@
    ],
    "adj": {
     "bb100": 10.83,
-    "lo": -13.24,
+    "lo": -13.91,
     "hi": 42.12,
-    "se": 14.45,
+    "se": 14.5,
     "hands": 2500,
     "blocks": 5
    },
    "raw": {
     "bb100": 14.92,
-    "lo": -35.39,
+    "lo": -39.2,
     "hi": 78.94,
-    "se": 29.12,
+    "se": 29.14,
     "hands": 2500,
     "blocks": 5
    },
@@ -7386,16 +8239,16 @@
    "adj": {
     "bb100": 103.43,
     "lo": 31.25,
-    "hi": 178.26,
-    "se": 36.2,
+    "hi": 171.14,
+    "se": 36.53,
     "hands": 2500,
     "blocks": 5
    },
    "raw": {
     "bb100": 98.3,
-    "lo": 38.93,
+    "lo": 33.07,
     "hi": 157.66,
-    "se": 31.45,
+    "se": 32.36,
     "hands": 2500,
     "blocks": 5
    },
@@ -7418,16 +8271,16 @@
    "adj": {
     "bb100": 70.33,
     "lo": 57.82,
-    "hi": 91.77,
-    "se": 9.48,
+    "hi": 90.61,
+    "se": 9.05,
     "hands": 2500,
     "blocks": 5
    },
    "raw": {
     "bb100": 50.24,
-    "lo": 19.07,
-    "hi": 82.3,
-    "se": 17.64,
+    "lo": 15.82,
+    "hi": 81.61,
+    "se": 17.01,
     "hands": 2500,
     "blocks": 5
    },
@@ -7449,17 +8302,17 @@
    ],
    "adj": {
     "bb100": 34.67,
-    "lo": 14.19,
-    "hi": 62.41,
-    "se": 12.27,
+    "lo": 13.18,
+    "hi": 61.99,
+    "se": 12.17,
     "hands": 2500,
     "blocks": 5
    },
    "raw": {
     "bb100": 43.91,
     "lo": -9.38,
-    "hi": 100.61,
-    "se": 27.19,
+    "hi": 100.22,
+    "se": 27.25,
     "hands": 2500,
     "blocks": 5
    },
@@ -7481,17 +8334,17 @@
    ],
    "adj": {
     "bb100": 115.82,
-    "lo": 32.35,
-    "hi": 194.97,
-    "se": 42.52,
+    "lo": 37.23,
+    "hi": 201.1,
+    "se": 42.46,
     "hands": 2500,
     "blocks": 5
    },
    "raw": {
     "bb100": 120.64,
-    "lo": 48.16,
+    "lo": 53.22,
     "hi": 188.06,
-    "se": 35.59,
+    "se": 35.54,
     "hands": 2500,
     "blocks": 5
    },
@@ -7523,17 +8376,17 @@
    ],
    "adj": {
     "bb100": 205.87,
-    "lo": 186.01,
-    "hi": 225.7,
-    "se": 10.16,
+    "lo": 185.51,
+    "hi": 224.45,
+    "se": 9.98,
     "hands": 15000,
     "blocks": 30
    },
    "raw": {
     "bb100": 185.48,
-    "lo": 156.48,
-    "hi": 215.01,
-    "se": 14.81,
+    "lo": 156.55,
+    "hi": 214.36,
+    "se": 14.85,
     "hands": 15000,
     "blocks": 30
    },
@@ -7565,17 +8418,17 @@
    ],
    "adj": {
     "bb100": 205.98,
-    "lo": 185.81,
-    "hi": 225.09,
-    "se": 10.12,
+    "lo": 185.1,
+    "hi": 225.33,
+    "se": 10.18,
     "hands": 15000,
     "blocks": 30
    },
    "raw": {
     "bb100": 185.59,
-    "lo": 157.15,
-    "hi": 214.57,
-    "se": 14.65,
+    "lo": 155.31,
+    "hi": 213.91,
+    "se": 14.8,
     "hands": 15000,
     "blocks": 30
    },
@@ -7607,17 +8460,17 @@
    ],
    "adj": {
     "bb100": 167.72,
-    "lo": 146.49,
-    "hi": 188.99,
-    "se": 11.11,
+    "lo": 145.25,
+    "hi": 189.58,
+    "se": 11.18,
     "hands": 15000,
     "blocks": 30
    },
    "raw": {
     "bb100": 155.38,
-    "lo": 125.83,
-    "hi": 184.65,
-    "se": 15.48,
+    "lo": 125.14,
+    "hi": 186.78,
+    "se": 15.6,
     "hands": 15000,
     "blocks": 30
    },
@@ -7649,17 +8502,17 @@
    ],
    "adj": {
     "bb100": 189.93,
-    "lo": 168.41,
-    "hi": 209.92,
-    "se": 10.67,
+    "lo": 168.67,
+    "hi": 210.87,
+    "se": 10.91,
     "hands": 15000,
     "blocks": 30
    },
    "raw": {
     "bb100": 173.56,
-    "lo": 143.02,
-    "hi": 204.43,
-    "se": 16.05,
+    "lo": 143.19,
+    "hi": 205.78,
+    "se": 15.97,
     "hands": 15000,
     "blocks": 30
    },
@@ -7691,17 +8544,17 @@
    ],
    "adj": {
     "bb100": 194.43,
-    "lo": 172.24,
-    "hi": 215.21,
-    "se": 11.01,
+    "lo": 172.14,
+    "hi": 216.15,
+    "se": 11.16,
     "hands": 15000,
     "blocks": 30
    },
    "raw": {
     "bb100": 177,
-    "lo": 146.77,
-    "hi": 205.87,
-    "se": 15.14,
+    "lo": 146.26,
+    "hi": 206.8,
+    "se": 15.39,
     "hands": 15000,
     "blocks": 30
    },
@@ -7733,21 +8586,63 @@
    ],
    "adj": {
     "bb100": 191.29,
-    "lo": 169.16,
-    "hi": 212.2,
-    "se": 10.78,
+    "lo": 169.19,
+    "hi": 212.33,
+    "se": 11.04,
     "hands": 15000,
     "blocks": 30
    },
    "raw": {
     "bb100": 173.38,
-    "lo": 142.74,
-    "hi": 203.88,
-    "se": 15.77,
+    "lo": 141.94,
+    "hi": 205.48,
+    "se": 15.83,
     "hands": 15000,
     "blocks": 30
    },
    "decisions": 21157,
+   "invalid": 0
+  },
+  {
+   "group": "selVa",
+   "hero": "varCz1",
+   "heroName": "Variante C (abgestimmt auf Tr23/E): hybrid, sehr empfindliche Schwellen",
+   "cond": "p23:Va|gemischt|100",
+   "condName": "p23:Va, 100 BB",
+   "startBB": 100,
+   "runs": [
+    "selVa_varCz1_p23-Va_gemischt_100BB_s23201_2500",
+    "selVa_varCz1_p23-Va_gemischt_100BB_s23202_2500",
+    "selVa_varCz1_p23-Va_gemischt_100BB_s23203_2500",
+    "selVa_varCz1_p23-Va_gemischt_100BB_s23204_2500",
+    "selVa_varCz1_p23-Va_gemischt_100BB_s23205_2500",
+    "selVa_varCz1_p23-Va_gemischt_100BB_s23206_2500"
+   ],
+   "seeds": [
+    23201,
+    23202,
+    23203,
+    23204,
+    23205,
+    23206
+   ],
+   "adj": {
+    "bb100": 199.92,
+    "lo": 180.63,
+    "hi": 219.57,
+    "se": 10.18,
+    "hands": 15000,
+    "blocks": 30
+   },
+   "raw": {
+    "bb100": 181.56,
+    "lo": 154.48,
+    "hi": 209.37,
+    "se": 14.07,
+    "hands": 15000,
+    "blocks": 30
+   },
+   "decisions": 21082,
    "invalid": 0
   },
   {
@@ -7775,17 +8670,17 @@
    ],
    "adj": {
     "bb100": 196.68,
-    "lo": 175.37,
-    "hi": 217.36,
-    "se": 10.74,
+    "lo": 176.09,
+    "hi": 217.4,
+    "se": 10.48,
     "hands": 15000,
     "blocks": 30
    },
    "raw": {
     "bb100": 177.23,
-    "lo": 147.36,
-    "hi": 208.09,
-    "se": 15.31,
+    "lo": 148.3,
+    "hi": 206.17,
+    "se": 15.2,
     "hands": 15000,
     "blocks": 30
    },
@@ -7817,17 +8712,17 @@
    ],
    "adj": {
     "bb100": 195.06,
-    "lo": 172.26,
-    "hi": 216.77,
-    "se": 11.29,
+    "lo": 173.81,
+    "hi": 216.81,
+    "se": 10.95,
     "hands": 15000,
     "blocks": 30
    },
    "raw": {
     "bb100": 177.63,
-    "lo": 146.74,
-    "hi": 207.75,
-    "se": 15.49,
+    "lo": 149.27,
+    "hi": 208.94,
+    "se": 15.53,
     "hands": 15000,
     "blocks": 30
    },
@@ -7859,17 +8754,17 @@
    ],
    "adj": {
     "bb100": 179.15,
-    "lo": 158.9,
-    "hi": 199.08,
-    "se": 10.08,
+    "lo": 160.33,
+    "hi": 198.62,
+    "se": 9.76,
     "hands": 15000,
     "blocks": 30
    },
    "raw": {
     "bb100": 166.83,
-    "lo": 138.06,
-    "hi": 197.56,
-    "se": 15.12,
+    "lo": 137.94,
+    "hi": 197.36,
+    "se": 14.92,
     "hands": 15000,
     "blocks": 30
    },
@@ -7897,17 +8792,17 @@
    ],
    "adj": {
     "bb100": 38.86,
-    "lo": 23.33,
-    "hi": 55.95,
-    "se": 8.11,
+    "lo": 23.57,
+    "hi": 55.62,
+    "se": 8,
     "hands": 10000,
     "blocks": 20
    },
    "raw": {
     "bb100": 43.21,
-    "lo": 24.61,
-    "hi": 61.89,
-    "se": 9.49,
+    "lo": 24.45,
+    "hi": 62.04,
+    "se": 9.57,
     "hands": 10000,
     "blocks": 20
    },
@@ -7935,17 +8830,17 @@
    ],
    "adj": {
     "bb100": 38.11,
-    "lo": 22.5,
-    "hi": 55.43,
-    "se": 8.39,
+    "lo": 22.09,
+    "hi": 54.92,
+    "se": 8.33,
     "hands": 10000,
     "blocks": 20
    },
    "raw": {
     "bb100": 41.68,
-    "lo": 21.81,
-    "hi": 62.24,
-    "se": 10.2,
+    "lo": 22.5,
+    "hi": 60.65,
+    "se": 10.05,
     "hands": 10000,
     "blocks": 20
    },
@@ -7973,17 +8868,17 @@
    ],
    "adj": {
     "bb100": 68.99,
-    "lo": 51.4,
-    "hi": 87.56,
-    "se": 9.16,
+    "lo": 51.42,
+    "hi": 88.47,
+    "se": 9.36,
     "hands": 10000,
     "blocks": 20
    },
    "raw": {
     "bb100": 75.49,
-    "lo": 54.14,
-    "hi": 96.99,
-    "se": 10.78,
+    "lo": 54.85,
+    "hi": 98.79,
+    "se": 11.29,
     "hands": 10000,
     "blocks": 20
    },
@@ -8011,17 +8906,17 @@
    ],
    "adj": {
     "bb100": 48.08,
-    "lo": 31.07,
-    "hi": 67.84,
-    "se": 9.56,
+    "lo": 30.62,
+    "hi": 67.57,
+    "se": 9.51,
     "hands": 10000,
     "blocks": 20
    },
    "raw": {
     "bb100": 51.71,
-    "lo": 31.15,
-    "hi": 74.73,
-    "se": 11.27,
+    "lo": 30.38,
+    "hi": 74.85,
+    "se": 11.2,
     "hands": 10000,
     "blocks": 20
    },
@@ -8049,17 +8944,17 @@
    ],
    "adj": {
     "bb100": 68.61,
-    "lo": 51.83,
-    "hi": 87.23,
-    "se": 9.01,
+    "lo": 52.84,
+    "hi": 88.04,
+    "se": 9,
     "hands": 10000,
     "blocks": 20
    },
    "raw": {
     "bb100": 73.25,
-    "lo": 52.75,
-    "hi": 96.28,
-    "se": 11.11,
+    "lo": 53.12,
+    "hi": 96.75,
+    "se": 11.17,
     "hands": 10000,
     "blocks": 20
    },
@@ -8087,21 +8982,59 @@
    ],
    "adj": {
     "bb100": 51.19,
-    "lo": 34.03,
-    "hi": 68.39,
-    "se": 8.94,
+    "lo": 35.09,
+    "hi": 69.66,
+    "se": 8.89,
     "hands": 10000,
     "blocks": 20
    },
    "raw": {
     "bb100": 55,
-    "lo": 33.86,
-    "hi": 76.03,
-    "se": 10.75,
+    "lo": 34.82,
+    "hi": 76.31,
+    "se": 10.71,
     "hands": 10000,
     "blocks": 20
    },
    "decisions": 14060,
+   "invalid": 0
+  },
+  {
+   "group": "selV",
+   "hero": "varCz1",
+   "heroName": "Variante C (abgestimmt auf Tr23/E): hybrid, sehr empfindliche Schwellen",
+   "cond": "bots|gemischt|100|V",
+   "condName": "Gegner-KI, gemischt, 100 BB",
+   "startBB": 100,
+   "runs": [
+    "selV_varCz1_bots_gemischt_100BB_poolV_s23211_2500",
+    "selV_varCz1_bots_gemischt_100BB_poolV_s23212_2500",
+    "selV_varCz1_bots_gemischt_100BB_poolV_s23213_2500",
+    "selV_varCz1_bots_gemischt_100BB_poolV_s23214_2500"
+   ],
+   "seeds": [
+    23211,
+    23212,
+    23213,
+    23214
+   ],
+   "adj": {
+    "bb100": 56.01,
+    "lo": 39,
+    "hi": 74.5,
+    "se": 9.05,
+    "hands": 10000,
+    "blocks": 20
+   },
+   "raw": {
+    "bb100": 60.34,
+    "lo": 38.46,
+    "hi": 83.76,
+    "se": 11.57,
+    "hands": 10000,
+    "blocks": 20
+   },
+   "decisions": 13890,
    "invalid": 0
   },
   {
@@ -8125,17 +9058,17 @@
    ],
    "adj": {
     "bb100": 66.45,
-    "lo": 49.31,
-    "hi": 86.94,
-    "se": 9.5,
+    "lo": 48.73,
+    "hi": 86.19,
+    "se": 9.52,
     "hands": 10000,
     "blocks": 20
    },
    "raw": {
     "bb100": 71.76,
-    "lo": 49.19,
-    "hi": 97.44,
-    "se": 12.46,
+    "lo": 48.61,
+    "hi": 96.65,
+    "se": 12.28,
     "hands": 10000,
     "blocks": 20
    },
@@ -8163,17 +9096,17 @@
    ],
    "adj": {
     "bb100": 70.05,
-    "lo": 52.58,
-    "hi": 89.35,
-    "se": 9.4,
+    "lo": 52.53,
+    "hi": 88.79,
+    "se": 9.37,
     "hands": 10000,
     "blocks": 20
    },
    "raw": {
     "bb100": 75.13,
-    "lo": 53.84,
-    "hi": 98.55,
-    "se": 11.28,
+    "lo": 52.62,
+    "hi": 99.09,
+    "se": 11.59,
     "hands": 10000,
     "blocks": 20
    },
@@ -8201,17 +9134,17 @@
    ],
    "adj": {
     "bb100": 47.35,
-    "lo": 30.69,
-    "hi": 66.52,
-    "se": 9.41,
+    "lo": 30.58,
+    "hi": 66.25,
+    "se": 9.32,
     "hands": 10000,
     "blocks": 20
    },
    "raw": {
     "bb100": 52.25,
-    "lo": 32.84,
-    "hi": 74.72,
-    "se": 10.81,
+    "lo": 33.17,
+    "hi": 74.26,
+    "se": 10.68,
     "hands": 10000,
     "blocks": 20
    },
@@ -8299,9 +9232,11 @@
     "selVa-varC3-coach210",
     "selVa-varC5-coach210",
     "selVa-varCz-coach210",
+    "selVa-varCz1-coach210",
     "selVa-varC-varA",
     "selVa-varB-varA",
-    "selVa-varCz-varA"
+    "selVa-varCz-varA",
+    "selVa-varCz1-varA"
    ]
   },
   {
@@ -8373,9 +9308,11 @@
     "selV-varC3-coach210",
     "selV-varC5-coach210",
     "selV-varCz-coach210",
+    "selV-varCz1-coach210",
     "selV-varC-varA",
     "selV-varB-varA",
-    "selV-varCz-varA"
+    "selV-varCz-varA",
+    "selV-varCz1-varA"
    ]
   },
   {
@@ -8481,9 +9418,11 @@
     "selReg-varC3-coach210",
     "selReg-varC5-coach210",
     "selReg-varCz-coach210",
+    "selReg-varCz1-coach210",
     "selReg-varC-varA",
     "selReg-varB-varA",
-    "selReg-varCz-varA"
+    "selReg-varCz-varA",
+    "selReg-varCz1-varA"
    ]
   },
   {
@@ -8565,13 +9504,15 @@
     "selVa-varC3-coach210",
     "selVa-varC5-coach210",
     "selVa-varCz-coach210",
+    "selVa-varCz1-coach210",
     "selVa-varC-varB",
     "selVa-varB-varA",
     "selVa-varS-varB",
     "selVa-varC2-varB",
     "selVa-varC3-varB",
     "selVa-varC5-varB",
-    "selVa-varCz-varB"
+    "selVa-varCz-varB",
+    "selVa-varCz1-varB"
    ]
   },
   {
@@ -8643,13 +9584,15 @@
     "selV-varC3-coach210",
     "selV-varC5-coach210",
     "selV-varCz-coach210",
+    "selV-varCz1-coach210",
     "selV-varC-varB",
     "selV-varB-varA",
     "selV-varS-varB",
     "selV-varC2-varB",
     "selV-varC3-varB",
     "selV-varC5-varB",
-    "selV-varCz-varB"
+    "selV-varCz-varB",
+    "selV-varCz1-varB"
    ]
   },
   {
@@ -8755,13 +9698,15 @@
     "selReg-varC3-coach210",
     "selReg-varC5-coach210",
     "selReg-varCz-coach210",
+    "selReg-varCz1-coach210",
     "selReg-varC-varB",
     "selReg-varB-varA",
     "selReg-varS-varB",
     "selReg-varC2-varB",
     "selReg-varC3-varB",
     "selReg-varC5-varB",
-    "selReg-varCz-varB"
+    "selReg-varCz-varB",
+    "selReg-varCz1-varB"
    ]
   },
   {
@@ -8843,6 +9788,7 @@
     "selVa-varC3-coach210",
     "selVa-varC5-coach210",
     "selVa-varCz-coach210",
+    "selVa-varCz1-coach210",
     "selVa-varC-varB",
     "selVa-varC-varA",
     "selVa-varC5-varC"
@@ -8917,6 +9863,7 @@
     "selV-varC3-coach210",
     "selV-varC5-coach210",
     "selV-varCz-coach210",
+    "selV-varCz1-coach210",
     "selV-varC-varB",
     "selV-varC-varA",
     "selV-varC5-varC"
@@ -9025,6 +9972,7 @@
     "selReg-varC3-coach210",
     "selReg-varC5-coach210",
     "selReg-varCz-coach210",
+    "selReg-varCz1-coach210",
     "selReg-varC-varB",
     "selReg-varC-varA",
     "selReg-varC5-varC"
@@ -9109,6 +10057,7 @@
     "selVa-varC3-coach210",
     "selVa-varC5-coach210",
     "selVa-varCz-coach210",
+    "selVa-varCz1-coach210",
     "selVa-varS-varB"
    ]
   },
@@ -9181,6 +10130,7 @@
     "selV-varC3-coach210",
     "selV-varC5-coach210",
     "selV-varCz-coach210",
+    "selV-varCz1-coach210",
     "selV-varS-varB"
    ]
   },
@@ -9287,6 +10237,7 @@
     "selReg-varC3-coach210",
     "selReg-varC5-coach210",
     "selReg-varCz-coach210",
+    "selReg-varCz1-coach210",
     "selReg-varS-varB"
    ]
   },
@@ -9369,6 +10320,7 @@
     "selVa-varC3-coach210",
     "selVa-varC5-coach210",
     "selVa-varCz-coach210",
+    "selVa-varCz1-coach210",
     "selVa-varC2-varB"
    ]
   },
@@ -9441,6 +10393,7 @@
     "selV-varC3-coach210",
     "selV-varC5-coach210",
     "selV-varCz-coach210",
+    "selV-varCz1-coach210",
     "selV-varC2-varB"
    ]
   },
@@ -9547,6 +10500,7 @@
     "selReg-varC3-coach210",
     "selReg-varC5-coach210",
     "selReg-varCz-coach210",
+    "selReg-varCz1-coach210",
     "selReg-varC2-varB"
    ]
   },
@@ -9629,6 +10583,7 @@
     "selVa-varC3-varB",
     "selVa-varC5-varB",
     "selVa-varCz-varB",
+    "selVa-varCz1-varB",
     "selVa-varC-coach210",
     "selVa-varC-varA",
     "selVa-varC5-varC"
@@ -9703,6 +10658,7 @@
     "selV-varC3-varB",
     "selV-varC5-varB",
     "selV-varCz-varB",
+    "selV-varCz1-varB",
     "selV-varC-coach210",
     "selV-varC-varA",
     "selV-varC5-varC"
@@ -9811,6 +10767,7 @@
     "selReg-varC3-varB",
     "selReg-varC5-varB",
     "selReg-varCz-varB",
+    "selReg-varCz1-varB",
     "selReg-varC-coach210",
     "selReg-varC-varA",
     "selReg-varC5-varC"
@@ -9891,6 +10848,7 @@
     "selVa-varA-coach210",
     "selVa-varB-varA",
     "selVa-varCz-varA",
+    "selVa-varCz1-varA",
     "selVa-varC-coach210",
     "selVa-varC-varB",
     "selVa-varC5-varC"
@@ -9961,6 +10919,7 @@
     "selV-varA-coach210",
     "selV-varB-varA",
     "selV-varCz-varA",
+    "selV-varCz1-varA",
     "selV-varC-coach210",
     "selV-varC-varB",
     "selV-varC5-varC"
@@ -10065,6 +11024,7 @@
     "selReg-varA-coach210",
     "selReg-varB-varA",
     "selReg-varCz-varA",
+    "selReg-varCz1-varA",
     "selReg-varC-coach210",
     "selReg-varC-varB",
     "selReg-varC5-varC"
@@ -10145,13 +11105,15 @@
     "selVa-varA-coach210",
     "selVa-varC-varA",
     "selVa-varCz-varA",
+    "selVa-varCz1-varA",
     "selVa-varB-coach210",
     "selVa-varC-varB",
     "selVa-varS-varB",
     "selVa-varC2-varB",
     "selVa-varC3-varB",
     "selVa-varC5-varB",
-    "selVa-varCz-varB"
+    "selVa-varCz-varB",
+    "selVa-varCz1-varB"
    ]
   },
   {
@@ -10219,13 +11181,15 @@
     "selV-varA-coach210",
     "selV-varC-varA",
     "selV-varCz-varA",
+    "selV-varCz1-varA",
     "selV-varB-coach210",
     "selV-varC-varB",
     "selV-varS-varB",
     "selV-varC2-varB",
     "selV-varC3-varB",
     "selV-varC5-varB",
-    "selV-varCz-varB"
+    "selV-varCz-varB",
+    "selV-varCz1-varB"
    ]
   },
   {
@@ -10327,13 +11291,15 @@
     "selReg-varA-coach210",
     "selReg-varC-varA",
     "selReg-varCz-varA",
+    "selReg-varCz1-varA",
     "selReg-varB-coach210",
     "selReg-varC-varB",
     "selReg-varS-varB",
     "selReg-varC2-varB",
     "selReg-varC3-varB",
     "selReg-varC5-varB",
-    "selReg-varCz-varB"
+    "selReg-varCz-varB",
+    "selReg-varCz1-varB"
    ]
   },
   {
@@ -10415,6 +11381,7 @@
     "selVa-varC3-varB",
     "selVa-varC5-varB",
     "selVa-varCz-varB",
+    "selVa-varCz1-varB",
     "selVa-varS-coach210"
    ]
   },
@@ -10487,6 +11454,7 @@
     "selV-varC3-varB",
     "selV-varC5-varB",
     "selV-varCz-varB",
+    "selV-varCz1-varB",
     "selV-varS-coach210"
    ]
   },
@@ -10593,6 +11561,7 @@
     "selReg-varC3-varB",
     "selReg-varC5-varB",
     "selReg-varCz-varB",
+    "selReg-varCz1-varB",
     "selReg-varS-coach210"
    ]
   },
@@ -10675,6 +11644,7 @@
     "selVa-varC3-varB",
     "selVa-varC5-varB",
     "selVa-varCz-varB",
+    "selVa-varCz1-varB",
     "selVa-varC2-coach210"
    ]
   },
@@ -10747,6 +11717,7 @@
     "selV-varC3-varB",
     "selV-varC5-varB",
     "selV-varCz-varB",
+    "selV-varCz1-varB",
     "selV-varC2-coach210"
    ]
   },
@@ -10853,6 +11824,7 @@
     "selReg-varC3-varB",
     "selReg-varC5-varB",
     "selReg-varCz-varB",
+    "selReg-varCz1-varB",
     "selReg-varC2-coach210"
    ]
   },
@@ -10935,6 +11907,7 @@
     "selVa-varC2-coach210",
     "selVa-varC5-coach210",
     "selVa-varCz-coach210",
+    "selVa-varCz1-coach210",
     "selVa-varC3-varB"
    ]
   },
@@ -11007,6 +11980,7 @@
     "selV-varC2-coach210",
     "selV-varC5-coach210",
     "selV-varCz-coach210",
+    "selV-varCz1-coach210",
     "selV-varC3-varB"
    ]
   },
@@ -11113,6 +12087,7 @@
     "selReg-varC2-coach210",
     "selReg-varC5-coach210",
     "selReg-varCz-coach210",
+    "selReg-varCz1-coach210",
     "selReg-varC3-varB"
    ]
   },
@@ -11195,6 +12170,7 @@
     "selVa-varC2-varB",
     "selVa-varC5-varB",
     "selVa-varCz-varB",
+    "selVa-varCz1-varB",
     "selVa-varC3-coach210"
    ]
   },
@@ -11267,6 +12243,7 @@
     "selV-varC2-varB",
     "selV-varC5-varB",
     "selV-varCz-varB",
+    "selV-varCz1-varB",
     "selV-varC3-coach210"
    ]
   },
@@ -11373,6 +12350,7 @@
     "selReg-varC2-varB",
     "selReg-varC5-varB",
     "selReg-varCz-varB",
+    "selReg-varCz1-varB",
     "selReg-varC3-coach210"
    ]
   },
@@ -11455,6 +12433,7 @@
     "selVa-varC2-coach210",
     "selVa-varC3-coach210",
     "selVa-varCz-coach210",
+    "selVa-varCz1-coach210",
     "selVa-varC5-varB",
     "selVa-varC5-varC"
    ]
@@ -11528,6 +12507,7 @@
     "selV-varC2-coach210",
     "selV-varC3-coach210",
     "selV-varCz-coach210",
+    "selV-varCz1-coach210",
     "selV-varC5-varB",
     "selV-varC5-varC"
    ]
@@ -11635,6 +12615,7 @@
     "selReg-varC2-coach210",
     "selReg-varC3-coach210",
     "selReg-varCz-coach210",
+    "selReg-varCz1-coach210",
     "selReg-varC5-varB",
     "selReg-varC5-varC"
    ]
@@ -11718,6 +12699,7 @@
     "selVa-varC2-varB",
     "selVa-varC3-varB",
     "selVa-varCz-varB",
+    "selVa-varCz1-varB",
     "selVa-varC5-coach210",
     "selVa-varC5-varC"
    ]
@@ -11791,6 +12773,7 @@
     "selV-varC2-varB",
     "selV-varC3-varB",
     "selV-varCz-varB",
+    "selV-varCz1-varB",
     "selV-varC5-coach210",
     "selV-varC5-varC"
    ]
@@ -11898,6 +12881,7 @@
     "selReg-varC2-varB",
     "selReg-varC3-varB",
     "selReg-varCz-varB",
+    "selReg-varCz1-varB",
     "selReg-varC5-coach210",
     "selReg-varC5-varC"
    ]
@@ -12232,6 +13216,7 @@
     "selVa-varC2-coach210",
     "selVa-varC3-coach210",
     "selVa-varC5-coach210",
+    "selVa-varCz1-coach210",
     "selVa-varCz-varB",
     "selVa-varCz-varA"
    ]
@@ -12305,6 +13290,7 @@
     "selV-varC2-coach210",
     "selV-varC3-coach210",
     "selV-varC5-coach210",
+    "selV-varCz1-coach210",
     "selV-varCz-varB",
     "selV-varCz-varA"
    ]
@@ -12412,6 +13398,7 @@
     "selReg-varC2-coach210",
     "selReg-varC3-coach210",
     "selReg-varC5-coach210",
+    "selReg-varCz1-coach210",
     "selReg-varCz-varB",
     "selReg-varCz-varA"
    ]
@@ -12495,6 +13482,7 @@
     "selVa-varC2-varB",
     "selVa-varC3-varB",
     "selVa-varC5-varB",
+    "selVa-varCz1-varB",
     "selVa-varCz-coach210",
     "selVa-varCz-varA"
    ]
@@ -12568,6 +13556,7 @@
     "selV-varC2-varB",
     "selV-varC3-varB",
     "selV-varC5-varB",
+    "selV-varCz1-varB",
     "selV-varCz-coach210",
     "selV-varCz-varA"
    ]
@@ -12675,6 +13664,7 @@
     "selReg-varC2-varB",
     "selReg-varC3-varB",
     "selReg-varC5-varB",
+    "selReg-varCz1-varB",
     "selReg-varCz-coach210",
     "selReg-varCz-varA"
    ]
@@ -12754,6 +13744,7 @@
     "selVa-varA-coach210",
     "selVa-varC-varA",
     "selVa-varB-varA",
+    "selVa-varCz1-varA",
     "selVa-varCz-coach210",
     "selVa-varCz-varB"
    ]
@@ -12823,6 +13814,7 @@
     "selV-varA-coach210",
     "selV-varC-varA",
     "selV-varB-varA",
+    "selV-varCz1-varA",
     "selV-varCz-coach210",
     "selV-varCz-varB"
    ]
@@ -12926,8 +13918,795 @@
     "selReg-varA-coach210",
     "selReg-varC-varA",
     "selReg-varB-varA",
+    "selReg-varCz1-varA",
     "selReg-varCz-coach210",
     "selReg-varCz-varB"
+   ]
+  },
+  {
+   "id": "selVa-varCz1-coach210",
+   "title": "Modellwahl Va23: Variante C (abgestimmt auf Tr23/E): hybrid, sehr empfindliche Schwellen gegen Coach 2.1.0 (exploitativ)",
+   "group": "selVa",
+   "a": "varCz1",
+   "b": "coach210",
+   "aName": "Variante C (abgestimmt auf Tr23/E): hybrid, sehr empfindliche Schwellen",
+   "bName": "Coach 2.1.0 (exploitativ)",
+   "adj": {
+    "diff": -5.94,
+    "lo": -12.46,
+    "hi": 0.47,
+    "se": 3.36,
+    "hands": 15000,
+    "pairs": 6,
+    "blocks": 30
+   },
+   "raw": {
+    "diff": -3.91,
+    "lo": -10.52,
+    "hi": 2.5,
+    "se": 3.42,
+    "hands": 15000,
+    "pairs": 6,
+    "blocks": 30
+   },
+   "decisionsA": 21082,
+   "decisionsB": 21061,
+   "invalidA": 0,
+   "invalidB": 0,
+   "seeds": [
+    23201,
+    23202,
+    23203,
+    23204,
+    23205,
+    23206
+   ],
+   "runsA": [
+    "selVa_varCz1_p23-Va_gemischt_100BB_s23201_2500",
+    "selVa_varCz1_p23-Va_gemischt_100BB_s23202_2500",
+    "selVa_varCz1_p23-Va_gemischt_100BB_s23203_2500",
+    "selVa_varCz1_p23-Va_gemischt_100BB_s23204_2500",
+    "selVa_varCz1_p23-Va_gemischt_100BB_s23205_2500",
+    "selVa_varCz1_p23-Va_gemischt_100BB_s23206_2500"
+   ],
+   "runsB": [
+    "selVa_coach210_p23-Va_gemischt_100BB_s23201_2500",
+    "selVa_coach210_p23-Va_gemischt_100BB_s23202_2500",
+    "selVa_coach210_p23-Va_gemischt_100BB_s23203_2500",
+    "selVa_coach210_p23-Va_gemischt_100BB_s23204_2500",
+    "selVa_coach210_p23-Va_gemischt_100BB_s23205_2500",
+    "selVa_coach210_p23-Va_gemischt_100BB_s23206_2500"
+   ],
+   "verdict": "nicht belegt",
+   "aAhead": 1,
+   "split": {},
+   "sharedRuns": [
+    "selVa_coach210_p23-Va_gemischt_100BB_s23201_2500",
+    "selVa_coach210_p23-Va_gemischt_100BB_s23202_2500",
+    "selVa_coach210_p23-Va_gemischt_100BB_s23203_2500",
+    "selVa_coach210_p23-Va_gemischt_100BB_s23204_2500",
+    "selVa_coach210_p23-Va_gemischt_100BB_s23205_2500",
+    "selVa_coach210_p23-Va_gemischt_100BB_s23206_2500",
+    "selVa_varCz1_p23-Va_gemischt_100BB_s23201_2500",
+    "selVa_varCz1_p23-Va_gemischt_100BB_s23202_2500",
+    "selVa_varCz1_p23-Va_gemischt_100BB_s23203_2500",
+    "selVa_varCz1_p23-Va_gemischt_100BB_s23204_2500",
+    "selVa_varCz1_p23-Va_gemischt_100BB_s23205_2500",
+    "selVa_varCz1_p23-Va_gemischt_100BB_s23206_2500"
+   ],
+   "sharedWith": [
+    "selVa-varA-coach210",
+    "selVa-varB-coach210",
+    "selVa-varC-coach210",
+    "selVa-varS-coach210",
+    "selVa-varC2-coach210",
+    "selVa-varC3-coach210",
+    "selVa-varC5-coach210",
+    "selVa-varCz-coach210",
+    "selVa-varCz1-varB",
+    "selVa-varCz1-varA"
+   ]
+  },
+  {
+   "id": "selV-varCz1-coach210",
+   "title": "Modellwahl Gegner-KI V: Variante C (abgestimmt auf Tr23/E): hybrid, sehr empfindliche Schwellen gegen Coach 2.1.0 (exploitativ)",
+   "group": "selV",
+   "a": "varCz1",
+   "b": "coach210",
+   "aName": "Variante C (abgestimmt auf Tr23/E): hybrid, sehr empfindliche Schwellen",
+   "bName": "Coach 2.1.0 (exploitativ)",
+   "adj": {
+    "diff": 17.15,
+    "lo": 6.92,
+    "hi": 27.62,
+    "se": 5.32,
+    "hands": 10000,
+    "pairs": 4,
+    "blocks": 20
+   },
+   "raw": {
+    "diff": 17.13,
+    "lo": 9.1,
+    "hi": 26.06,
+    "se": 4.34,
+    "hands": 10000,
+    "pairs": 4,
+    "blocks": 20
+   },
+   "decisionsA": 13890,
+   "decisionsB": 13926,
+   "invalidA": 0,
+   "invalidB": 0,
+   "seeds": [
+    23211,
+    23212,
+    23213,
+    23214
+   ],
+   "runsA": [
+    "selV_varCz1_bots_gemischt_100BB_poolV_s23211_2500",
+    "selV_varCz1_bots_gemischt_100BB_poolV_s23212_2500",
+    "selV_varCz1_bots_gemischt_100BB_poolV_s23213_2500",
+    "selV_varCz1_bots_gemischt_100BB_poolV_s23214_2500"
+   ],
+   "runsB": [
+    "selV_coach210_bots_gemischt_100BB_poolV_s23211_2500",
+    "selV_coach210_bots_gemischt_100BB_poolV_s23212_2500",
+    "selV_coach210_bots_gemischt_100BB_poolV_s23213_2500",
+    "selV_coach210_bots_gemischt_100BB_poolV_s23214_2500"
+   ],
+   "verdict": "belegt besser",
+   "aAhead": 3,
+   "split": {},
+   "sharedRuns": [
+    "selV_coach210_bots_gemischt_100BB_poolV_s23211_2500",
+    "selV_coach210_bots_gemischt_100BB_poolV_s23212_2500",
+    "selV_coach210_bots_gemischt_100BB_poolV_s23213_2500",
+    "selV_coach210_bots_gemischt_100BB_poolV_s23214_2500",
+    "selV_varCz1_bots_gemischt_100BB_poolV_s23211_2500",
+    "selV_varCz1_bots_gemischt_100BB_poolV_s23212_2500",
+    "selV_varCz1_bots_gemischt_100BB_poolV_s23213_2500",
+    "selV_varCz1_bots_gemischt_100BB_poolV_s23214_2500"
+   ],
+   "sharedWith": [
+    "selV-varA-coach210",
+    "selV-varB-coach210",
+    "selV-varC-coach210",
+    "selV-varS-coach210",
+    "selV-varC2-coach210",
+    "selV-varC3-coach210",
+    "selV-varC5-coach210",
+    "selV-varCz-coach210",
+    "selV-varCz1-varB",
+    "selV-varCz1-varA"
+   ]
+  },
+  {
+   "id": "selReg-varCz1-coach210",
+   "title": "Regressionsset: Variante C (abgestimmt auf Tr23/E): hybrid, sehr empfindliche Schwellen gegen Coach 2.1.0 (exploitativ)",
+   "group": "selReg",
+   "a": "varCz1",
+   "b": "coach210",
+   "aName": "Variante C (abgestimmt auf Tr23/E): hybrid, sehr empfindliche Schwellen",
+   "bName": "Coach 2.1.0 (exploitativ)",
+   "adj": {
+    "diff": -17.38,
+    "lo": -29.11,
+    "hi": -4.78,
+    "se": 6.14,
+    "hands": 7500,
+    "pairs": 3,
+    "blocks": 15
+   },
+   "raw": {
+    "diff": -18.69,
+    "lo": -32.15,
+    "hi": -3.27,
+    "se": 7.32,
+    "hands": 7500,
+    "pairs": 3,
+    "blocks": 15
+   },
+   "decisionsA": 10305,
+   "decisionsB": 10306,
+   "invalidA": 0,
+   "invalidB": 0,
+   "seeds": [
+    23221,
+    23222,
+    23223
+   ],
+   "runsA": [
+    "selReg_varCz1_final-polar_gemischt_100BB_s23221_2500",
+    "selReg_varCz1_final-trapper_gemischt_100BB_s23222_2500",
+    "selReg_varCz1_final-ipaggro_gemischt_100BB_s23223_2500"
+   ],
+   "runsB": [
+    "selReg_coach210_final-polar_gemischt_100BB_s23221_2500",
+    "selReg_coach210_final-trapper_gemischt_100BB_s23222_2500",
+    "selReg_coach210_final-ipaggro_gemischt_100BB_s23223_2500"
+   ],
+   "verdict": "zu wenig Blöcke",
+   "aAhead": 0,
+   "split": {
+    "comp": [
+     {
+      "value": "abschließend unbekannt: Fallensteller",
+      "diff": -10.08,
+      "lo": -27.91,
+      "hi": 12.52,
+      "se": 10.23,
+      "hands": 2500,
+      "pairs": 1,
+      "blocks": 5,
+      "rawDiff": -15.53,
+      "aAhead": 0
+     },
+     {
+      "value": "abschließend unbekannt: Polarisierer",
+      "diff": -35.61,
+      "lo": -63.37,
+      "hi": -5.82,
+      "se": 14.72,
+      "hands": 2500,
+      "pairs": 1,
+      "blocks": 5,
+      "rawDiff": -34.08,
+      "aAhead": 0
+     },
+     {
+      "value": "abschließend unbekannt: Positionsspieler",
+      "diff": -6.45,
+      "lo": -15.51,
+      "hi": 3.49,
+      "se": 5,
+      "hands": 2500,
+      "pairs": 1,
+      "blocks": 5,
+      "rawDiff": -6.45,
+      "aAhead": 0
+     }
+    ]
+   },
+   "sharedRuns": [
+    "selReg_coach210_final-polar_gemischt_100BB_s23221_2500",
+    "selReg_coach210_final-trapper_gemischt_100BB_s23222_2500",
+    "selReg_coach210_final-ipaggro_gemischt_100BB_s23223_2500",
+    "selReg_varCz1_final-polar_gemischt_100BB_s23221_2500",
+    "selReg_varCz1_final-trapper_gemischt_100BB_s23222_2500",
+    "selReg_varCz1_final-ipaggro_gemischt_100BB_s23223_2500"
+   ],
+   "sharedWith": [
+    "selReg-varA-coach210",
+    "selReg-varB-coach210",
+    "selReg-varC-coach210",
+    "selReg-varS-coach210",
+    "selReg-varC2-coach210",
+    "selReg-varC3-coach210",
+    "selReg-varC5-coach210",
+    "selReg-varCz-coach210",
+    "selReg-varCz1-varB",
+    "selReg-varCz1-varA"
+   ]
+  },
+  {
+   "id": "selVa-varCz1-varB",
+   "title": "Modellwahl Va23: Variante C (abgestimmt auf Tr23/E): hybrid, sehr empfindliche Schwellen gegen Variante B: adaptives Modell",
+   "group": "selVa",
+   "a": "varCz1",
+   "b": "varB",
+   "aName": "Variante C (abgestimmt auf Tr23/E): hybrid, sehr empfindliche Schwellen",
+   "bName": "Variante B: adaptives Modell",
+   "adj": {
+    "diff": 32.2,
+    "lo": 15.43,
+    "hi": 49.79,
+    "se": 8.66,
+    "hands": 15000,
+    "pairs": 6,
+    "blocks": 30
+   },
+   "raw": {
+    "diff": 26.18,
+    "lo": 10.02,
+    "hi": 42.29,
+    "se": 8.21,
+    "hands": 15000,
+    "pairs": 6,
+    "blocks": 30
+   },
+   "decisionsA": 21082,
+   "decisionsB": 21195,
+   "invalidA": 0,
+   "invalidB": 0,
+   "seeds": [
+    23201,
+    23202,
+    23203,
+    23204,
+    23205,
+    23206
+   ],
+   "runsA": [
+    "selVa_varCz1_p23-Va_gemischt_100BB_s23201_2500",
+    "selVa_varCz1_p23-Va_gemischt_100BB_s23202_2500",
+    "selVa_varCz1_p23-Va_gemischt_100BB_s23203_2500",
+    "selVa_varCz1_p23-Va_gemischt_100BB_s23204_2500",
+    "selVa_varCz1_p23-Va_gemischt_100BB_s23205_2500",
+    "selVa_varCz1_p23-Va_gemischt_100BB_s23206_2500"
+   ],
+   "runsB": [
+    "selVa_varB_p23-Va_gemischt_100BB_s23201_2500",
+    "selVa_varB_p23-Va_gemischt_100BB_s23202_2500",
+    "selVa_varB_p23-Va_gemischt_100BB_s23203_2500",
+    "selVa_varB_p23-Va_gemischt_100BB_s23204_2500",
+    "selVa_varB_p23-Va_gemischt_100BB_s23205_2500",
+    "selVa_varB_p23-Va_gemischt_100BB_s23206_2500"
+   ],
+   "verdict": "belegt besser",
+   "aAhead": 5,
+   "split": {},
+   "sharedRuns": [
+    "selVa_varB_p23-Va_gemischt_100BB_s23201_2500",
+    "selVa_varB_p23-Va_gemischt_100BB_s23202_2500",
+    "selVa_varB_p23-Va_gemischt_100BB_s23203_2500",
+    "selVa_varB_p23-Va_gemischt_100BB_s23204_2500",
+    "selVa_varB_p23-Va_gemischt_100BB_s23205_2500",
+    "selVa_varB_p23-Va_gemischt_100BB_s23206_2500",
+    "selVa_varCz1_p23-Va_gemischt_100BB_s23201_2500",
+    "selVa_varCz1_p23-Va_gemischt_100BB_s23202_2500",
+    "selVa_varCz1_p23-Va_gemischt_100BB_s23203_2500",
+    "selVa_varCz1_p23-Va_gemischt_100BB_s23204_2500",
+    "selVa_varCz1_p23-Va_gemischt_100BB_s23205_2500",
+    "selVa_varCz1_p23-Va_gemischt_100BB_s23206_2500"
+   ],
+   "sharedWith": [
+    "selVa-varB-coach210",
+    "selVa-varC-varB",
+    "selVa-varB-varA",
+    "selVa-varS-varB",
+    "selVa-varC2-varB",
+    "selVa-varC3-varB",
+    "selVa-varC5-varB",
+    "selVa-varCz-varB",
+    "selVa-varCz1-coach210",
+    "selVa-varCz1-varA"
+   ]
+  },
+  {
+   "id": "selV-varCz1-varB",
+   "title": "Modellwahl Gegner-KI V: Variante C (abgestimmt auf Tr23/E): hybrid, sehr empfindliche Schwellen gegen Variante B: adaptives Modell",
+   "group": "selV",
+   "a": "varCz1",
+   "b": "varB",
+   "aName": "Variante C (abgestimmt auf Tr23/E): hybrid, sehr empfindliche Schwellen",
+   "bName": "Variante B: adaptives Modell",
+   "adj": {
+    "diff": -12.98,
+    "lo": -22.86,
+    "hi": -2.02,
+    "se": 5.36,
+    "hands": 10000,
+    "pairs": 4,
+    "blocks": 20
+   },
+   "raw": {
+    "diff": -15.16,
+    "lo": -25,
+    "hi": -4.19,
+    "se": 5.25,
+    "hands": 10000,
+    "pairs": 4,
+    "blocks": 20
+   },
+   "decisionsA": 13890,
+   "decisionsB": 13903,
+   "invalidA": 0,
+   "invalidB": 0,
+   "seeds": [
+    23211,
+    23212,
+    23213,
+    23214
+   ],
+   "runsA": [
+    "selV_varCz1_bots_gemischt_100BB_poolV_s23211_2500",
+    "selV_varCz1_bots_gemischt_100BB_poolV_s23212_2500",
+    "selV_varCz1_bots_gemischt_100BB_poolV_s23213_2500",
+    "selV_varCz1_bots_gemischt_100BB_poolV_s23214_2500"
+   ],
+   "runsB": [
+    "selV_varB_bots_gemischt_100BB_poolV_s23211_2500",
+    "selV_varB_bots_gemischt_100BB_poolV_s23212_2500",
+    "selV_varB_bots_gemischt_100BB_poolV_s23213_2500",
+    "selV_varB_bots_gemischt_100BB_poolV_s23214_2500"
+   ],
+   "verdict": "belegt schlechter",
+   "aAhead": 0,
+   "split": {},
+   "sharedRuns": [
+    "selV_varB_bots_gemischt_100BB_poolV_s23211_2500",
+    "selV_varB_bots_gemischt_100BB_poolV_s23212_2500",
+    "selV_varB_bots_gemischt_100BB_poolV_s23213_2500",
+    "selV_varB_bots_gemischt_100BB_poolV_s23214_2500",
+    "selV_varCz1_bots_gemischt_100BB_poolV_s23211_2500",
+    "selV_varCz1_bots_gemischt_100BB_poolV_s23212_2500",
+    "selV_varCz1_bots_gemischt_100BB_poolV_s23213_2500",
+    "selV_varCz1_bots_gemischt_100BB_poolV_s23214_2500"
+   ],
+   "sharedWith": [
+    "selV-varB-coach210",
+    "selV-varC-varB",
+    "selV-varB-varA",
+    "selV-varS-varB",
+    "selV-varC2-varB",
+    "selV-varC3-varB",
+    "selV-varC5-varB",
+    "selV-varCz-varB",
+    "selV-varCz1-coach210",
+    "selV-varCz1-varA"
+   ]
+  },
+  {
+   "id": "selReg-varCz1-varB",
+   "title": "Regressionsset: Variante C (abgestimmt auf Tr23/E): hybrid, sehr empfindliche Schwellen gegen Variante B: adaptives Modell",
+   "group": "selReg",
+   "a": "varCz1",
+   "b": "varB",
+   "aName": "Variante C (abgestimmt auf Tr23/E): hybrid, sehr empfindliche Schwellen",
+   "bName": "Variante B: adaptives Modell",
+   "adj": {
+    "diff": 9.33,
+    "lo": -5.13,
+    "hi": 28.1,
+    "se": 8.53,
+    "hands": 7500,
+    "pairs": 3,
+    "blocks": 15
+   },
+   "raw": {
+    "diff": 8.86,
+    "lo": -3.31,
+    "hi": 24.33,
+    "se": 7.29,
+    "hands": 7500,
+    "pairs": 3,
+    "blocks": 15
+   },
+   "decisionsA": 10305,
+   "decisionsB": 10341,
+   "invalidA": 0,
+   "invalidB": 0,
+   "seeds": [
+    23221,
+    23222,
+    23223
+   ],
+   "runsA": [
+    "selReg_varCz1_final-polar_gemischt_100BB_s23221_2500",
+    "selReg_varCz1_final-trapper_gemischt_100BB_s23222_2500",
+    "selReg_varCz1_final-ipaggro_gemischt_100BB_s23223_2500"
+   ],
+   "runsB": [
+    "selReg_varB_final-polar_gemischt_100BB_s23221_2500",
+    "selReg_varB_final-trapper_gemischt_100BB_s23222_2500",
+    "selReg_varB_final-ipaggro_gemischt_100BB_s23223_2500"
+   ],
+   "verdict": "zu wenig Blöcke",
+   "aAhead": 3,
+   "split": {
+    "comp": [
+     {
+      "value": "abschließend unbekannt: Fallensteller",
+      "diff": 16.04,
+      "lo": 2.16,
+      "hi": 33.45,
+      "se": 7.86,
+      "hands": 2500,
+      "pairs": 1,
+      "blocks": 5,
+      "rawDiff": 8.84,
+      "aAhead": 1
+     },
+     {
+      "value": "abschließend unbekannt: Polarisierer",
+      "diff": 1.22,
+      "lo": -13.13,
+      "hi": 17.57,
+      "se": 7.25,
+      "hands": 2500,
+      "pairs": 1,
+      "blocks": 5,
+      "rawDiff": 1.44,
+      "aAhead": 1
+     },
+     {
+      "value": "abschließend unbekannt: Positionsspieler",
+      "diff": 10.73,
+      "lo": -25.58,
+      "hi": 60.96,
+      "se": 22.91,
+      "hands": 2500,
+      "pairs": 1,
+      "blocks": 5,
+      "rawDiff": 16.3,
+      "aAhead": 1
+     }
+    ]
+   },
+   "sharedRuns": [
+    "selReg_varB_final-polar_gemischt_100BB_s23221_2500",
+    "selReg_varB_final-trapper_gemischt_100BB_s23222_2500",
+    "selReg_varB_final-ipaggro_gemischt_100BB_s23223_2500",
+    "selReg_varCz1_final-polar_gemischt_100BB_s23221_2500",
+    "selReg_varCz1_final-trapper_gemischt_100BB_s23222_2500",
+    "selReg_varCz1_final-ipaggro_gemischt_100BB_s23223_2500"
+   ],
+   "sharedWith": [
+    "selReg-varB-coach210",
+    "selReg-varC-varB",
+    "selReg-varB-varA",
+    "selReg-varS-varB",
+    "selReg-varC2-varB",
+    "selReg-varC3-varB",
+    "selReg-varC5-varB",
+    "selReg-varCz-varB",
+    "selReg-varCz1-coach210",
+    "selReg-varCz1-varA"
+   ]
+  },
+  {
+   "id": "selVa-varCz1-varA",
+   "title": "Modellwahl Va23: Variante C (abgestimmt auf Tr23/E): hybrid, sehr empfindliche Schwellen gegen Variante A: robustes Basismodell",
+   "group": "selVa",
+   "a": "varCz1",
+   "b": "varA",
+   "aName": "Variante C (abgestimmt auf Tr23/E): hybrid, sehr empfindliche Schwellen",
+   "bName": "Variante A: robustes Basismodell",
+   "adj": {
+    "diff": -6.05,
+    "lo": -12.61,
+    "hi": 0.41,
+    "se": 3.36,
+    "hands": 15000,
+    "pairs": 6,
+    "blocks": 30
+   },
+   "raw": {
+    "diff": -4.03,
+    "lo": -10.68,
+    "hi": 2.39,
+    "se": 3.43,
+    "hands": 15000,
+    "pairs": 6,
+    "blocks": 30
+   },
+   "decisionsA": 21082,
+   "decisionsB": 21061,
+   "invalidA": 0,
+   "invalidB": 0,
+   "seeds": [
+    23201,
+    23202,
+    23203,
+    23204,
+    23205,
+    23206
+   ],
+   "runsA": [
+    "selVa_varCz1_p23-Va_gemischt_100BB_s23201_2500",
+    "selVa_varCz1_p23-Va_gemischt_100BB_s23202_2500",
+    "selVa_varCz1_p23-Va_gemischt_100BB_s23203_2500",
+    "selVa_varCz1_p23-Va_gemischt_100BB_s23204_2500",
+    "selVa_varCz1_p23-Va_gemischt_100BB_s23205_2500",
+    "selVa_varCz1_p23-Va_gemischt_100BB_s23206_2500"
+   ],
+   "runsB": [
+    "selVa_varA_p23-Va_gemischt_100BB_s23201_2500",
+    "selVa_varA_p23-Va_gemischt_100BB_s23202_2500",
+    "selVa_varA_p23-Va_gemischt_100BB_s23203_2500",
+    "selVa_varA_p23-Va_gemischt_100BB_s23204_2500",
+    "selVa_varA_p23-Va_gemischt_100BB_s23205_2500",
+    "selVa_varA_p23-Va_gemischt_100BB_s23206_2500"
+   ],
+   "verdict": "nicht belegt",
+   "aAhead": 1,
+   "split": {},
+   "sharedRuns": [
+    "selVa_varA_p23-Va_gemischt_100BB_s23201_2500",
+    "selVa_varA_p23-Va_gemischt_100BB_s23202_2500",
+    "selVa_varA_p23-Va_gemischt_100BB_s23203_2500",
+    "selVa_varA_p23-Va_gemischt_100BB_s23204_2500",
+    "selVa_varA_p23-Va_gemischt_100BB_s23205_2500",
+    "selVa_varA_p23-Va_gemischt_100BB_s23206_2500",
+    "selVa_varCz1_p23-Va_gemischt_100BB_s23201_2500",
+    "selVa_varCz1_p23-Va_gemischt_100BB_s23202_2500",
+    "selVa_varCz1_p23-Va_gemischt_100BB_s23203_2500",
+    "selVa_varCz1_p23-Va_gemischt_100BB_s23204_2500",
+    "selVa_varCz1_p23-Va_gemischt_100BB_s23205_2500",
+    "selVa_varCz1_p23-Va_gemischt_100BB_s23206_2500"
+   ],
+   "sharedWith": [
+    "selVa-varA-coach210",
+    "selVa-varC-varA",
+    "selVa-varB-varA",
+    "selVa-varCz-varA",
+    "selVa-varCz1-coach210",
+    "selVa-varCz1-varB"
+   ]
+  },
+  {
+   "id": "selV-varCz1-varA",
+   "title": "Modellwahl Gegner-KI V: Variante C (abgestimmt auf Tr23/E): hybrid, sehr empfindliche Schwellen gegen Variante A: robustes Basismodell",
+   "group": "selV",
+   "a": "varCz1",
+   "b": "varA",
+   "aName": "Variante C (abgestimmt auf Tr23/E): hybrid, sehr empfindliche Schwellen",
+   "bName": "Variante A: robustes Basismodell",
+   "adj": {
+    "diff": 17.9,
+    "lo": 11.09,
+    "hi": 26.06,
+    "se": 3.87,
+    "hands": 10000,
+    "pairs": 4,
+    "blocks": 20
+   },
+   "raw": {
+    "diff": 18.65,
+    "lo": 11.13,
+    "hi": 27.36,
+    "se": 4.22,
+    "hands": 10000,
+    "pairs": 4,
+    "blocks": 20
+   },
+   "decisionsA": 13890,
+   "decisionsB": 13902,
+   "invalidA": 0,
+   "invalidB": 0,
+   "seeds": [
+    23211,
+    23212,
+    23213,
+    23214
+   ],
+   "runsA": [
+    "selV_varCz1_bots_gemischt_100BB_poolV_s23211_2500",
+    "selV_varCz1_bots_gemischt_100BB_poolV_s23212_2500",
+    "selV_varCz1_bots_gemischt_100BB_poolV_s23213_2500",
+    "selV_varCz1_bots_gemischt_100BB_poolV_s23214_2500"
+   ],
+   "runsB": [
+    "selV_varA_bots_gemischt_100BB_poolV_s23211_2500",
+    "selV_varA_bots_gemischt_100BB_poolV_s23212_2500",
+    "selV_varA_bots_gemischt_100BB_poolV_s23213_2500",
+    "selV_varA_bots_gemischt_100BB_poolV_s23214_2500"
+   ],
+   "verdict": "belegt besser",
+   "aAhead": 4,
+   "split": {},
+   "sharedRuns": [
+    "selV_varA_bots_gemischt_100BB_poolV_s23211_2500",
+    "selV_varA_bots_gemischt_100BB_poolV_s23212_2500",
+    "selV_varA_bots_gemischt_100BB_poolV_s23213_2500",
+    "selV_varA_bots_gemischt_100BB_poolV_s23214_2500",
+    "selV_varCz1_bots_gemischt_100BB_poolV_s23211_2500",
+    "selV_varCz1_bots_gemischt_100BB_poolV_s23212_2500",
+    "selV_varCz1_bots_gemischt_100BB_poolV_s23213_2500",
+    "selV_varCz1_bots_gemischt_100BB_poolV_s23214_2500"
+   ],
+   "sharedWith": [
+    "selV-varA-coach210",
+    "selV-varC-varA",
+    "selV-varB-varA",
+    "selV-varCz-varA",
+    "selV-varCz1-coach210",
+    "selV-varCz1-varB"
+   ]
+  },
+  {
+   "id": "selReg-varCz1-varA",
+   "title": "Regressionsset: Variante C (abgestimmt auf Tr23/E): hybrid, sehr empfindliche Schwellen gegen Variante A: robustes Basismodell",
+   "group": "selReg",
+   "a": "varCz1",
+   "b": "varA",
+   "aName": "Variante C (abgestimmt auf Tr23/E): hybrid, sehr empfindliche Schwellen",
+   "bName": "Variante A: robustes Basismodell",
+   "adj": {
+    "diff": -17.38,
+    "lo": -29.11,
+    "hi": -4.78,
+    "se": 6.14,
+    "hands": 7500,
+    "pairs": 3,
+    "blocks": 15
+   },
+   "raw": {
+    "diff": -18.69,
+    "lo": -32.15,
+    "hi": -3.27,
+    "se": 7.32,
+    "hands": 7500,
+    "pairs": 3,
+    "blocks": 15
+   },
+   "decisionsA": 10305,
+   "decisionsB": 10306,
+   "invalidA": 0,
+   "invalidB": 0,
+   "seeds": [
+    23221,
+    23222,
+    23223
+   ],
+   "runsA": [
+    "selReg_varCz1_final-polar_gemischt_100BB_s23221_2500",
+    "selReg_varCz1_final-trapper_gemischt_100BB_s23222_2500",
+    "selReg_varCz1_final-ipaggro_gemischt_100BB_s23223_2500"
+   ],
+   "runsB": [
+    "selReg_varA_final-polar_gemischt_100BB_s23221_2500",
+    "selReg_varA_final-trapper_gemischt_100BB_s23222_2500",
+    "selReg_varA_final-ipaggro_gemischt_100BB_s23223_2500"
+   ],
+   "verdict": "zu wenig Blöcke",
+   "aAhead": 0,
+   "split": {
+    "comp": [
+     {
+      "value": "abschließend unbekannt: Fallensteller",
+      "diff": -10.08,
+      "lo": -27.91,
+      "hi": 12.52,
+      "se": 10.23,
+      "hands": 2500,
+      "pairs": 1,
+      "blocks": 5,
+      "rawDiff": -15.53,
+      "aAhead": 0
+     },
+     {
+      "value": "abschließend unbekannt: Polarisierer",
+      "diff": -35.61,
+      "lo": -63.37,
+      "hi": -5.82,
+      "se": 14.72,
+      "hands": 2500,
+      "pairs": 1,
+      "blocks": 5,
+      "rawDiff": -34.08,
+      "aAhead": 0
+     },
+     {
+      "value": "abschließend unbekannt: Positionsspieler",
+      "diff": -6.45,
+      "lo": -15.51,
+      "hi": 3.49,
+      "se": 5,
+      "hands": 2500,
+      "pairs": 1,
+      "blocks": 5,
+      "rawDiff": -6.45,
+      "aAhead": 0
+     }
+    ]
+   },
+   "sharedRuns": [
+    "selReg_varA_final-polar_gemischt_100BB_s23221_2500",
+    "selReg_varA_final-trapper_gemischt_100BB_s23222_2500",
+    "selReg_varA_final-ipaggro_gemischt_100BB_s23223_2500",
+    "selReg_varCz1_final-polar_gemischt_100BB_s23221_2500",
+    "selReg_varCz1_final-trapper_gemischt_100BB_s23222_2500",
+    "selReg_varCz1_final-ipaggro_gemischt_100BB_s23223_2500"
+   ],
+   "sharedWith": [
+    "selReg-varA-coach210",
+    "selReg-varC-varA",
+    "selReg-varB-varA",
+    "selReg-varCz-varA",
+    "selReg-varCz1-coach210",
+    "selReg-varCz1-varB"
    ]
   }
  ],
@@ -12939,7 +14718,8 @@
     "selVa-varA-coach210",
     "selVa-varC-varA",
     "selVa-varB-varA",
-    "selVa-varCz-varA"
+    "selVa-varCz-varA",
+    "selVa-varCz1-varA"
    ]
   },
   {
@@ -12953,7 +14733,8 @@
     "selVa-varC2-varB",
     "selVa-varC3-varB",
     "selVa-varC5-varB",
-    "selVa-varCz-varB"
+    "selVa-varCz-varB",
+    "selVa-varCz1-varB"
    ]
   },
   {
@@ -12977,7 +14758,8 @@
     "selVa-varC2-coach210",
     "selVa-varC3-coach210",
     "selVa-varC5-coach210",
-    "selVa-varCz-coach210"
+    "selVa-varCz-coach210",
+    "selVa-varCz1-coach210"
    ]
   },
   {
@@ -13023,13 +14805,23 @@
    ]
   },
   {
+   "id": "selVa_varCz1_p23-Va_gemischt_100BB_s23201_2500",
+   "hero": "varCz1",
+   "usedIn": [
+    "selVa-varCz1-coach210",
+    "selVa-varCz1-varB",
+    "selVa-varCz1-varA"
+   ]
+  },
+  {
    "id": "selVa_varA_p23-Va_gemischt_100BB_s23202_2500",
    "hero": "varA",
    "usedIn": [
     "selVa-varA-coach210",
     "selVa-varC-varA",
     "selVa-varB-varA",
-    "selVa-varCz-varA"
+    "selVa-varCz-varA",
+    "selVa-varCz1-varA"
    ]
   },
   {
@@ -13043,7 +14835,8 @@
     "selVa-varC2-varB",
     "selVa-varC3-varB",
     "selVa-varC5-varB",
-    "selVa-varCz-varB"
+    "selVa-varCz-varB",
+    "selVa-varCz1-varB"
    ]
   },
   {
@@ -13067,7 +14860,8 @@
     "selVa-varC2-coach210",
     "selVa-varC3-coach210",
     "selVa-varC5-coach210",
-    "selVa-varCz-coach210"
+    "selVa-varCz-coach210",
+    "selVa-varCz1-coach210"
    ]
   },
   {
@@ -13113,13 +14907,23 @@
    ]
   },
   {
+   "id": "selVa_varCz1_p23-Va_gemischt_100BB_s23202_2500",
+   "hero": "varCz1",
+   "usedIn": [
+    "selVa-varCz1-coach210",
+    "selVa-varCz1-varB",
+    "selVa-varCz1-varA"
+   ]
+  },
+  {
    "id": "selVa_varA_p23-Va_gemischt_100BB_s23203_2500",
    "hero": "varA",
    "usedIn": [
     "selVa-varA-coach210",
     "selVa-varC-varA",
     "selVa-varB-varA",
-    "selVa-varCz-varA"
+    "selVa-varCz-varA",
+    "selVa-varCz1-varA"
    ]
   },
   {
@@ -13133,7 +14937,8 @@
     "selVa-varC2-varB",
     "selVa-varC3-varB",
     "selVa-varC5-varB",
-    "selVa-varCz-varB"
+    "selVa-varCz-varB",
+    "selVa-varCz1-varB"
    ]
   },
   {
@@ -13157,7 +14962,8 @@
     "selVa-varC2-coach210",
     "selVa-varC3-coach210",
     "selVa-varC5-coach210",
-    "selVa-varCz-coach210"
+    "selVa-varCz-coach210",
+    "selVa-varCz1-coach210"
    ]
   },
   {
@@ -13203,13 +15009,23 @@
    ]
   },
   {
+   "id": "selVa_varCz1_p23-Va_gemischt_100BB_s23203_2500",
+   "hero": "varCz1",
+   "usedIn": [
+    "selVa-varCz1-coach210",
+    "selVa-varCz1-varB",
+    "selVa-varCz1-varA"
+   ]
+  },
+  {
    "id": "selVa_varA_p23-Va_gemischt_100BB_s23204_2500",
    "hero": "varA",
    "usedIn": [
     "selVa-varA-coach210",
     "selVa-varC-varA",
     "selVa-varB-varA",
-    "selVa-varCz-varA"
+    "selVa-varCz-varA",
+    "selVa-varCz1-varA"
    ]
   },
   {
@@ -13223,7 +15039,8 @@
     "selVa-varC2-varB",
     "selVa-varC3-varB",
     "selVa-varC5-varB",
-    "selVa-varCz-varB"
+    "selVa-varCz-varB",
+    "selVa-varCz1-varB"
    ]
   },
   {
@@ -13247,7 +15064,8 @@
     "selVa-varC2-coach210",
     "selVa-varC3-coach210",
     "selVa-varC5-coach210",
-    "selVa-varCz-coach210"
+    "selVa-varCz-coach210",
+    "selVa-varCz1-coach210"
    ]
   },
   {
@@ -13293,13 +15111,23 @@
    ]
   },
   {
+   "id": "selVa_varCz1_p23-Va_gemischt_100BB_s23204_2500",
+   "hero": "varCz1",
+   "usedIn": [
+    "selVa-varCz1-coach210",
+    "selVa-varCz1-varB",
+    "selVa-varCz1-varA"
+   ]
+  },
+  {
    "id": "selVa_varA_p23-Va_gemischt_100BB_s23205_2500",
    "hero": "varA",
    "usedIn": [
     "selVa-varA-coach210",
     "selVa-varC-varA",
     "selVa-varB-varA",
-    "selVa-varCz-varA"
+    "selVa-varCz-varA",
+    "selVa-varCz1-varA"
    ]
   },
   {
@@ -13313,7 +15141,8 @@
     "selVa-varC2-varB",
     "selVa-varC3-varB",
     "selVa-varC5-varB",
-    "selVa-varCz-varB"
+    "selVa-varCz-varB",
+    "selVa-varCz1-varB"
    ]
   },
   {
@@ -13337,7 +15166,8 @@
     "selVa-varC2-coach210",
     "selVa-varC3-coach210",
     "selVa-varC5-coach210",
-    "selVa-varCz-coach210"
+    "selVa-varCz-coach210",
+    "selVa-varCz1-coach210"
    ]
   },
   {
@@ -13383,13 +15213,23 @@
    ]
   },
   {
+   "id": "selVa_varCz1_p23-Va_gemischt_100BB_s23205_2500",
+   "hero": "varCz1",
+   "usedIn": [
+    "selVa-varCz1-coach210",
+    "selVa-varCz1-varB",
+    "selVa-varCz1-varA"
+   ]
+  },
+  {
    "id": "selVa_varA_p23-Va_gemischt_100BB_s23206_2500",
    "hero": "varA",
    "usedIn": [
     "selVa-varA-coach210",
     "selVa-varC-varA",
     "selVa-varB-varA",
-    "selVa-varCz-varA"
+    "selVa-varCz-varA",
+    "selVa-varCz1-varA"
    ]
   },
   {
@@ -13403,7 +15243,8 @@
     "selVa-varC2-varB",
     "selVa-varC3-varB",
     "selVa-varC5-varB",
-    "selVa-varCz-varB"
+    "selVa-varCz-varB",
+    "selVa-varCz1-varB"
    ]
   },
   {
@@ -13427,7 +15268,8 @@
     "selVa-varC2-coach210",
     "selVa-varC3-coach210",
     "selVa-varC5-coach210",
-    "selVa-varCz-coach210"
+    "selVa-varCz-coach210",
+    "selVa-varCz1-coach210"
    ]
   },
   {
@@ -13473,13 +15315,23 @@
    ]
   },
   {
+   "id": "selVa_varCz1_p23-Va_gemischt_100BB_s23206_2500",
+   "hero": "varCz1",
+   "usedIn": [
+    "selVa-varCz1-coach210",
+    "selVa-varCz1-varB",
+    "selVa-varCz1-varA"
+   ]
+  },
+  {
    "id": "selV_varA_bots_gemischt_100BB_poolV_s23211_2500",
    "hero": "varA",
    "usedIn": [
     "selV-varA-coach210",
     "selV-varC-varA",
     "selV-varB-varA",
-    "selV-varCz-varA"
+    "selV-varCz-varA",
+    "selV-varCz1-varA"
    ]
   },
   {
@@ -13493,7 +15345,8 @@
     "selV-varC2-varB",
     "selV-varC3-varB",
     "selV-varC5-varB",
-    "selV-varCz-varB"
+    "selV-varCz-varB",
+    "selV-varCz1-varB"
    ]
   },
   {
@@ -13517,7 +15370,8 @@
     "selV-varC2-coach210",
     "selV-varC3-coach210",
     "selV-varC5-coach210",
-    "selV-varCz-coach210"
+    "selV-varCz-coach210",
+    "selV-varCz1-coach210"
    ]
   },
   {
@@ -13563,13 +15417,23 @@
    ]
   },
   {
+   "id": "selV_varCz1_bots_gemischt_100BB_poolV_s23211_2500",
+   "hero": "varCz1",
+   "usedIn": [
+    "selV-varCz1-coach210",
+    "selV-varCz1-varB",
+    "selV-varCz1-varA"
+   ]
+  },
+  {
    "id": "selV_varA_bots_gemischt_100BB_poolV_s23212_2500",
    "hero": "varA",
    "usedIn": [
     "selV-varA-coach210",
     "selV-varC-varA",
     "selV-varB-varA",
-    "selV-varCz-varA"
+    "selV-varCz-varA",
+    "selV-varCz1-varA"
    ]
   },
   {
@@ -13583,7 +15447,8 @@
     "selV-varC2-varB",
     "selV-varC3-varB",
     "selV-varC5-varB",
-    "selV-varCz-varB"
+    "selV-varCz-varB",
+    "selV-varCz1-varB"
    ]
   },
   {
@@ -13607,7 +15472,8 @@
     "selV-varC2-coach210",
     "selV-varC3-coach210",
     "selV-varC5-coach210",
-    "selV-varCz-coach210"
+    "selV-varCz-coach210",
+    "selV-varCz1-coach210"
    ]
   },
   {
@@ -13653,13 +15519,23 @@
    ]
   },
   {
+   "id": "selV_varCz1_bots_gemischt_100BB_poolV_s23212_2500",
+   "hero": "varCz1",
+   "usedIn": [
+    "selV-varCz1-coach210",
+    "selV-varCz1-varB",
+    "selV-varCz1-varA"
+   ]
+  },
+  {
    "id": "selV_varA_bots_gemischt_100BB_poolV_s23213_2500",
    "hero": "varA",
    "usedIn": [
     "selV-varA-coach210",
     "selV-varC-varA",
     "selV-varB-varA",
-    "selV-varCz-varA"
+    "selV-varCz-varA",
+    "selV-varCz1-varA"
    ]
   },
   {
@@ -13673,7 +15549,8 @@
     "selV-varC2-varB",
     "selV-varC3-varB",
     "selV-varC5-varB",
-    "selV-varCz-varB"
+    "selV-varCz-varB",
+    "selV-varCz1-varB"
    ]
   },
   {
@@ -13697,7 +15574,8 @@
     "selV-varC2-coach210",
     "selV-varC3-coach210",
     "selV-varC5-coach210",
-    "selV-varCz-coach210"
+    "selV-varCz-coach210",
+    "selV-varCz1-coach210"
    ]
   },
   {
@@ -13743,13 +15621,23 @@
    ]
   },
   {
+   "id": "selV_varCz1_bots_gemischt_100BB_poolV_s23213_2500",
+   "hero": "varCz1",
+   "usedIn": [
+    "selV-varCz1-coach210",
+    "selV-varCz1-varB",
+    "selV-varCz1-varA"
+   ]
+  },
+  {
    "id": "selV_varA_bots_gemischt_100BB_poolV_s23214_2500",
    "hero": "varA",
    "usedIn": [
     "selV-varA-coach210",
     "selV-varC-varA",
     "selV-varB-varA",
-    "selV-varCz-varA"
+    "selV-varCz-varA",
+    "selV-varCz1-varA"
    ]
   },
   {
@@ -13763,7 +15651,8 @@
     "selV-varC2-varB",
     "selV-varC3-varB",
     "selV-varC5-varB",
-    "selV-varCz-varB"
+    "selV-varCz-varB",
+    "selV-varCz1-varB"
    ]
   },
   {
@@ -13787,7 +15676,8 @@
     "selV-varC2-coach210",
     "selV-varC3-coach210",
     "selV-varC5-coach210",
-    "selV-varCz-coach210"
+    "selV-varCz-coach210",
+    "selV-varCz1-coach210"
    ]
   },
   {
@@ -13833,13 +15723,23 @@
    ]
   },
   {
+   "id": "selV_varCz1_bots_gemischt_100BB_poolV_s23214_2500",
+   "hero": "varCz1",
+   "usedIn": [
+    "selV-varCz1-coach210",
+    "selV-varCz1-varB",
+    "selV-varCz1-varA"
+   ]
+  },
+  {
    "id": "selReg_varA_final-polar_gemischt_100BB_s23221_2500",
    "hero": "varA",
    "usedIn": [
     "selReg-varA-coach210",
     "selReg-varC-varA",
     "selReg-varB-varA",
-    "selReg-varCz-varA"
+    "selReg-varCz-varA",
+    "selReg-varCz1-varA"
    ]
   },
   {
@@ -13853,7 +15753,8 @@
     "selReg-varC2-varB",
     "selReg-varC3-varB",
     "selReg-varC5-varB",
-    "selReg-varCz-varB"
+    "selReg-varCz-varB",
+    "selReg-varCz1-varB"
    ]
   },
   {
@@ -13877,7 +15778,8 @@
     "selReg-varC2-coach210",
     "selReg-varC3-coach210",
     "selReg-varC5-coach210",
-    "selReg-varCz-coach210"
+    "selReg-varCz-coach210",
+    "selReg-varCz1-coach210"
    ]
   },
   {
@@ -13923,13 +15825,23 @@
    ]
   },
   {
+   "id": "selReg_varCz1_final-polar_gemischt_100BB_s23221_2500",
+   "hero": "varCz1",
+   "usedIn": [
+    "selReg-varCz1-coach210",
+    "selReg-varCz1-varB",
+    "selReg-varCz1-varA"
+   ]
+  },
+  {
    "id": "selReg_varA_final-trapper_gemischt_100BB_s23222_2500",
    "hero": "varA",
    "usedIn": [
     "selReg-varA-coach210",
     "selReg-varC-varA",
     "selReg-varB-varA",
-    "selReg-varCz-varA"
+    "selReg-varCz-varA",
+    "selReg-varCz1-varA"
    ]
   },
   {
@@ -13943,7 +15855,8 @@
     "selReg-varC2-varB",
     "selReg-varC3-varB",
     "selReg-varC5-varB",
-    "selReg-varCz-varB"
+    "selReg-varCz-varB",
+    "selReg-varCz1-varB"
    ]
   },
   {
@@ -13967,7 +15880,8 @@
     "selReg-varC2-coach210",
     "selReg-varC3-coach210",
     "selReg-varC5-coach210",
-    "selReg-varCz-coach210"
+    "selReg-varCz-coach210",
+    "selReg-varCz1-coach210"
    ]
   },
   {
@@ -14013,13 +15927,23 @@
    ]
   },
   {
+   "id": "selReg_varCz1_final-trapper_gemischt_100BB_s23222_2500",
+   "hero": "varCz1",
+   "usedIn": [
+    "selReg-varCz1-coach210",
+    "selReg-varCz1-varB",
+    "selReg-varCz1-varA"
+   ]
+  },
+  {
    "id": "selReg_varA_final-ipaggro_gemischt_100BB_s23223_2500",
    "hero": "varA",
    "usedIn": [
     "selReg-varA-coach210",
     "selReg-varC-varA",
     "selReg-varB-varA",
-    "selReg-varCz-varA"
+    "selReg-varCz-varA",
+    "selReg-varCz1-varA"
    ]
   },
   {
@@ -14033,7 +15957,8 @@
     "selReg-varC2-varB",
     "selReg-varC3-varB",
     "selReg-varC5-varB",
-    "selReg-varCz-varB"
+    "selReg-varCz-varB",
+    "selReg-varCz1-varB"
    ]
   },
   {
@@ -14057,7 +15982,8 @@
     "selReg-varC2-coach210",
     "selReg-varC3-coach210",
     "selReg-varC5-coach210",
-    "selReg-varCz-coach210"
+    "selReg-varCz-coach210",
+    "selReg-varCz1-coach210"
    ]
   },
   {
@@ -14101,13 +16027,22 @@
     "selReg-varCz-varB",
     "selReg-varCz-varA"
    ]
+  },
+  {
+   "id": "selReg_varCz1_final-ipaggro_gemischt_100BB_s23223_2500",
+   "hero": "varCz1",
+   "usedIn": [
+    "selReg-varCz1-coach210",
+    "selReg-varCz1-varB",
+    "selReg-varCz1-varA"
+   ]
   }
  ],
  "totals": {
-  "runs": 117,
-  "hands": 292500,
-  "coachDecisions": 408924,
+  "runs": 130,
+  "hands": 325000,
+  "coachDecisions": 454201,
   "invalidCoach": 0,
-  "cpuSeconds": 17574
+  "cpuSeconds": 18692
  }
 }
