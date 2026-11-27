@@ -2447,13 +2447,23 @@ function changeProfile(r) {
  * Werte für Coach und Gegnermodell: je Wert [Zähler, Nenner] wie in r.stats, bei erkannter Veränderung die Kurzzeitzähler.
  * Direkt mit PT.ranges.smooth nutzbar. Nur aus Beobachtungen am Tisch.
  */
+// Prüfer B, Befund 9: Werte mit gemeinsamem Nenner (je Hand) gehören zu einer Zeitskala. Schlägt einer Alarm, gelten für die ganze
+// Gruppe die Kurzzeitwerte; sonst entstünden unmögliche Kombinationen (z. B. VPIP kurzfristig unter PFR langfristig).
+var LINKED = [['vpip', 'pfr']];
+function linkedKeys(changedKeys) {
+  var out = changedKeys.slice();
+  LINKED.forEach(function (g) { if (g.some(function (k) { return out.indexOf(k) >= 0; })) g.forEach(function (k) { if (out.indexOf(k) < 0) out.push(k); }); });
+  return out;
+}
 function effectiveStats(r) {
   var st = r ? r.stats : emptyStats(), out = {}, changed = [], ch = r && r.recent && r.chg ? r.chg : {};
+  STATS.forEach(function (k) { if (Object.prototype.hasOwnProperty.call(ch, k) && changeTest(st[k], r.recent.stats[k], k)) changed.push(k); });  // wie profile().est
+  var use = linkedKeys(changed), linked = use.filter(function (k) { return changed.indexOf(k) < 0; });
   STATS.forEach(function (k) {
-    if (Object.prototype.hasOwnProperty.call(ch, k) && changeTest(st[k], r.recent.stats[k], k)) { out[k] = [r.recent.stats[k][0], r.recent.stats[k][1]]; changed.push(k); }  // wie profile().est
+    if (use.indexOf(k) >= 0) out[k] = [r.recent.stats[k][0], r.recent.stats[k][1]];
     else out[k] = [st[k][0], st[k][1]];
   });
-  return { stats: out, changed: changed, hands: r ? (changed.length ? Math.min(r.hands, Math.round(r.recent.h)) : r.hands) : 0, longHands: r ? r.hands : 0 };
+  return { stats: out, changed: changed, linked: linked, hands: r ? (changed.length ? Math.min(r.hands, Math.round(r.recent.h)) : r.hands) : 0, longHands: r ? r.hands : 0 };
 }
 function profile(r) {
   var o = { hands: r ? r.hands : 0 }, st = r ? r.stats : emptyStats();
@@ -2467,8 +2477,9 @@ function profile(r) {
   o.cards = { observed: c ? c.sd : (r ? r.shown.length : 0), unknown: c ? c.hid : null, from: c ? c.from : null, counted: !!c,
     share: c && c.sd + c.hid > 0 ? c.sd / (c.sd + c.hid) : null };
   o.est = {}; o.estSrc = {}; o.quality = {};
+  var useKeys = linkedKeys(o.change.keys.map(function (x) { return x.key; }));
   STATS.forEach(function (k) {
-    var pk = priorOf(k), useR = o.change.keys.some(function (x) { return x.key === k; }), nd = useR ? [r.recent.stats[k][0], r.recent.stats[k][1]] : st[k];
+    var pk = priorOf(k), useR = useKeys.indexOf(k) >= 0, nd = useR ? [r.recent.stats[k][0], r.recent.stats[k][1]] : st[k];
     o.est[k] = (nd[0] + pk[0] * pk[1]) / (nd[1] + pk[1]);
     o.estSrc[k] = useR ? 'kurzzeit' : st[k][1] > 0 ? 'langzeit' : 'prior';
     o.quality[k] = st[k][1] > 0 ? 'geschätzt' : 'unbekannt';
@@ -3258,7 +3269,7 @@ function comboEquities(hero, board, w, o) {
   // Kopie liefern: Aufrufer dürfen das Array nicht mit dem Cache teilen
   if (hit && ceUsable(hit, o)) return { e: Float32Array.from(hit.e), info: Object.assign({}, hit.info, { cached: true, iters: 0 }) };
   var res = comboEquitiesRaw(hero, board, w, o);
-  if (!res.info.failed && (!hit || ceBetter(res, hit))) { ceCache.delete(ck); ceCache.set(ck, { e: Float32Array.from(res.e), info: Object.assign({}, res.info) }); if (ceCache.size > 60) ceCache.delete(ceCache.keys().next().value); }
+  if (!res.info.failed && !res.info.aborted && (!hit || ceBetter(res, hit))) { ceCache.delete(ck); ceCache.set(ck, { e: Float32Array.from(res.e), info: Object.assign({}, res.info) }); if (ceCache.size > 60) ceCache.delete(ceCache.keys().next().value); }
   return res;
 }
 function comboEquitiesRaw(hero, board, w, o) {
@@ -3287,8 +3298,10 @@ function comboEquitiesRaw(hero, board, w, o) {
     subset = sh.slice(0, Math.max(0, allow)); perCombo = 1;
   }
   var allKs = ks; if (subset) ks = subset;
-  var rng = o.rng || PT.makeRng(), sampled = 0;
+  var rng = o.rng || PT.makeRng(), sampled = 0, doneN = ks.length;
   for (var q = 0; q < ks.length; q++) {
+    // Zeitgrenze (Abnahmekriterium „Deadline überall“): abbrechen, Rest über Klassenmittel, gekennzeichnet und nicht im Cache
+    if (o.deadline && (q & 7) === 0 && q > 0 && PT.util.now() > o.deadline) { doneN = q; info.aborted = true; break; }
     k = ks[q]; var a = C1[k], b = C2[k], s = 0, n = 0;
     oA[0] = a; oA[1] = b;
     if (need === 0) { var hs = evaluate(hA), os = evaluate(oA); s = hs > os ? 1 : hs === os ? 0.5 : 0; n = 1; }
@@ -3313,6 +3326,7 @@ function comboEquitiesRaw(hero, board, w, o) {
     info.evals += 2 * n;
     e[k] = n ? s / n : 0.5;
   }
+  if (info.aborted) { ks = ks.slice(0, doneN); if (!subset) subset = ks; }
   if (subset) {
     var cs = new Float64Array(169), cn = new Float64Array(169), gs = 0, gn = 0;
     ks.forEach(function (k3) { cs[CLS[k3]] += e[k3]; cn[CLS[k3]]++; gs += e[k3]; gn++; });
@@ -3320,8 +3334,9 @@ function comboEquitiesRaw(hero, board, w, o) {
     allKs.forEach(function (k3) { if (!done[k3]) e[k3] = cn[CLS[k3]] ? cs[CLS[k3]] / cn[CLS[k3]] : (gn ? gs / gn : 0.5); });
     info.partial = true;
   }
+  if (info.aborted) { info.method = exact ? 'exakt (abgebrochen, Rest genähert)' : 'Monte Carlo (abgebrochen, Rest genähert)'; info.se = Math.max(info.se || 0, 0.05); }
   if (!exact) {
-    info.method = 'Monte Carlo'; info.iters = sampled;
+    info.method = info.aborted ? info.method : 'Monte Carlo'; info.iters = sampled;
     if (o.budget) { o.budget.left -= sampled; o.budget.used += sampled; if (o.budget.calls) o.budget.calls.push(sampled); }
     info.se = 0.5 / Math.sqrt(Math.max(1, sampled));
   }
@@ -3442,7 +3457,8 @@ function respond(opp, ctx, heroAdd, potBefore, nResp, kind) {
       // Modellmittelung: Fold-Rate = Mittel aus Populationsmodell und strukturellem Modell (MDF mit Korrekturen, Stand 2.0.1).
       // Grund: Das Populationsmodell ist an einem eher passiven Helden kalibriert; gegen einen aggressiven Helden (Gegner passen sich an)
       // und gegen unbekannte Strategien überschätzt es Folds bei großen Einsätzen (Validierung, docs/STRATEGIE.md).
-      respond.inner = true; var old = respond(opp, ctx, heroAdd, potBefore, nResp, kind); respond.inner = false;
+      // Prüfer B, Befund 12: Flag immer zurücksetzen, auch wenn der innere Aufruf eine Ausnahme wirft
+      var old; respond.inner = true; try { old = respond(opp, ctx, heroAdd, potBefore, nResp, kind); } finally { respond.inner = false; }
       var tf = POP.blend * old.f + (1 - POP.blend) * pr0.f, pr1 = popRespond(opp, ctx, heroAdd, potBefore, nResp, kind, tf);
       if (pr1) { pr1.basis = 'Populationsmodell gemittelt mit MDF-Modell, angepasst an Gegnerwerte'; return pr1; }
     }
@@ -3823,13 +3839,18 @@ function solveMatrix(J, M, sizes, iters, opts) {
     return { vO: vO, vI: vI };
   }
   var oneO = new Float64Array(BO).fill(1), oneI = new Float64Array(BI).fill(1);
-  for (var t = 1; t <= iters; t++) { walk(T.root, oneO, oneI, 0, false, -1, t); walk(T.root, oneO, oneI, 1, false, -1, t); }
+  var done = iters, aborted = false;
+  for (var t = 1; t <= iters; t++) {
+    walk(T.root, oneO, oneI, 0, false, -1, t); walk(T.root, oneO, oneI, 1, false, -1, t);
+    // Zeitgrenze: nach mindestens 50 Iterationen abbrechen dürfen; Exploitability wird für die erreichte Iteration ehrlich ausgewiesen
+    if (opts && opts.deadline && t >= 50 && (t & 15) === 0 && PT.util.now() > opts.deadline) { done = t; aborted = true; break; }
+  }
   function sumv(v) { var s = 0; for (var i = 0; i < v.length; i++) s += v[i]; return s; }
   var val = walk(T.root, oneO, oneI, -1, true, -1, 0), gameV = sumv(val.vO);
   var brO = sumv(walk(T.root, oneO, oneI, -1, true, 0, 0).vO), brI = sumv(walk(T.root, oneO, oneI, -1, true, 1, 0).vI);
   var expl = (brO + brI) / 2; // ≥ 0; 0 im exakten Gleichgewicht (Einheit: Pot)
   var avgStrat = nodes.map(function (n) { var B = n.p === 0 ? BO : BI, out = []; for (var b = 0; b < B; b++) out.push(Array.from(strat(n, b, true))); return { name: n.name, p: n.p, acts: n.acts, s: out }; });
-  return { value: gameV, exploitability: expl, nodes: avgStrat, iters: iters, brO: brO, brI: brI, tree: T };
+  return { value: gameV, exploitability: expl, nodes: avgStrat, iters: done, aborted: aborted, brO: brO, brI: brI, tree: T };
 }
 /**
  * Unabhängige Prüfung: Wert und Best-Response-Werte fester Strategien (je Knoten-Name und Bucket eine Verteilung) in einem Spiel J/M.
@@ -3901,7 +3922,7 @@ function solveRiver(o) {
   for (i = 0; i < B; i++) for (j = 0; j < B; j++) { if (J[i][j] > 0) M[i][j] /= J[i][j]; tot += J[i][j]; }
   if (!(tot > 0)) return null;
   for (i = 0; i < B; i++) for (j = 0; j < B; j++) J[i][j] /= tot;
-  var sol = solveMatrix(J, M, sizes, iters, { raise: o.raise || false, stack: o.stack });
+  var sol = solveMatrix(J, M, sizes, iters, { raise: o.raise || false, stack: o.stack, deadline: o.deadline });
   sol.J = o.keepMatrix ? J : undefined; sol.M = o.keepMatrix ? M : undefined; sol.bO = o.keepMatrix ? bO : undefined; sol.bI = o.keepMatrix ? bI : undefined;
   var heroB = o.heroCombo != null ? (o.heroIsOOP ? bO.of[o.heroCombo] : bI.of[o.heroCombo]) : -1;
   sol.heroBucket = heroB; sol.buckets = B; sol.sizes = sizes; sol.ms = Math.round(PT.util.now() - t0);
@@ -3976,7 +3997,8 @@ function oppStats(dbRec) {
   // Datenformat 3: bei erkannter Änderung der Spielweise zählen die Kurzzeitwerte (PT.stats.effectiveStats), sonst die Langzeitwerte
   var eff = dbRec && S.effectiveStats ? S.effectiveStats(dbRec) : null;
   var raw = eff ? eff.stats : (dbRec ? dbRec.stats : S.emptyStats()), hands = eff ? eff.hands : (dbRec ? dbRec.hands : 0);
-  return { raw: raw, hands: hands, sm: R.smooth(raw), typ: S.playerType(dbRec), bel: S.reliability(hands), changed: eff ? eff.changed : [], longHands: eff ? eff.longHands : hands };
+  var sm = R.smooth(raw); if (sm.pfr > sm.vpip) sm.pfr = sm.vpip;  // PFR ist eine Teilmenge von VPIP (Prüfer B, Befund 9)
+  return { raw: raw, hands: hands, sm: sm, typ: S.playerType(dbRec), bel: S.reliability(hands), changed: eff ? eff.changed : [], longHands: eff ? eff.longHands : hands };
 }
 function buildRange(v, seat, st, gto, pfaSeat) {
   var line = lineOf(v, seat), sm = gto ? R.smooth(null) : st.sm, prof = R.profileOf(sm);
@@ -4042,7 +4064,7 @@ function analyze(input) {
   var deadline = t0 + (live ? Math.min(L0.ms, 1400) : L0.ms);
   var res = {}, scale = level === 'praezise' ? 4 : level === 'tief' ? 10 : 1;
   budget.scale = scale;
-  var prep = prepare(input, v, L0, budget, rng);
+  var prep = prepare(input, v, L0, budget, rng, deadline);
   // Faire Verteilung (Prüfbefund A1): Beide Modi teilen die gemeinsamen Zwischenergebnisse (Ranges, Equity je Kombination)
   // und erhalten danach je die Hälfte des Restbudgets und der Restzeit sowie eigene, vom Modus abhängige Zufallsströme.
   // Die Reihenfolge der Modi verändert die Ergebnisse dadurch nicht.
@@ -4073,7 +4095,7 @@ function rngFor(budget, tag, ranges) {
   return PT.makeRng(base + '|' + tag + '|' + ranges.map(R.hash).join(','));
 }
 /** Ranges beider Modi und eine gemeinsame Equity je Kombination (Vereinigung der Träger) */
-function prepare(input, v, L0, budget, rng) {
+function prepare(input, v, L0, budget, rng, deadlineAll) {
   var pre = preInfo(v), out = {};
   v.players.filter(function (q) { return q.seat !== v.seat && !q.folded; }).forEach(function (q) {
     var st = oppStats(input.opps ? input.opps[q.id] : null);
@@ -4094,7 +4116,7 @@ function prepare(input, v, L0, budget, rng) {
   seats.forEach(function (k) {
     var o = out[k], u = new Float64Array(NC);
     for (var i = 0; i < NC; i++) { var a = o.ex.w[i], b = o.gto.w[i], c = o.defW ? o.defW[i] : 0; if (a > 0 || b > 0 || c > 0) u[i] = 1; }
-    var ce = X.comboEquities(v.cards, v.board, u, { budget: budget, rng: rng, exactMax: L0.exactMax, maxIter: share });
+    var ce = X.comboEquities(v.cards, v.board, u, { budget: budget, rng: rng, exactMax: L0.exactMax, maxIter: share, deadline: deadlineAll });
     o.e = ce.e; o.eqInfo = ce.info;
     o.floor = { ex: floorParts(o.ex.w, v.board), gto: floorParts(o.gto.w, v.board) };
   });
@@ -4267,6 +4289,9 @@ function chartWeight(hc, a, unopened) {
   var g = group(a);
   if (g === 'aggr') return hc.raise;
   if (g === 'call') return unopened ? hc.call : Math.max(hc.call, CHART_MIN);  // Calls gegen Raises rechnet das Modell über Equity; nur der Open-Limp ist an den Chart gebunden
+  // Prüfer B, Befund 1: Fold wird wie jede andere Aktion am Chartgewicht gemessen (früher immer 1 → Fold mit Händen, die der Chart zu 100 % spielt).
+  // Ausnahme bleibt der reine Call-oder-Fold gegen ein All-in (preflopAnchor rechnet dort ohne Chart).
+  if (g === 'fold') return hc.fold;
   return 1;
 }
 function preflopAnchor(v, ctx, pre, acts, gto) {
@@ -4388,7 +4413,7 @@ function riverModel(v, ctx, opp) {
   // Effektiver Stack in Pot-Anteilen (begrenzt Bets und Raises); Raise-Option für beide Seiten (Prüfung: tests/strategy/cfr-study.js)
   var stack = Math.min(ctx.me.stack + ctx.me.bet, opp.p.stack + opp.p.bet) / potStart;
   var deep = ctx.level === 'tief';
-  var sol = PT.cfr.solveRiver({ oopW: heroOOP ? heroW : opp.w, ipW: heroOOP ? opp.w : heroW, board: v.board, sizes: sizes, iters: deep ? 2500 : 700, buckets: deep ? 20 : 10, heroCombo: heroCombo, heroIsOOP: heroOOP, raise: true, stack: stack });
+  var sol = PT.cfr.solveRiver({ oopW: heroOOP ? heroW : opp.w, ipW: heroOOP ? opp.w : heroW, board: v.board, sizes: sizes, iters: deep ? 2500 : 700, buckets: deep ? 20 : 10, heroCombo: heroCombo, heroIsOOP: heroOOP, raise: true, stack: stack, deadline: ctx.deadline ? ctx.deadline + (deep ? 3000 : 400) : null });
   if (!sol || sol.heroBucket < 0) return null;
   var b = sol.heroBucket, node, nodeName, sz = sol.tree.sizes;
   if (!facing && heroOOP) nodeName = 'OOP';
@@ -4566,8 +4591,10 @@ function grade(a, chosen) {
     modelTopLabel: top.label, recGapBB: recGap / bb, withinU: loss <= u };
 }
 function chartCapText(a, pick, best, loss) {
-  var bb = a.bb, aggr = group(pick) === 'aggr';
-  var s = 'Empfohlen war ' + best.label + '. ' + (aggr ? 'Ein Raise' : 'Ein Limp') + ' mit ' + a.hand.cls + ' liegt außerhalb des Faustregel-Charts (' + a.chart.kind + ').';
+  var bb = a.bb, aggr = group(pick) === 'aggr', fold = group(pick) === 'fold';
+  var s = 'Empfohlen war ' + best.label + '. ' + (aggr ? 'Ein Raise' : fold ? 'Ein Fold' : 'Ein Limp') + ' mit ' + a.hand.cls + ' liegt außerhalb des Faustregel-Charts (' + a.chart.kind + ')' +
+    (fold ? ': Der Chart spielt die Hand zu ' + Math.round(100 * (1 - a.chart.fold)) + ' %.' : '.');
+  if (fold) { if (pick.ev > best.ev) s += ' Das vereinfachte Modell sieht den Fold zwar ' + bbTxt(pick.ev - best.ev, bb) + ' vorn, der Coach folgt hier aber dem Chart.'; return s; }
   if (pick.ev > best.ev) s += ' Das vereinfachte Modell rechnet zwar mit ' + bbTxt(pick.ev - best.ev, bb) + ' mehr, die dafür nötigen Folds sind aber nicht durch Gegnerwerte belegt.';
   else if (loss > 0) s += ' Geschätzter Verlust ' + bbTxt(loss, bb) + '.';
   return s;

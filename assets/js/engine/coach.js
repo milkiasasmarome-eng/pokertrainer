@@ -55,7 +55,8 @@ function oppStats(dbRec) {
   // Datenformat 3: bei erkannter Änderung der Spielweise zählen die Kurzzeitwerte (PT.stats.effectiveStats), sonst die Langzeitwerte
   var eff = dbRec && S.effectiveStats ? S.effectiveStats(dbRec) : null;
   var raw = eff ? eff.stats : (dbRec ? dbRec.stats : S.emptyStats()), hands = eff ? eff.hands : (dbRec ? dbRec.hands : 0);
-  return { raw: raw, hands: hands, sm: R.smooth(raw), typ: S.playerType(dbRec), bel: S.reliability(hands), changed: eff ? eff.changed : [], longHands: eff ? eff.longHands : hands };
+  var sm = R.smooth(raw); if (sm.pfr > sm.vpip) sm.pfr = sm.vpip;  // PFR ist eine Teilmenge von VPIP (Prüfer B, Befund 9)
+  return { raw: raw, hands: hands, sm: sm, typ: S.playerType(dbRec), bel: S.reliability(hands), changed: eff ? eff.changed : [], longHands: eff ? eff.longHands : hands };
 }
 function buildRange(v, seat, st, gto, pfaSeat) {
   var line = lineOf(v, seat), sm = gto ? R.smooth(null) : st.sm, prof = R.profileOf(sm);
@@ -346,6 +347,9 @@ function chartWeight(hc, a, unopened) {
   var g = group(a);
   if (g === 'aggr') return hc.raise;
   if (g === 'call') return unopened ? hc.call : Math.max(hc.call, CHART_MIN);  // Calls gegen Raises rechnet das Modell über Equity; nur der Open-Limp ist an den Chart gebunden
+  // Prüfer B, Befund 1: Fold wird wie jede andere Aktion am Chartgewicht gemessen (früher immer 1 → Fold mit Händen, die der Chart zu 100 % spielt).
+  // Ausnahme bleibt der reine Call-oder-Fold gegen ein All-in (preflopAnchor rechnet dort ohne Chart).
+  if (g === 'fold') return hc.fold;
   return 1;
 }
 function preflopAnchor(v, ctx, pre, acts, gto) {
@@ -645,8 +649,10 @@ function grade(a, chosen) {
     modelTopLabel: top.label, recGapBB: recGap / bb, withinU: loss <= u };
 }
 function chartCapText(a, pick, best, loss) {
-  var bb = a.bb, aggr = group(pick) === 'aggr';
-  var s = 'Empfohlen war ' + best.label + '. ' + (aggr ? 'Ein Raise' : 'Ein Limp') + ' mit ' + a.hand.cls + ' liegt außerhalb des Faustregel-Charts (' + a.chart.kind + ').';
+  var bb = a.bb, aggr = group(pick) === 'aggr', fold = group(pick) === 'fold';
+  var s = 'Empfohlen war ' + best.label + '. ' + (aggr ? 'Ein Raise' : fold ? 'Ein Fold' : 'Ein Limp') + ' mit ' + a.hand.cls + ' liegt außerhalb des Faustregel-Charts (' + a.chart.kind + ')' +
+    (fold ? ': Der Chart spielt die Hand zu ' + Math.round(100 * (1 - a.chart.fold)) + ' %.' : '.');
+  if (fold) { if (pick.ev > best.ev) s += ' Das vereinfachte Modell sieht den Fold zwar ' + bbTxt(pick.ev - best.ev, bb) + ' vorn, der Coach folgt hier aber dem Chart.'; return s; }
   if (pick.ev > best.ev) s += ' Das vereinfachte Modell rechnet zwar mit ' + bbTxt(pick.ev - best.ev, bb) + ' mehr, die dafür nötigen Folds sind aber nicht durch Gegnerwerte belegt.';
   else if (loss > 0) s += ' Geschätzter Verlust ' + bbTxt(loss, bb) + '.';
   return s;

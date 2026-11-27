@@ -242,7 +242,8 @@ function respond(opp, ctx, heroAdd, potBefore, nResp, kind) {
       // Modellmittelung: Fold-Rate = Mittel aus Populationsmodell und strukturellem Modell (MDF mit Korrekturen, Stand 2.0.1).
       // Grund: Das Populationsmodell ist an einem eher passiven Helden kalibriert; gegen einen aggressiven Helden (Gegner passen sich an)
       // und gegen unbekannte Strategien überschätzt es Folds bei großen Einsätzen (Validierung, docs/STRATEGIE.md).
-      respond.inner = true; var old = respond(opp, ctx, heroAdd, potBefore, nResp, kind); respond.inner = false;
+      // Prüfer B, Befund 12: Flag immer zurücksetzen, auch wenn der innere Aufruf eine Ausnahme wirft
+      var old; respond.inner = true; try { old = respond(opp, ctx, heroAdd, potBefore, nResp, kind); } finally { respond.inner = false; }
       var tf = POP.blend * old.f + (1 - POP.blend) * pr0.f, pr1 = popRespond(opp, ctx, heroAdd, potBefore, nResp, kind, tf);
       if (pr1) { pr1.basis = 'Populationsmodell gemittelt mit MDF-Modell, angepasst an Gegnerwerte'; return pr1; }
     }
