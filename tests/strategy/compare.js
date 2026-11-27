@@ -35,6 +35,16 @@ const HEROES = {
   'coach201-gto': { kind: 'coach', root: V201, mode: 'gto', name: 'Coach 2.0.1 (gleichgewichtsnah)' },
   'coach22': { kind: 'coach', root: ROOT, mode: 'exploit', name: 'Coach 2.2 (exploitativ)' },
   'coach22-gto': { kind: 'coach', root: ROOT, mode: 'gto', name: 'Coach 2.2 (gleichgewichtsnah)' },
+  // 2.3 abschließende Helden (Plan v23): Produktstand und die drei Varianten mit ausdrücklichen Schaltern
+  'coach23': { kind: 'coach', root: ROOT, mode: 'exploit', name: 'Coach 2.3 (exploitativ)' },
+  'coach23-gto': { kind: 'coach', root: ROOT, mode: 'gto', name: 'Coach 2.3 (gleichgewichtsnah)' },
+  'fA': { kind: 'coach', root: ROOT, mode: 'exploit', abl: { rangeLegacy: true, respLegacy: true, hybrid: false }, name: 'Robustes Basismodell (A)' },
+  'fB': { kind: 'coach', root: ROOT, mode: 'exploit', abl: { hybrid: false }, name: 'Adaptives Modell (B)' },
+  'fC': { kind: 'coach', root: ROOT, mode: 'exploit', abl: { hybrid: true }, name: 'Hybrides Modell (C)' },
+  // 2.3 Strategievarianten (Arbeitspaket 3): A robust (Range und Reaktion 2.1, keine Tabellenanpassung), B adaptiv (Tabellen wie 2.2), C hybrid
+  'varA': { kind: 'coach', root: ROOT, mode: 'exploit', abl: { rangeLegacy: true, respLegacy: true }, name: 'Variante A: robustes Basismodell' },
+  'varB': { kind: 'coach', root: ROOT, mode: 'exploit', abl: {}, name: 'Variante B: adaptives Modell' },
+  'varC': { kind: 'coach', root: ROOT, mode: 'exploit', abl: { hybrid: true }, name: 'Variante C: kontrolliertes hybrides Modell' },
   // 2.3 Ablation (Arbeitspaket 1): Coach 2.2 mit einzelnen Komponenten im Stand 2.1
   'abl-R': { kind: 'coach', root: ROOT, mode: 'exploit', abl: { rangeLegacy: true }, name: 'Ablation: Range-Eingrenzung 2.1' },
   'abl-S': { kind: 'coach', root: ROOT, mode: 'exploit', abl: { respLegacy: true }, name: 'Ablation: Reaktionsmodell 2.1' },
@@ -61,6 +71,27 @@ function plan(name) {
   const add = (group, heroes, cond, seeds, hands) => seeds.forEach(sd => heroes.forEach(hk => jobs.push({ group, hero: hk, comp: cond.comp, difficulty: cond.difficulty, startBB: cond.startBB, seed: sd, hands })));
   // Läufe zu je 2.500 Händen (Zwischenspeicherung je Lauf; ein Neustart wiederholt höchstens die laufenden Jobs).
   // Reihenfolge: zuerst die gepaarten Coach-Läufe des Hauptvergleichs, Seed für Seed, damit Teilergebnisse ausgewogen sind.
+  if (name === 'v23') {
+    // 2.3: vor den Läufen festgelegt (docs/ABNAHMEKRITERIEN_2.3.md). Seeds 23501 ff. kommen in keiner Entwicklung vor.
+    const G = (group, heroes, cond, seeds, env) => seeds.forEach(sd => heroes.forEach(hk => jobs.push({ group, hero: hk, comp: cond.comp, difficulty: 'gemischt', startBB: cond.startBB || 100, seed: sd, hands: 2500, env: env || 'neu', pool: cond.pool || null })));
+    const range = (a, n) => Array.from({ length: n }, (_, i) => a + i);
+    const SUB = (process.env.PT_V23_S4 || 'fA,fB,fC,coach201,coach220').split(',').filter(Boolean);   // Variante gleich dem Produktstand wird ausgelassen (identisches Spiel)
+    for (let i = 0; i < 40; i++) { G('pF', ['coach23', 'coach210'], { comp: 'f23' }, [23501 + i]); G('pK', ['coach23', 'coach210'], { comp: 'bots' }, [23601 + i]);
+      if (i < 6) { G('pF', SUB, { comp: 'f23' }, [23501 + i]); G('pK', SUB, { comp: 'bots' }, [23601 + i]); } }
+    G('pT', ['coach23', 'coach210'], { comp: 'bots', pool: 'T' }, range(23701, 10));
+    G('pG', ['coach23-gto', 'coach201-gto'], { comp: 'bots' }, range(23801, 16));
+    G('sRef', ['coach23', 'coach210'], { comp: 'bots' }, range(23901, 8), 'ref');
+    ['polar', 'sizetell', 'trapper', 'ipaggro', 'nitlag', 'minraiser'].forEach((k, i) => G('sReg', ['coach23', 'coach210'], { comp: 'final:' + k }, [23951 + i]));
+    [15, 25].forEach((sb, i) => G('sKurz', ['coach23', 'coach210'].concat(sb === 15 ? ['pushfold'] : []), { comp: 'bots', startBB: sb }, range(23971 + 10 * i, 4)));
+  }
+  if (name === 'sel23') {
+    // 2.3 Modellwahl (docs/ABNAHMEKRITERIEN_2.3.md): Validierungsgruppen Va23 (unbekannte Strategien) und Gegner-KI V; dazu beschreibend das Regressionsset.
+    const G = (group, heroes, cond, seeds) => seeds.forEach(sd => heroes.forEach(hk => jobs.push({ group, hero: hk, comp: cond.comp, difficulty: 'gemischt', startBB: 100, seed: sd, hands: 2500, env: 'neu', pool: cond.pool || null })));
+    const HS = ['varA', 'varB', 'varC', 'coach210'];
+    G('selVa', HS, { comp: 'p23:Va' }, [23201, 23202, 23203, 23204, 23205, 23206]);
+    G('selV', HS, { comp: 'bots', pool: 'V' }, [23211, 23212, 23213, 23214]);
+    ['polar', 'trapper', 'ipaggro'].forEach((k, i) => G('selReg', HS, { comp: 'final:' + k }, [23221 + i]));
+  }
   if (name === 'abl23') {
     // 2.3 Arbeitspaket 1: Ablation. Seeds 23001 ff. nur für diese Studie. Regressionsset = frühere FINAL-Strategien (nicht mehr unberührt).
     const G = (group, heroes, cond, seeds) => seeds.forEach(sd => heroes.forEach(hk => jobs.push({ group, hero: hk, comp: cond.comp, difficulty: 'gemischt', startBB: 100, seed: sd, hands: 2500, env: 'neu', pool: cond.pool || null })));
@@ -68,7 +99,7 @@ function plan(name) {
     ['polar', 'sizetell', 'trapper', 'ipaggro', 'nitlag', 'minraiser'].forEach((k, i) => G('a1final', HS, { comp: 'final:' + k }, [23001 + i]));
     G('a1V', HS, { comp: 'bots', pool: 'V' }, [23101, 23102, 23103, 23104]);
   }
-  if (name === 'v22') {
+  if (name === 'v23' || name === 'sel23' || name === 'abl23') { /* Pläne 2.3 oben */ } else if (name === 'v22') {
     // 2.2: Plan vor den Läufen festgelegt (docs/ABNAHMEKRITERIEN_2.2.md). Seeds 22001 ff. kommen in keiner Entwicklung vor.
     const G = (group, heroes, cond, seeds, env) => seeds.forEach(sd => heroes.forEach(hk => jobs.push({ group, hero: hk, comp: cond.comp, difficulty: cond.difficulty, startBB: cond.startBB, seed: sd, hands: 2500, env: env || 'neu', pool: cond.pool || null })));
     const range = (a, n) => Array.from({ length: n }, (_, i) => a + i);
@@ -163,7 +194,7 @@ function aggregate(planName, runs, h) {
       runs: list.map(r => r.id), seeds: list.map(r => r.job.seed), adj: summary(list, true, 100 + i), raw: summary(list, false, 100 + i), decisions: decisions(list), invalid: invalid(list) }); });
   // Gepaarte Vergleiche
   const comparisons = [];
-  function compare(id, title, group, a, b, splitBy) {
+  function compare(id, title, group, a, b, splitBy, niDelta) {
     const pairs = [];
     runs.filter(r => r.job.group === group && r.job.hero === a).forEach(ra => {
       const rb = runs.filter(r => r.job.group === group && r.job.hero === b && condKey(r.job) === condKey(ra.job) && r.job.seed === ra.job.seed && r.job.hands === ra.job.hands)[0];
@@ -175,6 +206,8 @@ function aggregate(planName, runs, h) {
       return { diff: +bs.bb100.toFixed(2), lo: +bs.lo.toFixed(2), hi: +bs.hi.toFixed(2), se: +bs.se.toFixed(2), hands: bs.hands, pairs: ps.length, blocks: bs.nBlocks }; };
     const res = { id, title, group, a, b, aName: HEROES[a].name, bName: HEROES[b].name, adj: one(pairs, true, 7), raw: one(pairs, false, 7), decisionsA: decisions(pairs.map(p => p[0])), decisionsB: decisions(pairs.map(p => p[1])),
       invalidA: invalid(pairs.map(p => p[0])), invalidB: invalid(pairs.map(p => p[1])), seeds: [...new Set(pairs.map(p => p[0].job.seed))], runsA: pairs.map(p => p[0].id), runsB: pairs.map(p => p[1].id) };
+    if (niDelta != null) { const bs = blockBootstrap(pairs.map(([ra, rb]) => pairRuns(metric(ra, true), metric(rb, true))), L, 10000, 11, [-niDelta]);
+      res.ni = { delta: niDelta, lo: +bs.lo.toFixed(2), p: bs.pLE[-niDelta], verdict: bs.nBlocks < 20 ? 'zu wenig Blöcke' : bs.lo > -niDelta ? 'nicht unterlegen' : 'Nichtunterlegenheit nicht belegt', seeds: new Set(pairs.map(p => p[0].job.seed)).size }; }
     res.verdict = res.adj.blocks < 20 ? 'zu wenig Blöcke' : res.adj.lo > 0 ? 'belegt besser' : res.adj.hi < 0 ? 'belegt schlechter' : 'nicht belegt';
     res.aAhead = pairs.filter(([ra, rb]) => ra.sumBBAdj > rb.sumBBAdj).length;
     res.split = {};
@@ -183,6 +216,28 @@ function aggregate(planName, runs, h) {
       res.split[key] = Object.keys(parts).sort((x, y) => key === 'stack' ? parseFloat(x) - parseFloat(y) : x < y ? -1 : x > y ? 1 : 0).map((v, i) => Object.assign({ value: v }, one(parts[v], true, 31 + i), { rawDiff: one(parts[v], false, 31 + i).diff, aAhead: parts[v].filter(([ra, rb]) => ra.sumBBAdj > rb.sumBBAdj).length }));
     });
     comparisons.push(res);
+  }
+  if (planName === 'v23') {
+    const D = 5, DG = 8;
+    const P = [['P1', 'pF', 'coach23', 'coach210', D, 'P1: Coach 2.3 gegen 2.1.0, neue abschließende Testgruppe F23'], ['P2', 'pK', 'coach23', 'coach210', D, 'P2: Coach 2.3 gegen 2.1.0, Gegner-KI 2.2 (ganzer Pool)'],
+      ['P3', 'pT', 'coach23', 'coach210', D, 'P3: Coach 2.3 gegen 2.1.0, Gegner-KI Testgruppe T'], ['P4', 'pG', 'coach23-gto', 'coach201-gto', DG, 'P4: gleichgewichtsnah 2.3 gegen 2.0.1']];
+    P.forEach(([id, g, a, b, d, t]) => compare(id, t, g, a, b, id === 'P1' ? ['comp'] : [], d));
+    // Holm über P1–P4 (einseitige Nichtunterlegenheit)
+    const ps = comparisons.filter(c => /^P\d$/.test(c.id)).sort((x, y) => x.ni.p - y.ni.p); let stop = false;
+    ps.forEach((c, i) => { const lvl = 0.05 / (ps.length - i); c.ni.holmLevel = +lvl.toFixed(4); if (!stop && c.ni.p <= lvl) c.ni.holm = 'nicht unterlegen'; else { stop = true; c.ni.holm = 'nicht belegt'; } });
+    compare('S1', 'S1: Coach 2.3 gegen 2.2.0, Gegner-KI 2.2', 'pK', 'coach23', 'coach220', []);
+    compare('S2', 'S2: Coach 2.3 gegen 2.1.0, unveränderte Gegner-KI 2.1', 'sRef', 'coach23', 'coach210', [], D);
+    compare('S3', 'S3: Coach 2.3 gegen 2.1.0, Regressionsset (frühere FINAL)', 'sReg', 'coach23', 'coach210', ['comp'], D);
+    ['fA', 'fB', 'fC', 'coach201', 'coach220', 'coach210'].forEach(b => { compare('S4F-' + b, 'S4: Coach 2.3 gegen ' + HEROES[b].name + ', F23', 'pF', 'coach23', b, []); compare('S4K-' + b, 'S4: Coach 2.3 gegen ' + HEROES[b].name + ', Gegner-KI 2.2', 'pK', 'coach23', b, []); });
+    compare('S5', 'S5: Coach 2.3 gegen 2.1.0, 15 und 25 BB', 'sKurz', 'coach23', 'coach210', ['stack']);
+    compare('S6', 'S6: Coach 2.3 gegen Push/Fold-Referenz, 15 BB', 'sKurz', 'coach23', 'pushfold', []);
+  }
+  if (planName === 'sel23') {
+    [['varA', 'coach210'], ['varB', 'coach210'], ['varC', 'coach210'], ['varC', 'varB'], ['varC', 'varA'], ['varB', 'varA']].forEach(([a, b]) => {
+      compare('selVa-' + a + '-' + b, 'Modellwahl Va23: ' + HEROES[a].name + ' gegen ' + HEROES[b].name, 'selVa', a, b, []);
+      compare('selV-' + a + '-' + b, 'Modellwahl Gegner-KI V: ' + HEROES[a].name + ' gegen ' + HEROES[b].name, 'selV', a, b, []);
+      compare('selReg-' + a + '-' + b, 'Regressionsset: ' + HEROES[a].name + ' gegen ' + HEROES[b].name, 'selReg', a, b, ['comp']);
+    });
   }
   if (planName === 'abl23') {
     ['abl-R', 'abl-S', 'abl-A', 'abl-D', 'abl-RS', 'abl-RSD', 'coach210'].forEach(b => {
@@ -219,7 +274,7 @@ function aggregate(planName, runs, h) {
   const shared = runTable.filter(x => x.usedIn.length > 1).map(x => ({ id: x.id, hero: x.hero, usedIn: x.usedIn }));
   comparisons.forEach(c => { c.sharedRuns = c.runsB.concat(c.runsA).filter(id => runById[id].usedIn.length > 1); c.sharedWith = [...new Set(c.sharedRuns.flatMap(id => runById[id].usedIn))].filter(x => x !== c.id); });
   const file = path.join(ROOT, 'tests', 'results', planName === 'haupt' ? 'strategy.json' : 'strategy-' + planName + '.json');
-  h.envHash = planName === 'v22' ? { neu: h.envHash, ref: 'ref-' + hashFiles(V210, ENV_MODULES) } : h.envHash;
+  h.envHash = (planName === 'v22' || planName === 'v23') ? { neu: h.envHash, ref: 'ref-' + hashFiles(V210, ENV_MODULES) } : h.envHash;
   let prev = {}; try { prev = JSON.parse(fs.readFileSync(file, 'utf8')); } catch (e) { /* neu */ }
   const out = Object.assign(prev, { app: version(ROOT), date: new Date().toISOString(), node: process.version, cpus: os.cpus().length, plan: planName,
     method: { primary: 'All-in-bereinigte BB/100 (unverzerrt, vor den Hauptläufen festgelegt); Rohwerte zusätzlich', bootstrap: { blockHands: L, reps: B, stratified: 'je Lauf' }, verdict: 'belegt, wenn das 95-%-Intervall der Differenz ganz über 0 liegt',

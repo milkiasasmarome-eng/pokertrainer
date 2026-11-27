@@ -20,7 +20,12 @@ function summary(list) {
   const withRef = list.filter(r => r.ref != null), mathE = withRef.map(r => r.est - r.ref), rangeE = withRef.map(r => r.ref - r.tr);
   const mean = xs => xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : NaN;
   return { n, est: mean(est), true: mean(tr), bias: mean(d), biasCI: ciCluster(list, r => r.est - r.tr) || ci(d), nRef: withRef.length, mathErr: mean(mathE), mathAbs: mean(mathE.map(Math.abs)), rangeErr: mean(rangeE), rangeCI: ciCluster(withRef, r => r.ref - r.tr) || ci(rangeE),
-    brier: mean(list.map(r => (r.est - r.tr) ** 2)) };
+    brier: mean(list.map(r => (r.est - r.tr) ** 2)), ece: ece(list), absErr: mean(d.map(Math.abs)) };
+}
+/** 2.3 (Arbeitspaket 5): mittlerer Kalibrierungsfehler (ECE) über 10 gleich breite Klassen der Schätzung: Σ n_k/N · |Ø Schätzung − Ø tatsächlich| */
+function ece(list) {
+  const B = Array.from({ length: 10 }, () => [0, 0, 0]); list.forEach(r => { const k = Math.min(9, Math.max(0, Math.floor(r.est * 10))); B[k][0] += r.est; B[k][1] += r.tr; B[k][2]++; });
+  let s = 0; B.forEach(([e, t, n]) => { if (n) s += n / list.length * Math.abs(e / n - t / n); }); return s;
 }
 const groups = {
   'Straße': r => ST[r.st],

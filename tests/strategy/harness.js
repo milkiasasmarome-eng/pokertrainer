@@ -148,6 +148,7 @@ function runMatch(opts) {
   }
   if (out.hands % BLOCK) { out.blocks.push(+bs.toFixed(4)); out.blocksAdj.push(+bsA.toFixed(4)); out.partialLast = out.hands % BLOCK; }
   out.sumBB = out.blocks.reduce((s, x) => s + x, 0); out.sumBBAdj = out.blocksAdj.reduce((s, x) => s + x, 0);
+  if (opts.onEnd) opts.onEnd({ db });
   return out;
 }
 module.exports = { runMatch, allInAdjusted, synthFor, oppAct, oppDecision, coachInput, cloneHand, clone, PT, STRAT, BLOCK, loadEngine };

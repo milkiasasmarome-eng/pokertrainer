@@ -59,7 +59,8 @@ function run(seed, hands, group, root, mode) {
   const recs = [], C = HS.loadEngine(root || path.join(__dirname, '..', '..')), rng = PT.makeRng('calib|' + seed);
   const opts = { seed, hands, startBB: 100, difficulty: 'gemischt', comp: 'bots', hero: { kind: 'coach', root: root || path.join(__dirname, '..', '..'), mode: mode || 'exploit' } };
   if (/^[EVT]$/.test(group)) opts.pool = GROUPS[group];
-  else if (group.indexOf('synth:') === 0) opts.comp = group;
+  else if (/^(synth:|final|p23|f23)/.test(group)) opts.comp = group;
+  if (process.env.PT_ABL) { opts.hero.abl = JSON.parse(process.env.PT_ABL); if (C.ranges.ABL) Object.assign(C.ranges.ABL, opts.hero.abl); }   // 2.3: Variante A/B/C
   opts.onDecision = ({ an, v, h, db }) => {
     if (v.street === 0) return;
     const active = h.p.filter(q => !q.isHero && !q.folded);
@@ -70,6 +71,7 @@ function run(seed, hands, group, root, mode) {
     const r = { h: h.no, st: v.street, n: active.length, est: +an.equity.eq.toFixed(4), tr: +tr.toFixed(4), fk: fc.kind, f: +fc.f.toFixed(3), lead: fc.lead ? 1 : 0, best: an.actions[0].type, ip: an.ip ? 1 : 0 };
     if (active.length === 1) {
       const q = active[0], st = C.coach._intern.oppStats(db.opps[q.id] ? JSON.parse(JSON.stringify(db.opps[q.id])) : null);
+      if (C.ranges.ABL && C.ranges.ABL.hybrid && C.coach.__hybridFit) { const om = {}; h.p.forEach(x => { if (!x.isHero && db.opps[x.id]) om[x.id] = db.opps[x.id]; }); const fit = C.coach.__hybridFit({ opps: om }); st.wTab = fit[q.id] ? fit[q.id].w : (fit.__pool.w == null ? 1 : fit.__pool.w); }
       const vv = HS.clone(v), rg = C.coach._intern.buildRange(vv, q.seat, st, mode === 'gto', vv.pfa);
       const ref = rangeEq(C, v.cards, v.board, rg.w, rng);
       if (ref != null) r.ref = +ref.toFixed(4);
