@@ -39,10 +39,12 @@ Positionsspieler R +19,2, S −27,2; „eng preflop, aggressiv postflop“ R −
 
 1. **Hauptursache ist das Reaktionsmodell** (belegt). Die aus der Gegner-KI erhobene Aktionstabelle sagt gegen fremde Strategien zu viele Folds
    voraus. Das macht Bets und vor allem Raises scheinbar profitabel: Raises postflop 6,7 % der Entscheidungen (2.1: 2,1 %), Checks 27,8 % (2.1: 31,5 %).
-2. **Zweite Ursache ist die Range-Tabelle** (Größenordnung −11, einzeln nicht belegt). Sie ist gegen den Polarisierer allein verantwortlich: Große
+2. **Die Range-Tabelle trägt bei einzelnen Strategien bei** (über das Set −11,2, einzeln nicht belegt). Sie ist gegen den Polarisierer allein verantwortlich: Große
    Einsätze gelten als stark, beim Polarisierer sind sie zur Hälfte Luft.
-3. **Mehrere Ursachen wirken gleichzeitig.** Je nach Strategie überwiegt die Range (Polarisierer) oder die Reaktion (Fallensteller, Positionsspieler).
-   Gegen die Gegner-KI verstärken sich beide Teile (RS +29,5 > S + R = +20,4).
+3. **Mehrere Ursachen wirken gleichzeitig, aber nicht additiv.** Je nach Strategie überwiegt die Range (Polarisierer) oder die Reaktion
+   (Fallensteller, Positionsspieler). Über das ganze Regressionsset ist die Wechselwirkung unteradditiv: S allein −18,9, R allein −11,2, beide
+   zusammen −17,7. Wer die Reaktion ersetzt, beseitigt dort fast den ganzen Verlust; die Range-Tabelle wirkt vor allem gegen einzelne
+   Strategien (Prüfbefund B23-8). Gegen die Gegner-KI verstärken sich beide Teile (RS +29,5 > S + R = +20,4).
 4. Die Gegneranpassung (λ, γ) und die Datenlage nach Gelegenheiten erklären die Regression nicht.
 5. Derselbe Mechanismus, der gegen die Gegner-KI +30 BB/100 bringt, kostet gegen fremde Spielweisen. Die Tabellen sind an der Gegner-KI angepasst
    und übertragen sich nicht. Die Gegner-KI ist für den Trainer die eigentliche Zielgruppe; für allgemeine strategische Qualität ist das Übertragen entscheidend.
