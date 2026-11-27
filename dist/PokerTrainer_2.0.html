@@ -5630,7 +5630,27 @@ var Store = {
   clearAll: function () { return Promise.all(STORES.map(function (s) { return Store.clear(s); })); },
   /** Hände: neueste zuerst; begrenzt auf max Einträge (älteste werden entfernt) */
   addHand: function (rec, max) {
-    return Store.put('hands', rec).then(function () {
+    // IndexedDB: nur zählen und die ältesten Schlüssel über den Index „ts“ löschen. Bis 2.1 wurden nach jeder Hand alle Hände gelesen
+    // (getAll, bei 3.000 Händen über 100 MB) – das blockierte die Oberfläche am Handende 1,5–8 s (Prüfung C10).
+    if (S.mode === 'idb') return safe(function () {
+      var tx = S.db.transaction('hands', 'readwrite'), os = tx.objectStore('hands');
+      os.put(rec);
+      if (os.indexNames.contains('ts')) {
+        var cq = os.count();
+        cq.onsuccess = function () {
+          var extra = cq.result - max; if (extra <= 0) return;
+          var cur = os.index('ts').openKeyCursor();
+          cur.onsuccess = function () { var c = cur.result; if (!c || extra <= 0) return; os.delete(c.primaryKey); extra--; c.continue(); };
+        };
+        return txDone(tx);
+      }
+      return txDone(tx).then(function () { return Store.trimHands(max); });
+    });
+    return Store.put('hands', rec).then(function () { return Store.trimHands(max); });
+  },
+  /** Rückfall (localStorage, Arbeitsspeicher, Datenbank ohne Index „ts“): alle lesen, älteste entfernen */
+  trimHands: function (max) {
+    return Promise.resolve().then(function () {
       return Store.all('hands').then(function (list) {
         if (list.length <= max) return;
         list.sort(function (a, b) { return a.ts - b.ts; });

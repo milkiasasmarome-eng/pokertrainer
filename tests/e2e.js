@@ -2,7 +2,8 @@
    Aufruf: node tests/e2e.js [Basis-URL]   (Standard: http://127.0.0.1:8765/)
    Voraussetzung: statischer Server im Projektordner, z. B. python3 -m http.server 8765 --bind 127.0.0.1
    Werkzeuge: npm --prefix tests ci (Playwright, axe-core). Browser: CHROME=Pfad, CHROME= (leer) für das Chromium von Playwright.
-   Teile: diese Datei (Grundfunktionen), tests/e2e/robust.js (Start, Sicherheit, Daten), tests/e2e/a11y.js (Barrierefreiheit).
+   Teile: diese Datei (Grundfunktionen), tests/e2e/robust.js (Start, Sicherheit, Daten), tests/e2e/a11y.js (Barrierefreiheit),
+   tests/e2e/pruefung-cd.js (Regressionen der Prüfung 2.1, Prüfer C und D).
    Ergebnis: tests/results/e2e.json, Screenshots in tests/results/screens/, Barrierefreiheit in tests/results/a11y/ */
 'use strict';
 const path = require('path'), fs = require('fs'), http = require('http');
@@ -405,6 +406,7 @@ async function playHand(page, policy) {
     bumpUpdateSite: () => { const f = path.join(UPD_DIR, 'sw.js'); fs.writeFileSync(f, fs.readFileSync(f, 'utf8').replace(/(CACHE = 'pokertrainer-' \+ VERSION \+ '-[0-9a-f]+)'/, "$1-neu'") + '/* Update ' + Date.now() + ' */\n'); } };
   PART = 'robust'; await require('./e2e/robust.js')(H);
   PART = 'a11y'; await require('./e2e/a11y.js')(H);
+  PART = 'cd'; await require('./e2e/pruefung-cd.js')(H);
   PART = 'basis';
   await test('Netzwerk: keine Verbindung zu fremden Adressen (alle Seiten, alle Tests)', async () => {
     ok(requests.n > 200, requests.n + ' Anfragen protokolliert');
