@@ -6,6 +6,18 @@ module.exports = function (T) {
   const C = s => PT.parseCards(s);
   const coach = (h, mode, more) => PT.coach.analyze(Object.assign({ view: PT.bots.publicView(h, 0), opps: {}, settings: { mode: mode || 'exploit', level: 'standard' }, seed: 7, live: true, skipModel: true }, more || {}));
 
+  /** Spot mit wählbarer Stacktiefe (alle Spieler gleich tief) */
+  function deep(heroPos, cards, board, script, stackBB) {
+    const button = (0 - PT.POS6.indexOf(heroPos) + 6) % 6, ids = ['g001', 'g002', 'g003', 'g004', 'g005'];
+    const players = [{ id: 'hero', name: 'Du', stack: stackBB * 100, isHero: true }].concat(ids.map(id => ({ id, name: PT.bots.nameOf(id), stack: stackBB * 100 })));
+    const deck = PT.rules.deckFor({ n: 6, button, board: board ? (PT.parseCards(board) || []).map(PT.cardStr) : [], seats: players }, { 0: C(cards) });
+    const h = new PT.Hand({ players, button, sb: 50, bb: 100, deck, no: 1 }).start(), seatOf = p => p === 'H' ? 0 : h.p.findIndex(q => q.pos === p);
+    for (const [p, t, amt] of script) { const sx = seatOf(p); let g = 0; while (h.toAct !== sx && g++ < 20) { const L = h.legal(h.toAct); h.act(h.toAct, L.canCheck ? { type: 'check' } : { type: 'fold' }); }
+      const r = h.act(sx, amt ? { type: t, amount: Math.round(amt * 100) } : { type: t }); if (!r.ok) throw new Error(p + ' ' + t + ': ' + r.error); }
+    let g = 0; while (h.toAct !== 0 && !h.done && g++ < 20) { const L = h.legal(h.toAct); h.act(h.toAct, L.canCheck ? { type: 'check' } : { type: 'fold' }); }
+    return h;
+  }
+
   test('Prüfer B 1: Chart-Anker misst Fold am Chartgewicht (kein Fold mit Händen, die der Chart zu 100 % spielt)', () => {
     const cases = [
       ['BTN', 'As5s', [['UTG', 'call']], 'aggr', 'A5s BTN gegen Limper'],
@@ -97,5 +109,17 @@ module.exports = function (T) {
     }
     // Anpassung bleibt möglich: 90 % Fold über 100 Gelegenheiten → Steal mit 72o
     ok(steal(0.9, 100).actions[0].type === 'raise', 'BB foldet 90 % (n = 100): Steal mit 72o');
+  });
+  test('Prüfer B 8: Short Stack – keine Raises ab einem Drittel des effektiven Stacks außer All-in (Commitment)', () => {
+    const sits = [['BB', [['BTN', 'raise', 2.2]], ['Ks9s', 'Ks8s', 'As5s', 'JsJh']], ['CO', [['H', 'raise', 2.2], ['BTN', 'raise', 5.5]], ['As5s', 'Ks9s', 'AsKh']]];
+    let bad = 0, n = 0;
+    for (const [pos, script, hands] of sits) for (const cards of hands) for (const mode of ['exploit', 'gto']) {
+      const a = coach(deep(pos, cards, '', script, 20), mode), eff = 2000;
+      a.actions.forEach(x => { if ((x.type === 'raise' || x.type === 'bet') && !x.allin && x.amount >= eff / 3) bad++; });
+      const b = a.actions[0]; n++; if ((b.type === 'raise') && !b.allin) bad++;
+    }
+    ok(bad === 0, n + ' Analysen bei 20 BB: kein Nicht-All-in-Raise ab ⅓ Stack (' + bad + ')');
+    const deepA = coach(deep('BB', 'AsKh', '', [['BTN', 'raise', 2.5]], 100), 'exploit');
+    ok(deepA.actions.some(x => x.type === 'raise' && !x.allin), '100 BB: normale 3-Bet-Größen bleiben');
   });
 };

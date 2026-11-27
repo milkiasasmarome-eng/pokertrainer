@@ -3710,6 +3710,15 @@ function candidates(ctx) {
         [2.2, 2.6].forEach(function (x) { add(pre.lastTo * x, '4-Bet ' + String(x).replace('.', ',') + '×', '4bet'); });
       }
       if (ctx.eff <= 35 * bb || pre.rc >= 3 || (pre.rc === 2 && ctx.eff <= 60 * bb)) add(L.maxTo, 'All-in', 'jam');
+      // Prüfer B, Befund 8: Festlegung (Commitment). Ein Raise auf mindestens ein Drittel des effektiven Stacks S lässt gegen ein All-in
+      // nur noch einen Call von höchstens 2S/3 in einen Pot von mindestens 2S offen; benötigt wären höchstens 33 % Equity, die eine
+      // Raise-Hand gegen eine Shove-Range fast immer hat – der Held müsste praktisch immer callen. Ein solcher Raise ist schwächer als das
+      // All-in selbst (der Gegner behält die Wahl, schwache Hände zu folden und starke zu shoven) und wird durch das All-in ersetzt.
+      if (ctx.eff > 0) {
+        var commit = ctx.eff / 3, dropped = false;
+        out = out.filter(function (a) { var drop = (a.type === 'bet' || a.type === 'raise') && a.amount < L.maxTo && a.amount >= commit; if (drop) dropped = true; return !drop; });
+        if (dropped) add(L.maxTo, 'All-in', 'jam');
+      }
     } else if (L.isBet) {
       [[0.33, '⅓ Pot'], [0.5, '½ Pot'], [0.75, '¾ Pot'], [1.0, 'Pot'], [1.5, 'Overbet 1,5×']].forEach(function (x) {
         // Overbets nur auf Turn und River im Heads-up (Modellannahme: auf dem Flop und multiway kaum sinnvoll, Reaktionen dort schlecht belegt)
