@@ -122,4 +122,27 @@ module.exports = function (T) {
     const deepA = coach(deep('BB', 'AsKh', '', [['BTN', 'raise', 2.5]], 100), 'exploit');
     ok(deepA.actions.some(x => x.type === 'raise' && !x.allin), '100 BB: normale 3-Bet-Größen bleiben');
   });
+  test('Prüfer B 3: Gegner-KI – starke Hände folden je nach Stil gegen sehr große Einsätze, kleine Einsätze unverändert', () => {
+    const byStyle = {}; PT.bots.POOL.forEach(p => { const st = PT.bots.styleOf(p.id); (byStyle[st] = byStyle[st] || []).push(p.id); });
+    function rate(style, betBB) {
+      let c = 0, n = 0;
+      for (const id of byStyle[style].slice(0, 2)) for (let k = 0; k < 50; k++) {
+        const h = deep('BTN', 'AhQh', '', [], 100), bb = h.p.findIndex(q => q.pos === 'BB');
+        const holes = { 0: h.p[0].cards }; holes[bb] = C('KdTc');
+        const players = h.p.map(q => ({ id: q.id, name: q.name, stack: 10000, isHero: !!q.isHero }));
+        const deck = PT.rules.deckFor({ n: 6, button: h.button, board: ['Ks', '7c', '2d'], seats: players }, holes);
+        const g = new PT.Hand({ players, button: h.button, sb: 50, bb: 100, deck, no: 1 }).start();
+        let q = 0; while (g.toAct !== 0 && q++ < 10) g.act(g.toAct, { type: 'fold' });
+        g.act(0, { type: 'raise', amount: 250 }); q = 0; while (g.toAct !== bb && q++ < 10) g.act(g.toAct, { type: 'fold' });
+        g.act(bb, { type: 'call' }); g.act(bb, { type: 'check' }); g.act(0, { type: 'bet', amount: Math.min(g.p[0].stack, Math.round(betBB * 100)) });
+        const a = PT.bots.decide(PT.bots.publicView(g, bb), id, PT.makeRng('b3|' + id + '|' + k + '|' + betBB), { heroStats: null });
+        n++; if (a.type !== 'fold') c++;
+      }
+      return c / n;
+    }
+    const big = {}, small = {}; ['lp', 'nit', 'tag', 'lag'].forEach(st => { big[st] = rate(st, 97.5); small[st] = rate(st, 2); });
+    ok(big.nit <= 0.2 && big.tag <= 0.2 && big.lag <= 0.2, 'Top Pair guter Kicker gegen 17,7-fachen Pot: Nit/TAG/LAG spielen selten weiter (' + JSON.stringify(big) + ')');
+    ok(big.lp >= 0.5, 'Calling Station (loose-passiv) callt weiterhin meist (' + big.lp + ')');
+    ok(Object.values(small).every(x => x >= 0.95), 'gegen ⅓ Pot spielen alle Stile weiter (' + JSON.stringify(small) + ')');
+  });
 };
