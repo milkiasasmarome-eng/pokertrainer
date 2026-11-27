@@ -45,6 +45,8 @@ const HEROES = {
   'varA': { kind: 'coach', root: ROOT, mode: 'exploit', abl: { rangeLegacy: true, respLegacy: true }, name: 'Variante A: robustes Basismodell' },
   'varB': { kind: 'coach', root: ROOT, mode: 'exploit', abl: {}, name: 'Variante B: adaptives Modell' },
   'varC': { kind: 'coach', root: ROOT, mode: 'exploit', abl: { hybrid: true }, name: 'Variante C: kontrolliertes hybrides Modell' },
+  'varS': { kind: 'coach', root: ROOT, mode: 'exploit', abl: { respLegacy: true }, name: 'Variante S: Tabellen-Range, Reaktionsmodell 2.1 (aus der Ablation)' },
+  'varC2': { kind: 'coach', root: ROOT, mode: 'exploit', abl: { hybrid: true, respLegacy: true }, name: 'Variante C2: hybride Range, Reaktionsmodell 2.1' },
   // 2.3 Ablation (Arbeitspaket 1): Coach 2.2 mit einzelnen Komponenten im Stand 2.1
   'abl-R': { kind: 'coach', root: ROOT, mode: 'exploit', abl: { rangeLegacy: true }, name: 'Ablation: Range-Eingrenzung 2.1' },
   'abl-S': { kind: 'coach', root: ROOT, mode: 'exploit', abl: { respLegacy: true }, name: 'Ablation: Reaktionsmodell 2.1' },
@@ -87,7 +89,7 @@ function plan(name) {
   if (name === 'sel23') {
     // 2.3 Modellwahl (docs/ABNAHMEKRITERIEN_2.3.md): Validierungsgruppen Va23 (unbekannte Strategien) und Gegner-KI V; dazu beschreibend das Regressionsset.
     const G = (group, heroes, cond, seeds) => seeds.forEach(sd => heroes.forEach(hk => jobs.push({ group, hero: hk, comp: cond.comp, difficulty: 'gemischt', startBB: 100, seed: sd, hands: 2500, env: 'neu', pool: cond.pool || null })));
-    const HS = ['varA', 'varB', 'varC', 'coach210'];
+    const HS = ['varA', 'varB', 'varC', 'coach210', 'varS', 'varC2'];
     G('selVa', HS, { comp: 'p23:Va' }, [23201, 23202, 23203, 23204, 23205, 23206]);
     G('selV', HS, { comp: 'bots', pool: 'V' }, [23211, 23212, 23213, 23214]);
     ['polar', 'trapper', 'ipaggro'].forEach((k, i) => G('selReg', HS, { comp: 'final:' + k }, [23221 + i]));
@@ -233,7 +235,7 @@ function aggregate(planName, runs, h) {
     compare('S6', 'S6: Coach 2.3 gegen Push/Fold-Referenz, 15 BB', 'sKurz', 'coach23', 'pushfold', []);
   }
   if (planName === 'sel23') {
-    [['varA', 'coach210'], ['varB', 'coach210'], ['varC', 'coach210'], ['varC', 'varB'], ['varC', 'varA'], ['varB', 'varA']].forEach(([a, b]) => {
+    [['varA', 'coach210'], ['varB', 'coach210'], ['varC', 'coach210'], ['varS', 'coach210'], ['varC2', 'coach210'], ['varC', 'varB'], ['varC', 'varA'], ['varB', 'varA'], ['varS', 'varB'], ['varC2', 'varB']].forEach(([a, b]) => {
       compare('selVa-' + a + '-' + b, 'Modellwahl Va23: ' + HEROES[a].name + ' gegen ' + HEROES[b].name, 'selVa', a, b, []);
       compare('selV-' + a + '-' + b, 'Modellwahl Gegner-KI V: ' + HEROES[a].name + ' gegen ' + HEROES[b].name, 'selV', a, b, []);
       compare('selReg-' + a + '-' + b, 'Regressionsset: ' + HEROES[a].name + ' gegen ' + HEROES[b].name, 'selReg', a, b, ['comp']);
