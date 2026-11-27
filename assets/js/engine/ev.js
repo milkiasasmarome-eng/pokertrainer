@@ -272,7 +272,8 @@ function likRespond(opp, ctx, heroAdd, potBefore, nResp) {
   var st = ctx.street, A = absStrength(ctx.board), w = opp.w;
   var callAmt = Math.max(0, Math.min(ctx.me.bet + heroAdd, opp.p.bet + opp.p.stack) - opp.p.bet);
   var f = callAmt / Math.max(1, potBefore + heroAdd - callAmt), facingRaise = ctx.L.toCall > 0;  // wie in den Daten: Einsatz / Pot vor dem Einsatz
-  var key = st + '|' + (facingRaise ? 'rr' : R.sizeKey(f)) + '|' + (nResp > 1 ? 'm' : 'h'), cache = {};
+  var nLive = ctx.opps ? ctx.opps.length : nResp;   // 2.3 (A-15): wie in den Daten zählen alle nicht gefoldeten Gegner, auch All-in
+  var sk = facingRaise ? 'rr' : R.sizeKey(f), key = st + '|' + sk + '|' + (Math.max(nResp, nLive) > 1 ? 'm' : 'h'), cache = {};
   var canRaise = opp.p.stack > callAmt, contW = new Float64Array(NC), callW = new Float64Array(NC), raiseW = new Float64Array(NC), W = 0, Cn = 0, Rs = 0, miss = 0;
   for (var k = 0; k < NC; k++) {
     var x0 = w[k]; if (!(x0 > 0)) continue;
@@ -286,28 +287,30 @@ function likRespond(opp, ctx, heroAdd, potBefore, nResp) {
   if (!(W > 0) || miss > 0) return null;
   var nObs = opp.raw && opp.raw.foldToCbet ? opp.raw.foldToCbet[1] : 0;
   return { f: clamp(1 - Cn / W, 0, 1), c: Math.max(0, (Cn - Rs) / W), r: Rs / W, contW: contW, callW: callW, raiseW: raiseW,
-    basis: 'Aktionstabelle der Population, angepasst an Gegnerwerte (' + nObs + ' Beobachtungen)', model: 'tab', price: callAmt / Math.max(1, potBefore + heroAdd + callAmt) };
+    basis: 'Aktionstabelle der Population, angepasst an Gegnerwerte (' + nObs + ' Beobachtungen)', model: 'tab', sk: sk, price: callAmt / Math.max(1, potBefore + heroAdd + callAmt) };
 }
 /**
  * Reaktion eines Gegners auf einen Einsatz. heroAdd: Chips, die der Held hinzufügt; potBefore: Pot vor der Aktion.
  * Rückgabe: {f, c, r} (Wahrscheinlichkeiten), contW/callW/raiseW (Ranges), basis (Text)
  */
+/** 2.3: Gewicht der Aktionstabelle in der Reaktion je Größenklasse (Prüfbefund B-6: Overbets s5/s6 eigenes Gewicht, auf V gewählt) */
+function tabWeight(sk) { if ((sk === 's5' || sk === 's6') && POP.tabBlendBig != null) return POP.tabBlendBig; return POP.tabBlend; }
 function respond(opp, ctx, heroAdd, potBefore, nResp, kind) {
   if (ctx.street > 0 && ctx.mode !== 'gto' && !POP.off && !POP.tabOff && !R.ABL.respLegacy && !respond.inner) {
-    var tr = likRespond(opp, ctx, heroAdd, potBefore, nResp);
-    if (tr && POP.tabBlend > 0 && POP.tabBlend < 1) {
+    var tr = likRespond(opp, ctx, heroAdd, potBefore, nResp), a = tr ? tabWeight(tr.sk) * (opp.wTab != null ? opp.wTab : 1) : 0;   // 2.3: Modell C skaliert das Tabellengewicht je Gegner
+    if (tr && a > 0 && a < 1) {
       // Modellmittelung (2.2): Mischung aus Aktionstabelle und Reaktionsmodell 2.1 (Populationsmodell gemittelt mit MDF). Die Tabelle
       // überschätzt Folds gegen kleine Einsätze, das 2.1-Modell unterschätzt sie gegen große (Größenstudie Gruppe V, docs/STRATEGIE.md);
       // die Mischung ist über alle Größen am genauesten. Gemischt werden die Reaktionsranges, Fold-Rate und Zusammensetzung folgen daraus.
-      var alt; POP.tabOff = true; try { alt = respond(opp, ctx, heroAdd, potBefore, nResp, kind); } finally { POP.tabOff = false; }
+      var alt, prevOff = POP.tabOff; POP.tabOff = true; try { alt = respond(opp, ctx, heroAdd, potBefore, nResp, kind); } finally { POP.tabOff = prevOff; }
       if (alt && alt.contW) {
-        var a = POP.tabBlend, cw = new Float64Array(NC), cl = new Float64Array(NC), rw = new Float64Array(NC);
+        var cw = new Float64Array(NC), cl = new Float64Array(NC), rw = new Float64Array(NC);
         for (var q = 0; q < NC; q++) { cw[q] = a * tr.contW[q] + (1 - a) * alt.contW[q]; cl[q] = a * tr.callW[q] + (1 - a) * alt.callW[q]; rw[q] = a * tr.raiseW[q] + (1 - a) * alt.raiseW[q]; }
         return { f: a * tr.f + (1 - a) * alt.f, c: a * tr.c + (1 - a) * alt.c, r: a * tr.r + (1 - a) * alt.r, contW: cw, callW: cl, raiseW: rw,
           basis: 'Aktionstabelle gemittelt mit Populations-/MDF-Modell, angepasst an Gegnerwerte', model: 'tab+pop', price: tr.price };
       }
     }
-    if (tr) return tr;
+    if (tr && a >= 1) return tr;   // 2.3 (D-6): Gewicht 0 heißt Modell 2.1, nicht reine Tabelle
   }
   if (ctx.street > 0 && ctx.mode !== 'gto' && !POP.off && !respond.inner) {  // POP.off: nur für Studien (Reaktionsmodell 2.0.1)
     var pr0 = popRespond(opp, ctx, heroAdd, potBefore, nResp, kind);
@@ -541,7 +544,10 @@ function candidates(ctx) {
     if (to > L.maxTo) to = L.maxTo;
     return to;
   }
-  function add(to, label, kind) { to = fit(to); if (seen[to]) return; seen[to] = 1; out.push({ type: L.isBet ? 'bet' : 'raise', amount: to, label: label, kind: kind }); }
+  function add(to, label, kind) { var nominal = to; to = fit(to); if (seen[to]) return; seen[to] = 1;
+    // 2.3 (Prüfbefund D-11): liegt der Stack unter der Nenngröße, nennt die Beschriftung den tatsächlichen Betrag
+    if (to === L.maxTo && nominal > to + 0.5 && label !== 'All-in') label = 'All-in ' + U.fmt(to);
+    out.push({ type: L.isBet ? 'bet' : 'raise', amount: to, label: label, kind: kind }); }
   if (L.canFold) out.push({ type: 'fold', label: 'Fold' });
   if (L.canCheck) out.push({ type: 'check', label: 'Check' });
   if (L.canCall) out.push({ type: 'call', amount: L.callAmt, label: 'Call ' + U.fmt(L.callAmt) });
@@ -580,7 +586,7 @@ function candidates(ctx) {
       add(ctx.cur + (pot + ctx.L.toCall), 'Raise Pot', 'raise');
       if (L.maxTo - me.bet <= 3 * (pot + ctx.L.toCall)) add(L.maxTo, 'All-in', 'jam');
     }
-    out.forEach(function (a) { if ((a.type === 'bet' || a.type === 'raise') && a.amount === L.maxTo) a.label = (a.label === 'All-in' ? 'All-in' : a.label + ' (All-in)'), a.allin = true; });
+    out.forEach(function (a) { if ((a.type === 'bet' || a.type === 'raise') && a.amount === L.maxTo) a.label = (/^All-in/.test(a.label) ? a.label : a.label + ' (All-in)'), a.allin = true; });
   }
   return out;
 }

@@ -471,6 +471,13 @@ var ABL = {};
 function setLikelihoodTable(t) { LIK = t; }
 function likelihoodTable() { return LIK; }
 /** Wendet alle Postflop-Aktionen eines Spielers bis einschließlich Straße `upto` an. */
+var shareCache = {};
+/** Anteil einer Einsatzgröße an allen Bets eines Zelltyps über alle Stärkeklassen (Populationstabelle) */
+function sizeShare(cellKey, out) {
+  var k = cellKey + '|' + out; if (shareCache[k] != null) return shareCache[k];
+  var num = 0, den = 0; for (var xb = 0; xb < 10; xb++) { var d = likDist(cellKey, 0, xb); if (!d) continue; num += d[out] || 0; den += (d.bs || 0) + (d.bl || 0) + (d.bo || 0); }
+  return (shareCache[k] = den > 0 ? num / den : 1 / 3);
+}
 function narrowPostflop(w, actions, seat, board, prof, pfaSeat, upto, opt) {
   var streets = [1, 2, 3], useTable = !!LIK && !(opt && opt.legacy), tcache = {};
   streets.forEach(function (s) {
@@ -487,12 +494,14 @@ function narrowPostflop(w, actions, seat, board, prof, pfaSeat, upto, opt) {
         // 2.2: datenbasierte Likelihood nach absoluter Stärke, Lage, Einsatzgröße und Mehrgegner, angepasst an die Werte des Gegners;
         // Zellen ohne Daten: Faustregel mit der absoluten Stärke
         if (!hsA) hsA = absAll();
-        var idx = actions.indexOf(a), cell = cellAt(actions, idx, seat, pfaSeat, 6), out = actionOutcome(a, cell);
+        var idx = actions.indexOf(a), cell = cellAt(actions, idx, seat, pfaSeat, opt && opt.nPlayers || 6), out = actionOutcome(a, cell);
         for (var k2 = 0; k2 < NC; k2++) {
           if (!(w[k2] > 0)) continue;
           var xa = hsA.v[k2], dr = s < 3 && hsA.d[k2] === 1 ? 1 : 0, d = likDist(cell.key, dr, xaBucket(xa));
           if (!d) { w[k2] *= likelihood(a.t, xa, dr === 1, ctx, prof); continue; }
-          var pk = oppAdjust(d, cell.facing, xa, prof, cell.key, opt && opt.sm, tcache)[out];
+          var dA = oppAdjust(d, cell.facing, xa, prof, cell.key, opt && opt.sm, tcache), pk = dA[out];
+          // 2.3 (Modell C): Größensignale nur teilweise vertrauen – Anteil rho der Größenwahl stärkeunabhängig (Populationsanteil der Größe im Zelltyp)
+          if (opt && opt.sizeShrink > 0 && (out === 'bs' || out === 'bl' || out === 'bo')) { var tb = (dA.bs || 0) + (dA.bl || 0) + (dA.bo || 0); pk = (1 - opt.sizeShrink) * (pk || 0) + opt.sizeShrink * tb * sizeShare(cell.key, out); }
           w[k2] *= Math.max(0.02, Math.min(1, pk == null ? 0.02 : pk));
         }
         return;
