@@ -28,7 +28,8 @@
 <script src="assets/js/recovery.js?v=2.0.1"></script>
 </head>
 <body>
-<a class="skip" href="#main">Zum Inhalt springen</a>
+<a class="skip" href="#main" data-goto="main">Zum Inhalt springen</a>
+<noscript><p class="noscript">Der PokerTrainer braucht JavaScript. Bitte JavaScript für diese Seite erlauben und neu laden. Deine gespeicherten Daten bleiben unverändert.</p></noscript>
 <div class="app" id="app">
   <header class="top">
     <div class="brand">
@@ -69,7 +70,7 @@
           <div class="result2" id="result2"></div>
           <div class="trainbar" id="trainbar" hidden></div>
           <div class="tipmini" id="tipMini"></div>
-          <div class="actions" id="actions">
+          <div class="actions" id="actions" role="group" aria-label="Aktionen" tabindex="-1">
             <div class="mainacts">
               <button class="act fold" id="bFold" type="button" aria-keyshortcuts="F">Fold<kbd aria-hidden="true">F</kbd></button>
               <button class="act call" id="bCall" type="button" aria-keyshortcuts="C K">Check<kbd aria-hidden="true">C</kbd></button>
@@ -85,7 +86,7 @@
             </div>
             <button class="primary pulse" id="bNext" type="button" aria-keyshortcuts="N Enter Space">Nächste Hand<kbd aria-hidden="true">N</kbd></button>
           </div>
-          <div class="msg" id="msg" role="alert" aria-atomic="true"></div>
+          <div class="msg" id="msg" role="status" aria-atomic="true"></div>
         </div>
         <aside class="side">
           <section class="panel coach" aria-labelledby="coachH">
@@ -122,7 +123,7 @@
           </section>
           <section class="panel log" aria-labelledby="logH">
             <h2 id="logH">Handverlauf</h2>
-            <ol id="log" aria-live="off"></ol>
+            <ol id="log" aria-live="off" tabindex="0" aria-labelledby="logH"></ol>
           </section>
         </aside>
       </div>

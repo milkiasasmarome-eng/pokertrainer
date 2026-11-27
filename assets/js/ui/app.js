@@ -86,6 +86,23 @@ function trapFocus(e, root) {
 }
 function showTerm(k) { openModal(k, '<p>' + esc(PT.glossary[k] || '') + '</p><p class="muted">Weitere Begriffe im Bereich Hilfe → Glossar.</p>'); }
 function showMsg(text, info) { var m = $('msg'); m.textContent = text || ''; m.classList.toggle('info', !!info); }
+// ---------- Fokus beim Neuzeichnen erhalten (Prüfung D: t1, t1b) ----------
+/** Selektor, mit dem das fokussierte Element nach dem Neuzeichnen wiedergefunden wird (id oder erstes data-Attribut). */
+function focusKey(el) {
+  if (!el || el === document.body || !el.getAttribute) return null;
+  var esc2 = window.CSS && CSS.escape ? CSS.escape : function (x) { return String(x).replace(/["\\]/g, '\\$&'); };
+  if (el.id) return '#' + esc2(el.id);
+  var a = Array.prototype.filter.call(el.attributes, function (x) { return /^data-/.test(x.name); })[0];
+  return a ? el.tagName.toLowerCase() + '[' + a.name + '="' + esc2(a.value) + '"]' : null;
+}
+/** Führt fn aus (die root neu zeichnet) und setzt den Fokus danach auf das gleichwertige Element, falls er darin lag. */
+function keepFocus(root, fn) {
+  var ae = document.activeElement, key = root && ae && ae !== root && root.contains(ae) ? focusKey(ae) : null;
+  fn();
+  if (key && !root.contains(document.activeElement)) { var n = root.querySelector(key); if (n && !n.disabled) n.focus({ preventScroll: true }); }
+}
+/** innerHTML nur setzen, wenn sich der Inhalt geändert hat (Knöpfe darin bleiben sonst erhalten und behalten den Fokus). */
+function setHtml(el, html) { if (el._h === html) return; keepFocus(el, function () { el.innerHTML = html; }); el._h = html; }
 
 // ---------- Analyse-Dienst (Web Worker, Rückfall Hauptthread) ----------
 /** Neuer Worker mit der Engine (Website: worker.js, Einzeldatei: Blob aus dem eingebetteten Code). Wirft, wenn nicht möglich. */
@@ -207,7 +224,11 @@ function persist(changedIds) {
 }
 function persistAllOpps() { if (S.readonly) return Promise.resolve(); return track(Store.put('opps', PT.stats.dbList(S.db), true).catch(storageError)); }
 function persistLearning() { if (S.readonly) return Promise.resolve(); return track(Store.put('learn', { k: 'learning', v: S.learning }).catch(storageError)); }
-function storageError(e) { S.notes.storageErr = 'Speichern fehlgeschlagen (' + ((e && (e.name || e.message)) || e) + '). Bitte eine Sicherung exportieren.'; renderNotice(); }
+function storageError(e) {
+  var t = 'Speichern fehlgeschlagen (' + ((e && (e.name || e.message)) || e) + '). Bitte eine Sicherung exportieren.';
+  if (S.notes.storageErr !== t) announce(t);  // wichtiger Hinweis: einmal ansagen (WCAG 4.1.3, Prüfung D t10)
+  S.notes.storageErr = t; renderNotice();
+}
 PTUI.persist = persist; PTUI.persistAllOpps = persistAllOpps; PTUI.persistLearning = persistLearning;
 
 // ---------- Sprachausgabe ----------
@@ -257,7 +278,7 @@ function lastActLabel(h, i) {
 }
 function v(x) { return x == null ? '–' : String(x); }
 function renderSeats() {
-  var h = S.hand, html = '', bets = '', bb = S.table ? S.table.cfg.bb : 100;
+  var h = S.hand, html = '', bets = '', bb = S.table ? S.table.cfg.bb : 100, parts = [];
   for (var i = 0; i < N; i++) {
     var d = seatData(i), me = i === 0, act = h && !h.done && !S.reveal && h.toAct === i;
     var win = h && h.done && !S.reveal && h.result && h.result.net[i] > 0;
@@ -291,12 +312,25 @@ function renderSeats() {
     var la = lastActLabel(h, i);
     var extra = '<span class="hole">' + (hole ? '<span class="sr">, </span>' + hole : '') + '</span>' + marks + (la ? '<span class="sr">, letzte Aktion </span>' : '') + '<span class="lastact">' + esc(la) + '</span>';
     // Zugänglicher Name = sichtbarer Inhalt (Name, Position, Stack, Werte, Karten); der Zusatz nennt die Funktion
-    var plate = me ? '<div class="plate" role="group" aria-label="Dein Platz">' + inner + extra + '</div>'
-      : '<button class="plate" type="button" data-opp="' + esc(d.id) + '">' + inner + extra + '<span class="sr">' + (act ? ', ist am Zug' : '') + ', alle Werte anzeigen</span></button>';
+    var content = me ? inner + extra : inner + extra + '<span class="sr">' + (act ? ', ist am Zug' : '') + ', alle Werte anzeigen</span>';
+    var plate = me ? '<div class="plate" role="group" aria-label="Dein Platz">' + content + '</div>'
+      : '<button class="plate" type="button" data-opp="' + esc(d.id) + '">' + content + '</button>';
     if (h && !h.done && d.bet > 0) bets += '<span class="bet b' + i + '">' + fmt(d.bet) + '</span>';
     html += '<div class="' + cls + '">' + plate + '</div>';
+    parts.push({ cls: cls, me: me, id: d.id, content: content, plate: plate });
   }
-  $('seats').innerHTML = html + bets;
+  // Plätze an Ort und Stelle aktualisieren: Der Knopf eines Gegnerplatzes bleibt dasselbe Element und behält den Fokus,
+  // während die Gegner handeln (bis 2.1 wurde #seats bei jeder Aktion komplett ersetzt, der Fokus fiel auf <body>).
+  var box = $('seats'), seats = box.querySelectorAll(':scope > .seat');
+  if (seats.length !== N) { box.innerHTML = html + bets; return; }
+  parts.forEach(function (x, k) {
+    var el = seats[k], pl = el.firstElementChild;
+    if (el.className !== x.cls) el.className = x.cls;
+    if (!pl || pl.tagName !== (x.me ? 'DIV' : 'BUTTON') || (!x.me && pl.getAttribute('data-opp') !== x.id)) { el.innerHTML = x.plate; el.firstElementChild._h = x.content; }
+    else if (pl._h !== x.content) { pl.innerHTML = x.content; pl._h = x.content; }
+  });
+  Array.prototype.forEach.call(box.querySelectorAll(':scope > .bet'), function (b) { b.remove(); });
+  if (bets) box.insertAdjacentHTML('beforeend', bets);
 }
 function potsHtml(h) {
   if (!h) return '<span class="pot">Pot 0,00</span>';
@@ -343,7 +377,8 @@ function presetList(h, L) {
 function sliderToAmt(L, x) { var t = x / 100; return Math.round(L.minTo + (L.maxTo - L.minTo) * t * t); }
 function amtToSlider(L, a) { if (L.maxTo <= L.minTo) return 100; return Math.round(100 * Math.sqrt(Math.max(0, (a - L.minTo) / (L.maxTo - L.minTo)))); }
 function renderControls() {
-  var h = S.hand, my = myTurn(), L = my ? h.legal(0) : null;
+  var h = S.hand, my = myTurn(), L = my ? h.legal(0) : null, acts = $('actions'), ae = document.activeElement;
+  var inActs = ae && ae !== acts && acts.contains(ae);
   $('bFold').disabled = !my || !L.canFold;
   $('bCall').disabled = !my;
   $('bCall').innerHTML = (L ? (L.canCheck ? 'Check' : 'Call ' + fmt(L.callAmt) + (L.callAmt >= L.stack ? ' (All-in)' : '')) : 'Check / Call') + '<kbd aria-hidden="true">C</kbd>';
@@ -352,11 +387,17 @@ function renderControls() {
   $('bRaise').innerHTML = (L && L.isBet ? 'Bet' : 'Raise auf') + '<kbd aria-hidden="true">R</kbd>';
   $('amt').disabled = !canR; $('slider').disabled = !canR;
   var pre = canR ? presetList(h, L) : [];
-  $('presets').innerHTML = pre.map(function (p, i) { return '<button class="preset" type="button" data-amt="' + p[1] + '" title="' + fmt(p[1]) + '"' + (i < 9 ? ' aria-keyshortcuts="' + (i + 1) + '"' : '') + '>' + esc(p[0]) + '<span class="sr"> (' + fmt(p[1]) + ')</span>' + (i < 9 ? '<kbd aria-hidden="true">' + (i + 1) + '</kbd>' : '') + '</button>'; }).join('');
+  setHtml($('presets'), pre.map(function (p, i) { return '<button class="preset" type="button" data-amt="' + p[1] + '" title="' + fmt(p[1]) + '"' + (i < 9 ? ' aria-keyshortcuts="' + (i + 1) + '"' : '') + '>' + esc(p[0]) + '<span class="sr"> (' + fmt(p[1]) + ')</span>' + (i < 9 ? '<kbd aria-hidden="true">' + (i + 1) + '</kbd>' : '') + '</button>'; }).join(''));
   var nextOk = S.ready && !S.readonly && (!h || h.done) && !S.reveal;
   $('bNext').disabled = !nextOk;
   $('bNext').classList.toggle('pulse', nextOk);
   $('bNext').innerHTML = (S.training ? 'Nächste Situation' : 'Nächste Hand') + '<kbd aria-hidden="true">N</kbd>';
+  // Tastaturbedienung: Wird der fokussierte Aktionsknopf gesperrt (eigene Aktion, Handende), bleibt der Fokus in der Aktionsleiste
+  // und springt auf „Check/Call“, sobald du wieder am Zug bist, bzw. auf „Nächste Hand“ (Prüfung D, t1).
+  if ((inActs && (ae.disabled || !document.body.contains(ae))) || ae === acts) {
+    var to = !$('bCall').disabled ? $('bCall') : !$('bNext').disabled ? $('bNext') : acts;
+    if (document.activeElement !== to) to.focus({ preventScroll: true });
+  }
 }
 function renderStatus() {
   var t = S.table; if (!t) { $('status').textContent = 'Lade …'; return; }
@@ -430,12 +471,12 @@ function renderTip() {
     else html = '<p class="tipreason muted">Das Urteil erscheint, nachdem du gehandelt hast.</p>';
     if (my) html += '<p class="small">Du bist am Zug – das Urteil folgt nach deiner Aktion.</p>';
   }
-  box.innerHTML = html;
+  setHtml(box, html);
   // Kurzfassung direkt über den Aktionsknöpfen (nur auf schmalen Bildschirmen sichtbar)
   var mini = '';
   if (mode === 'vorher' && my && a) mini = '<b>' + esc(a.bestLabel) + '</b> · ' + esc(a.classText) + ' <a href="#coachH" data-goto="coachH">Begründung</a>';
   else if (mode !== 'aus' && !my && S.verdict) mini = gradeHtml(S.verdict.g) + ' <a href="#coachH" data-goto="coachH">Details</a>';
-  $('tipMini').innerHTML = mini;
+  setHtml($('tipMini'), mini);
   $('speechOn').checked = !!S.settings.speech;
   $('speechOn').disabled = !(S.speech && S.speech.available);
   $('bSay').disabled = !(S.speech && S.speech.available && S.speech.voice && S.settings.speech && mode !== 'aus');
@@ -460,15 +501,15 @@ function renderNotice() {
   var parts = [], el = $('notice');
   ['readonly', 'storage', 'storageErr', 'speech', 'legacy', 'migration', 'update', 'resume'].forEach(function (k) { if (S.notes[k]) parts.push(S.notes[k]); });
   el.hidden = !parts.length;
-  el.innerHTML = parts.map(function (p) { return '<div class="row">' + (typeof p === 'string' ? '<span>' + esc(p) + '</span>' : p.html) + '</div>'; }).join('');
+  setHtml(el, parts.map(function (p) { return '<div class="row">' + (typeof p === 'string' ? '<span>' + esc(p) + '</span>' : p.html) + '</div>'; }).join(''));
 }
 function renderTrainbar() {
   var tb = $('trainbar');
   if (!S.training) { tb.hidden = true; return; }
   tb.hidden = false;
   var tr = S.training, avg = tr.scores.length ? Math.round(tr.scores.reduce(function (a, b) { return a + b; }, 0) / tr.scores.length) : null;
-  tb.innerHTML = '<span><b>Training: ' + esc(tr.name) + '</b>' + (tr.review ? ' · Wiederholung' : '') + ' · Situation ' + tr.count + (avg != null ? ' · Ø Qualität ' + avg : '') + (tr.difficulty ? ' · Gegnerfeld: ' + esc(PT.session.DIFFICULTY[tr.difficulty].name) : '') + '</span>' +
-    '<span><button class="btn" type="button" data-act="trainstop">Training beenden</button></span>';
+  setHtml(tb, '<span><b>Training: ' + esc(tr.name) + '</b>' + (tr.review ? ' · Wiederholung' : '') + ' · Situation ' + tr.count + (avg != null ? ' · Ø Qualität ' + avg : '') + (tr.difficulty ? ' · Gegnerfeld: ' + esc(PT.session.DIFFICULTY[tr.difficulty].name) : '') + '</span>' +
+    '<span><button class="btn" type="button" data-act="trainstop">Training beenden</button></span>');
 }
 function render() {
   document.body.classList.toggle('simple', !S.settings.advanced);
@@ -570,8 +611,12 @@ function onHeroTurn() {
   var L = h.legal(0);
   $('amt').value = L.canRaise ? plain(L.minTo) : ''; $('slider').value = 0;
   render();
-  S.turnSaid = { t: Date.now(), text: turnText(h) };
-  announce(S.turnSaid.text);
+  // Ansage „Du bist am Zug …“ nur einmal: Im Modus „vorher“ wartet sie bis 1,2 s auf den Tipp und wird mit ihm zusammen angesagt
+  // (bis 2.1 kam sie sofort und mit dem Tipp ein zweites Mal, Prüfung D t10).
+  if (S.turnSaid && S.turnSaid.timer) clearTimeout(S.turnSaid.timer);
+  var said = S.turnSaid = { t: Date.now(), text: turnText(h), done: false };
+  if (S.settings.tipMode === 'vorher') said.timer = setTimeout(function () { if (!said.done) { said.done = true; announce(said.text); } }, 1200);
+  else { said.done = true; announce(said.text); }
   var cur = S.cur;
   cur.promise = Analyzer.run('analyze', { view: view, opps: opps, settings: coachSettings(), seed: seed, learner: learnerSummary(), live: true }).then(function (a) {
     cur.analysis = a;
@@ -581,7 +626,7 @@ function onHeroTurn() {
       if (S.settings.tipMode === 'vorher' && myTurn()) {
         renderTip(); speakText(a.text.speech);
         var tipSay = 'Coach empfiehlt ' + a.bestLabel + ' (' + a.classText + ').';
-        announce(S.turnSaid && Date.now() - S.turnSaid.t < 1500 ? S.turnSaid.text + ' ' + tipSay : tipSay);
+        if (S.turnSaid && !S.turnSaid.done) { S.turnSaid.done = true; clearTimeout(S.turnSaid.timer); announce(S.turnSaid.text + ' ' + tipSay); } else announce(tipSay);
       }
     }
     return a;
@@ -670,14 +715,15 @@ function handEnded() {
     var rec = PT.training.makeHandRecord(h, { session: S.sessionId, seed: S.table.seed, tseed: h.isTraining && S.training ? S.training.seed : null, decisions: S.handDecisions.slice(), types: types, training: h.isTraining ? S.training && S.training.curCat : null });
     return Store.addHand(rec, MAX_HANDS).catch(storageError);
   }));
-  if (notes.length) showMsg(notes.join(' '), true);
+  S.endNote = notes.join(' ');
+  if (notes.length) showMsg(S.endNote, true);
   if (h.result.showdown && !h.p[0].folded && S.shownBoard < h.board.length) { S.reveal = true; revealStep(); }
-  else { S.reveal = false; render(); announce('Hand beendet. ' + resultText(h)); }
+  else { S.reveal = false; render(); announce('Hand beendet. ' + resultText(h) + (S.endNote ? ' ' + S.endNote : '')); }
 }
 function revealStep() {
   var h = S.hand;
   S.shownBoard = S.shownBoard < 3 ? 3 : S.shownBoard + 1;
-  if (S.shownBoard >= h.board.length) { S.shownBoard = h.board.length; S.reveal = false; render(); announce('Hand beendet. ' + resultText(h)); return; }
+  if (S.shownBoard >= h.board.length) { S.shownBoard = h.board.length; S.reveal = false; render(); announce('Hand beendet. ' + resultText(h) + (S.endNote ? ' ' + S.endNote : '')); return; }
   render();
   S.timer = setTimeout(revealStep, Math.max(450, (SPEED[S.settings.speed] || 650) + 200));
 }
@@ -798,7 +844,9 @@ function bind() {
     if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') { if (tg.id === 'amt' && e.key === 'Enter') { e.preventDefault(); onRaise(); } return; }
     // Auf fokussierten Links, Schaltflächen und aufklappbaren Elementen gelten Enter und Leertaste dem Element selbst
     if ((e.key === 'Enter' || e.key === ' ') && tg && tg.closest && tg.closest('a, button, summary, [role="button"], [role="tab"], [tabindex="0"]')) return;
-    if (tg && tg.closest && tg.closest('nav, header, footer, .modal') && e.key.length === 1) return;
+    // Zeichen-Kürzel nicht auf Links/Knöpfen außerhalb der Aktionsleiste (z. B. Gegnerplatz im Fokusmodus eines Screenreaders),
+    // wie in docs/BARRIEREFREIHEIT.md §4 beschrieben (Prüfung D t10)
+    if (e.key.length === 1 && tg && tg.closest && (tg.closest('nav, header, footer, .modal') || (tg.closest('a[href], button, summary, [role="button"]') && !tg.closest('#actions')))) return;
     var k = e.key.toLowerCase();
     if (k === 'f') { if (!$('bFold').disabled) $('bFold').click(); }
     else if (k === 'c' || k === 'k') { if (!$('bCall').disabled) $('bCall').click(); }
@@ -895,7 +943,7 @@ function registerSW() {
   if (!('serviceWorker' in navigator) || window.PT_INLINE || !/^https:$|^http:$/.test(location.protocol)) return;
   if (location.protocol === 'http:' && !/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) return;
   navigator.serviceWorker.register('sw.js', { scope: './' }).then(function (reg) {
-    function waiting(w) { S.swWaiting = w; S.notes.update = { html: '<span>Eine neue Version des PokerTrainers ist bereit.</span><button class="btn" type="button" data-act="swupdate">Jetzt aktualisieren</button>' }; renderNotice(); }
+    function waiting(w) { if (!S.swWaiting) announce('Eine neue Version des PokerTrainers ist bereit.'); S.swWaiting = w; S.notes.update = { html: '<span>Eine neue Version des PokerTrainers ist bereit.</span><button class="btn" type="button" data-act="swupdate">Jetzt aktualisieren</button>' }; renderNotice(); }
     if (reg.waiting && navigator.serviceWorker.controller) waiting(reg.waiting);
     S.hadController = !!navigator.serviceWorker.controller;
     reg.addEventListener('updatefound', function () {
@@ -912,7 +960,7 @@ function registerSW() {
     if (reloading) return;
     if (!S.swUpdating) {
       // Update wurde in einem anderen Tab bestätigt: dieser Tab läuft noch mit dem alten Programmstand
-      if (S.hadController) { S.staleCode = true; S.notes.update = { html: '<span>In einem anderen Tab wurde eine neue Version aktiviert. Bitte nach dieser Hand neu laden.</span><button class="btn" type="button" data-act="reload">Neu laden</button>' }; renderNotice(); }
+      if (S.hadController) { S.staleCode = true; announce('In einem anderen Tab wurde eine neue Version aktiviert. Bitte nach dieser Hand neu laden.'); S.notes.update = { html: '<span>In einem anderen Tab wurde eine neue Version aktiviert. Bitte nach dieser Hand neu laden.</span><button class="btn" type="button" data-act="reload">Neu laden</button>' }; renderNotice(); }
       S.hadController = true;
       return;
     }
@@ -1113,7 +1161,7 @@ function boot() {
   }).catch(function (e) { bootFailed(e, stage); });
   registerSW();
 }
-PTUI.h = { $: $, esc: esc, cardHtml: cardHtml, cardsHtml: cardsHtml, backHtml: backHtml, openModal: openModal, closeModal: closeModal, toast: toast, download: download,
+PTUI.h = { $: $, esc: esc, keepFocus: keepFocus, announce: announce, cardHtml: cardHtml, cardsHtml: cardsHtml, backHtml: backHtml, openModal: openModal, closeModal: closeModal, toast: toast, download: download,
   dateTxt: dateTxt, today: today, termify: termify, bbTxt: bbTxt, gradeHtml: gradeHtml, analysisHtml: analysisHtml, evTableHtml: evTableHtml, potsHtml: potsHtml, depthOf: depthOf,
   coachSettings: coachSettings, learnerSummary: learnerSummary, metaRecord: metaRecord };
 PTUI.boot = boot;

@@ -47,8 +47,9 @@ module.exports = async function (H) {
     const meta = (await p.evaluate(IDB.all, 'meta'))[0], opps = await p.evaluate(IDB.all, 'opps');
     const victim = JSON.parse(JSON.stringify(opps[0])); victim.lastSeen = null; meta.heroRec.extra = 1;
     const heroHands = meta.heroRec.hands;
-    await p.evaluate(IDB.put, ['opps', [victim]]); await p.evaluate(IDB.put, ['meta', [meta]]);
-    await p.close();
+    await p.close();  // erst schließen: beim Schließen speichert der Trainer (pagehide) und würde die Beschädigung überschreiben
+    const hp = await c.newPage(); await hp.goto(BASE + 'manifest.webmanifest');
+    await hp.evaluate(IDB.put, ['opps', [victim]]); await hp.evaluate(IDB.put, ['meta', [meta]]); await hp.close();
     const dls = []; c.on('page', pg => pg.on('download', d => dls.push(d)));
     let q = await c.newPage(); await q.goto(BASE + 'index.html#tisch'); await ready(q, 30000); await q.waitForTimeout(800);
     const raw = dls.find(d => /Rohdaten/.test(d.suggestedFilename()));
@@ -99,6 +100,86 @@ module.exports = async function (H) {
     const r = await b.evaluate(() => window.PTUI.offThread('import', { text: '{}' }, 5000).then(x => x && x.ok === false, e => 'Fehler ' + e.message));
     ok(r === true && await b.evaluate(() => window.__w) === 0 && /neue Version aktiviert/.test(await b.textContent('#notice')), 'Importprüfung im Hauptthread, kein Worker aus dem neuen Stand (' + r + ')');
     await c.close();
+  });
+
+  // ---------------- Prüfer D ----------------
+  async function heroTurn(p) { for (let k = 0; k < 10; k++) { if (await p.locator('#bNext').isEnabled()) await p.click('#bNext'); const st = await waitTurnOrNext(p); if (st.my) return true; } return false; }
+  const active = p => p.evaluate(() => { const a = document.activeElement; return !a || a === document.body ? 'BODY' : (a.id || a.getAttribute('data-opp') || a.getAttribute('data-step') || a.getAttribute('data-gtab') || a.className || a.tagName); });
+
+  await test('Prüfung D (t1/t1b): Fokus bleibt beim Neuzeichnen erhalten – Gegnerplatz, Hinweisleiste, eigene Aktion, Replayer, Gegnerliste', async () => {
+    const { c, p } = await fresh({ viewport: { width: 1366, height: 900 } });
+    await p.goto(BASE + 'index.html?start=sicher#tisch'); await ready(p);
+    await p.evaluate(() => window.PTUI.setSetting('speed', 'langsam'));
+    // a) Gegnerplatz, während Gegner handeln
+    let botTurn = false;
+    for (let k = 0; k < 10 && !botTurn; k++) {
+      if (await p.locator('#bNext').isEnabled()) await p.click('#bNext');
+      for (let i = 0; i < 80; i++) { const s = await p.evaluate(() => { const h = window.PTUI.S.hand; return h && !h.done ? h.toAct : -1; }); if (s > 0) { botTurn = true; break; } if (s === 0) await p.click('#bCall'); if (s === -1) break; await p.waitForTimeout(50); }
+    }
+    await p.focus('.seat.s3 .plate'); const before = await active(p), samples = [];
+    for (let i = 0; i < 10; i++) { await p.waitForTimeout(300); samples.push(await active(p)); }
+    ok(botTurn && samples.every(x => x === before), 'Fokus auf Gegnerplatz ' + before + ': ' + samples.join(','));
+    // b) Knopf in der Hinweisleiste übersteht render()
+    await p.evaluate(() => { const S = window.PTUI.S; S.notes.update = { html: '<span>Test</span><button class="btn" type="button" data-act="dismiss" data-note="update">Jetzt aktualisieren</button>' }; window.PTUI.render(); });
+    await p.focus('#notice [data-act="dismiss"]');
+    await p.evaluate(() => { for (let i = 0; i < 3; i++) window.PTUI.render(); });
+    ok(await p.evaluate(() => document.activeElement && document.activeElement.getAttribute('data-act')) === 'dismiss', 'Fokus auf Hinweis-Knopf nach render()');
+    await p.evaluate(() => { window.PTUI.S.notes.update = ''; window.PTUI.render(); });
+    // c) eigene Aktion per Tastatur: Fokus bleibt in der Aktionsleiste und kehrt zu Check/Call bzw. „Nächste Hand“ zurück
+    await p.evaluate(() => window.PTUI.setSetting('speed', 'sehrschnell'));
+    for (let i = 0; i < 40; i++) { const s = await waitTurnOrNext(p); if (s.next) break; await p.click('#bCall'); }
+    const trail = [];
+    ok(await heroTurn(p), 'Held am Zug');
+    for (let i = 0; i < 12; i++) {
+      await p.focus('#bCall'); await p.keyboard.press('Enter'); await p.waitForTimeout(60); trail.push(await active(p));
+      const s = await waitTurnOrNext(p); await p.waitForTimeout(100); trail.push(await active(p)); if (s.next) break;
+    }
+    ok(!trail.includes('BODY') && ['bCall', 'bNext'].includes(trail[trail.length - 1]), 'Fokus nach eigener Aktion nie auf <body>: ' + trail.join(' → '));
+    // d) Replayer: „Schritt vor“ mit Enter
+    await p.evaluate(() => { location.hash = '#analyse'; }); await p.waitForSelector('#hlist .linkbtn');
+    await p.click('#hlist .linkbtn >> nth=0'); await p.waitForSelector('.replay');
+    await p.focus('[data-step="next"]'); await p.keyboard.press('Enter'); await p.keyboard.press('Enter');
+    ok(await active(p) === 'next' && /Schritt 3 von/.test(await p.textContent('.rcontrols [role=status]')), 'Replayer: Fokus bleibt auf „Schritt vor“');
+    // e) Gegnerliste: Umschalten Am Tisch/Archiv/Alle
+    await p.evaluate(() => { location.hash = '#gegner'; }); await p.waitForSelector('[data-gtab="archiv"]');
+    await p.focus('[data-gtab="archiv"]'); await p.keyboard.press('Enter');
+    ok(await active(p) === 'archiv' && await p.getAttribute('[data-gtab="archiv"]', 'aria-pressed') === 'true', 'Gegner: Fokus bleibt auf „Archiv“');
+    await c.close();
+  });
+
+  await test('Prüfung D (t6, t10, t2, t5): Quiz-Fokus und -Ansage, Sprunglink, Kürzel auf Knöpfen, einmalige Zug-Ansage, Statusmeldungen, Handverlauf per Tastatur, noscript', async () => {
+    const { c, p } = await fresh({ viewport: { width: 1366, height: 900 } });
+    await p.addInitScript(() => { window.__ann = []; document.addEventListener('DOMContentLoaded', () => { const el = document.getElementById('announce'); new MutationObserver(() => { if (el.textContent) window.__ann.push(el.textContent); }).observe(el, { childList: true, characterData: true, subtree: true }); }); });
+    await p.goto(BASE + 'index.html?start=sicher#training'); await ready(p); await p.waitForSelector('#quizBox [data-qa]');
+    await p.focus('#quizBox [data-qa="1"]'); await p.keyboard.press('Enter'); await p.waitForTimeout(150);
+    ok(await p.evaluate(() => !!document.activeElement.closest('#quizBox') && document.activeElement.hasAttribute('data-qnext')), 'Quiz: Fokus auf „Nächste Frage“');
+    ok(await p.evaluate(() => window.__ann.some(t => /^(Richtig|Nicht ganz)/.test(t))), 'Quiz: Ergebnis angesagt');
+    await p.keyboard.press('Enter'); await p.waitForTimeout(100);
+    ok(await p.evaluate(() => document.activeElement.hasAttribute('data-qa')), 'Quiz: nach „Nächste Frage“ Fokus auf der ersten Antwort');
+    // Sprunglink bleibt im aktuellen Bereich
+    await p.evaluate(() => { location.hash = '#einstellungen'; }); await p.waitForTimeout(300);
+    await p.focus('.skip'); await p.keyboard.press('Enter'); await p.waitForTimeout(300);
+    ok(await p.evaluate(() => window.PTUI.S.view === 'einstellungen' && location.hash === '#einstellungen' && document.activeElement.id === 'main'), 'Sprunglink: Fokus im Hauptbereich, Bereich bleibt „Einstellungen“');
+    // Kürzel: Buchstabe auf fokussiertem Gegnerplatz löst nichts aus, in der Aktionsleiste schon
+    await p.evaluate(() => { location.hash = '#tisch'; window.__ann.length = 0; }); await p.evaluate(() => window.PTUI.setSetting('speed', 'sehrschnell'));
+    ok(await heroTurn(p), 'Held am Zug');
+    await p.waitForTimeout(1600);
+    const turnAnn = await p.evaluate(() => window.__ann.filter(t => /Du bist am Zug/.test(t)).length);
+    ok(turnAnn === 1, 'Ansage „Du bist am Zug“ genau einmal (' + turnAnn + '): ' + (await p.evaluate(() => window.__ann.join(' | '))).slice(0, 200));
+    await p.focus('.seat.s1 .plate'); await p.keyboard.press('f'); await p.waitForTimeout(150);
+    ok(await p.evaluate(() => !window.PTUI.S.hand.p[0].folded && window.PTUI.S.hand.toAct === 0), 'Taste F auf Gegnerplatz: kein Fold');
+    await p.focus('#bCall'); await p.keyboard.press('f'); await p.waitForTimeout(150);
+    ok(await p.evaluate(() => window.PTUI.S.hand.p[0].folded || window.PTUI.S.hand.done), 'Taste F in der Aktionsleiste: Fold');
+    // Statusmeldungen: Info nicht als alert, wichtige Hinweise angesagt, Handverlauf fokussierbar
+    ok(await p.getAttribute('#msg', 'role') === 'status' && await p.getAttribute('#log', 'tabindex') === '0', '#msg als Status, Handverlauf per Tastatur scrollbar');
+    await p.evaluate(() => { window.__ann.length = 0; window.PTUI.persist([]); });
+    await p.evaluate(() => { const s = window.PTUI.Store, o = s.put; s.put = () => Promise.reject(new DOMException('voll', 'QuotaExceededError')); window.PTUI.persist([]); setTimeout(() => { s.put = o; }, 200); });
+    await p.waitForTimeout(300);
+    ok(await p.evaluate(() => window.__ann.some(t => /Speichern fehlgeschlagen/.test(t))), '„Speichern fehlgeschlagen“ wird angesagt');
+    await c.close();
+    const c2 = await browser.newContext({ javaScriptEnabled: false }), p2 = await c2.newPage();
+    await p2.goto(BASE + 'index.html'); ok(/braucht JavaScript/.test(await p2.textContent('body')), 'ohne JavaScript: Erklärung statt nur „Lade …“');
+    await c2.close();
   });
 
   await test('Prüfung C3: Rohsicherung ohne lesbare IndexedDB gilt als unvollständig – Zurücksetzen nur nach ausdrücklicher Bestätigung; Fokus nach „Weiter warten“ (D t12)', async () => {

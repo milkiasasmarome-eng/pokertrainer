@@ -49,9 +49,13 @@ views.training = function (el) {
       quizState.answered = +qa.getAttribute('data-qa');
       var right = quizState.answered === quizState.q.ok, Q = S.learning.quiz;
       Q.n++; if (right) Q.correct++; var bt = Q.byType[quizState.q.type] || (Q.byType[quizState.q.type] = { n: 0, c: 0 }); bt.n++; if (right) bt.c++;
-      PTUI.persistLearning(); renderQuiz(); return;
+      PTUI.persistLearning(); renderQuiz();
+      // Ergebnis ansagen und Fokus auf „Nächste Frage“ (die Antwortknöpfe sind jetzt gesperrt, Prüfung D t6)
+      var res = document.querySelector('#quizBox p.good, #quizBox p.bad'), nx = document.querySelector('#quizBox [data-qnext]');
+      if (res) H.announce(res.textContent); if (nx) nx.focus();
+      return;
     }
-    if (e.target.closest('[data-qnext]')) { quizState = null; renderQuiz(); }
+    if (e.target.closest('[data-qnext]')) { quizState = null; renderQuiz(); var first = document.querySelector('#quizBox [data-qa]'); if (first) first.focus(); }
   };
   renderQuiz();
 };
@@ -138,7 +142,8 @@ function stepTo(cmd) {
   else if (cmd === 'pause') { clearInterval(hist.timer); return; }
   hist.redo = null; renderReplay();
 }
-function renderReplay() {
+function renderReplay() { var box = $('hreplay'); if (box) H.keepFocus(box, renderReplay0); }
+function renderReplay0() {
   var box = $('hreplay'); if (!box || !hist.sel) return;
   var h = hist.sel.h, st = hist.sel.states[hist.step], last = hist.step === hist.sel.states.length - 1;
   if (st.error) { box.innerHTML = '<div class="panel bad">' + esc(st.error) + '</div>'; return; }
@@ -298,7 +303,7 @@ views.gegner = function (el) {
   $('gt').addEventListener('change', function () { gstate.typ = $('gt').value; draw(); });
   $('gs').addEventListener('change', function () { gstate.sort = $('gs').value; draw(); });
   el.onclick = function (e) {
-    var t = e.target.closest('[data-gtab]'); if (t) { gstate.tab = t.getAttribute('data-gtab'); views.gegner(el); return; }
+    var t = e.target.closest('[data-gtab]'); if (t) { gstate.tab = t.getAttribute('data-gtab'); H.keepFocus(el, function () { views.gegner(el); }); return; }
     var r = e.target.closest('[data-opp]'); if (r) { PTUI.showOpp(r.getAttribute('data-opp')); return; }
     var g = e.target.closest('[data-g]'); if (!g) return;
     if (g.getAttribute('data-g') === 'export') { var txt = PT.stats.dbExport(S.db, new Date().toISOString()); H.download('PokerTrainer_Datenbank_' + H.today() + '.json', txt); H.toast('Datenbank mit ' + list.length + ' Gegnern exportiert.'); }
