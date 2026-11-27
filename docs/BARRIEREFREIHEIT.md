@@ -84,7 +84,8 @@ Der Sprunglink („Zum Inhalt springen“) ist nur bei Fokus sichtbar und führt
 - Automatische Werkzeuge erkennen nur einen Teil der WCAG-Probleme; die eigenen Tests decken die oben genannten Kriterien ab,
   nicht jedes Erfolgskriterium (z. B. nicht geprüft: 1.4.12 Textabstände, 1.4.4 Zoom 200 % auf allen Geräten, 1.4.13 Tooltips,
   3.3.x bei allen Formularfeldern der Einstellungen).
-- Tastenkürzel aus einem Zeichen gelten nur am Tisch und nur, wenn kein Eingabefeld, Link, Knopf oder Dialog den Fokus hat;
+- Tastenkürzel aus einem Zeichen gelten nur am Tisch und nur, wenn kein Eingabefeld, Dialog, Link oder Knopf außerhalb der
+  Aktionsleiste den Fokus hat (in der Aktionsleiste – Fold, Check/Call, Raise, Beträge, Nächste Hand – bleiben sie aktiv);
   sie lassen sich abschalten. Ein Umbelegen der Tasten gibt es nicht (für 2.1.4 genügt das Abschalten).
 - Der Tisch ist eine grafische Anordnung; Screenreader-Nutzer folgen dem Spiel über die Ansagen beim eigenen Zug und den
   Handverlauf (Liste). Bot-Aktionen werden nicht einzeln angesagt (bewusst sparsam).

@@ -118,7 +118,9 @@ jobs:
           cd _site
           find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
           cd ..
-          cp -r index.html manifest.webmanifest sw.js .nojekyll assets dist archiv PRIVACY.md CHANGELOG.md _site/
+          # archiv/ (gesicherte Freigabe 2.0.1) wird bewusst NICHT veröffentlicht: im selben Ursprung nutzt sie dieselbe IndexedDB
+          # und würde Daten im Format 3 ohne Rückfrage überschreiben (Prüfung C2). Die Datei bleibt im Repository.
+          cp -r index.html manifest.webmanifest sw.js .nojekyll assets dist PRIVACY.md CHANGELOG.md _site/
           cd _site
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"

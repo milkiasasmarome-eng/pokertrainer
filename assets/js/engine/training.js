@@ -336,10 +336,12 @@ var SCEN = {
 function hasDraw(h) { var d = PT.ranges.drawInfo(h.p[0].cards[0], h.p[0].cards[1], h.board); return d.strong && (PT.eval.evaluate(h.p[0].cards.concat(h.board)) >> 20) <= 1; }
 function weakRiver(h) { return PT.bots.percentile(h.p[0].cards, h.board).p < 0.55; }
 function strongHand(h) { return PT.bots.percentile(h.p[0].cards, h.board).p >= 0.88; }
+/** Bekannte Trainingskategorie (nur eigene Schlüssel: „constructor“ aus importierten Lerndaten ist keine Kategorie, Prüfung C6). */
+function hasScen(cat) { return typeof cat === 'string' && Object.prototype.hasOwnProperty.call(SCEN, cat); }
 /** Führt Aktionen bis zum Zielspot aus. Gibt {hand, ok} zurück. Held sitzt immer auf Platz 0. */
 function generate(cat, seed, opts) {
   opts = opts || {};
-  var sc = SCEN[cat] || SCEN['preflop-open'], rng0 = PT.makeRng('szenario|' + cat + '|' + (seed >>> 0));
+  var sc = (hasScen(cat) && SCEN[cat]) || SCEN['preflop-open'], rng0 = PT.makeRng('szenario|' + cat + '|' + (seed >>> 0));
   var cfg = PT.session.defaultConfig(); cfg.difficulty = opts.difficulty || 'gemischt';
   for (var attempt = 0, maxAtt = sc.any ? 240 : 80; attempt < maxAtt; attempt++) {
     var r = PT.makeRng('szenario|' + cat + '|' + (seed >>> 0) + '|' + attempt);
@@ -524,6 +526,6 @@ function handText(h) {
 }
 
 PT.training = { makeHandRecord: makeHandRecord, makeDecision: makeDecision, slimDecision: slimDecision, validHand: validHand, newLearning: newLearning, addDecision: addDecision, validLearning: validLearning, repairLearning: repairLearning, validView: validView, validSnap: validSnap,
-  profile: profile, goalStatus: goalStatus, srsAdd: srsAdd, srsDue: srsDue, srsReview: srsReview, BOX_DAYS: BOX_DAYS, SCEN: SCEN, generate: generate,
+  profile: profile, goalStatus: goalStatus, srsAdd: srsAdd, srsDue: srsDue, srsReview: srsReview, BOX_DAYS: BOX_DAYS, SCEN: SCEN, hasScen: hasScen, generate: generate,
   quiz: quiz, QUIZ_TYPES: QUIZ_TYPES, handText: handText, levelOf: levelOf, defaultGoals: defaultGoals };
 })(typeof globalThis !== 'undefined' ? globalThis : (typeof self !== 'undefined' ? self : this));

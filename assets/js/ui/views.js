@@ -44,14 +44,18 @@ views.training = function (el) {
   el.innerHTML = html;
   el.onclick = function (e) {
     var b = e.target.closest('[data-train]'); if (b) { PTUI.startTraining(b.getAttribute('data-train')); return; }
-    if (e.target.closest('[data-review]')) { var q = PT.training.srsDue(S.learning, Date.now()).slice(0, 20); if (q.length) PTUI.startTraining(q[0].cat, q.map(function (x) { return { key: x.key, cat: PT.training.SCEN[x.cat] ? x.cat : 'preflop-open', seed: x.seed }; })); return; }
+    if (e.target.closest('[data-review]')) { var q = PT.training.srsDue(S.learning, Date.now()).slice(0, 20); if (q.length) PTUI.startTraining(PT.training.hasScen(q[0].cat) ? q[0].cat : 'preflop-open', q.map(function (x) { return { key: x.key, cat: PT.training.hasScen(x.cat) ? x.cat : 'preflop-open', seed: x.seed }; })); return; }
     var qa = e.target.closest('[data-qa]'); if (qa && quizState && quizState.answered == null) {
       quizState.answered = +qa.getAttribute('data-qa');
       var right = quizState.answered === quizState.q.ok, Q = S.learning.quiz;
       Q.n++; if (right) Q.correct++; var bt = Q.byType[quizState.q.type] || (Q.byType[quizState.q.type] = { n: 0, c: 0 }); bt.n++; if (right) bt.c++;
-      PTUI.persistLearning(); renderQuiz(); return;
+      PTUI.persistLearning(); renderQuiz();
+      // Ergebnis ansagen und Fokus auf „Nächste Frage“ (die Antwortknöpfe sind jetzt gesperrt, Prüfung D t6)
+      var res = document.querySelector('#quizBox p.good, #quizBox p.bad'), nx = document.querySelector('#quizBox [data-qnext]');
+      if (res) H.announce(res.textContent); if (nx) nx.focus();
+      return;
     }
-    if (e.target.closest('[data-qnext]')) { quizState = null; renderQuiz(); }
+    if (e.target.closest('[data-qnext]')) { quizState = null; renderQuiz(); var first = document.querySelector('#quizBox [data-qa]'); if (first) first.focus(); }
   };
   renderQuiz();
 };
@@ -138,7 +142,8 @@ function stepTo(cmd) {
   else if (cmd === 'pause') { clearInterval(hist.timer); return; }
   hist.redo = null; renderReplay();
 }
-function renderReplay() {
+function renderReplay() { var box = $('hreplay'); if (box) H.keepFocus(box, renderReplay0); }
+function renderReplay0() {
   var box = $('hreplay'); if (!box || !hist.sel) return;
   var h = hist.sel.h, st = hist.sel.states[hist.step], last = hist.step === hist.sel.states.length - 1;
   if (st.error) { box.innerHTML = '<div class="panel bad">' + esc(st.error) + '</div>'; return; }
@@ -298,7 +303,7 @@ views.gegner = function (el) {
   $('gt').addEventListener('change', function () { gstate.typ = $('gt').value; draw(); });
   $('gs').addEventListener('change', function () { gstate.sort = $('gs').value; draw(); });
   el.onclick = function (e) {
-    var t = e.target.closest('[data-gtab]'); if (t) { gstate.tab = t.getAttribute('data-gtab'); views.gegner(el); return; }
+    var t = e.target.closest('[data-gtab]'); if (t) { gstate.tab = t.getAttribute('data-gtab'); H.keepFocus(el, function () { views.gegner(el); }); return; }
     var r = e.target.closest('[data-opp]'); if (r) { PTUI.showOpp(r.getAttribute('data-opp')); return; }
     var g = e.target.closest('[data-g]'); if (!g) return;
     if (g.getAttribute('data-g') === 'export') { var txt = PT.stats.dbExport(S.db, new Date().toISOString()); H.download('PokerTrainer_Datenbank_' + H.today() + '.json', txt); H.toast('Datenbank mit ' + list.length + ' Gegnern exportiert.'); }
@@ -374,7 +379,8 @@ document.addEventListener('click', function (e) {
   var b = e.target && e.target.closest && e.target.closest('[data-act="migdl"]');
   if (b && S.migBackup) S.migBackup.forEach(function (f) { H.download(f.name, f.text); });
 });
-var MAX_FILE = 60 * 1024 * 1024;
+// Gleiche Grenze wie die Importprüfung (PT.stats.MAX_IMPORT): jede eigene vollständige Sicherung muss wieder einlesbar sein (Prüfung C14)
+var MAX_FILE = PT.stats.MAX_IMPORT || 60 * 1024 * 1024, MAX_MB = Math.round(MAX_FILE / 1048576);
 function pickFile(cb) {
   if (!PTUI.canWrite()) return;
   if (S.hand && !S.hand.done) { H.toast('Import ist nur zwischen zwei Händen möglich.'); return; }
@@ -382,7 +388,7 @@ function pickFile(cb) {
   f.onchange = function () {
     var file = f.files && f.files[0]; if (!file) return;
     // Größe vor dem Lesen prüfen: zu große Dateien werden nie eingelesen
-    if (file.size > MAX_FILE) { H.openModal('Import abgelehnt', '<p>Die Datei ist zu groß (' + esc(String(Math.round(file.size / 1048576))) + ' MB, erlaubt sind höchstens 60 MB).</p><p>Die bestehenden Daten bleiben unverändert.</p>'); return; }
+    if (file.size > MAX_FILE) { H.openModal('Import abgelehnt', '<p>Die Datei ist zu groß (' + esc(String(Math.round(file.size / 1048576))) + ' MB, erlaubt sind höchstens ' + MAX_MB + ' MB).</p><p>Die bestehenden Daten bleiben unverändert.</p>'); return; }
     if (!file.size) { H.openModal('Import abgelehnt', '<p>Die Datei ist leer.</p><p>Die bestehenden Daten bleiben unverändert.</p>'); return; }
     var rd = new FileReader();
     H.openModal('Datei wird geprüft …', '<p role="status">Die Datei <b>' + esc(file.name) + '</b> wird gelesen und geprüft. Die Oberfläche bleibt bedienbar.</p>');
@@ -394,7 +400,7 @@ function pickFile(cb) {
 }
 function importText(text, fname, expect) {
   // Prüfung im Web Worker: große Dateien blockieren die Oberfläche nicht
-  PTUI.offThread('import', { text: text }, 90000).then(function (r) { showImport(r, fname); }, function (e) {
+  PTUI.offThread('import', { text: text }, Math.max(90000, Math.round(text.length / 1048576 * 600))).then(function (r) { showImport(r, fname); }, function (e) {
     H.openModal('Import abgelehnt', '<p>Die Datei konnte nicht geprüft werden (' + esc((e && e.message) || e) + ').</p><p>Die bestehenden Daten bleiben unverändert.</p>');
   });
 }
@@ -416,7 +422,8 @@ function showImport(r, fname) {
     try { if (r.kind === 'backup' && r.learning) newProf = PT.training.profile(r.learning); }
     catch (e) { H.openModal('Import abgelehnt', '<p>Die Lerndaten der Datei lassen sich nicht auswerten.</p><p>Die bestehenden Daten bleiben unverändert.</p>'); return; }
     // Erst wenn die Sicherung der bisherigen Daten fertig erzeugt ist, werden die Daten ersetzt.
-    backupNow('vor-Import').then(applyImport, function () { H.openModal('Import abgebrochen', '<p>Die Sicherung der aktuellen Daten ist fehlgeschlagen. Es wurde nichts geändert.</p>'); });
+    // Beschädigte lokale Einträge fehlen in der regulären Sicherung: dann zusätzlich die Rohsicherung (wie beim Löschen, Prüfung C12)
+    backupNow('vor-Import', true).then(function (skipped) { return (skipped || S.db.skipped) && window.PTRecovery ? window.PTRecovery.backup() : null; }).then(applyImport, function (e) { H.openModal('Import abgebrochen', '<p>Die Sicherung der aktuellen Daten ist fehlgeschlagen' + (e && e.tooBig ? ': ' + esc(e.message) : '') + '. Es wurde nichts geändert.</p>'); });
   };
   function applyImport() {
     S.db = r.db;
@@ -432,10 +439,16 @@ function showImport(r, fname) {
       function (e) { H.openModal('Import unvollständig', '<p>Beim Speichern ist ein Fehler aufgetreten (' + esc((e && e.message) || e) + '). Die vorher heruntergeladene Sicherung enthält den alten Stand.</p>'); });
   }
 }
-function backupNow(tag) {
+/** strict: Sicherung vor einem Ersetzen/Löschen – ist sie größer als die Importgrenze (nicht wieder einlesbar), wird abgebrochen, bevor etwas geändert wird. */
+function backupNow(tag, strict) {
   // Nur gültige Hände: Eine Sicherung mit beschädigten Einträgen ließe sich nicht wieder importieren (dafür gibt es die Rohsicherung)
   return loadHands().then(function (hands) {
     var txt = PT.stats.backupExport({ opponents: PT.stats.dbList(S.db), hero: S.heroRec, hands: hands, learning: S.learning, settings: S.settings, table: S.table }, new Date().toISOString());
+    if (txt.length > MAX_FILE) {
+      var msg = 'Die Sicherung wäre ' + Math.round(txt.length / 1048576) + ' MB groß und damit größer als die Importgrenze von ' + MAX_MB + ' MB';
+      if (strict) { var e = new Error(msg); e.tooBig = true; throw e; }
+      H.toast(msg + '. Bitte zusätzlich die Handhistorie getrennt exportieren.', 8000);
+    }
     H.download('Sicherung_PokerTrainer_' + H.today() + (tag ? '_' + tag : '') + '_Datenbank.json', txt);
     return hands.skipped || 0;
   });
@@ -554,7 +567,7 @@ views.einstellungen = function (el) {
   });
   $('dBk').addEventListener('click', function () { backupNow('').then(function () { H.toast('Sicherung exportiert.'); }); });
   $('dIm').addEventListener('click', function () { pickFile(function (t, n) { importText(t, n, 'backup'); }); });
-  $('dRaw').addEventListener('click', function () { if (window.PTRecovery) window.PTRecovery.backup().then(function (n) { H.toast('Rohsicherung „' + n + '“ exportiert.'); }, function (e) { H.toast('Rohsicherung fehlgeschlagen: ' + ((e && e.message) || e)); }); });
+  $('dRaw').addEventListener('click', function () { if (window.PTRecovery) window.PTRecovery.backup().then(function (n) { H.toast('Rohsicherung „' + n + '“ exportiert.' + (window.PTRecovery.backupComplete ? '' : ' Achtung: unvollständig, ' + window.PTRecovery.backupMissing + '.'), 8000); }, function (e) { H.toast('Rohsicherung fehlgeschlagen: ' + ((e && e.message) || e)); }); });
   $('dDel').addEventListener('click', function () {
     if (!PTUI.canWrite()) return;
     H.openModal('Alle Daten löschen?', '<p>Gegnerdatenbank, Handhistorie, Lernfortschritt und Einstellungen in diesem Browser werden <b>unwiderruflich gelöscht</b>. Vorher wird eine Sicherung heruntergeladen.</p><div class="btnrow"><button class="btn danger" type="button" id="delOk">Endgültig löschen</button><button class="btn" type="button" id="delNo">Abbrechen</button></div>');
@@ -562,7 +575,7 @@ views.einstellungen = function (el) {
     $('delOk').onclick = function () {
       $('delOk').disabled = true;
       // Beschädigte Einträge fehlen in der regulären Sicherung – dann zusätzlich die Rohsicherung aller Daten
-      backupNow('vor-Loeschen').then(function (skipped) { return (skipped || S.db.skipped) && window.PTRecovery ? window.PTRecovery.backup() : null; }).then(function () { return PTUI.flushWrites(3000); }).then(function () { return Store.clearAll(); }).then(function () { location.hash = '#tisch'; location.reload(); },
+      backupNow('vor-Loeschen', true).then(function (skipped) { return (skipped || S.db.skipped) && window.PTRecovery ? window.PTRecovery.backup() : null; }).then(function () { return PTUI.flushWrites(3000); }).then(function () { return Store.clearAll(); }).then(function () { location.hash = '#tisch'; location.reload(); },
         function (e) { H.openModal('Nicht gelöscht', '<p>Die Sicherung oder das Löschen ist fehlgeschlagen (' + esc((e && e.message) || e) + '). Es wurde nichts gelöscht, solange die Sicherung nicht erstellt war.</p>'); });
     };
   });

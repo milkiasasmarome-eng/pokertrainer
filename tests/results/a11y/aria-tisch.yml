@@ -2,7 +2,7 @@
   - /url: "#main"
 - banner:
   - heading "PokerTrainer 2.0" [level=1]
-  - text: No-Limit Hold'em · 6-max · Spielgeld Hand 2 Gegnerwechsel in 29 Händen Ergebnis −14,00 0,50/1,00
+  - text: No-Limit Hold'em · 6-max · Spielgeld Hand 2 Gegnerwechsel in 29 Händen Ergebnis −3,50 0,50/1,00
   - button "Erweitert"
   - button "Darstellung wechseln"
 - navigation "Bereiche":
@@ -25,51 +25,51 @@
 - region "Hinweise": Keine lokale deutsche Stimme gefunden. Der Trainer läuft ohne Ton weiter.
 - main:
   - region "Pokertisch":
-    - text: PokerTrainer Pot 1,50
+    - text: PokerTrainer Pot 7,00
     - group "Board"
     - group "Dein Platz":
-      - text: Du , UTG , Stack 86,00 86 BB Session −14,00 ,
-      - img "Fünf Pik"
-      - img "Zehn Herz"
-    - button "Kalle , HJ , Stack 100,00 100 BB , VPIP 0 %, PFR 0 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt , verdeckte Karte verdeckte Karte , alle Werte anzeigen":
-      - text: Kalle , HJ , Stack 100,00 100 BB , VPIP 0 %, PFR 0 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt ,
-      - img "verdeckte Karte"
-      - img "verdeckte Karte"
-      - text: ", alle Werte anzeigen"
-    - button "Falk , CO , Stack 99,00 99 BB , VPIP 100 %, PFR 0 %, 3-Bet 0 % , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt , verdeckte Karte verdeckte Karte , alle Werte anzeigen":
-      - text: Falk , CO , Stack 99,00 99 BB , VPIP 100 %, PFR 0 %, 3-Bet 0 % , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt ,
-      - img "verdeckte Karte"
-      - img "verdeckte Karte"
-      - text: ", alle Werte anzeigen"
-    - button "Lotte , BTN , Stack 116,00 116 BB , VPIP 100 %, PFR 100 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt , verdeckte Karte verdeckte Karte , Dealer-Button , alle Werte anzeigen":
-      - text: Lotte , BTN , Stack 116,00 116 BB , VPIP 100 %, PFR 100 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt ,
+      - text: Du , CO , Stack 96,50 97 BB Session −3,50 ,
+      - img "Acht Kreuz"
+      - img "Ass Karo"
+    - button "Cem , BTN , Stack 99,00 99 BB , VPIP 100 %, PFR 0 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt , verdeckte Karte verdeckte Karte , Dealer-Button , alle Werte anzeigen":
+      - text: Cem , BTN , Stack 99,00 99 BB , VPIP 100 %, PFR 0 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt ,
       - img "verdeckte Karte"
       - img "verdeckte Karte"
       - text: ", Dealer-Button , alle Werte anzeigen"
-    - button "Berta , SB , Stack 98,50 99 BB , VPIP 0 %, PFR 0 %, 3-Bet 0 % , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt , verdeckte Karte verdeckte Karte , letzte Aktion SB , alle Werte anzeigen":
-      - text: Berta , SB , Stack 98,50 99 BB , VPIP 0 %, PFR 0 %, 3-Bet 0 % , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt ,
+    - button "Henrik , SB , Stack 104,00 104 BB , VPIP 0 %, PFR 0 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt , verdeckte Karte verdeckte Karte , letzte Aktion SB , alle Werte anzeigen":
+      - text: Henrik , SB , Stack 104,00 104 BB , VPIP 0 %, PFR 0 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt ,
       - img "verdeckte Karte"
       - img "verdeckte Karte"
       - text: ", letzte Aktion SB , alle Werte anzeigen"
-    - button "Björn , BB , Stack 99,00 99 BB , VPIP 0 %, PFR 0 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt , verdeckte Karte verdeckte Karte , letzte Aktion BB , alle Werte anzeigen":
-      - text: Björn , BB , Stack 99,00 99 BB , VPIP 0 %, PFR 0 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt ,
+    - button "Kalle , BB , Stack 99,00 99 BB , VPIP 0 %, PFR 0 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt , verdeckte Karte verdeckte Karte , letzte Aktion BB , alle Werte anzeigen":
+      - text: Kalle , BB , Stack 99,00 99 BB , VPIP 0 %, PFR 0 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt ,
       - img "verdeckte Karte"
       - img "verdeckte Karte"
       - text: ", letzte Aktion BB , alle Werte anzeigen"
-    - text: 0,50 1,00
-    - button "Fold"
-    - button "Call 1,00"
-    - button "Raise auf"
-    - button "Min (2,00)"
-    - button "2 BB (2,00)"
-    - button "2,5 BB (2,50)"
-    - button "3 BB (3,00)"
-    - button "All-in (86,00)"
-    - slider "Betrag wählen": "0"
-    - text: Betrag
-    - textbox "Betrag (Raise auf)": 2,00
-    - button "Nächste Hand" [disabled]
-    - alert
+    - button "Enno , UTG , Stack 99,00 99 BB , VPIP 0 %, PFR 0 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt , verdeckte Karte verdeckte Karte , letzte Aktion Call , alle Werte anzeigen":
+      - text: Enno , UTG , Stack 99,00 99 BB , VPIP 0 %, PFR 0 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt ,
+      - img "verdeckte Karte"
+      - img "verdeckte Karte"
+      - text: ", letzte Aktion Call , alle Werte anzeigen"
+    - button "Nele , HJ , Stack 95,50 96 BB , VPIP 0 %, PFR 0 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt , verdeckte Karte verdeckte Karte , letzte Aktion Raise 4,50 , alle Werte anzeigen":
+      - text: Nele , HJ , Stack 95,50 96 BB , VPIP 0 %, PFR 0 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt ,
+      - img "verdeckte Karte"
+      - img "verdeckte Karte"
+      - text: ", letzte Aktion Raise 4,50 , alle Werte anzeigen"
+    - text: 0,50 1,00 1,00 4,50
+    - group "Aktionen":
+      - button "Fold"
+      - button "Call 4,50"
+      - button "Raise auf"
+      - button "Min (8,00)"
+      - button "3× (13,50)"
+      - button "4× (18,00)"
+      - button "All-in (96,50)"
+      - slider "Betrag wählen": "0"
+      - text: Betrag
+      - textbox "Betrag (Raise auf)": 8,00
+      - button "Nächste Hand" [disabled]
+    - status
     - complementary:
       - region "Coach":
         - heading "Coach" [level=2]
@@ -86,9 +86,9 @@
           - option "Einsteiger"
           - option "Fortgeschritten"
           - option "Experte"
-        - text: "Empfehlung: Fold Mehrere vertretbare Aktionen"
-        - paragraph: "Fold: T5o gehört laut Open-Raise-Chart UTG nicht zu den spielbaren Händen. T5o liegt auf Rang 131 von 169 Starthandklassen."
-        - text: Equity 33 % ± 2,9 % Pot 1,50 Eff. Stack 86 BB
+        - text: "Empfehlung: Fold Mathematisch eindeutig"
+        - paragraph: "Fold: Du müsstest 4,50 zahlen und bräuchtest dafür mindestens 39 % Gewinnchance. Geschätzt hast du nur etwa 25 %. A8o gehört zu den besten 19 % aller Starthände."
+        - text: Equity 25 % ± 2,4 % Benötigt 39 % Pot 7,00 Eff. Stack 97 BB
         - group: EV-Vergleich und Annahmen
         - paragraph: Faustregel, kein Solver-Ergebnis
         - checkbox "Sprachausgabe" [checked]
@@ -98,10 +98,12 @@
         - text: "Sprache: keine lokale deutsche Stimme"
       - region "Handverlauf":
         - heading "Handverlauf" [level=2]
-        - list:
-          - listitem: "Hand #2 · Button: Lotte"
-          - listitem: Berta postet Small Blind 0,50
-          - listitem: Björn postet Big Blind 1,00
+        - list "Handverlauf":
+          - listitem: "Hand #2 · Button: Cem"
+          - listitem: Henrik postet Small Blind 0,50
+          - listitem: Kalle postet Big Blind 1,00
+          - listitem: "Enno: Call 1,00"
+          - listitem: "Nele: Raise auf 4,50"
 - contentinfo:
   - text: PokerTrainer 2.0.1 · nur Spielgeld, kein Glücksspiel · Daten bleiben in deinem Browser
   - link "Datenschutz & Rechtliches":

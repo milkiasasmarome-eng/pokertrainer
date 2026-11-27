@@ -58,9 +58,9 @@ module.exports = function (T) {
     const p3 = clone(P); p3.learning.quiz.n = 1e308; ok(!PT.dataport.parseImport(backupFile(p3)).ok, 'Lerndaten 1e308 abgelehnt');
   });
 
-  test('Import: Größenlimit 60 MB (keine Verarbeitung zu großer Dateien), große gültige Sicherung in vertretbarer Zeit', () => {
-    const big = '{' + 'x'.repeat(60 * 1024 * 1024 + 10), t0 = Date.now(), r = PT.dataport.parseImport(big);
-    ok(!r.ok && /zu groß/.test(r.error), 'über 60 MB abgelehnt: ' + r.error);
+  test('Import: Größenlimit PT.stats.MAX_IMPORT (keine Verarbeitung zu großer Dateien), große gültige Sicherung in vertretbarer Zeit', () => {
+    const big = '{' + 'x'.repeat(PT.stats.MAX_IMPORT + 10), t0 = Date.now(), r = PT.dataport.parseImport(big);
+    ok(!r.ok && /zu groß/.test(r.error), 'über ' + Math.round(PT.stats.MAX_IMPORT / 1048576) + ' MB abgelehnt: ' + r.error);
     ok(Date.now() - t0 < 1000, 'sofort abgelehnt (' + (Date.now() - t0) + ' ms)');
     const D = data(), hs = []; for (let i = 0; i < 600; i++) { const h = clone(D.hands[i % D.hands.length]); h.id = 'h1-' + i + '-' + (1700000000000 + i); h.ts = 1700000000000 + i; hs.push(h); }
     const txt = backupFile({ opponents: D.list, hero: D.hero, hands: hs, learning: D.learning, settings: null, table: null });

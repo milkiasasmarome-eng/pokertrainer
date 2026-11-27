@@ -159,18 +159,39 @@ function rawToBackup(o) {
   var payload = { opponents: S.dbList(db), hero: hero, hands: hands, learning: learning, settings: null, table: null };
   return { text: S.backupExport(payload, 'aus Rohsicherung ' + String(o.created || '').slice(0, 40)), info: info };
 }
+/** Alle Zahlen endlich? JSON-Überläufe wie 1e999 ergeben beim Lesen Infinity; der nächste Export schriebe null (Prüfung C1). */
+function allFinite(x) {
+  var stack = [x];
+  while (stack.length) {
+    var v = stack.pop();
+    if (typeof v === 'number') { if (!isFinite(v)) return false; continue; }
+    if (!v || typeof v !== 'object') continue;
+    if (Array.isArray(v)) { for (var i = 0; i < v.length; i++) stack.push(v[i]); }
+    else for (var k in v) if (Object.prototype.hasOwnProperty.call(v, k)) stack.push(v[k]);
+  }
+  return true;
+}
+/** Nachprüfung eines angenommenen Imports: endliche Zahlen, jeder gezählte Gegner auch wirklich übernommen
+    (eine ID „__proto__“ würde sonst nur den Prototyp der Datenbank setzen, Prüfung C4). */
+function checkResult(r) {
+  if (!r || !r.ok) return r;
+  if (Object.getPrototypeOf(r.db.opps) !== Object.prototype || Object.keys(r.db.opps).length !== r.count) return { ok: false, error: 'Die Datei enthält eine ungültige Gegner-ID.' };
+  if (!allFinite([r.db.opps, r.hero || null, r.hands || null, r.learning || null, r.settings || null, r.table || null])) return { ok: false, error: 'Die Datei enthält ungültige Zahlen (zu groß oder nicht endlich).' };
+  return r;
+}
 /** Liest eine Importdatei (Datenbank, Sicherung oder Rohsicherung). Ergebnis wie PT.stats.dbImport, bei Rohsicherung mit .raw. */
 function parseImport(text) {
-  if (typeof text === 'string' && text.length <= 60 * 1024 * 1024 && /^\s*\{\s*"format"\s*:\s*"PokerTrainer-Rohsicherung"/.test(text.slice(0, 120))) {
+  var lim = PT.stats.MAX_IMPORT || 60 * 1024 * 1024;
+  if (typeof text === 'string' && text.length <= lim && /^\s*\{\s*"format"\s*:\s*"PokerTrainer-Rohsicherung"/.test(text.slice(0, 120))) {
     var o; try { o = JSON.parse(text); } catch (e) { return { ok: false, error: 'Die Rohsicherung ist beschädigt oder abgeschnitten (kein gültiges JSON).' }; }
     if (!o || o.format !== RAW || o.version !== 1) return { ok: false, error: 'Unbekannte Version der Rohsicherung.' };
-    var conv = rawToBackup(o), r = PT.stats.dbImport(conv.text);
+    var conv = rawToBackup(o), r = checkResult(PT.stats.dbImport(conv.text));
     if (r.ok) { r.raw = conv.info; r.kind = 'backup'; }
     return r;
   }
-  return PT.stats.dbImport(text);
+  return checkResult(PT.stats.dbImport(text));
 }
 
 PT.benchmark = { FORMAT: FORMAT, SCHEMA: SCHEMA, build: build, exportText: exportText, validate: validate, coachInput: coachInput, handId: handId, modelVersion: modelVersion, SEPARATION: SEPARATION };
-PT.dataport = { parseImport: parseImport, rawToBackup: rawToBackup, RAW: RAW };
+PT.dataport = { parseImport: parseImport, rawToBackup: rawToBackup, RAW: RAW, allFinite: allFinite };
 })(typeof globalThis !== 'undefined' ? globalThis : (typeof self !== 'undefined' ? self : this));

@@ -18,6 +18,13 @@ Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen 
 - Beschädigte Einträge im lokalen Speicher (Einstellungen außerhalb des Wertebereichs, laufende Hand, Hände) konnten Folgefehler auslösen oder ungeprüft angezeigt werden; Handdatensätze werden jetzt vor jeder Anzeige, Sicherung und jedem Export streng geprüft (endliche Zahlen, Wertebereiche, bekannte Felder).
 - Barrierefreiheit (axe-core, WCAG 2.2 AA, hell und dunkel: 0 Verstöße, Bericht `docs/BARRIEREFREIHEIT.md`): Range-Matrix ohne ungültige Grid-Rollen und mit Pfeiltasten, Kontraste (gefoldete Plätze, Abzeichen, Dunkelmodus), Namen von Schaltern und Plätzen, Fokusfalle und inerter Hintergrund in Dialogen, nicht abgeschnittener Fokus, sparsame Live-Ansagen statt Ansage bei jeder Bot-Aktion, Zielgrößen ≥ 24 px, reduzierte Bewegung auch beim Scrollen.
 
+### Behoben (unabhängige Prüfung 2.1, Prüfer C und D – `docs/audit-2.1/PRUEFUNG_C_D.md`)
+- Daten: Import lehnt nicht endliche Zahlen (1e999) und die Gegner-ID `__proto__` ab; Rohsicherung ohne lesbare IndexedDB gilt als unvollständig (Zurücksetzen nur nach Bestätigung des Verlusts); beschädigte lokale Einträge werden vor dem ersten Überschreiben roh gesichert (Start, Import); Importgrenze 256 MB statt 60 MB, damit jede eigene vollständige Sicherung wieder einlesbar ist; Archivfassung 2.0.1 wird nicht mehr im selben Ursprung veröffentlicht.
+- Performance: Handende liest die Handhistorie nicht mehr vollständig (bei 3.000 Händen 1,8 s Blockade).
+- Mehrere Tabs: ohne Web Locks kein zweiter schreibender Tab mehr; nach einem Update schreibt der neu geladene Tab weiter; ein Tab mit altem Programmstand startet keine Worker des neuen Stands.
+- Barrierefreiheit: Fokus bleibt beim Neuzeichnen erhalten (Plätze, Hinweise, Replayer, Gegnerliste, eigene Aktion, Quiz), Sprunglink ohne Bereichswechsel, Kürzel nicht auf Knöpfen außerhalb der Aktionsleiste, Zug-Ansage nur einmal, wichtige Hinweise werden angesagt, Handverlauf per Tastatur scrollbar, Hinweis ohne JavaScript, Fokus nach „Weiter warten“.
+- Darstellung: keine Überdeckungen am Tisch von 320 bis 1366 px (eigene Karten, Pot, Board, Einsätze, Marker); HUD-Werte umbrechen bei größeren Textabständen.
+
 ### Geändert
 - Importdateien werden im Web Worker geprüft (23 MB in 1,3 s, längste Blockade der Oberfläche 0,3 s); Dateien über 60 MB werden vor dem Lesen abgelehnt.
 - Antwortet IndexedDB nicht oder ist sie fehlerhaft, arbeitet der Trainer nur im Arbeitsspeicher (statt in einem zweiten, abweichenden Speicher im localStorage); „Jetzt aktualisieren“ schließt vorher alle Schreibvorgänge ab.

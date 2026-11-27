@@ -135,7 +135,7 @@ module.exports = function (T) {
       ['ungültige Halbwertszeit', variant((x, o) => { o.halfLife = 'abc'; })],
       ['Format 2 in Datei Version 3', variant(x => { delete x.recent; delete x.cards; delete x.chg; })],
       ['Format 3 in Datei Version 2', variant((x, o) => { o.version = 2; })],
-      ['zu groß', 'x'.repeat(60 * 1024 * 1024 + 10)]
+      ['zu groß', 'x'.repeat(S.MAX_IMPORT + 10)]
     ];
     bad.forEach(([n, t2]) => { const res = S.dbImport(t2); ok(!res.ok && typeof res.error === 'string', n + ' abgelehnt' + (res.ok ? '' : ' (' + res.error + ')')); });
     eq(S.dbCanon(r.db), before, 'bestehende Datenbank unverändert');

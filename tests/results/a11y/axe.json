@@ -15,7 +15,7 @@
    "incomplete": [
     {
      "id": "color-contrast",
-     "n": 13
+     "n": 10
     }
    ]
   },
@@ -26,7 +26,7 @@
    "incomplete": [
     {
      "id": "color-contrast",
-     "n": 11
+     "n": 12
     }
    ]
   },
@@ -58,7 +58,7 @@
    "incomplete": [
     {
      "id": "color-contrast",
-     "n": 31
+     "n": 32
     },
     {
      "id": "label-content-name-mismatch",
@@ -88,7 +88,7 @@
    "incomplete": [
     {
      "id": "color-contrast",
-     "n": 2
+     "n": 1
     }
    ]
   },
@@ -128,7 +128,7 @@
    "incomplete": [
     {
      "id": "color-contrast",
-     "n": 11
+     "n": 9
     }
    ]
   },
@@ -139,7 +139,7 @@
    "incomplete": [
     {
      "id": "color-contrast",
-     "n": 10
+     "n": 9
     }
    ]
   },
@@ -201,7 +201,7 @@
    "incomplete": [
     {
      "id": "color-contrast",
-     "n": 2
+     "n": 3
     }
    ]
   },
@@ -241,7 +241,7 @@
    "incomplete": [
     {
      "id": "color-contrast",
-     "n": 11
+     "n": 10
     }
    ]
   },

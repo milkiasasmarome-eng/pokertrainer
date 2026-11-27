@@ -410,11 +410,12 @@ function loadRecord(r) {
   if (!validRecord(r, 1)) return migrateV1(r);
   return null;
 }
-var MAX_IMPORT = 60 * 1024 * 1024;
+// Importgrenze: muss jede vollständige Sicherung abdecken, die der Trainer selbst erzeugt (bis 3.000 Hände mit Momentaufnahmen, typisch 20–45 KB je Hand; Prüfung C14)
+var MAX_IMPORT = 256 * 1024 * 1024;
 function dbImport(text) {
   function fail(m) { return { ok: false, error: m }; }
   if (typeof text !== 'string' || !text.trim()) return fail('Die Datei ist leer.');
-  if (text.length > MAX_IMPORT) return fail('Die Datei ist zu groß (über 60 MB).');
+  if (text.length > MAX_IMPORT) return fail('Die Datei ist zu groß (über ' + Math.round(MAX_IMPORT / 1048576) + ' MB).');
   var obj;
   try { obj = JSON.parse(text); } catch (e) { return fail('Die Datei ist beschädigt oder abgeschnitten (kein gültiges JSON).'); }
   if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return fail('Die Datei ist keine PokerTrainer-Datei.');
@@ -491,5 +492,5 @@ PT.stats = { STATS: STATS, STAT_LABEL: STAT_LABEL, STAT_HELP: STAT_HELP, POSITIO
   DB_VERSION: DB_VERSION, BACKUP_VERSION: BACKUP_VERSION, MEMORY: { HALF_LIFE: HALF_LIFE, LAMBDA: LAMBDA, H_MAX: H_MAX, CHANGE_KEYS: CHANGE_KEYS, CHANGE: CHANGE },
   emptyRecent: emptyRecent, addRecent: addRecent, changeTest: changeTest, updateChange: updateChange, recentProfile: recentProfile, changeProfile: changeProfile,
   effectiveStats: effectiveStats, wilsonP: wilsonP, migrateV2: migrateV2, loadRecord: loadRecord, recordVersion: recordVersion, rawExport: rawExport,
-  needsMigration: needsMigration, setMemoryParams: setMemoryParams };
+  needsMigration: needsMigration, setMemoryParams: setMemoryParams, MAX_IMPORT: MAX_IMPORT };
 })(typeof globalThis !== 'undefined' ? globalThis : (typeof self !== 'undefined' ? self : this));
