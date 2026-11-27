@@ -91,7 +91,7 @@ function buildRange(v, seat, st, gto, pfaSeat) {
  * aggressiv), gilt die Tabelle für diesen Gegner als nicht belastbar, und das Modell geht zum robusten Modell 2.1 über. Gepoolt über alle Gegner am
  * Tisch entsteht ein Vorwissen für Gegner mit wenigen aufgedeckten Blättern. Auswahlverzerrung (nur Showdowns) betrifft Referenz und Gegner gleich.
  */
-var FIT = { rho: 0.5, llRef: -0.463, llSd: 0.546, zHi: -1, zLo: -3, k: 8, minPairs: 4 }, fitCache = {};
+var FIT = { nResp: 40, rho: 0.5, llRef: -0.463, llSd: 0.546, zHi: -1, zLo: -3, k: 8, minPairs: 4 }, fitCache = {};
 /** Paare [aggressiv 0/1, Stärke, Einsatz offen 0/1, Straße] aus einem aufgedeckten Blatt (Aktionstext je Straße) */
 function shownPairs(s) {
   var key = s.hand + '|' + s.ts + '|' + s.cards + '|' + s.board; if (fitCache[key]) return fitCache[key];
@@ -220,7 +220,10 @@ function prepare(input, v, L0, budget, rng, deadlineAll) {
   var pre = preInfo(v), out = {}, fitAll = null;
   v.players.filter(function (q) { return q.seat !== v.seat && !q.folded; }).forEach(function (q) {
     var st = oppStats(input.opps ? input.opps[q.id] : null);
-    if (R.ABL.hybrid) { if (!fitAll) fitAll = hybridFit(input); st.wTab = fitAll[q.id] ? fitAll[q.id].w : (fitAll.__pool.w == null ? 1 : fitAll.__pool.w); }
+    if (R.ABL.hybrid) { if (!fitAll) fitAll = hybridFit(input); st.wTab = fitAll[q.id] ? fitAll[q.id].w : (fitAll.__pool.w == null ? 1 : fitAll.__pool.w);
+      // 2.3 (Ablation: Hauptursache ist das Reaktionsmodell): die Reaktion aus der Tabelle erst, wenn die Tabelle am Tisch belegt passt –
+      // Vorwissen robust (Modell 2.1), Gewicht wächst mit der gepoolten Zahl der Paare aus aufgedeckten Blättern
+      if (R.ABL.respPrior0) { var np = fitAll.__pool && fitAll.__pool.n || 0; st.wResp = st.wTab * Math.min(1, np / FIT.nResp); } }
     var rE = buildRange(v, q.seat, st, false, v.pfa), rG = buildRange(v, q.seat, st, true, v.pfa);
     out[q.seat] = { st: st, ex: rE, gto: rG, pending: v.street === 0 && !pre.acted[q.seat] };
   });
@@ -256,7 +259,7 @@ function analyzeMode(input, v, mode, level, L0, budget, rng, deadline, set, prep
   var oppsAll = v.players.filter(function (q) { return q.seat !== v.seat && !q.folded; });
   var opps = oppsAll.map(function (q) {
     var P = prep[q.seat], st = P.st, rg = gto ? P.gto : P.ex;
-    return { p: q, seat: q.seat, w: P.defW && P.pending ? P.defW : rg.w, line: rg.line, sm: rg.sm, prof: rg.prof, raw: st.raw, hands: st.hands, typ: st.typ, bel: st.bel, agg: st.agg, wTab: gto ? null : st.wTab,
+    return { p: q, seat: q.seat, w: P.defW && P.pending ? P.defW : rg.w, line: rg.line, sm: rg.sm, prof: rg.prof, raw: st.raw, hands: st.hands, typ: st.typ, bel: st.bel, agg: st.agg, wTab: gto ? null : st.wTab, wResp: gto ? null : st.wResp,
       pending: P.pending, e: P.e, eqInfo: P.eqInfo, floor: gto ? P.floor.gto : P.floor.ex, isDefW: !!(P.defW && P.pending) };
   });
   var maxOpp = 0; opps.forEach(function (o) { maxOpp = Math.max(maxOpp, o.p.stack + o.p.bet); });

@@ -297,7 +297,7 @@ function likRespond(opp, ctx, heroAdd, potBefore, nResp) {
 function tabWeight(sk) { if ((sk === 's5' || sk === 's6') && POP.tabBlendBig != null) return POP.tabBlendBig; return POP.tabBlend; }
 function respond(opp, ctx, heroAdd, potBefore, nResp, kind) {
   if (ctx.street > 0 && ctx.mode !== 'gto' && !POP.off && !POP.tabOff && !R.ABL.respLegacy && !respond.inner) {
-    var tr = likRespond(opp, ctx, heroAdd, potBefore, nResp), a = tr ? tabWeight(tr.sk) * (opp.wTab != null ? opp.wTab : 1) : 0;   // 2.3: Modell C skaliert das Tabellengewicht je Gegner
+    var tr = likRespond(opp, ctx, heroAdd, potBefore, nResp), a = tr ? tabWeight(tr.sk) * (opp.wResp != null ? opp.wResp : opp.wTab != null ? opp.wTab : 1) : 0;   // 2.3: Modell C skaliert das Tabellengewicht je Gegner
     if (tr && a > 0 && a < 1) {
       // Modellmittelung (2.2): Mischung aus Aktionstabelle und Reaktionsmodell 2.1 (Populationsmodell gemittelt mit MDF). Die Tabelle
       // überschätzt Folds gegen kleine Einsätze, das 2.1-Modell unterschätzt sie gegen große (Größenstudie Gruppe V, docs/STRATEGIE.md);
