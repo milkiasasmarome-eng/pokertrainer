@@ -5693,6 +5693,61 @@ PT.speech = { Speech: Speech, pickVoice: pickVoice, toSpeech: toSpeech };
 PT.Speech = Speech; PT.toSpeech = toSpeech; PT.pickVoice = pickVoice;
 })(typeof globalThis !== 'undefined' ? globalThis : (typeof self !== 'undefined' ? self : this));
 
+/* assets/js/engine/pai-bridge.js */
+/* PokerTrainer – Ereignis-Schnittstelle für Adaptive Poker Intelligence (PAI), Kanal "pai-events-v1".
+   Freiwillig (Einstellung „PAI-Schnittstelle“, Standard aus). Einseitig: Der Trainer sendet, empfängt aber nichts.
+   Grundsatz: Ein Ereignis enthält nur, was der Spieler am Tisch zu diesem Zeitpunkt weiß – eigene Karten, Board,
+   öffentliche Aktionen, Stacks, aufgedeckte Karten. Nicht enthalten: verdeckte Karten anderer Spieler, Seeds,
+   Bot-Stile und -Parameter, Gegnerstatistiken des Trainers, Empfehlungen und Bewertungen des Trainer-Coaches. */
+(function (G) {
+'use strict';
+var PT = G.PT;
+var CHANNEL = 'pai-events-v1', VERSION = 1;
+
+function seatsOf(h) { return h.p.map(function (q) { return { seat: q.seat, id: q.id, name: q.name, start: q.start }; }); }
+function actionsOf(h) { return h.actions.map(function (a) { return { st: a.st, s: a.s, t: a.t, a: a.a }; }); }
+
+/** Entscheidung des Spielers auf Platz seat (vor seiner Aktion). meta: {decisionId, handId, ts} */
+function decisionEvent(h, seat, meta) {
+  return {
+    v: VERSION, type: 'decision', decisionId: String(meta.decisionId), handId: String(meta.handId), ts: meta.ts,
+    heroSeat: seat, heroCards: PT.cardsStr(h.p[seat].cards), board: h.board.map(PT.cardStr), street: h.street,
+    button: h.button, sb: h.sb, bb: h.bb, seats: seatsOf(h), actions: actionsOf(h)
+  };
+}
+
+/** Tatsächlich gewählte Aktion zu einer Entscheidung (für Nachbewertung und Abbruch veralteter Empfehlungen). */
+function actedEvent(meta, rec) {
+  return { v: VERSION, type: 'acted', decisionId: String(meta.decisionId), handId: String(meta.handId), ts: meta.ts, action: { t: rec.t, a: rec.a, ai: !!rec.ai } };
+}
+
+/** Abgeschlossene Hand in öffentlicher Form: aufgedeckte Karten und die eigenen Karten des Spielers (heroSeat), sonst nichts
+    Verdecktes. Inhaltlich gleich dem Handdatensatz einer Trainer-Sicherung, damit PAI beide als Dublette erkennt. */
+function handEvent(h, meta) {
+  var r = h.publicRecord(), hero = h.p.filter(function (q) { return q.isHero; })[0];
+  return {
+    v: VERSION, type: 'hand', handId: String(meta.handId), ts: meta.ts,
+    record: {
+      v: 1, id: String(meta.handId), ts: r.ts, no: r.no, button: r.button, sb: r.sb, bb: r.bb, n: r.n,
+      seats: r.seats.map(function (s) { return { seat: s.seat, id: s.id, name: s.name, pos: s.pos, start: s.start }; }),
+      actions: r.actions.map(function (a) { return { st: a.st, s: a.s, t: a.t, a: a.a, add: a.add, ai: a.ai }; }),
+      board: r.board.slice(), shown: r.shown.slice(), won: r.won.slice(), returned: r.returned.slice(), rake: r.rake, showdown: r.showdown,
+      heroSeat: hero ? hero.seat : null, hero: hero ? PT.cardsStr(hero.cards) : ''
+    }
+  };
+}
+
+/** Sender über BroadcastChannel (gleiche Herkunft). Ohne BroadcastChannel: stiller Leerlauf. */
+function Sender() { this.ch = null; this.sent = 0; }
+Sender.prototype.post = function (ev) {
+  if (!this.ch) { if (typeof G.BroadcastChannel !== 'function') return false; this.ch = new G.BroadcastChannel(CHANNEL); }
+  this.ch.postMessage(ev); this.sent++; return true;
+};
+Sender.prototype.close = function () { if (this.ch) { this.ch.close(); this.ch = null; } };
+
+PT.paiBridge = { CHANNEL: CHANNEL, VERSION: VERSION, decisionEvent: decisionEvent, actedEvent: actedEvent, handEvent: handEvent, Sender: Sender };
+})(typeof globalThis !== 'undefined' ? globalThis : (typeof self !== 'undefined' ? self : this));
+
 </script>
 <script id="pt-worker" type="text/plain">
 /* PokerTrainer 2.1 – Web Worker für Coach-Analysen und Importprüfung (hält die Oberfläche bedienbar). */
@@ -5927,7 +5982,7 @@ var $ = function (id) { return document.getElementById(id); }, esc = U.esc, fmt 
 var N = 6, MAX_HANDS = 3000;
 var SPEED = { langsam: 1100, normal: 650, schnell: 220, sehrschnell: 70 };
 var DEFAULTS = { tipMode: 'vorher', smode: 'exploit', depth: 'auto', level: 'standard', speech: true, speechRate: 1.05, speed: 'normal', theme: 'auto',
-  advanced: false, fourColor: false, recordHands: true, seed: null, shortcuts: true };
+  advanced: false, fourColor: false, recordHands: true, seed: null, shortcuts: true, paiBridge: false };
 var S = PTUI.S = {
   settings: U.deepClone(DEFAULTS), db: PT.stats.newDb(), heroRec: PT.stats.newRecord('hero', 'Du'), table: null, hand: null, finished: null,
   learning: PT.training.newLearning(), prof: null, decisionNo: 0, cur: null, analysis: null, verdict: null, handDecisions: [], pendingGrades: [],
@@ -6503,6 +6558,13 @@ function learnerSummary() {
   Object.keys(S.prof.spots).forEach(function (k) { var s = S.prof.spots[k]; spots[k] = { n: s.n, score: s.smooth == null ? 70 : s.smooth }; });
   return { spots: spots, cats: S.prof.cats };
 }
+// PAI-Schnittstelle (freiwillig, einseitig): nur Wissen des Spielers, keine Coach-Ausgaben, keine Gegnerdaten des Trainers.
+var paiSender = null;
+function paiHandId(h) { return 'h' + S.sessionId + '-' + h.no + '-' + (h.ts || 0); }
+function paiPost(build) {
+  if (!S.settings.paiBridge || !PT.paiBridge) return;
+  try { if (!paiSender) paiSender = new PT.paiBridge.Sender(); paiSender.post(build()); } catch (e) { console.warn('PAI-Schnittstelle', e); }
+}
 // Zusammenfassung für Screenreader, wenn der Spieler am Zug ist: Straße, Board, Aktionen seit der eigenen letzten Aktion, Betrag
 function cardName(c) { return PT.cards.RANK_NAME_DE[c >> 2] + ' ' + PT.cards.SUIT_NAME[c & 3]; }
 function turnText(h) {
@@ -6526,6 +6588,7 @@ function onHeroTurn() {
   var id = S.decisionNo, view = PT.bots.publicView(h, 0), opps = snapshotOpps(h);
   var seed = PT.rng.hashStr((S.table ? S.table.seed : 0) + '|' + h.no + '|' + h.actions.length + '|' + (h.isTraining ? 'T' + S.training.seed : 'P'));
   S.cur = { id: id, view: view, opps: opps, seed: seed, t0: performance.now(), street: h.street, idx: h.actions.length, pos: h.p[0].pos, training: h.isTraining ? S.training.curCat : null, target: h.isTraining && S.training.target };
+  paiPost(function () { return PT.paiBridge.decisionEvent(h, 0, { decisionId: S.sessionId + '-' + id, handId: paiHandId(h), ts: Date.now() }); });
   if (h.isTraining) S.training.target = false;
   S.analysis = null; S.lastStreet = h.street;
   var L = h.legal(0);
@@ -6574,6 +6637,8 @@ function heroAct(a) {
   var L = h.legal(0), r = h.isTraining ? h.act(0, a) : PT.session.act(S.table, h, 0, a);
   if (!r.ok) { showMsg(r.error); return; }
   showMsg('');
+  var cur0 = S.cur;
+  paiPost(function () { return PT.paiBridge.actedEvent({ decisionId: S.sessionId + '-' + cur0.id, handId: paiHandId(h), ts: Date.now() }, r.action); });
   var cur = S.cur, chosen = { type: r.action.t, amount: r.action.a, label: actLabel({ type: r.action.t, amount: r.action.a }, L) };
   if (r.action.t === 'call') chosen.label = 'Call ' + fmt(r.action.a) + (r.action.ai ? ' (All-in)' : '');
   if ((r.action.t === 'bet' || r.action.t === 'raise') && r.action.ai) chosen.label += ' (All-in)';
@@ -6628,6 +6693,7 @@ function handEnded() {
     res.ev.rebuys.forEach(function (x) { notes.push(x.seat === 0 ? 'Du kaufst ' + fmt(x.amount) + ' Spielgeld nach.' : h.p[x.seat].name + ' kauft nach.'); });
     if (res.ev.swap) notes.push(res.ev.swap.leftName + ' verlässt den Tisch (Datensatz ins Archiv). Neu ab der nächsten Hand: ' + res.ev.swap.joinedName + '.');
   }
+  if (!h.isTraining) paiPost(function () { return PT.paiBridge.handEvent(h, { handId: paiHandId(h), ts: Date.now() }); });
   var decisionsP = Promise.all(S.pendingGrades);
   var types = {}; h.p.forEach(function (q) { if (!q.isHero) types[q.id] = PT.stats.playerType(S.db.opps[q.id]); });
   track(decisionsP.then(function () {
@@ -7625,7 +7691,8 @@ views.einstellungen = function (el) {
     '<div class="row"><label for="cSo">Sprachausgabe</label><input id="cSo" type="checkbox"' + (st.speech ? ' checked' : '') + '></div>' +
     '<div class="row"><label for="cSr">Sprechtempo</label><input id="cSr" type="range" min="0.7" max="1.5" step="0.05" value="' + st.speechRate + '"></div>' +
     '<div class="row"><label for="cRh">Hände speichern</label><input id="cRh" type="checkbox"' + (st.recordHands ? ' checked' : '') + '></div>' +
-    '<div class="row"><label for="cKs">Tastenkürzel aus einem Zeichen (F, C, R, N, T, 1–9)</label><input id="cKs" type="checkbox"' + (st.shortcuts !== false ? ' checked' : '') + '><div class="hint">Abschalten, wenn ein Screenreader oder eine Spracheingabe die Tasten selbst nutzt. Enter im Betragsfeld bleibt aktiv.</div></div></form></div></div>' +
+    '<div class="row"><label for="cKs">Tastenkürzel aus einem Zeichen (F, C, R, N, T, 1–9)</label><input id="cKs" type="checkbox"' + (st.shortcuts !== false ? ' checked' : '') + '><div class="hint">Abschalten, wenn ein Screenreader oder eine Spracheingabe die Tasten selbst nutzt. Enter im Betragsfeld bleibt aktiv.</div></div>' +
+    '<div class="row"><label for="cPai">PAI-Schnittstelle</label><input id="cPai" type="checkbox"' + (st.paiBridge ? ' checked' : '') + '><div class="hint">Sendet deine Spielsituationen (nur eigene Karten und öffentliche Infos) und fertige Hände an eine offene PAI-Seite derselben Website. Keine Tipps, Bewertungen oder Gegnerdaten. Standard: aus.</div></div></form></div></div>' +
     '<div class="panel"><h2>Daten</h2><p class="small">Alle Daten liegen nur in diesem Browser (' + (Store.mode() === 'idb' ? 'IndexedDB' : Store.mode() === 'ls' ? 'localStorage' : 'nur im Arbeitsspeicher') + '). Andere Browser oder Geräte haben eigene, getrennte Daten.</p>' +
     '<div class="btnrow"><button class="btn" type="button" id="dBk">Vollständige Sicherung exportieren</button><button class="btn" type="button" id="dIm">Sicherung importieren</button><button class="btn" type="button" id="dRaw" title="Alle lokalen Daten unverändert, auch beschädigte Einträge">Rohsicherung exportieren</button><button class="btn danger" type="button" id="dDel">Alle Daten löschen</button></div></div>';
   function onT(id, fn) { $(id).addEventListener('change', fn); }
@@ -7641,6 +7708,7 @@ views.einstellungen = function (el) {
   onT('cSr', function () { PTUI.setSetting('speechRate', +$('cSr').value); });
   onT('cRh', function () { PTUI.setSetting('recordHands', $('cRh').checked); });
   onT('cKs', function () { PTUI.setSetting('shortcuts', $('cKs').checked); });
+  onT('cPai', function () { PTUI.setSetting('paiBridge', $('cPai').checked); });
   $('sApply').addEventListener('click', function () {
     if (!PTUI.canWrite()) return;
     if (S.hand && !S.hand.done) { H.toast('Bitte erst die laufende Hand beenden.'); return; }

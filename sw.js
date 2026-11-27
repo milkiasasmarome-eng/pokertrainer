@@ -1,6 +1,6 @@
 /* PokerTrainer 2.1.0 – Service Worker (automatisch erzeugt mit tools/build.js). Offline-Betrieb, Cache je Inhaltsstand, kontrollierte Aktualisierung. */
 'use strict';
-var VERSION = '2.1.0', CACHE = 'pokertrainer-' + VERSION + '-5a7854d301aa';
+var VERSION = '2.1.0', CACHE = 'pokertrainer-' + VERSION + '-77e0707f01be';
 var ASSETS = [
   "./",
   "index.html",
@@ -23,6 +23,7 @@ var ASSETS = [
   "assets/js/engine/training.js?v=2.1.0",
   "assets/js/engine/export.js?v=2.1.0",
   "assets/js/engine/speech.js?v=2.1.0",
+  "assets/js/engine/pai-bridge.js?v=2.1.0",
   "assets/js/ui/store.js?v=2.1.0",
   "assets/js/ui/app.js?v=2.1.0",
   "assets/js/ui/views.js?v=2.1.0",

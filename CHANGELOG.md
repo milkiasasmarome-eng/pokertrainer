@@ -2,6 +2,15 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## Unveröffentlicht
+
+- Freiwillige PAI-Schnittstelle `pai-events-v1` (Einstellung „PAI-Schnittstelle“, Standard aus): sendet über BroadcastChannel an eine
+  offene PAI-Seite derselben Website Entscheidungen (eigene Karten, öffentliche Aktionen), die gewählte Aktion und abgeschlossene
+  Hände in öffentlicher Form. Keine verdeckten Karten anderer Spieler, keine Seeds, Bot-Stile, Coach-Empfehlungen oder
+  Gegnerstatistiken. Einseitig: Der Trainer empfängt nichts. Portiert vom Zweig `pai-schnittstelle` (Basis 2.0.1) auf den Stand
+  2.1.0 (Zweig `pai-schnittstelle-2.1`); Versionsnummer bewusst unverändert, Freigabe und Version entscheidet der Nutzer.
+- Test „PAI-Schnittstelle: Ereignisse enthalten nur Wissen des Spielers“.
+
 ## [2.1.0] – 2026-11-27
 
 Folgeaudit mit Überprüfung der externen Befunde A1–A6, vier unabhängigen Prüfagenten (A Mathematik, B Strategie, C Architektur/Sicherheit/Datenbank, D Oberfläche/Barrierefreiheit/PWA), statistisch abgesicherten Strategievergleichen und neuem Gegnergedächtnis. Details: `docs/AUDIT.md`, `docs/TESTBERICHT.md`, `docs/VALIDIERUNG_MATHE.md`, `docs/STRATEGIE.md`, `docs/audit-2.1/`.
