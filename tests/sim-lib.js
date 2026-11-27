@@ -27,6 +27,7 @@ function run(opts) {
     while (!h.done) {
       if (++guard > 500) { out.errors.push('Hand hängt #' + h.no); break; }
       if (h.p[h.toAct].isHero) {
+        if (opts.onDecision) opts.onDecision(h);
         let a = heroPolicy(h, hrng, opts.heroMode);
         let r = PT.session.act(t, h, h.toAct, a);
         let tries = 0;
