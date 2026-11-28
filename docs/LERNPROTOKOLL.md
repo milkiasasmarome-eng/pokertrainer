@@ -61,3 +61,12 @@ Format: Befund. Ursache. Regel.
 - 2.3: Das Maß w maß Stil und Rolle statt Passung (feste Lage, gemeinsame Referenz für aggressive und passive Aktionen). Ursache: Prüfstatistik ohne Kontext der Tabelle. Regel: Passungsmaße in derselben Zelle wie das Modell berechnen und je Teilgruppe eigene Referenzwerte verwenden.
 - 2.3: Der Leckagetest konnte kein Leck finden. Regel: jeder Schutztest bekommt einen Negativtest, der ihn rot macht.
 - 2.3: Die Arbeitsumgebung startete während der Hauptläufe neu. Regel bestätigt: Läufe mit Zwischenspeicherung je Lauf, danach einfach neu starten.
+
+## 2.3.1 (28.11.2026, erste Runde in Claude Code)
+
+- Der gleichgewichtsnahe Modus raiste seit 2.1 postflop dreimal so oft wie 2.0.1; aufgefallen erst beim Blick auf die Aktionsverteilung, nicht in BB/100. Ursache: Korrektur „Prüfer B 7“ nahm im Modus alle Fold-Korrekturen heraus, auch die für Raises. Regel: Bei jedem Modusvergleich die Aktionsanteile (Raise, Call, Fold) neben BB/100 mit der Referenz vergleichen; eine Korrektur für einen Fall (Bets) nie pauschal auf verwandte Fälle (Raises) ausdehnen.
+- Gegen die Gegner-KI war die Korrektur ohne Wirkung auf BB/100 (dev24), gegen unbekannte Strategien +43 bis +52 BB/100 (dev24b). Ursache: Die Gegner-KI bestraft Über-Raisen kaum. Regel: Jede Variante auf Gegner-KI und auf synthetischen Strategien entwickeln; eine Gruppe allein entscheidet nie über „kein Nutzen“.
+- Ein nicht bestandenes Kriterium (P4) darf nicht durch einen Wiederholungslauf allein bestehen. Regel: Vor einer Replikation festlegen, dass das Urteil auf der gepoolten Schätzung beruht (P4-gesamt).
+- Die Annahme „PAI ist auf 0.1.0“ war veraltet (PAI 0.4.0-dev las Format 3 bereits). Regel: Stand fremder Repositories vor jeder Aussage mit `git ls-remote` prüfen und Commit-Hashes in Berichten nennen.
+- Erster Browsertestlauf direkt nach der Installation: sechs Zeitüberschreitungen, Wiederholung 52/52; im CI ein zufälliger Fehler „ohne Worker: Tipp erscheint“, weil die einzige gespielte Hand ohne eigene Entscheidung endete. Regel: Browsertests, die auf eine Entscheidung warten, spielen bis zu drei Hände; bei Fehlschlägen erst im selben Stand wiederholen, dann untersuchen.
+- Diagnose Equity-Unterschätzung: aufgeschlüsselt nach Lage liegt sie fast ganz beim River-Check des Gegners zum Helden (F23 in Position +0,29). Regel: Kalibrierungsfehler vor jeder Korrektur nach Straße, Lage und Gegneraktion aufschlüsseln.

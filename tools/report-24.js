@@ -31,6 +31,11 @@ out.results.push(evaluate('P4', 'P4 (Plan v23, 2.3.0): gleichgewichtsnah gegen 2
 out.results.push(evaluate("P4'", "P4' (Plan val24, 2.3.1, neue Seeds): gleichgewichtsnah gegen 2.0.1", pairs([P4s]), 8));
 out.results.push(evaluate('P4-gesamt', 'P4-gesamt (P4 ∪ P4′, Urteil): gleichgewichtsnah gegen 2.0.1', pairs([P4, P4s]), 8));
 out.results.push(evaluate('G3', 'G3: gleichgewichtsnah gegen 2.0.1, synth23 Ka23 (beschreibend)', pairs([['vKa', 'coach23-gto', 'coach201-gto', range(24451, 6), 'p23-Ka']]), null));
+const R24 = range(24601, 24);
+out.results.push(evaluate('P4R', 'P4R (Plan val24b, Produktstand 2.3.1 mit Raise-Korrektur): gleichgewichtsnah gegen 2.0.1, neue Seeds', pairs([['vR', 'g24-R', 'coach201-gto', R24]]), 8));
+out.results.push(evaluate('vR-0', 'Raise-Korrektur gegen Stand 2.3 (Rückschalter), Gegner-KI, neue Seeds', pairs([['vR', 'g24-R', 'g24-0', R24]]), null));
+[['dTr', 'Tr23', range(24501, 6)], ['dVa', 'Va23', range(24511, 6)]].forEach(([g, n, sd]) => { out.results.push(evaluate(g + '-R0', 'dev24b ' + n + ': Raise-Korrektur gegen Stand 2.3', pairs([[g, 'g24-R', 'g24-0', sd, 'p23-' + n.slice(0, 2)]]), null));
+  out.results.push(evaluate(g + '-R201', 'dev24b ' + n + ': Raise-Korrektur gegen 2.0.1', pairs([[g, 'g24-R', 'coach201-gto', sd, 'p23-' + n.slice(0, 2)]]), null)); });
 fs.writeFileSync(path.join(__dirname, '..', 'tests', 'results', 'report-24.json'), JSON.stringify(out, null, 1));
 const f = x => String(x).replace('.', ',');
 console.log('Gleichheit 2.3.0/2.3.1 auf Seed 23801: ' + (out.identity.ok ? 'identisch' : 'NICHT identisch') + ' ' + JSON.stringify(out.identity));
