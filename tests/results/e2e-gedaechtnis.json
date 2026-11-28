@@ -1,6 +1,6 @@
 {
- "base": "http://127.0.0.1:8765/",
- "date": "2026-11-28T10:56:29.752Z",
+ "base": "http://127.0.0.1:8767/",
+ "date": "2026-11-28T13:25:23.814Z",
  "passed": 3,
  "failed": 0,
  "tests": [
@@ -9,14 +9,14 @@
    "ok": true,
    "checks": 10,
    "notes": [],
-   "ms": 3177
+   "ms": 2756
   },
   {
    "name": "Gegnerdialog: Kurzzeit- und Langzeitwerte, erkannte Veränderung, beobachtet/geschätzt/unbekannt, Maskierung",
    "ok": true,
    "checks": 5,
    "notes": [],
-   "ms": 723
+   "ms": 737
   },
   {
    "name": "Konsole: keine JavaScript-Fehler",

@@ -388,12 +388,14 @@ async function playHand(page, policy) {
     const file = 'file://' + path.join(__dirname, '..', 'dist', 'PokerTrainer_' + require('../tools/check-version.js').check().version.split('.').slice(0, 2).join('.') + '.html');
     const c = await browser.newContext(), p = await c.newPage(); watch(p, 'einzeldatei');
     await p.goto(file + '#tisch'); await p.waitForFunction(() => window.PTUI && window.PTUI.S.ready, null, { timeout: 15000 });
-    await p.click('#bNext');
     let tip = false;
-    for (let i = 0; i < 30; i++) {
-      const st = await waitTurnOrNext(p); if (st.next) break;
-      await p.waitForFunction(() => /badge c-/.test(document.getElementById('tipBox').innerHTML), null, { timeout: 5000 }); tip = true;
-      await p.click('#bCall');
+    for (let hnd = 0; hnd < 3 && !tip; hnd++) {   /* 2.3.1: bis zu drei Hände (Hand ohne eigene Entscheidung möglich) */
+      await p.click('#bNext');
+      for (let i = 0; i < 30; i++) {
+        const st = await waitTurnOrNext(p); if (st.next) break;
+        await p.waitForFunction(() => /badge c-/.test(document.getElementById('tipBox').innerHTML), null, { timeout: 5000 }); tip = true;
+        await p.click('#bCall');
+      }
     }
     ok(tip, 'Tipp in der Einzeldatei');
     ok(await p.evaluate(() => window.PTUI.Analyzer.mode()) === 'Web Worker', 'Analyse im Web Worker');

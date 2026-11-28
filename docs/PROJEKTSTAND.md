@@ -102,6 +102,17 @@
 - 2026-11-28 · Qualitätsbewertung 9,48 (2.1.0: 9,47, 2.2.0: 9,42), Ziel 9,5 nicht erreicht (docs/TESTBERICHT_2.3.md).
 - 2026-11-28 · PokerTrainer_Entwurf auf 2.3.0 aktualisiert (Artefakt-Version 1795863503-431a). Final Acceptance Test zu 2.3.0 eröffnet (33 Fälle), Fall 1 offen.
 
+- 2026-11-28 · Master-Übergabe an Claude Code angenommen: Übernahme statt Neubau, Entwicklungsrunde mit höchstens fünf Korrekturzyklen. Annahmen mit Grund:
+  - Weiterarbeit auf `entwicklung-2.3` statt einem neuen Zweig. Grund: Die Arbeitsumgebung erlaubt Pushes nur auf diesen Zweig; 2.3.0 bleibt als Commit `601df61` referenzierbar.
+  - Version 2.3.1 statt 2.4.0. Grund: Fehlerbehebungen und eine Korrektur des experimentellen Modus, keine neuen Funktionen, Datenformat unverändert.
+  - Projektstand und Lernprotokoll ab jetzt im Repository (`docs/PROJEKTSTAND.md`, `docs/LERNPROTOKOLL.md`), ohne Namen und private Links. Grund: dauerhaftes Projektgedächtnis für neue Sitzungen.
+  - P4 nach Replikation gepoolt beurteilt. Grund: Ein Wiederholungslauf allein darf ein nicht bestandenes Kriterium nicht kippen.
+- 2026-11-28 · Übernahme geprüft: Build reproduzierbar, 140/140 Node-Tests, 52/52 Browsertests, 3/3 Gedächtnistests. `CLAUDE.md` und `docs/UEBERGABE.md` angelegt.
+- 2026-11-28 · P4 untersucht: Ursache Raise-Anteil (Korrektur Prüfer B 7 zu weit). Drei Zyklen (dev24, val24, dev24b, val24b): P4-gesamt für den alten Modus nicht bestanden (−4,2 [−8,8; 0,2]); neuer Modus mit Raise-Korrektur P4R +7,7 [3,8; 11,4] gegen 2.0.1 bestanden.
+- 2026-11-28 · PAI ist auf 0.4.0-dev (`f4990fe`) und liest Format 3 selbst; Integrationstest 18/18, PAI-eigener Test 18 + 1 beschreibend. Änderungsauftrag aktualisiert.
+- 2026-11-28 · Prüfbefunde E23-10, E23-14, C23-10 behoben. Diagnose Equity-Unterschätzung: River-Check des Gegners gegen unbekannte Strategien (+0,29 in Position).
+- 2026-11-28 · Qualitätsbewertung 9,50 (rechnerisch 9,505), Ziel knapp erreicht (docs/TESTBERICHT_2.3.1.md). Final Acceptance Test 2.3.1 vorbereitet (fünf Bündel), noch nicht eröffnet.
+
 ## Später
 
 - Sprachsteuerung per Mikrofon
@@ -119,12 +130,11 @@
 - Git-Tags v2.0.1 und v2.1.0 im Repository setzen (aus dieser Umgebung nicht möglich)
 - Gegen unbekannte Strategien (Polarisierer, Fallensteller) wieder mindestens so stark wie 2.1.0 werden
 - Zähler je Aktionsfamilie im Gegnergedächtnis (neues Datenformat mit Migration)
-- PAI-Adapter für Sicherungen Format 3 und Anzeige des PAI-Kanals
+- Anzeige des PAI-Kanals (PAI liest Format 3 seit 0.3/0.4)
 - Minraise-Linien für 16–25 BB
 - Offene Prüfbefunde 2.2: B-6, C-7, C-12, D-2, D-5, D-6, D-11
-- Gleichgewichtsnahen Modus mindestens auf den Stand von 2.0.1 bringen (P4)
 - Equity gegen unbekannte Strategien: Unterschätzung am River nach Checks
 - Hybrides Gewicht mit Alter der Einträge und Veränderungserkennung koppeln
-- Kürzung langer Aktionsfolgen in aufgedeckten Blättern (E23-14), Textfehler „Die Bet gewinnt“ bei Raises (E23-10)
 - Schema für den Kanal „pai“ gemeinsam mit PAI festlegen
-
+- Gleichgewichtsnaher Modus gegen unbekannte Strategien (Va23 −25 gegen 2.0.1)
+- Showdown-Kalibrierung je Gegner für River-Checks (neue versiegelte Testgruppe nötig)

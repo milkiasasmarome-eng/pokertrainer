@@ -11,7 +11,7 @@ Geschichte und Regeln: `docs/PROJEKTSTAND.md`, `docs/LERNPROTOKOLL.md`, `CLAUDE.
 | 2.1.0 | `main` = `sicherung-2.1.0`, `gh-pages` | **öffentlich** |
 | 2.2.0 | Zweig `sicherung-2.2.0`, `archiv/PokerTrainer_2.2.0.html`, PR #2 | nicht freigegeben, Referenz |
 | 2.3.0 | Commit `601df61` auf `entwicklung-2.3` | nicht freigegeben, in 2.3.1 enthalten |
-| 2.3.1 | Zweig `entwicklung-2.3`, eingefroren `6d6e575` (danach nur Doku, Berichte, Tests) | **Release-Kandidat**, Final Acceptance Test vorbereitet |
+| 2.3.1 | Zweig `entwicklung-2.3`, Engine eingefroren `88f1191` (danach nur Oberflächentexte, Tests, Doku) | **Release-Kandidat**, Final Acceptance Test vorbereitet |
 
 ## Offen beim Auftraggeber
 
@@ -24,8 +24,8 @@ Geschichte und Regeln: `docs/PROJEKTSTAND.md`, `docs/LERNPROTOKOLL.md`, `CLAUDE.
 1. **Equity gegen unbekannte Strategien am River nach Checks** (F23 −0,15, Ka23 −0,08, Gegner-KI V/T ≈ 0): Diagnose in
    `docs/TESTBERICHT_2.3.1.md` §4. Ansatz: Showdown-Kalibrierung je Gegner (gezeigte Hände gegen die vorhergesagte Range) statt globaler
    Verbreiterung; Entwicklung nur auf Tr23/E, Wahl auf Va23/V, Abschluss auf einer **neuen** versiegelten Gruppe (F23 ist verbraucht).
-2. **Gleichgewichtsnaher Modus:** Variante `gtoRaiseAdj` (Schalter in `ev.js`) normalisiert den Raise-Anteil, ohne belegten BB/100-Vorteil. Ein
-   echter Fortschritt braucht vermutlich Mischstrategien statt Einzelhand-Empfehlung (B7-Problem) oder ein Modellspiel auch für Turn/Flop.
+2. **Gleichgewichtsnaher Modus:** Raise-Korrektur übernommen (P4R bestanden). Gegen unbekannte Strategien weiter −25 gegen 2.0.1 (Va23);
+   nächster Ansatz: Mischstrategien statt Einzelhand-Empfehlung (B7-Problem) oder ein Modellspiel auch für Turn/Flop.
 3. Offene geringe Befunde: B-6, B23-9, C23-5, E23-12 (`docs/TESTBERICHT_2.3.1.md` §5).
 
 ## Umgebung

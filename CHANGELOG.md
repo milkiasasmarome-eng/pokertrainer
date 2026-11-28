@@ -14,9 +14,10 @@ Bericht: `docs/TESTBERICHT_2.3.1.md`.
 - C23-10: `tests/long.js calib` meldet die tatsächliche Händezahl.
 
 ### Gleichgewichtsnaher Modus (P4)
-- Ursache des hohen Raise-Anteils (8 % statt 2,7 % bei 2.0.1) gefunden: seit 2.1 fehlen im Modus die Fold-Korrekturen für Raises.
-  Variante mit Korrektur (Schalter `gtoRaiseAdj`, Standard aus) normalisiert den Raise-Anteil, ist aber nicht belegt besser; Modus bleibt unverändert
-  und „experimentell“. Replikation von P4 auf neuen Seeds: `docs/TESTBERICHT_2.3.1.md`.
+- Ursache des hohen Raise-Anteils (8 % statt 2,6 % bei 2.0.1) gefunden: Seit 2.1 fehlten im Modus die Fold-Korrekturen für Raises.
+  Raises und Jams gegen einen Einsatz bekommen sie wieder; Bets bleiben bei reiner MDF-Annahme (Prüfer B 7). Rückschalter `gtoRaise23`.
+- P4R auf neuen Seeds: +7,7 [3,8; 11,4] BB/100 gegen 2.0.1 (bestanden), +11,5 gegen den Stand 2.3; gegen unbekannte Strategien (Va23) +43 gegen 2.3,
+  aber weiter −25 gegen 2.0.1. Der Modus bleibt „experimentell“ und nicht voreingestellt. Der exploitative Modus ist unverändert.
 
 ### PAI
 - Integrationstest gegen PAI 0.4.0-dev (Commit f4990fe) 18/18: PAI liest Format 3 selbst, lässt Trainingshände aus, lehnt Version 4 ab.

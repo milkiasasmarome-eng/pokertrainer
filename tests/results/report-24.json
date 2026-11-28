@@ -1,5 +1,5 @@
 {
- "date": "2026-11-28T12:47:12.189Z",
+ "date": "2026-11-28T13:13:09.902Z",
  "method": "all-in-bereinigt, gepaart nach Seed, Block-Bootstrap 500 Hände; Nichtunterlegenheit: konservativeres Verfahren (geschichtet/zweistufig), einseitig 2,5 %",
  "results": [
   {
@@ -93,12 +93,42 @@
   {
    "id": "P4R",
    "title": "P4R (Plan val24b, Produktstand 2.3.1 mit Raise-Korrektur): gleichgewichtsnah gegen 2.0.1, neue Seeds",
-   "missing": true
+   "seeds": 24,
+   "hands": 60000,
+   "blocks": 120,
+   "diff": 7.66,
+   "lo": 3.81,
+   "hi": 11.43,
+   "verdict": "belegt besser",
+   "aAhead": 17,
+   "raiseShare": 1.5,
+   "raiseShareRef": 2.5,
+   "invalid": 0,
+   "decisions": 84840,
+   "ni": {
+    "delta": 8,
+    "lo": 2.07,
+    "loStrat": 3.74,
+    "loHier": 2.07,
+    "p": 0,
+    "verdict": "nicht unterlegen"
+   }
   },
   {
    "id": "vR-0",
    "title": "Raise-Korrektur gegen Stand 2.3 (Rückschalter), Gegner-KI, neue Seeds",
-   "missing": true
+   "seeds": 24,
+   "hands": 60000,
+   "blocks": 120,
+   "diff": 11.46,
+   "lo": 7.02,
+   "hi": 16.13,
+   "verdict": "belegt besser",
+   "aAhead": 22,
+   "raiseShare": 1.5,
+   "raiseShareRef": 7.9,
+   "invalid": 0,
+   "decisions": 84840
   },
   {
    "id": "dTr-R0",

@@ -7,7 +7,8 @@ und im Lernprotokoll vermerkt. Nach dem letzten bestandenen Bündel und dem Wort
 **Prüfgegenstand:** Offline-Datei `dist/PokerTrainer_2.3.html` aus dem Zweig `entwicklung-2.3` (Fußzeile **2.3.1**). Download:
 `https://github.com/milkiasasmarome-eng/pokertrainer/raw/entwicklung-2.3/dist/PokerTrainer_2.3.html`, dann per Doppelklick öffnen.
 Alternativ lokal: im Repository `python3 -m http.server 8767`, dann `http://127.0.0.1:8767/`. Die öffentliche Website zeigt bis zur Freigabe 2.1.0.
-Der Final Acceptance Test zu 2.3.0 (Fall 1 offen) entfällt: 2.3.1 enthält 2.3.0 vollständig (Entscheidungen bitgleich, `tests/results/report-24.json`).
+Der Final Acceptance Test zu 2.3.0 (Fall 1 offen) entfällt: 2.3.1 enthält 2.3.0 vollständig; der exploitative Modus entscheidet unverändert, nur der
+experimentelle gleichgewichtsnahe Modus raist seltener (P4R, `docs/TESTBERICHT_2.3.1.md`).
 
 ## Teil A – automatisch geprüft (kein Handgriff nötig)
 
