@@ -692,7 +692,7 @@ function explain(a, depth) {
   else if (best.type === 'check') core = 'Check: Eine Bet bringt hier geschätzt nicht mehr als ein Check (Equity etwa ' + pct(eq.eq) + ').';
   else {
     var p = best.parts || {}, value = eq.eq >= 0.55;
-    core = actWord + ': ' + (value ? 'Mit etwa ' + pct(eq.eq) + ' Equity holst du Value von schwächeren Händen.' : 'Die Bet gewinnt den Pot geschätzt in etwa ' + pct(p.pAllFold || 0) + ' der Fälle sofort' + (a.hand.draw && a.hand.draw.strong ? ', und dein Draw hat Rückhalt.' : '.'));
+    core = actWord + ': ' + (value ? 'Mit etwa ' + pct(eq.eq) + ' Equity holst du Value von schwächeren Händen.' : (best.type === 'raise' ? 'Der Raise' : best.allin ? 'Der Einsatz' : 'Die Bet') + ' gewinnt den Pot geschätzt in etwa ' + pct(p.pAllFold || 0) + ' der Fälle sofort' + (a.hand.draw && a.hand.draw.strong ? ', und dein Draw hat Rückhalt.' : '.'));
   }
   if (a.mix) core += ' Im Gleichgewicht sind ' + a.mix.passive + ' und ' + a.mix.bluff + ' (Bluff) etwa gleich viel wert; eine Einzelhand-Empfehlung kann diese Mischung nicht abbilden, ' + a.mix.passive + ' ist die risikoärmere Wahl.';
   // E23-6: Hinweis auf die Vereinfachung einmal; den Modellabstand nur nennen, wenn er mindestens 0,05 BB beträgt

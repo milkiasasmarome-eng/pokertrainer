@@ -113,7 +113,7 @@ function save() {
     const T = { lp: { vpip: [28, 40], pfr: [5, 14], af: [0.3, 1.5], wtsd: [32, 48], typ: 'loose-passiv' }, vl: { vpip: [40, 60], pfr: [18, 32], af: [1.8, 4], typ: 'sehr loose' },
       nit: { vpip: [9, 16], pfr: [6, 13], typ: 'Nit' }, tag: { vpip: [18, 26], pfr: [14, 22], threeBet: [5, 10], af: [2, 4], typ: 'TAG' },
       lag: { vpip: [27, 36], pfr: [21, 30], threeBet: [8, 14], af: [2.5, 5], typ: 'LAG' }, bal: { vpip: [20, 28], pfr: [16, 23], threeBet: [5, 10], typ: 'TAG' } };
-    out.calib = { hands: 200000, styles: {}, ms: 0 };
+    out.calib = { hands: 2 * +(process.env.CALIB_HANDS || 100000), styles: {}, ms: 0 };   /* 2.4 (C23-10): tatsächliche Händezahl */
     let allOk = true;
     Object.keys(T).forEach(st => {
       const a = agg[st], r = {}; PT.stats.STATS.forEach(k => { r[k] = a.s[k][1] ? +(100 * a.s[k][0] / a.s[k][1]).toFixed(1) : null; });

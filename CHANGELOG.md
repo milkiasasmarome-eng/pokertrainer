@@ -2,6 +2,29 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [2.3.1] – 2026-11-28
+
+Übernahme in Claude Code, Reproduzierbarkeit, offene Prüfbefunde, PAI-Schnittstelle, Untersuchung von P4. Keine Änderung an Strategie, Gegner-KI
+oder Datenformat (weiter 3). Nicht freigegeben, solange der Final Acceptance Test aussteht. Kriterien: `docs/ABNAHMEKRITERIEN_2.4.md`,
+Bericht: `docs/TESTBERICHT_2.3.1.md`.
+
+### Korrekturen
+- E23-10: Erklärtext nennt bei Raises „Der Raise gewinnt …“, bei All-ins „Der Einsatz …“ statt immer „Die Bet …“.
+- E23-14: Kürzung langer Aktionsfolgen in aufgedeckten Blättern endet die Straße mit „…“ statt eine Aktion aus der Mitte auszulassen.
+- C23-10: `tests/long.js calib` meldet die tatsächliche Händezahl.
+
+### Gleichgewichtsnaher Modus (P4)
+- Ursache des hohen Raise-Anteils (8 % statt 2,7 % bei 2.0.1) gefunden: seit 2.1 fehlen im Modus die Fold-Korrekturen für Raises.
+  Variante mit Korrektur (Schalter `gtoRaiseAdj`, Standard aus) normalisiert den Raise-Anteil, ist aber nicht belegt besser; Modus bleibt unverändert
+  und „experimentell“. Replikation von P4 auf neuen Seeds: `docs/TESTBERICHT_2.3.1.md`.
+
+### PAI
+- Integrationstest gegen PAI 0.4.0-dev (Commit f4990fe) 18/18: PAI liest Format 3 selbst, lässt Trainingshände aus, lehnt Version 4 ab.
+  Test prüft die Punkte des Änderungsauftrags direkt am Original, sobald PAI Format 3 liest; der Commit von PAI steht im Ergebnis.
+
+### Dauerhafte Einrichtung
+- `CLAUDE.md`, `docs/UEBERGABE.md`; Projektstand und Lernprotokoll ins Repository übernommen (`docs/PROJEKTSTAND.md`, `docs/LERNPROTOKOLL.md`).
+
 ## [2.3.0] – 2026-11-27
 
 Generalisierung, Ursachenanalyse der Regression 2.2 und unabhängige Validierung. Nicht freigegeben, solange der Final Acceptance Test aussteht.

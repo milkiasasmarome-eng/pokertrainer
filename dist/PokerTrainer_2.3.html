@@ -687,7 +687,7 @@ R.fail = function (reason, detail, opts) {
     <section class="view" id="view-hilfe" hidden></section>
   </main>
   <footer class="foot">
-    <span>PokerTrainer <span id="verText">2.3.0</span> · nur Spielgeld, kein Glücksspiel · Daten bleiben in deinem Browser</span>
+    <span>PokerTrainer <span id="verText">2.3.1</span> · nur Spielgeld, kein Glücksspiel · Daten bleiben in deinem Browser</span>
     <a href="#hilfe/datenschutz">Datenschutz &amp; Rechtliches</a>
   </footer>
 </div>
@@ -708,8 +708,8 @@ R.fail = function (reason, detail, opts) {
 (function (G) {
 'use strict';
 var PT = G.PT || (G.PT = {});
-PT.VERSION = '2.3.0';
-PT.BUILD = '2026-11-27';
+PT.VERSION = '2.3.1';
+PT.BUILD = '2026-11-28';
 
 // ---------- Hilfen ----------
 function clamp(x, a, b) { return x < a ? a : x > b ? b : x; }
@@ -2625,10 +2625,11 @@ function newRecord(id, name) {
 }
 function dbEnsure(db, id, name) { var r = db.opps[id]; if (!r) r = db.opps[id] = newRecord(id, name || (PT.bots ? PT.bots.nameOf(id) : id)); return r; }
 function shownEntry(rec, seat, cards) {
-  var streets = ['', '', '', ''];
+  var streets = ['', '', '', ''], cut = [false, false, false, false];
   // 2.3 (Prüfbefund B23-1): Bets mit Größe relativ zum Pot vor dem Einsatz („Bet 3,00 (0,5 Pot)“), damit das hybride Modell Größensignale prüfen kann
   rec.actions.forEach(function (a) { if (a.s !== seat) return; var t = PT.actionText(a); if (a.t === 'bet' && a.pot > 0) t += ' (' + String(Math.round(a.a / a.pot * 1000) / 1000).replace('.', ',') + ' Pot)';   // C23-7: drei Stellen
-    var nx = streets[a.st] ? streets[a.st] + ', ' + t : t; if (nx.length <= 300) streets[a.st] = nx; });   // C23-6: höchstens 300 Zeichen je Straße (Prüfgrenze in validShown)
+    if (cut[a.st]) return;   /* 2.4 (E23-14): nach der ersten Kürzung keine weiteren Aktionen dieser Straße, sonst entsteht eine Folge mit Lücke */
+    var nx = streets[a.st] ? streets[a.st] + ', ' + t : t; if (nx.length <= 300) streets[a.st] = nx; else { cut[a.st] = true; if (streets[a.st].length + 3 <= 300) streets[a.st] += ', …'; } });   // C23-6: höchstens 300 Zeichen je Straße (Prüfgrenze in validShown)
   return { hand: rec.no, ts: rec.ts, pos: rec.seats[seat].pos, cards: cards, board: rec.board.join(''), actions: streets, net: rec.net[seat] };
 }
 function applyToRecord(r, I, ts) {
@@ -5038,7 +5039,7 @@ function explain(a, depth) {
   else if (best.type === 'check') core = 'Check: Eine Bet bringt hier geschätzt nicht mehr als ein Check (Equity etwa ' + pct(eq.eq) + ').';
   else {
     var p = best.parts || {}, value = eq.eq >= 0.55;
-    core = actWord + ': ' + (value ? 'Mit etwa ' + pct(eq.eq) + ' Equity holst du Value von schwächeren Händen.' : 'Die Bet gewinnt den Pot geschätzt in etwa ' + pct(p.pAllFold || 0) + ' der Fälle sofort' + (a.hand.draw && a.hand.draw.strong ? ', und dein Draw hat Rückhalt.' : '.'));
+    core = actWord + ': ' + (value ? 'Mit etwa ' + pct(eq.eq) + ' Equity holst du Value von schwächeren Händen.' : (best.type === 'raise' ? 'Der Raise' : best.allin ? 'Der Einsatz' : 'Die Bet') + ' gewinnt den Pot geschätzt in etwa ' + pct(p.pAllFold || 0) + ' der Fälle sofort' + (a.hand.draw && a.hand.draw.strong ? ', und dein Draw hat Rückhalt.' : '.'));
   }
   if (a.mix) core += ' Im Gleichgewicht sind ' + a.mix.passive + ' und ' + a.mix.bluff + ' (Bluff) etwa gleich viel wert; eine Einzelhand-Empfehlung kann diese Mischung nicht abbilden, ' + a.mix.passive + ' ist die risikoärmere Wahl.';
   // E23-6: Hinweis auf die Vereinfachung einmal; den Modellabstand nur nennen, wenn er mindestens 0,05 BB beträgt
@@ -6267,7 +6268,7 @@ PT.Speech = Speech; PT.toSpeech = toSpeech; PT.pickVoice = pickVoice;
 (function () {
 'use strict';
 if (typeof importScripts === 'function' && !self.PT) {
-  var v = '?v=2.3.0';
+  var v = '?v=2.3.1';
   importScripts('engine/core.js' + v, 'engine/evaluator.js' + v, 'engine/preflop-data.js' + v, 'engine/rules.js' + v, 'engine/ranges.js' + v, 'engine/equity.js' + v,
     'engine/stats.js' + v, 'engine/bots.js' + v, 'engine/session.js' + v, 'engine/ev.js' + v, 'engine/cfr.js' + v, 'engine/coach.js' + v, 'engine/training.js' + v, 'engine/export.js' + v);
 }

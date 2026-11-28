@@ -30,7 +30,7 @@ node tests/e2e.js                                  # Browser-Tests (Playwright +
 - Versionsnummer: `PT.VERSION` in `core.js`, `?v=` in `index.html` und `worker.js`, `CHANGELOG.md`. `tools/build.js` bricht ab, wenn `index.html` nicht zur Version passt.
 - Die Obergrenze von 5.000 Simulationen je Live-Entscheidung (Stufen Schnell/Standard) ist eine Projektvorgabe; Tests prüfen sie.
 - Neue Fehler: reproduzierbaren Test in `tests/run.js` ergänzen.
-- Projektstand und Lernprotokoll werden außerhalb des Repos im Claude-Projekt „Poker“ gepflegt (`PokerTrainer_Stand`).
+- Projektstand und Lernprotokoll: `docs/PROJEKTSTAND.md`, `docs/LERNPROTOKOLL.md` (ab 2.4 im Repository; bis 2.3.0 im Claude-Projekt „Poker“, `PokerTrainer_Stand`). Kurzanweisung für Claude Code: `CLAUDE.md`.
 
 ## Hinweise aus der unabhängigen Prüfung (2.0.1)
 - Preflop folgt der Coach dem Faustregel-Chart; Abweichungen nur bei belegtem Exploit (`coach.preflopAnchor`). Wer die EV-Annahmen ändert, muss `tests/run.js` „Regression Prüfer C“ grün halten.

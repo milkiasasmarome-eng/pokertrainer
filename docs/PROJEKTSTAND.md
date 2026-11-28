@@ -1,0 +1,130 @@
+# Projektstand PokerTrainer
+
+> Übernommen am 28.11.2026 aus der Datei `PokerTrainer_Stand` des Claude-Projekts „Poker“ (dort bis 2.3.0 gepflegt). Ab 2.4 ist diese Datei maßgeblich.
+> Namen und private Artefakt-Links entfernt.
+
+
+## Projektstand
+
+- 2026-11-26 · Auftrag „Grundausstattung PokerCoach“ (WPT-Global-Historien einlesen, Gegnerarchiv, Fehlerprofil, Dateien PokerCoach_*) auf den PokerTrainer umgelegt. Einlesen fremder Hand-Historien, Gegnerarchiv echter Spieler und Fehlerprofil aus Fremdhänden nach Entscheidungsbaum Zeile 2 weder ausgeführt noch entworfen; [OFFEN: Format der Hand-Historien von WPT Global] damit gegenstandslos.
+- 2026-11-26 · Entwurf 1 geliefert: PokerTrainer_Entwurf, Kernversion als eine HTML-Datei (Claude-Artefakt). Spiellogik in `<script id="engine">`, Oberfläche in `<script id="ui">`. Annahmen mit Grund:
+  - Bet/Raise-Betrag ist der Gesamteinsatz der Straße („Raise auf“), Schritte 0,01. Grund: so arbeiten gängige Clients.
+  - Fällt ein Stack unter 1 BB, wird vor der nächsten Hand auf 100 BB nachgekauft. Grund: Cash Game mit Spielgeld, das Training läuft weiter.
+  - Am Showdown werden alle Blätter aufgedeckt. Grund: einfache Regel, mehr Material für die Datenbank.
+  - Fold ist nur wählbar, wenn ein Einsatz offen ist. Grund: verhindert Fehlklicks.
+  - Werte: VPIP und PFR je Hand mit Preflop-Entscheidung (Walks zählen nicht), 3-Bet je Gelegenheit nach genau einem Raise, Fold gegen 3-Bet nur für den Opener, C-Bet je Gelegenheit des Preflop-Aggressors, Fold gegen C-Bet bis zum ersten Raise, WTSD = Showdown je gesehenem Flop. Grund: übliche Tracker-Definitionen.
+  - Spielertyp wird aus den angezeigten, auf ganze Prozent gerundeten Werten bestimmt. Grund: Anzeige und Typ passen immer zusammen.
+  - Tipps glätten Datenbankwerte zum Durchschnitt der Population (30 Pseudo-Hände); der interne Spielstil fließt nicht ein. Grund: unter 100 Händen sind Werte nicht belastbar.
+  - Preflop-Equity wird nach Position gewichtet (in Position 92 %, out of Position 80 %). Grund: rohe Equity überschätzt schwache Hände ohne Position.
+  - Ungeöffnete Pots preflop nach Positions-Range (UTG 15 %, HJ 19 %, CO 27 %, BTN 45 %, SB 36 %), enger bei vielen Callern dahinter, weiter bei Foldern. Grund: Faustregel statt Equity gegen Gegner, die noch nicht gehandelt haben.
+  - Simulation mit Zeitbremse 1,2 s zusätzlich zur Obergrenze von 5.000 Durchläufen. Grund: sichert die 2-Sekunden-Grenze auch auf langsamen Rechnern.
+  - Speicher: IndexedDB, Rückfall localStorage, sonst nur Sitzung mit Hinweis. Grund: 5.000 Gegner passen sicher nur in IndexedDB.
+  - Eine beim Schließen laufende Hand wird verworfen. Grund: die Datenbank zählt nur fertige Hände.
+  - Beim Gegnerwechsel setzt sich nicht sofort derselbe Gegner wieder. Grund: sonst kein echter Wechsel.
+  - Zusätzlich Tempo „normal/schnell“ und eine Datenbank-Übersicht. Grund: Gegnerwechsel und Archiv sind so im Final Acceptance Test in wenigen Minuten prüfbar.
+  - Export mit Kopieren-Knopf; in der Claude-Vorschau speichert die Plattform die Datei (Fähigkeit downloads). Grund: dort sperrt der Rahmen normale Downloads.
+- 2026-11-26 · Selbsttests bestanden (Runde 2): 9 Tests nach Abschnitt Autonomie auf der gelieferten Datei, dazu 10 Browsertests in Chrome. Keine Sicherung nötig, es gibt noch keine Freigabe.
+- 2026-11-26 · Probe mit fünf vom Trainer ausgeteilten Testhänden ausgewertet; nichts davon gespeichert.
+- 2026-11-26 · Final Acceptance Test eröffnet, Fall 1 offen.
+- 2026-11-26 · Auftrag „Kernversion bauen und bis zum Final Acceptance Test bringen“ erneut erteilt, während der Test zu Entwurf 1 bei Fall 1 offen stand. Annahme: Neubau statt Weiterbau, der offene Test zu Entwurf 1 entfällt. Grund: Der Auftrag verlangt den Bau, und ein Neubau mit eigenem, wiederholbarem Testsatz ist verlässlicher als Tests nachträglich an fremdem Code.
+- 2026-11-26 · Entwurf 2 geliefert: PokerTrainer_Entwurf als neue Version desselben Artefakts (Claude-Artefakt, Version 1795663727-9736), eine HTML-Datei, Spiellogik in `<script id="engine">`, Oberfläche in `<script id="ui">`. Die Annahmen von Entwurf 1 gelten weiter, dazu Tempo „langsam“. Neue oder geänderte Annahmen mit Grund:
+  - Positionen UTG, HJ, CO, BTN, SB, BB. Grund: übliche 6-max-Bezeichnungen.
+  - Glättung zum Mittel der Population: 30 Pseudo-Hände für VPIP und PFR, 20 Pseudo-Gelegenheiten für die übrigen Werte. Grund: 3-Bet und C-Bet haben viel weniger Gelegenheiten als Hände.
+  - Ohne Position zählt Equity preflop gegen 3-Bets zu 82 %, postflop zu 90 %. Grund: Position wirkt nach dem Flop weiter, aber schwächer.
+  - Sprachausgabe nur mit einer lokalen deutschen Systemstimme, Online-Stimmen bleiben ungenutzt. Grund: keine Verbindung nach außen.
+  - Testschalter `#ohne-sprache` am Ende der Adresse simuliert einen Browser ohne Sprachfunktion. Grund: der Fehlerfall ist so auch in Chrome und Edge prüfbar.
+  - Import ersetzt die Datenbank nach Bestätigung und nur zwischen zwei Händen. Grund: Export und Import ergeben dieselbe Datenbank, eine laufende Hand bleibt stimmig.
+  - Eigener Speicherbereich `pokertrainer-v2`, Daten aus Entwurf 1 werden nicht übernommen. Grund: Entwurf 1 war nie freigegeben.
+  - Check oder Fold statt eines empfohlenen Bluffs gilt als „vertretbar“. Grund: Faustregel, ein verpasster Bluff ist kein grober Fehler.
+  - Pot Odds erscheinen nur, wenn ein Call zur Wahl steht. Grund: beim Eröffnen wären sie irreführend.
+- 2026-11-26 · Selbsttests zu Entwurf 2 bestanden: 14 Tests nach Abschnitt Autonomie auf der gelieferten Datei (10.000 Hände mit 68.003 abgewiesenen Fehleingaben, Stack-Summen, 50 Handbewertungen, Kontrollzählung 1.344 Zähler/Nenner, 242 Rückkehrer ohne Doppeleintrag, Export = Import, 11 beschädigte Dateien abgewiesen, 5.000 Gegner, 2.176 Tipps mit höchstens 5.000 Durchläufen und höchstens 10 ms), dazu 15 Browsertests in Chrome (Neustart, 5.000 Gegner nach Neustart, ohne Sprachfunktion, 400 px). Keine Sicherung nötig, es gibt noch keine Freigabe.
+- 2026-11-26 · Final Acceptance Test zu Entwurf 2 eröffnet, Fall 1 offen.
+- 2026-11-26 · Auftrag „PokerTrainer 2.0“ (Master-Prompt mit Zusatz §21) angenommen, während der Test zu Entwurf 2 bei Fall 1 offen stand. Annahme: Der neuere, ausdrückliche Auftrag geht vor, auch wo er von der Projektanweisung abweicht (öffentliche Website auf GitHub Pages, Veröffentlichung ohne vorherigen Final Acceptance Test, Website plus portable Einzeldatei statt nur einer HTML-Datei). Grund: Der Auftraggeber hat Repository, Veröffentlichung und kostenlose Pages-Seite ausdrücklich autorisiert. Beibehalten aus der Projektanweisung: höchstens 5.000 Simulationen je automatischem Tipp, Tipp binnen 2 s, nur der jüngste Tipp wird gesprochen, keine neue Hand ohne „Nächste Hand“, kein Echtgeld, keine Verbindung nach außen, keine Solver-Behauptung, 100er-Gegnerpool mit Stilverteilung, Wechsel alle 30 Hände.
+- 2026-11-26 · Version 2.0.0 gebaut: modulare Website (Engine, Oberfläche, Web Worker, PWA, Service Worker), portable Einzeldatei `dist/PokerTrainer_2.0.html`, Tests (Node, Langläufe, Playwright), Doku für Menschen und KI-Assistenten. Annahmen mit Grund:
+  - Neuer Speicherbereich `pokertrainer2`; Daten aus Entwurf 2 (`pokertrainer-v2`) werden beim ersten Start übernommen, vorher lädt der Trainer die alte Datenbank als Sicherung herunter. Grund: kein Datenverlust beim Umstieg.
+  - Repository ohne Lizenzdatei. Grund: Lizenzwahl ist Entscheidung des Auftraggebers; [OFFEN: Lizenz].
+  - Anbieterkennzeichnung offen, keine Angaben erfunden. Grund: Name und Anschrift nur vom Auftraggeber; [OFFEN: Impressum nach § 5 DDG / § 18 MStV klären].
+  - Rake standardmäßig aus. Grund: Training ohne Rake ist der übliche Ausgangspunkt.
+- 2026-11-26 · Repository https://github.com/milkiasasmarome-eng/pokertrainer vom Auftraggeber angelegt (direkte Anlage war von der Umgebung gesperrt), Code gepusht, Website über den Zweig `gh-pages` veröffentlicht: https://milkiasasmarome-eng.github.io/pokertrainer/. Veröffentlichung läuft automatisch nach bestandenen Tests (GitHub Actions). Kostenlos, keine kostenpflichtigen Dienste aktiviert.
+- 2026-11-26 · Sicherung: Es gab noch keine Freigabe, daher keine Sicherung der Freigabe nötig. Datenbank-Sicherung beim Umstieg von Entwurf 2 erfolgt automatisch im Trainer. Rückweg: „Gesicherte Freigabe öffnen und gesicherte Datenbank importieren.“ (hier: Entwurf 2 öffnen und die heruntergeladene Datei Sicherung_PokerTrainer_JJJJ-MM-TT_Datenbank importieren).
+- 2026-11-26 · Unabhängige Prüfung von 2.0.0 durch zwei getrennte Prüfagenten: 25 Befunde (6 schwer), alle in 2.0.1 behoben und als Regressionstests nachgestellt (docs/AUDIT.md im Repository).
+- 2026-11-26 · Version 2.0.1 veröffentlicht und getestet: 41/41 Node-Tests, 19/19 Browsertests, 1.000.000 simulierte Hände ohne Fehler, alle 133.784.560 Sieben-Karten-Kombinationen exakt, Gegner-Kalibrierung in allen Zielbereichen, Coach gegen Bots im Mittel +19,9 BB/100 (Bot auf demselben Platz +4,8), Live-Test der Website bestanden (Update-Ablauf, Tipps ≤ 413 ms, keine Konsolenfehler, keine externen Anfragen, Smartphone-Ansicht). Qualitätsbewertung 9,1 von 10, Ziel 9,5 nicht erreicht (docs/TESTBERICHT.md). Annahmen mit Grund:
+  - Preflop folgt der Coach dem Faustregel-Chart; Abweichungen nur bei belegtem Exploit (mindestens 20 Beobachtungen). Grund: ohne Daten waren Bluff-Raises mit beliebigen Händen reine Modellartefakte.
+  - Postflop konservative Fold-Schätzung, Overbets nur Turn/River heads-up. Grund: Die Computergegner folden seltener als nach MDF.
+  - Der automatische Tipp rechnet immer mit höchstens 5.000 Simulationen; Präzise und Tiefenanalyse nur auf Knopfdruck. Grund: Projektvorgabe.
+  - Hinweis im Tippfeld wörtlich „Faustregel, kein Solver-Ergebnis“. Grund: Projektvorgabe.
+  - Loose-passive Gegner etwas weniger klebrig (WTSD 43,6 % statt 50,2 %). Grund: Zielbereich 32–48 %.
+- 2026-11-26 · PokerTrainer_Entwurf (Claude-Artefakt) auf 2.0.1 aktualisiert, Version 1795720052-fcf1 = portable Einzeldatei. Final Acceptance Test zu 2.0.1 nach Projektanweisung noch nicht eröffnet; PokerTrainer_Freigabe und Abschluss_PokerTrainer erst nach „Freigabe“.
+- 2026-11-27 · Folgeauftrag „PokerTrainer 2.1“ (Folgeaudit, Qualitätsziel 9,5) angenommen. Sicherung von 2.0.1 vor allen Änderungen: Zweig `sicherung-2.0.1` im Repository und `archiv/PokerTrainer_2.0.1.html`. Rückweg: „Gesicherte Freigabe öffnen und gesicherte Datenbank importieren.“ (hier: `archiv/PokerTrainer_2.0.1.html` aus dem Repository lokal öffnen und die beim Umstieg auf Datenformat 3 heruntergeladene Format-2-Sicherung importieren). Annahmen mit Grund:
+  - Die externen Befunde A1–A6 gelten als Hypothesen; jede zuerst mit Reproduktionstest geprüft. Grund: Auftrag.
+  - Versionsnummer 2.1.0. Grund: Umfang (neues Datenformat, neue Funktionen, Strategiemodell).
+  - Gegnergedächtnis als Datenformat 3 mit automatischer Migration und vorheriger Sicherung. Grund: Datenformate nur mit Migration ändern.
+  - Offline-Datei heißt `PokerTrainer_2.1.html`, die 2.0-Datei entfällt. Grund: eine Offline-Datei je Version, Versionsprüfung im CI.
+  - Archivfassung 2.0.1 nur im Repository, nicht auf der Website. Grund: gleiche Datenbank im Browser, sie würde Format-3-Daten überschreiben (Prüfbefund C2).
+  - Importgrenze 256 MB. Grund: eigene Sicherungen mit 2.000 Händen waren 67 MB groß (Prüfbefund C14).
+  - Gleichgewichtsnaher Modus empfiehlt bei EV-Gleichstand eines reinen Bluffs die passive Aktion und nennt den Bluff als gleichwertig. Grund: Einzelhand-Empfehlungen können keine Mischstrategie abbilden, sonst Überbluffen.
+  - Git-Tags v2.0.1 und v2.1.0 nur lokal. Grund: Die Umgebung lässt Tag-Pushes nicht zu; die Sicherung liegt als Zweig vor.
+- 2026-11-27 · Befunde A1–A6, Monte-Carlo-Abdeckung und Handbewertungs-Validierung: alle bestätigt und behoben, je mit Regressionstest (docs/AUDIT.md, docs/VALIDIERUNG_MATHE.md).
+- 2026-11-27 · Vier unabhängige Prüfagenten auf dem Stand 2.1: A (Mathematik, 12 Befunde, alle behoben), B (Strategie, 12 Befunde, 9 behoben, 2 teilweise, 1 Doku), C (Sicherheit/Datenbank, 10 bestätigt und behoben, 7 widerlegt), D (Oberfläche/Barrierefreiheit/PWA, 10 bestätigt und behoben, 2 widerlegt). Echter Screenreader-Test nicht ausführbar, Ersatzprüfung dokumentiert.
+- 2026-11-27 · Hauptvergleich (241 Läufe, 602.500 Hände): Coach 2.1 gegen 2.0.1 +14,0 BB/100 [9,1; 18,9], gegen unbekannte Strategien +43,5 [28,2; 58,7], 0 ungültige Empfehlungen; gleichgewichtsnaher Modus −20,6 [−35,4; −7,5] auf 5.000 Händen (schwächer als 2.0.1), 15 BB nicht belegt. Zwischenstand vor Prüfung B: +8,8.
+- 2026-11-27 · Version 2.1.0 veröffentlicht: 114/114 Node-Tests, 52/52 Browsertests, 3/3 Gedächtnis-Browsertests, 1.000.000 Hände ohne Fehler, Kalibrierung aller Stile im Zielbereich, CI grün (Pflichttests, Browsertests mit axe-core, Veröffentlichung, Live-Smoke-Test: Website, Service Worker und Offline-Datei mit Version 2.1.0, keine Skriptfehler, keine fremden Verbindungen). Qualitätsbewertung 9,47 von 10, Ziel 9,5 knapp nicht erreicht (docs/TESTBERICHT.md).
+- 2026-11-27 · PokerTrainer_Entwurf (Claude-Artefakt) auf 2.1.0 aktualisiert, Version 1795774355-c449. Final Acceptance Test vorbereitet (docs/FINAL_ACCEPTANCE_TEST.md, 24 Fälle), noch nicht eröffnet; PokerTrainer_Freigabe und Abschluss_PokerTrainer erst nach „Freigabe“.
+- 2026-11-27 · Folgeauftrag „Entwicklungsauftrag PokerTrainer 2.2.0“ angenommen. Sicherung von 2.1.0 vor allen Änderungen: Zweig `sicherung-2.1.0` und `archiv/PokerTrainer_2.1.0.html`. Rückweg: „Gesicherte Freigabe öffnen und gesicherte Datenbank importieren.“ (hier: `archiv/PokerTrainer_2.1.0.html` lokal öffnen; das Datenformat bleibt 3, eine Datenbank-Sicherung ist nicht nötig, die eigene Exportdatei genügt). Annahmen mit Grund:
+  - Versionsnummer 2.2.0. Grund: neue Funktionen ohne Formatänderung der Datenbank.
+  - Gegnergruppen Entwicklung/Validierung/Test 52/26/22 statt 50/25/25. Grund: feste Zuordnung je Profil per Hash; Umverteilen hätte die schon angepasste Tabelle entwertet.
+  - Reaktionsmodell als Mittel aus Aktionstabelle und 2.1-Modell (Anteil 0,5). Grund: kleinster Fehler der Fold-Vorhersage auf der Validierungsgruppe.
+  - Keine Gegneranpassung bei Leads. Grund: auf der Validierungsgruppe Bias −0,001 ohne gegen +0,014 mit Anpassung.
+  - Name „Gleichgewichtsnah“ bleibt. Grund: vorab festgelegtes Kriterium erfüllt (nicht belegt schlechter als 2.0.1).
+  - Offline-Datei `PokerTrainer_2.2.html`, die 2.1-Datei entfällt. Grund: eine Offline-Datei je Version.
+  - Arbeit auf Zweig `entwicklung-2.2`, Pull Request #2 als Entwurf nur für das CI, kein Merge. Grund: Veröffentlichung erst nach Final Acceptance Test und „Freigabe“.
+  - Fälle 15 (App installieren) und 31 (Update einer installierten 2.1.0) laufen nach „Freigabe“ als Abnahme der Veröffentlichung. Grund: Website und Service Worker zeigen 2.2.0 erst nach dem Merge; bei Fehler gilt der Rückweg oben.
+- 2026-11-27 · Folgeaudit 2.1 abgeschlossen (docs/audit-2.2/FOLGEAUDIT.md): zwölfter Befund von Prüfer B war B10 (Dokumentation, erledigt); 602.500 Hände = 241 Läufe mit 162.500 unabhängigen Kartenfolgen; Gegnerbedingungen innerhalb des 2.1-Vergleichs identisch; Blöcke praktisch unabhängig; „−20,6 gleichgewichtsnah“ und 15 BB waren mit unter 20 Blöcken kein Beleg.
+- 2026-11-27 · Abnahmekriterien 2.2 vor den Läufen festgelegt (docs/ABNAHMEKRITERIEN_2.2.md). Erster Lauf des Plans v22 verworfen (45 Läufe getrennt abgelegt), weil Korrekturen nach Prüfagent A die Engine während des Laufs änderten; danach vollständiger Neulauf.
+- 2026-11-27 · Fünf Prüfagenten A–E: 60 Befunde, 4 schwer, alle schweren behoben und mit Regressionstest. Teilweise: A-15, B-1, D-2. Geprüft und nicht übernommen: B-2, B-4. Offen: B-6, C-7, C-12, D-5, D-6, D-11. Übrige behoben (docs/audit-2.2/PRUEFUNG_2.2.md).
+- 2026-11-27 · Plan v22 abgeschlossen (154 Läufe): Coach 2.2 gegen 2.1.0 +25,5 BB/100 [21,2; 29,9] belegt besser; unveränderte Gegner-KI 2.1 +37,2 [26,0; 48,6] belegt besser; Testgruppe +29,7 (zu wenig Blöcke); unbekannte Strategien −16,8 [−30,4; −4,7] gegen 2.1.0 und −21,8 [−35,8; −7,1] gegen 2.0.1 belegt schlechter; Stacktiefen +6,9 nicht belegt; gleichgewichtsnah gegen 2.0.1 −0,9 [−13,6; 10,9] nicht belegt.
+- 2026-11-27 · Kalibrierung: Brier der Range-Equity 0,079 auf Validierungs- und Testgruppe (2.1.0: 0,088); River nach Bet 71–110 % Pot Bias −0,227 → −0,044; Fehler der Fold-Vorhersage 0,048 / 0,027 (2.1: 0,121 / 0,083); Push/Fold-Exploitability ≤ 0,0031 BB je Hand; Equity als Held am River auf der Testgruppe −0,049, außerhalb ±0,03.
+- 2026-11-27 · Tests bestanden: 124/124 Node, 52/52 Browser, 3/3 Gedächtnis, 1.000.000 Hände ohne Fehler, alle Stile im Zielbereich, Tipp Median 19,1 ms, P95 51,5 ms, Maximum 331 ms; CI auf Pull Request #2 grün. PAI 8/9: PAI 0.1.0 liest Sicherungen Format 3 nicht.
+- 2026-11-27 · Qualitätsbewertung 9,42 (2.1.0: 9,47), Ziel 9,5 nicht erreicht; Ursache: belegte Regression gegen unbekannte Strategien (docs/TESTBERICHT_2.2.md).
+- 2026-11-27 · PokerTrainer_Entwurf (Claude-Artefakt) auf 2.2.0 aktualisiert, Version 1795792233-bddd. Final Acceptance Test zu 2.2.0 eröffnet (31 Fälle, docs/FINAL_ACCEPTANCE_TEST.md), Fall 1 offen.
+- 2026-11-27 · Entwicklungsauftrag „PokerTrainer 2.3.0“ angenommen. Final Acceptance Test zu 2.2.0 auf Anweisung abgebrochen; 2.2.0 nicht freigegeben, unverändert gesichert: Zweig `sicherung-2.2.0`, `archiv/PokerTrainer_2.2.0.html`, Pull Request #2 als Referenz (nicht mergen). Rückweg: „Gesicherte Freigabe öffnen und gesicherte Datenbank importieren.“ (hier: öffentliche 2.1.0 bleibt live; Datenformat unverändert 3). Entwicklung auf `entwicklung-2.3`, Pull Request #3 nur für das CI. Annahmen mit Grund:
+  - Ablation über Schalter `PT.ranges.ABL` im Produktcode, im Trainer fest auf das gewählte Modell. Grund: gleiche Engine für Ablation, Varianten und Produkt, ein Test sichert den Produktstand.
+  - Neue Gegnerfamilie `synth23` mit Gruppen Entwicklung, Training, Validierung, Kalibrierung; abschließende Testgruppe F23 von einem unabhängigen Prüfagenten erstellt und versiegelt (SHA-256 11b99fa3…). Grund: Auftrag, Trennung der Gruppen.
+  - Nichtunterlegenheitsgrenze 5 BB/100 (Coach), 8 BB/100 (gleichgewichtsnah), Holm einseitig 2,5 %. Grund: fachlich begründet in docs/ABNAHMEKRITERIEN_2.3.md, vor den Läufen festgelegt.
+  - Aufgedeckte Blätter speichern Bets mit Größe („Bet 3,00 (0,5 Pot)“) ohne Formatwechsel. Grund: Text bleibt Text, 2.1/2.2 lesen die Einträge.
+  - Gleichgewichtsnaher Modus heißt „Gleichgewichtsnah (experimentell)“. Grund: P4 nicht bestanden, Regel aus 2.2.
+- 2026-11-27 · Ablationsstudie (Plan abl23, 300.000 Hände): Hauptursache der Regression 2.2 ist das Reaktionsmodell (−18,9 [−29,9; −8,5] gegen unbekannte Strategien), die Range-Tabelle wirkt bei einzelnen Strategien; Range und Reaktion zusammen auf 2.1 ergeben exakt 2.1.0 (docs/URSACHENANALYSE_2.3.md).
+- 2026-11-27 · Strategievarianten A (robust), B (adaptiv), C (hybrid) und Abwandlungen; Abstimmung auf Tr23/E, Wahl auf Va23/V nach vorab festgelegter Regel. Gewählt: C (docs/STRATEGIEVARIANTEN_2.3.md). Erste Wahl verworfen nach Prüfbefunden.
+- 2026-11-27 · Fünf Prüfagenten A–E vor den Hauptläufen: 62 Befunde (5 schwer/hoch), alle schweren behoben mit Regressionstest, Modellwahl danach wiederholt: C nach Prüfung Va23 −2,8 [−12,5; 6,8], V +33,1 gegen 2.1.0 (docs/audit-2.3/PRUEFUNG_2.3.md).
+- 2026-11-27 · Stand eingefroren (acb0748). PAI erneut geprüft (unverändert 0.1.0), Änderungsauftrag präzisiert (docs/PAI_AENDERUNGSAUFTRAG.md).
+- 2026-11-28 · Abschließende Vergleiche (Plan v23, 328 Läufe, 820.000 Hände): P1 F23 gegen 2.1.0 −1,3 [−3,4; 0,8] nicht unterlegen; P2 +19,3; P3 +28,6; P4 gleichgewichtsnah gegen 2.0.1 −6,3 [−12,5; −0,1] nicht bestanden; gegen 2.2.0 Gegner-KI −8,5, F23 +12,1; 15/25 BB +2,5 belegt besser. Die Arbeitsumgebung startete zweimal neu; Läufe waren zwischengespeichert, nichts ging verloren.
+- 2026-11-28 · Kalibrierung: Bias je Straße auf V und T erstmals innerhalb ±0,03; Brier als Held auf T und Fold-Vorhersage auf T verfehlt; Unterschätzung gegen unbekannte Strategien wie 2.1.0.
+- 2026-11-28 · Tests bestanden: 137/137 Node, 52/52 Browser, 3/3 Gedächtnis, 1.000.000 Hände ohne Fehler, Kalibrierung der Gegner-KI im Ziel, Tipp P95 50,9 ms, Maximum 395 ms; PAI 16/18 (zwei Fälle hängen an PAI).
+- 2026-11-28 · Qualitätsbewertung 9,48 (2.1.0: 9,47, 2.2.0: 9,42), Ziel 9,5 nicht erreicht (docs/TESTBERICHT_2.3.md).
+- 2026-11-28 · PokerTrainer_Entwurf auf 2.3.0 aktualisiert (Artefakt-Version 1795863503-431a). Final Acceptance Test zu 2.3.0 eröffnet (33 Fälle), Fall 1 offen.
+
+## Später
+
+- Sprachsteuerung per Mikrofon
+- Session-Auswertung mit Fehlerprofil
+- Export der Trainerhände als Hand-Historie
+- weitere Tischgrößen und Limits
+- Werte für Turn und River (z. B. Fold gegen Bet), damit Bluff-Tipps auf späteren Straßen mehr Datenbasis haben
+- Vorberechnete Gleichgewichtslösungen für häufige Spots (offline), damit die Größenwahl postflop weniger heuristisch ist
+- Test mit echtem Screenreader (NVDA, VoiceOver)
+- Lernwirkung messen (Entscheidungsqualität vor und nach Trainingsblöcken)
+- Lizenz wählen und Anbieterkennzeichnung klären
+- Gleichgewichtsnahen Modus mit echten Mischstrategien verbessern (derzeit schwächer als 2.0.1 gegen die Computergegner)
+- Größenwahl postflop (½ Pot selten, große Einsätze mit starken Händen) und River-Equity gegen Caller
+- Eigene Charts für 15–25 BB gegen Open und 3-Bet
+- Git-Tags v2.0.1 und v2.1.0 im Repository setzen (aus dieser Umgebung nicht möglich)
+- Gegen unbekannte Strategien (Polarisierer, Fallensteller) wieder mindestens so stark wie 2.1.0 werden
+- Zähler je Aktionsfamilie im Gegnergedächtnis (neues Datenformat mit Migration)
+- PAI-Adapter für Sicherungen Format 3 und Anzeige des PAI-Kanals
+- Minraise-Linien für 16–25 BB
+- Offene Prüfbefunde 2.2: B-6, C-7, C-12, D-2, D-5, D-6, D-11
+- Gleichgewichtsnahen Modus mindestens auf den Stand von 2.0.1 bringen (P4)
+- Equity gegen unbekannte Strategien: Unterschätzung am River nach Checks
+- Hybrides Gewicht mit Alter der Einträge und Veränderungserkennung koppeln
+- Kürzung langer Aktionsfolgen in aufgedeckten Blättern (E23-14), Textfehler „Die Bet gewinnt“ bei Raises (E23-10)
+- Schema für den Kanal „pai“ gemeinsam mit PAI festlegen
+

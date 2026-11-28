@@ -3,7 +3,7 @@
 (function () {
 'use strict';
 if (typeof importScripts === 'function' && !self.PT) {
-  var v = '?v=2.3.0';
+  var v = '?v=2.3.1';
   importScripts('engine/core.js' + v, 'engine/evaluator.js' + v, 'engine/preflop-data.js' + v, 'engine/rules.js' + v, 'engine/ranges.js' + v, 'engine/equity.js' + v,
     'engine/stats.js' + v, 'engine/bots.js' + v, 'engine/session.js' + v, 'engine/ev.js' + v, 'engine/cfr.js' + v, 'engine/coach.js' + v, 'engine/training.js' + v, 'engine/export.js' + v);
 }

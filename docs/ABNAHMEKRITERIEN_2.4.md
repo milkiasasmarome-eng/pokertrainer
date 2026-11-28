@@ -41,3 +41,30 @@ schlechter ist als 2.0.1. Der exploitative Modus (Voreinstellung) bleibt unverä
 Ein Lauf mit 2.500 Händen dauert etwa 55 s je Prozess; 4 Kerne, höchstens 3 Prozesse parallel. dev24: 32 Läufe (≈ 10 min), val24: 72 Läufe
 (≈ 25 min). Abbruch: Fehler im Lauf dreimal wiederholt, dann entfällt der Seed für alle Helden (Regel A23-7). Während val24 keine Änderung an
 Engine-Dateien.
+
+## Ergebnis der Entwicklung und Festlegung der abschließenden Prüfung (nach dev24, vor val24)
+
+dev24 (40 Blöcke je Vergleich, `tests/results/strategy-dev24.json`), Differenz gegen 2.0.1 gleichgewichtsnah, all-in-bereinigt:
+
+| Variante | BB/100 | 95-%-Intervall | Raise-Anteil postflop | Call-Anteil |
+|---|---:|---|---:|---:|
+| g24-0 (Stand 2.3) | +4,35 | [−4,05; 12,52] | 8,6 % | 3,2 % |
+| g24-R | +4,35 | [−1,79; 10,53] | 1,6 % | 6,3 % |
+| g24-P | +0,07 | [−5,66; 5,95] | 1,7 % | 6,5 % |
+| (2.0.1 selbst) | | | 2,6 % | 5,9 % |
+
+Wahlregel angewandt: Keine Variante liegt über g24-0 (g24-R gleich, nicht höher). **Der Modus bleibt unverändert** (Stand 2.3, Schalter aus) und
+„experimentell“. H-G1 ist als Mechanismus bestätigt (Raise-Anteil), aber ohne belegten Nutzen in BB/100.
+
+Damit wird val24 eine **Replikation von P4 auf unberührten Seeds** für den unveränderten Modus (Version 2.3.1, Entscheidungen identisch mit 2.3.0):
+
+| Kennung | Vergleich | Seeds | Kriterium |
+|---|---|---|---|
+| ID | 2.3.1 gleichgewichtsnah auf P4-Seed 23801 gegen den gespeicherten 2.3.0-Lauf | 23801 | identisches Ergebnis (Summe BB und Entscheidungen gleich) |
+| P4' | 2.3.1 gleichgewichtsnah gegen 2.0.1, Gegner-KI 2.2, gemischt, 100 BB | 24401–24424 (60.000 Hände) | beschreibend |
+| P4-gesamt | P4 ∪ P4' (48 Seeds, 120.000 Hände, gepaart, gleiche Verfahren) | 23801–23824, 24401–24424 | **Urteil:** nicht unterlegen mit δ_gto = 8, einseitig 2,5 % |
+| G3 | 2.3.1 gleichgewichtsnah gegen 2.0.1, synth23 Gruppe Ka23 | 24451–24456 | beschreibend |
+
+Begründung für das gepoolte Urteil: Ein zweiter Test nach einem nicht bestandenen ersten darf nicht allein entscheiden (sonst „testen, bis es passt“).
+Die gepoolte Schätzung nutzt alle vorab geplanten Daten zu derselben Frage. Die Kennzeichnung „experimentell“ entfällt nur, wenn P4-gesamt besteht
+und G3 nicht belegt schlechter ist. dev24 fließt nicht ein (Entwicklungsdaten).
