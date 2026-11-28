@@ -32,93 +32,69 @@
       - columnheader "Ergebnis"
       - columnheader "Bewertung"
   - rowgroup:
-    - 'row "Hand #2 vom 27.11.26, 20:42 öffnen #2 UTG Fünf Karo König Pik Fünf Pik Bube Herz Vier Pik Drei Pik Bube Pik +34,50 Fehler"':
-      - 'cell "Hand #2 vom 27.11.26, 20:42 öffnen"':
-        - 'button "Hand #2 vom 27.11.26, 20:42 öffnen"': 27.11.26, 20:42
+    - 'row "Hand #2 vom 28.11.26, 11:55 öffnen #2 BB Neun Pik Zehn Karo Ass Karo Sechs Pik Vier Kreuz König Pik Drei Pik −49,00 Schwerer Fehler (Fehler)"':
+      - 'cell "Hand #2 vom 28.11.26, 11:55 öffnen"':
+        - 'button "Hand #2 vom 28.11.26, 11:55 öffnen"': 28.11.26, 11:55
       - cell "#2"
-      - cell "UTG"
-      - cell "Fünf Karo König Pik":
-        - img "Fünf Karo"
-        - img "König Pik"
-      - cell "Fünf Pik Bube Herz Vier Pik Drei Pik Bube Pik":
-        - img "Fünf Pik"
-        - img "Bube Herz"
-        - img "Vier Pik"
-        - img "Drei Pik"
-        - img "Bube Pik"
-      - cell "+34,50"
-      - cell "Fehler"
-    - 'row "Hand #1 vom 27.11.26, 20:42 öffnen #1 HJ Fünf Herz Bube Pik König Kreuz Dame Kreuz Drei Herz Zwei Pik Vier Kreuz −1,00 –"':
-      - 'cell "Hand #1 vom 27.11.26, 20:42 öffnen"':
-        - 'button "Hand #1 vom 27.11.26, 20:42 öffnen"': 27.11.26, 20:42
-      - cell "#1"
-      - cell "HJ"
-      - cell "Fünf Herz Bube Pik":
-        - img "Fünf Herz"
-        - img "Bube Pik"
-      - cell "König Kreuz Dame Kreuz Drei Herz Zwei Pik Vier Kreuz":
-        - img "König Kreuz"
-        - img "Dame Kreuz"
-        - img "Drei Herz"
-        - img "Zwei Pik"
+      - cell "BB"
+      - cell "Neun Pik Zehn Karo":
+        - img "Neun Pik"
+        - img "Zehn Karo"
+      - cell "Ass Karo Sechs Pik Vier Kreuz König Pik Drei Pik":
+        - img "Ass Karo"
+        - img "Sechs Pik"
         - img "Vier Kreuz"
+        - img "König Pik"
+        - img "Drei Pik"
+      - cell "−49,00"
+      - cell "Schwerer Fehler (Fehler)"
+    - 'row "Hand #1 vom 28.11.26, 11:55 öffnen #1 UTG Fünf Karo Bube Kreuz Vier Herz Dame Kreuz Drei Kreuz Vier Karo Sechs Pik −1,00 Fehler"':
+      - 'cell "Hand #1 vom 28.11.26, 11:55 öffnen"':
+        - 'button "Hand #1 vom 28.11.26, 11:55 öffnen"': 28.11.26, 11:55
+      - cell "#1"
+      - cell "UTG"
+      - cell "Fünf Karo Bube Kreuz":
+        - img "Fünf Karo"
+        - img "Bube Kreuz"
+      - cell "Vier Herz Dame Kreuz Drei Kreuz Vier Karo Sechs Pik":
+        - img "Vier Herz"
+        - img "Dame Kreuz"
+        - img "Drei Kreuz"
+        - img "Vier Karo"
+        - img "Sechs Pik"
       - cell "−1,00"
-      - cell "–"
-- 'heading "Replayer – Hand #2 (27.11.26, 20:42)" [level=2]'
-- text: Pot 1,50 Du UTG 99,00
-- img "Fünf Karo"
-- img "König Pik"
-- text: Pia HJ 100,00
+      - cell "Fehler"
+- 'heading "Replayer – Hand #2 (28.11.26, 11:55)" [level=2]'
+- text: Pot 1,50 Du BB 98,00
+- img "Neun Pik"
+- img "Zehn Karo"
+- text: 1,00 Carlo UTG 100,00
 - img "verdeckte Karte"
 - img "verdeckte Karte"
-- text: Berta CO 100,00
+- text: Malte HJ 102,50
 - img "verdeckte Karte"
 - img "verdeckte Karte"
-- text: Cora BTN 99,50
+- text: Rosa CO 100,00
 - img "verdeckte Karte"
 - img "verdeckte Karte"
-- text: D Klara SB 101,00
+- text: Nils BTN 99,50
 - img "verdeckte Karte"
 - img "verdeckte Karte"
-- text: 0,50 Clea BB 99,00
+- text: D Bruno SB 98,50
 - img "verdeckte Karte"
 - img "verdeckte Karte"
-- text: 1,00
+- text: 0,50
 - button "Zum Anfang": ⏮
 - button "Schritt zurück": ◀
 - button "Abspielen": ▶︎ Abspielen
 - button "Pause": ⏸
 - button "Schritt vor": ▶
 - button "Zum Ende": ⏭
-- status: "Schritt 1 von 18: Blinds"
+- status: "Schritt 1 von 17: Blinds"
 - button "Später bekannte Infos einblenden"
 - heading "Damals bekannt" [level=3]
-- paragraph: Deine Karten, Board bis hier, alle Aktionen bis hier, Gegnerwerte zum Entscheidungszeitpunkt.
-- paragraph: "Nächste Aktion: deine Entscheidung – gespielt: Call 1,00, empfohlen: Fold"
-- paragraph: Ungenau (vertretbar, EV-Verlust 0,31 BB)
-- table:
-  - rowgroup:
-    - row "Fold 0,00 BB ± 0,0 BB":
-      - cell "Fold"
-      - cell "0,00 BB"
-      - cell "± 0,0 BB"
-    - row "Open 2 BB 0,00 BB ± 0,3 BB":
-      - cell "Open 2 BB"
-      - cell "0,00 BB"
-      - cell "± 0,3 BB"
-    - row "Open 2,5 BB −0,05 BB ± 0,4 BB":
-      - cell "Open 2,5 BB"
-      - cell "−0,05 BB"
-      - cell "± 0,4 BB"
-    - row "Open 3 BB −0,11 BB ± 0,5 BB":
-      - cell "Open 3 BB"
-      - cell "−0,11 BB"
-      - cell "± 0,5 BB"
-    - row "Call 1,00 −0,31 BB ± 0,0 BB":
-      - cell "Call 1,00"
-      - cell "−0,31 BB"
-      - cell "± 0,0 BB"
-- button "Entscheidung erneut treffen"
+- paragraph: Deine Karten, Board bis hier, alle Aktionen bis hier.
+- paragraph: "Nächste Aktion: Carlo"
 - heading "Später bekannt" [level=3]
 - paragraph: Ausgeblendet, damit du die Entscheidung ohne Kenntnis des Ausgangs prüfen kannst.
 - group: Handverlauf als Text

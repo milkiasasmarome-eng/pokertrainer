@@ -7,6 +7,12 @@ Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen 
 Generalisierung, Ursachenanalyse der Regression 2.2 und unabhängige Validierung. Nicht freigegeben, solange der Final Acceptance Test aussteht.
 Ergebnisse: `docs/ERGEBNISSE_2.3.md` (automatisch), Bewertung: `docs/TESTBERICHT_2.3.md`, Ursachen: `docs/URSACHENANALYSE_2.3.md`.
 
+### Ergebnisse (Plan v23, 820.000 Hände)
+- P1 neue versiegelte Testgruppe: gegen 2.1.0 −1,3 [−3,4; 0,8], nicht unterlegen (Grenze 5). P2 Gegner-KI: +19,3 [16,0; 22,5]. P3 Testgruppe T: +28,6.
+- P4 nicht bestanden: gleichgewichtsnaher Modus gegen 2.0.1 −6,3 [−12,5; −0,1]; Modus jetzt „experimentell“ gekennzeichnet.
+- Gegen 2.2.0 auf der Gegner-KI −8,5 [−16,0; −1,0], auf F23 +12,1 [0,8; 22,5]. Short Stack 15/25 BB gegen 2.1.0 +2,5 [1,0; 3,8].
+- Qualitätsbewertung 9,48 (2.1.0: 9,47, 2.2.0: 9,42), Ziel 9,5 nicht erreicht (`docs/TESTBERICHT_2.3.md`).
+
 ### Strategie
 - Ablationsstudie: Hauptursache der Regression 2.2 ist das Reaktionsmodell aus der Aktionstabelle, zweite Ursache die Range-Tabelle (`docs/URSACHENANALYSE_2.3.md`).
 - Hybrides Modell: Range und Reaktion mischen Populationstabelle und robustes Modell 2.1 je Gegner nach der Belastbarkeit der Tabelle

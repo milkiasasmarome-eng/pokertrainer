@@ -22,52 +22,40 @@
     - /url: "#einstellungen"
   - link "Hilfe":
     - /url: "#hilfe"
+- region "Hinweise": Keine lokale deutsche Stimme gefunden. Der Trainer läuft ohne Ton weiter.
 - main:
   - region "Pokertisch":
-    - text: PokerTrainer Pot 1,50
+    - text: PokerTrainer Pot 13,00
     - group "Board"
     - group "Dein Platz":
-      - text: Du , UTG , Stack 99,00 99 BB Session −1,00 ,
-      - img "Fünf Karo"
-      - img "König Pik"
-    - button "Pia , HJ , Stack 100,00 100 BB , VPIP 0 %, PFR 0 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt , verdeckte Karte verdeckte Karte , alle Werte anzeigen":
-      - text: Pia , HJ , Stack 100,00 100 BB , VPIP 0 %, PFR 0 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt ,
+      - text: Du , BB , Stack 98,00 98 BB Session −1,00 ,
+      - img "Neun Pik"
+      - img "Zehn Karo"
+      - text: ", letzte Aktion BB"
+    - button "Carlo , UTG , Stack 100,00 100 BB , VPIP 0 %, PFR 0 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt , letzte Aktion Fold , alle Werte anzeigen"
+    - button "Malte , HJ , Stack 102,50 103 BB , VPIP 100 %, PFR 0 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt , letzte Aktion Fold , alle Werte anzeigen"
+    - button "Rosa , CO , Stack 100,00 100 BB , VPIP 0 %, PFR 0 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt , letzte Aktion Fold , alle Werte anzeigen"
+    - button "Nils , BTN , Stack 97,00 97 BB , VPIP 0 %, PFR 0 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt , verdeckte Karte verdeckte Karte , Dealer-Button , letzte Aktion Raise 2,50 , alle Werte anzeigen":
+      - text: Nils , BTN , Stack 97,00 97 BB , VPIP 0 %, PFR 0 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt ,
       - img "verdeckte Karte"
       - img "verdeckte Karte"
-      - text: ", alle Werte anzeigen"
-    - button "Berta , CO , Stack 100,00 100 BB , VPIP 0 %, PFR 0 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt , verdeckte Karte verdeckte Karte , alle Werte anzeigen":
-      - text: Berta , CO , Stack 100,00 100 BB , VPIP 0 %, PFR 0 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt ,
+      - text: ", Dealer-Button , letzte Aktion Raise 2,50 , alle Werte anzeigen"
+    - button "Bruno , SB , Stack 89,50 90 BB , VPIP 0 %, PFR 0 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt , verdeckte Karte verdeckte Karte , letzte Aktion Raise 9,50 , alle Werte anzeigen":
+      - text: Bruno , SB , Stack 89,50 90 BB , VPIP 0 %, PFR 0 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt ,
       - img "verdeckte Karte"
       - img "verdeckte Karte"
-      - text: ", alle Werte anzeigen"
-    - button "Cora , BTN , Stack 99,50 100 BB , VPIP 0 %, PFR 0 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt , verdeckte Karte verdeckte Karte , Dealer-Button , alle Werte anzeigen":
-      - text: Cora , BTN , Stack 99,50 100 BB , VPIP 0 %, PFR 0 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt ,
-      - img "verdeckte Karte"
-      - img "verdeckte Karte"
-      - text: ", Dealer-Button , alle Werte anzeigen"
-    - button "Klara , SB , Stack 101,00 101 BB , VPIP 0 %, PFR 0 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt , verdeckte Karte verdeckte Karte , letzte Aktion SB , alle Werte anzeigen":
-      - text: Klara , SB , Stack 101,00 101 BB , VPIP 0 %, PFR 0 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt ,
-      - img "verdeckte Karte"
-      - img "verdeckte Karte"
-      - text: ", letzte Aktion SB , alle Werte anzeigen"
-    - button "Clea , BB , Stack 99,00 99 BB , VPIP 0 %, PFR 0 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt , verdeckte Karte verdeckte Karte , letzte Aktion BB , alle Werte anzeigen":
-      - text: Clea , BB , Stack 99,00 99 BB , VPIP 0 %, PFR 0 %, 3-Bet unbekannt , 1 Hand, Belastbarkeit unsicher, Spielertyp unbekannt ,
-      - img "verdeckte Karte"
-      - img "verdeckte Karte"
-      - text: ", letzte Aktion BB , alle Werte anzeigen"
-    - text: 0,50 1,00
+      - text: ", letzte Aktion Raise 9,50 , alle Werte anzeigen"
+    - text: 1,00 2,50 9,50
     - group "Aktionen":
       - button "Fold"
-      - button "Call 1,00"
+      - button "Call 8,50"
       - button "Raise auf"
-      - button "Min (2,00)"
-      - button "2 BB (2,00)"
-      - button "2,5 BB (2,50)"
-      - button "3 BB (3,00)"
+      - button "Min (16,50)"
+      - button "2,3× (21,90)"
       - button "All-in (99,00)"
       - slider "Betrag wählen": "0"
       - text: Betrag
-      - textbox "Betrag (Raise auf)": 2,00
+      - textbox "Betrag (Raise auf)": 16,50
       - button "Nächste Hand" [disabled]
     - status
     - complementary:
@@ -79,29 +67,34 @@
           - button "aus"
         - group "Strategiemodus":
           - button "Exploitativ" [pressed]
-          - button "Gleichgewichtsnah"
+          - button "Gleichgewichtsnah (experimentell)"
         - text: Tiefe
         - combobox "Tiefe":
           - option "automatisch" [selected]
           - option "Einsteiger"
           - option "Fortgeschritten"
           - option "Experte"
-        - text: "Empfehlung: Fold Klar bevorzugt"
-        - paragraph: "Fold: K5o gehört laut Open-Raise-Chart UTG nicht zu den spielbaren Händen. Preflop folgt der Coach hier dem Faustregel-Chart (Open-Raise-Chart UTG); das vereinfachte EV-Modell sähe Open 2 BB um 0,0 BB vorn, aber nur wegen Fold-Annahmen, die nicht durch Gegnerwerte belegt sind. K5o liegt auf Rang 87 von 169 Starthandklassen."
-        - text: Equity 36 % ± 3,0 % Pot 1,50 Eff. Stack 99 BB
+        - text: "Empfehlung: Fold Mathematisch eindeutig"
+        - paragraph: "Fold: Du müsstest 8,50 zahlen und bräuchtest dafür mindestens 40 % Gewinnchance. Geschätzt hast du nur etwa 26 %. T9o gehört zu den besten 38 % aller Starthände."
+        - text: Equity 26 % ± 2,4 % Benötigt 40 % Pot 13,00 Eff. Stack 99 BB
         - group: EV-Vergleich und Annahmen
         - paragraph: Faustregel, kein Solver-Ergebnis
         - checkbox "Sprachausgabe" [checked]
         - text: Sprachausgabe
         - button "Vorlesen" [disabled]
         - button "Tiefenanalyse"
-        - text: "Sprache: Stimme wird gesucht …"
+        - text: "Sprache: keine lokale deutsche Stimme"
       - region "Handverlauf":
         - heading "Handverlauf" [level=2]
         - list "Handverlauf":
-          - listitem: "Hand #2 · Button: Cora"
-          - listitem: Klara postet Small Blind 0,50
-          - listitem: Clea postet Big Blind 1,00
+          - listitem: "Hand #2 · Button: Nils"
+          - listitem: Bruno postet Small Blind 0,50
+          - listitem: Du postet Big Blind 1,00
+          - listitem: "Carlo: Fold"
+          - listitem: "Malte: Fold"
+          - listitem: "Rosa: Fold"
+          - listitem: "Nils: Raise auf 2,50"
+          - listitem: "Bruno: Raise auf 9,50"
 - contentinfo:
   - text: PokerTrainer 2.3.0 · nur Spielgeld, kein Glücksspiel · Daten bleiben in deinem Browser
   - link "Datenschutz & Rechtliches":

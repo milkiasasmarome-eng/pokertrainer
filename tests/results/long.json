@@ -1,6 +1,6 @@
 {
- "app": "2.2.0",
- "date": "2026-11-27T14:21:22.849Z",
+ "app": "2.3.0",
+ "date": "2026-11-28T10:31:30.618Z",
  "node": "v22.23.5",
  "cpus": 2,
  "eval7": {
@@ -29,7 +29,7 @@
   ],
   "ok": true,
   "distinct": 4824,
-  "ms": 16030
+  "ms": 12975
  },
  "sim": {
   "hands": 1000000,
@@ -55,7 +55,7 @@
    "{\"cfg\":{\"startBB\":300},\"heroMode\":null}",
    "{\"cfg\":{\"difficulty\":\"experte\",\"swapEvery\":10},\"heroMode\":\"random\"}"
   ],
-  "ms": 438400
+  "ms": 327176
  },
  "calib": {
   "hands": 200000,
@@ -341,41 +341,41 @@
     "hudTypeMatch": "20/20"
    }
   },
-  "ms": 96938,
+  "ms": 64533,
   "ok": true
  },
  "coach": {
   "exploit": [
    {
     "seed": 21,
-    "coachBB100": 83.9,
+    "coachBB100": 82.1,
     "botBB100": 6.3,
-    "avgMs": 97.8,
-    "maxMs": 1327,
+    "avgMs": 75.3,
+    "maxMs": 1301,
     "maxIt": 5000
    },
    {
     "seed": 22,
-    "coachBB100": 78.1,
+    "coachBB100": 52.8,
     "botBB100": 0.6,
-    "avgMs": 94.8,
-    "maxMs": 1338,
+    "avgMs": 74.2,
+    "maxMs": 1389,
     "maxIt": 5000
    },
    {
     "seed": 23,
-    "coachBB100": 12.2,
+    "coachBB100": 32.4,
     "botBB100": -3.1,
-    "avgMs": 95.3,
-    "maxMs": 1236,
+    "avgMs": 74,
+    "maxMs": 1441,
     "maxIt": 5000
    },
    {
     "seed": 24,
-    "coachBB100": 48.9,
+    "coachBB100": 50.9,
     "botBB100": 44.6,
-    "avgMs": 90,
-    "maxMs": 1337,
+    "avgMs": 73.3,
+    "maxMs": 1307,
     "maxIt": 5000
    }
   ],
@@ -384,24 +384,24 @@
     "seed": 21,
     "coachBB100": 11.6,
     "botBB100": 6.3,
-    "avgMs": 97.5,
-    "maxMs": 1295,
+    "avgMs": 74.4,
+    "maxMs": 1403,
     "maxIt": 5000
    },
    {
     "seed": 22,
-    "coachBB100": 5.8,
+    "coachBB100": -2.4,
     "botBB100": 0.6,
-    "avgMs": 98.3,
-    "maxMs": 1361,
+    "avgMs": 75.7,
+    "maxMs": 1310,
     "maxIt": 5000
    }
   ],
-  "exploitAvgCoach": 55.775,
+  "exploitAvgCoach": 54.55,
   "exploitAvgBot": 12.1,
-  "gtoAvgCoach": 8.7,
+  "gtoAvgCoach": 4.6,
   "gtoAvgBot": 3.4499999999999997,
-  "ms": 366326
+  "ms": 278146
  },
  "evalref": {
   "reference": "tests/ref/handref.js (konstruktive Aufzählung der 7.462 Klassen, Zuordnung über Rang-Multimenge + Flush-Bit, bestes der 21 Fünfer-Blätter)",
@@ -1204,7 +1204,7 @@
   },
   "examples": [],
   "scale": 1,
-  "ms": 40272,
+  "ms": 13892,
   "ok": true
  },
  "mccov": {
@@ -1331,7 +1331,7 @@
     "name": "HU Flop, Top Pair gegen Top 30 %",
     "group": "HU Flop",
     "exact": 0.8827947796315083,
-    "exactMs": 991,
+    "exactMs": 368,
     "configs": {
      "schnell": {
       "runs": 1000,
@@ -1350,7 +1350,7 @@
       "meanIters": 625,
       "meanN": 625,
       "abortedShare": 0,
-      "ms": 781
+      "ms": 305
      },
      "standard": {
       "runs": 1000,
@@ -1369,7 +1369,7 @@
       "meanIters": 1711.817,
       "meanN": 1455.817,
       "abortedShare": 0,
-      "ms": 1845
+      "ms": 631
      },
      "praezise": {
       "runs": 1000,
@@ -1388,7 +1388,7 @@
       "meanIters": 6065.209,
       "meanN": 5809.209,
       "abortedShare": 0,
-      "ms": 6464
+      "ms": 2391
      },
      "tief": {
       "runs": 1000,
@@ -1407,7 +1407,7 @@
       "meanIters": 23508.528,
       "meanN": 23252.528,
       "abortedShare": 0,
-      "ms": 35130
+      "ms": 9013
      },
      "standard-budget1000": {
       "runs": 1000,
@@ -1426,7 +1426,7 @@
       "meanIters": 1000,
       "meanN": 1000,
       "abortedShare": 1,
-      "ms": 1060
+      "ms": 464
      },
      "schnell-budget300": {
       "runs": 1000,
@@ -1445,7 +1445,7 @@
       "meanIters": 300,
       "meanN": 300,
       "abortedShare": 1,
-      "ms": 435
+      "ms": 187
      }
     }
    },
@@ -1454,7 +1454,7 @@
     "name": "HU Flop, Flushdraw gegen Top 50 %",
     "group": "HU Flop",
     "exact": 0.7166652103268627,
-    "exactMs": 1620,
+    "exactMs": 624,
     "configs": {
      "schnell": {
       "runs": 1000,
@@ -1473,7 +1473,7 @@
       "meanIters": 625,
       "meanN": 625,
       "abortedShare": 0,
-      "ms": 818
+      "ms": 345
      },
      "standard": {
       "runs": 1000,
@@ -1492,7 +1492,7 @@
       "meanIters": 2553.092,
       "meanN": 2297.092,
       "abortedShare": 0,
-      "ms": 2926
+      "ms": 1062
      },
      "praezise": {
       "runs": 1000,
@@ -1511,7 +1511,7 @@
       "meanIters": 9439.992,
       "meanN": 9183.992,
       "abortedShare": 0,
-      "ms": 11224
+      "ms": 3740
      },
      "tief": {
       "runs": 1000,
@@ -1530,7 +1530,7 @@
       "meanIters": 37013.23,
       "meanN": 36757.23,
       "abortedShare": 0,
-      "ms": 57233
+      "ms": 15415
      },
      "standard-budget1000": {
       "runs": 1000,
@@ -1549,7 +1549,7 @@
       "meanIters": 1000,
       "meanN": 1000,
       "abortedShare": 1,
-      "ms": 1116
+      "ms": 519
      },
      "schnell-budget300": {
       "runs": 1000,
@@ -1568,7 +1568,7 @@
       "meanIters": 300,
       "meanN": 300,
       "abortedShare": 1,
-      "ms": 346
+      "ms": 147
      }
     }
    },
@@ -1577,7 +1577,7 @@
     "name": "HU Flop, Set gegen Overpairs (nahe 1)",
     "group": "HU Flop",
     "exact": 0.9101010101010097,
-    "exactMs": 63,
+    "exactMs": 29,
     "configs": {
      "schnell": {
       "runs": 1000,
@@ -1596,7 +1596,7 @@
       "meanIters": 625,
       "meanN": 625,
       "abortedShare": 0,
-      "ms": 585
+      "ms": 226
      },
      "standard": {
       "runs": 1000,
@@ -1615,7 +1615,7 @@
       "meanIters": 1502.465,
       "meanN": 1246.465,
       "abortedShare": 0,
-      "ms": 1586
+      "ms": 581
      },
      "praezise": {
       "runs": 1000,
@@ -1634,7 +1634,7 @@
       "meanIters": 5221.435,
       "meanN": 4965.435,
       "abortedShare": 0,
-      "ms": 4595
+      "ms": 2101
      },
      "tief": {
       "runs": 1000,
@@ -1653,7 +1653,7 @@
       "meanIters": 20353.971,
       "meanN": 20097.971,
       "abortedShare": 0,
-      "ms": 24593
+      "ms": 7177
      },
      "standard-budget1000": {
       "runs": 1000,
@@ -1672,7 +1672,7 @@
       "meanIters": 1000,
       "meanN": 1000,
       "abortedShare": 1,
-      "ms": 1146
+      "ms": 347
      },
      "schnell-budget300": {
       "runs": 1000,
@@ -1691,7 +1691,7 @@
       "meanIters": 300,
       "meanN": 300,
       "abortedShare": 1,
-      "ms": 452
+      "ms": 111
      }
     }
    },
@@ -1700,7 +1700,7 @@
     "name": "HU Flop, Runner-Runner (nahe 0)",
     "group": "HU Flop",
     "exact": 0.00016835016835016836,
-    "exactMs": 29,
+    "exactMs": 9,
     "configs": {
      "schnell": {
       "runs": 1000,
@@ -1719,7 +1719,7 @@
       "meanIters": 625,
       "meanN": 625,
       "abortedShare": 0,
-      "ms": 503
+      "ms": 171
      },
      "standard": {
       "runs": 1000,
@@ -1738,7 +1738,7 @@
       "meanIters": 505.657,
       "meanN": 249.657,
       "abortedShare": 0,
-      "ms": 443
+      "ms": 134
      },
      "praezise": {
       "runs": 1000,
@@ -1757,7 +1757,7 @@
       "meanIters": 1253.58,
       "meanN": 997.58,
       "abortedShare": 0,
-      "ms": 974
+      "ms": 405
      },
      "tief": {
       "runs": 1000,
@@ -1776,7 +1776,7 @@
       "meanIters": 4252.779,
       "meanN": 3996.779,
       "abortedShare": 0,
-      "ms": 3524
+      "ms": 1466
      },
      "standard-budget1000": {
       "runs": 1000,
@@ -1795,7 +1795,7 @@
       "meanIters": 1000,
       "meanN": 1000,
       "abortedShare": 1,
-      "ms": 657
+      "ms": 320
      },
      "schnell-budget300": {
       "runs": 1000,
@@ -1814,7 +1814,7 @@
       "meanIters": 300,
       "meanN": 300,
       "abortedShare": 1,
-      "ms": 130
+      "ms": 87
      }
     }
    },
@@ -1842,7 +1842,7 @@
       "meanIters": 625,
       "meanN": 625,
       "abortedShare": 0,
-      "ms": 550
+      "ms": 169
      },
      "standard": {
       "runs": 1000,
@@ -1861,7 +1861,7 @@
       "meanIters": 1518.176,
       "meanN": 1262.176,
       "abortedShare": 0,
-      "ms": 1494
+      "ms": 406
      },
      "praezise": {
       "runs": 1000,
@@ -1880,7 +1880,7 @@
       "meanIters": 5280.118,
       "meanN": 5024.118,
       "abortedShare": 0,
-      "ms": 5696
+      "ms": 1356
      },
      "tief": {
       "runs": 1000,
@@ -1899,7 +1899,7 @@
       "meanIters": 20237.187,
       "meanN": 19981.187,
       "abortedShare": 0,
-      "ms": 20688
+      "ms": 5175
      },
      "standard-budget1000": {
       "runs": 1000,
@@ -1918,7 +1918,7 @@
       "meanIters": 1000,
       "meanN": 1000,
       "abortedShare": 1,
-      "ms": 677
+      "ms": 250
      },
      "schnell-budget300": {
       "runs": 1000,
@@ -1937,7 +1937,7 @@
       "meanIters": 300,
       "meanN": 300,
       "abortedShare": 1,
-      "ms": 188
+      "ms": 81
      }
     }
    },
@@ -1965,7 +1965,7 @@
       "meanIters": 625,
       "meanN": 625,
       "abortedShare": 0,
-      "ms": 369
+      "ms": 159
      },
      "standard": {
       "runs": 1000,
@@ -1984,7 +1984,7 @@
       "meanIters": 872.684,
       "meanN": 616.684,
       "abortedShare": 0,
-      "ms": 532
+      "ms": 219
      },
      "praezise": {
       "runs": 1000,
@@ -2003,7 +2003,7 @@
       "meanIters": 2697.448,
       "meanN": 2441.448,
       "abortedShare": 0,
-      "ms": 1797
+      "ms": 744
      },
      "tief": {
       "runs": 1000,
@@ -2022,7 +2022,7 @@
       "meanIters": 10107.674,
       "meanN": 9851.674,
       "abortedShare": 0,
-      "ms": 8323
+      "ms": 2649
      },
      "standard-budget1000": {
       "runs": 1000,
@@ -2041,7 +2041,7 @@
       "meanIters": 1000,
       "meanN": 1000,
       "abortedShare": 1,
-      "ms": 804
+      "ms": 264
      },
      "schnell-budget300": {
       "runs": 1000,
@@ -2060,7 +2060,7 @@
       "meanIters": 300,
       "meanN": 300,
       "abortedShare": 1,
-      "ms": 227
+      "ms": 84
      }
     }
    },
@@ -2088,7 +2088,7 @@
       "meanIters": 625,
       "meanN": 625,
       "abortedShare": 0,
-      "ms": 398
+      "ms": 181
      },
      "standard": {
       "runs": 1000,
@@ -2107,7 +2107,7 @@
       "meanIters": 680.588,
       "meanN": 424.588,
       "abortedShare": 0,
-      "ms": 462
+      "ms": 195
      },
      "praezise": {
       "runs": 1000,
@@ -2126,7 +2126,7 @@
       "meanIters": 1941.242,
       "meanN": 1685.242,
       "abortedShare": 0,
-      "ms": 1376
+      "ms": 576
      },
      "tief": {
       "runs": 1000,
@@ -2145,7 +2145,7 @@
       "meanIters": 6987.371,
       "meanN": 6731.371,
       "abortedShare": 0,
-      "ms": 5139
+      "ms": 1908
      },
      "standard-budget1000": {
       "runs": 1000,
@@ -2164,7 +2164,7 @@
       "meanIters": 1000,
       "meanN": 1000,
       "abortedShare": 1,
-      "ms": 716
+      "ms": 300
      },
      "schnell-budget300": {
       "runs": 1000,
@@ -2183,7 +2183,7 @@
       "meanIters": 300,
       "meanN": 300,
       "abortedShare": 1,
-      "ms": 180
+      "ms": 80
      }
     }
    },
@@ -2211,7 +2211,7 @@
       "meanIters": 625,
       "meanN": 625,
       "abortedShare": 0,
-      "ms": 528
+      "ms": 184
      },
      "standard": {
       "runs": 1000,
@@ -2230,7 +2230,7 @@
       "meanIters": 503,
       "meanN": 247,
       "abortedShare": 0,
-      "ms": 395
+      "ms": 150
      },
      "praezise": {
       "runs": 1000,
@@ -2249,7 +2249,7 @@
       "meanIters": 1241,
       "meanN": 985,
       "abortedShare": 0,
-      "ms": 1259
+      "ms": 345
      },
      "tief": {
       "runs": 1000,
@@ -2268,7 +2268,7 @@
       "meanIters": 4196,
       "meanN": 3940,
       "abortedShare": 0,
-      "ms": 4783
+      "ms": 1197
      },
      "standard-budget1000": {
       "runs": 1000,
@@ -2287,7 +2287,7 @@
       "meanIters": 1000,
       "meanN": 1000,
       "abortedShare": 1,
-      "ms": 1143
+      "ms": 301
      },
      "schnell-budget300": {
       "runs": 1000,
@@ -2306,7 +2306,7 @@
       "meanIters": 300,
       "meanN": 300,
       "abortedShare": 1,
-      "ms": 312
+      "ms": 86
      }
     }
    },
@@ -2315,7 +2315,7 @@
     "name": "HU Turn, Split-lastig (Nut Straight, seltene Verluste)",
     "group": "Split",
     "exact": 0.608879492600423,
-    "exactMs": 20,
+    "exactMs": 8,
     "configs": {
      "schnell": {
       "runs": 1000,
@@ -2334,7 +2334,7 @@
       "meanIters": 625,
       "meanN": 625,
       "abortedShare": 0,
-      "ms": 459
+      "ms": 172
      },
      "standard": {
       "runs": 1000,
@@ -2353,7 +2353,7 @@
       "meanIters": 953.777,
       "meanN": 697.777,
       "abortedShare": 0,
-      "ms": 702
+      "ms": 266
      },
      "praezise": {
       "runs": 1000,
@@ -2372,7 +2372,7 @@
       "meanIters": 3020.925,
       "meanN": 2764.925,
       "abortedShare": 0,
-      "ms": 3087
+      "ms": 845
      },
      "tief": {
       "runs": 1000,
@@ -2391,7 +2391,7 @@
       "meanIters": 11312.092,
       "meanN": 11056.092,
       "abortedShare": 0,
-      "ms": 9492
+      "ms": 2982
      },
      "standard-budget1000": {
       "runs": 1000,
@@ -2410,7 +2410,7 @@
       "meanIters": 1000,
       "meanN": 1000,
       "abortedShare": 1,
-      "ms": 729
+      "ms": 253
      },
      "schnell-budget300": {
       "runs": 1000,
@@ -2429,7 +2429,7 @@
       "meanIters": 300,
       "meanN": 300,
       "abortedShare": 1,
-      "ms": 212
+      "ms": 82
      }
     }
    },
@@ -2457,7 +2457,7 @@
       "meanIters": 625,
       "meanN": 625,
       "abortedShare": 0,
-      "ms": 536
+      "ms": 145
      },
      "standard": {
       "runs": 1000,
@@ -2476,7 +2476,7 @@
       "meanIters": 2477.346,
       "meanN": 2221.346,
       "abortedShare": 0,
-      "ms": 2663
+      "ms": 556
      },
      "praezise": {
       "runs": 1000,
@@ -2495,7 +2495,7 @@
       "meanIters": 9152.374,
       "meanN": 8896.374,
       "abortedShare": 0,
-      "ms": 6065
+      "ms": 2088
      },
      "tief": {
       "runs": 1000,
@@ -2514,7 +2514,7 @@
       "meanIters": 35902.457,
       "meanN": 35646.457,
       "abortedShare": 0,
-      "ms": 27350
+      "ms": 8322
      },
      "standard-budget1000": {
       "runs": 1000,
@@ -2533,7 +2533,7 @@
       "meanIters": 1000,
       "meanN": 1000,
       "abortedShare": 1,
-      "ms": 567
+      "ms": 244
      },
      "schnell-budget300": {
       "runs": 1000,
@@ -2552,7 +2552,7 @@
       "meanIters": 300,
       "meanN": 300,
       "abortedShare": 1,
-      "ms": 178
+      "ms": 76
      }
     }
    },
@@ -2561,7 +2561,7 @@
     "name": "HU River, Board spielt meist (Split-lastig)",
     "group": "Split",
     "exact": 0.4426229508196721,
-    "exactMs": 5,
+    "exactMs": 1,
     "configs": {
      "schnell": {
       "runs": 1000,
@@ -2580,7 +2580,7 @@
       "meanIters": 625,
       "meanN": 625,
       "abortedShare": 0,
-      "ms": 436
+      "ms": 136
      },
      "standard": {
       "runs": 1000,
@@ -2599,7 +2599,7 @@
       "meanIters": 593.302,
       "meanN": 337.302,
       "abortedShare": 0,
-      "ms": 649
+      "ms": 126
      },
      "praezise": {
       "runs": 1000,
@@ -2618,7 +2618,7 @@
       "meanIters": 1606.46,
       "meanN": 1350.46,
       "abortedShare": 0,
-      "ms": 1137
+      "ms": 345
      },
      "tief": {
       "runs": 1000,
@@ -2637,7 +2637,7 @@
       "meanIters": 5642.526,
       "meanN": 5386.526,
       "abortedShare": 0,
-      "ms": 4203
+      "ms": 1390
      },
      "standard-budget1000": {
       "runs": 1000,
@@ -2656,7 +2656,7 @@
       "meanIters": 1000,
       "meanN": 1000,
       "abortedShare": 1,
-      "ms": 761
+      "ms": 249
      },
      "schnell-budget300": {
       "runs": 1000,
@@ -2675,7 +2675,7 @@
       "meanIters": 300,
       "meanN": 300,
       "abortedShare": 1,
-      "ms": 202
+      "ms": 78
      }
     }
    },
@@ -2703,7 +2703,7 @@
       "meanIters": 625,
       "meanN": 625,
       "abortedShare": 0,
-      "ms": 478
+      "ms": 198
      },
      "standard": {
       "runs": 1000,
@@ -2722,7 +2722,7 @@
       "meanIters": 1545.578,
       "meanN": 1289.578,
       "abortedShare": 0,
-      "ms": 1178
+      "ms": 527
      },
      "praezise": {
       "runs": 1000,
@@ -2741,7 +2741,7 @@
       "meanIters": 5398.804,
       "meanN": 5142.804,
       "abortedShare": 0,
-      "ms": 4146
+      "ms": 1723
      },
      "tief": {
       "runs": 1000,
@@ -2760,7 +2760,7 @@
       "meanIters": 20824.806,
       "meanN": 20568.806,
       "abortedShare": 0,
-      "ms": 16013
+      "ms": 6550
      },
      "standard-budget1000": {
       "runs": 1000,
@@ -2779,7 +2779,7 @@
       "meanIters": 1000,
       "meanN": 1000,
       "abortedShare": 1,
-      "ms": 876
+      "ms": 322
      },
      "schnell-budget300": {
       "runs": 1000,
@@ -2798,7 +2798,7 @@
       "meanIters": 300,
       "meanN": 300,
       "abortedShare": 1,
-      "ms": 257
+      "ms": 93
      }
     }
    },
@@ -2826,7 +2826,7 @@
       "meanIters": 625,
       "meanN": 625,
       "abortedShare": 0,
-      "ms": 878
+      "ms": 208
      },
      "standard": {
       "runs": 1000,
@@ -2845,7 +2845,7 @@
       "meanIters": 503,
       "meanN": 247,
       "abortedShare": 0,
-      "ms": 503
+      "ms": 169
      },
      "praezise": {
       "runs": 1000,
@@ -2864,7 +2864,7 @@
       "meanIters": 1241,
       "meanN": 985,
       "abortedShare": 0,
-      "ms": 1517
+      "ms": 408
      },
      "tief": {
       "runs": 1000,
@@ -2883,7 +2883,7 @@
       "meanIters": 4196,
       "meanN": 3940,
       "abortedShare": 0,
-      "ms": 3646
+      "ms": 1425
      },
      "standard-budget1000": {
       "runs": 1000,
@@ -2902,7 +2902,7 @@
       "meanIters": 1000,
       "meanN": 1000,
       "abortedShare": 1,
-      "ms": 791
+      "ms": 426
      },
      "schnell-budget300": {
       "runs": 1000,
@@ -2921,7 +2921,7 @@
       "meanIters": 300,
       "meanN": 300,
       "abortedShare": 1,
-      "ms": 257
+      "ms": 118
      }
     }
    },
@@ -2930,7 +2930,7 @@
     "name": "2 Gegner River, ausgeglichen",
     "group": "Multiway",
     "exact": 0.46774193548387094,
-    "exactMs": 5,
+    "exactMs": 11,
     "configs": {
      "schnell": {
       "runs": 1000,
@@ -2949,7 +2949,7 @@
       "meanIters": 625,
       "meanN": 625,
       "abortedShare": 0,
-      "ms": 731
+      "ms": 262
      },
      "standard": {
       "runs": 1000,
@@ -2968,7 +2968,7 @@
       "meanIters": 2755.903,
       "meanN": 2499.903,
       "abortedShare": 0,
-      "ms": 3479
+      "ms": 826
      },
      "praezise": {
       "runs": 1000,
@@ -2987,7 +2987,7 @@
       "meanIters": 10255.424,
       "meanN": 9999.424,
       "abortedShare": 0,
-      "ms": 12018
+      "ms": 3409
      },
      "tief": {
       "runs": 1000,
@@ -3006,7 +3006,7 @@
       "meanIters": 40254.233,
       "meanN": 39998.233,
       "abortedShare": 0,
-      "ms": 37784
+      "ms": 13028
      },
      "standard-budget1000": {
       "runs": 1000,
@@ -3025,7 +3025,7 @@
       "meanIters": 1000,
       "meanN": 1000,
       "abortedShare": 1,
-      "ms": 1101
+      "ms": 331
      },
      "schnell-budget300": {
       "runs": 1000,
@@ -3044,7 +3044,7 @@
       "meanIters": 300,
       "meanN": 300,
       "abortedShare": 1,
-      "ms": 312
+      "ms": 108
      }
     }
    },
@@ -3053,7 +3053,7 @@
     "name": "3 Gegner River, gewichtete Ranges",
     "group": "Multiway",
     "exact": 0.18710493046776233,
-    "exactMs": 1,
+    "exactMs": 0,
     "configs": {
      "schnell": {
       "runs": 1000,
@@ -3072,7 +3072,7 @@
       "meanIters": 625,
       "meanN": 625,
       "abortedShare": 0,
-      "ms": 736
+      "ms": 246
      },
      "standard": {
       "runs": 1000,
@@ -3091,7 +3091,7 @@
       "meanIters": 2127.236,
       "meanN": 1871.236,
       "abortedShare": 0,
-      "ms": 2222
+      "ms": 797
      },
      "praezise": {
       "runs": 1000,
@@ -3110,7 +3110,7 @@
       "meanIters": 7784.552,
       "meanN": 7528.552,
       "abortedShare": 0,
-      "ms": 7916
+      "ms": 2982
      },
      "tief": {
       "runs": 1000,
@@ -3129,7 +3129,7 @@
       "meanIters": 30270.941,
       "meanN": 30014.941,
       "abortedShare": 0,
-      "ms": 20204
+      "ms": 11719
      },
      "standard-budget1000": {
       "runs": 1000,
@@ -3148,7 +3148,7 @@
       "meanIters": 1000,
       "meanN": 1000,
       "abortedShare": 1,
-      "ms": 523
+      "ms": 349
      },
      "schnell-budget300": {
       "runs": 1000,
@@ -3167,7 +3167,7 @@
       "meanIters": 300,
       "meanN": 300,
       "abortedShare": 1,
-      "ms": 146
+      "ms": 111
      }
     }
    },
@@ -3195,7 +3195,7 @@
       "meanIters": 625,
       "meanN": 625,
       "abortedShare": 0,
-      "ms": 629
+      "ms": 260
      },
      "standard": {
       "runs": 1000,
@@ -3214,7 +3214,7 @@
       "meanIters": 2545.974,
       "meanN": 2289.974,
       "abortedShare": 0,
-      "ms": 2530
+      "ms": 1114
      },
      "praezise": {
       "runs": 1000,
@@ -3233,7 +3233,7 @@
       "meanIters": 9410.27,
       "meanN": 9154.27,
       "abortedShare": 0,
-      "ms": 9361
+      "ms": 3712
      },
      "tief": {
       "runs": 1000,
@@ -3252,7 +3252,7 @@
       "meanIters": 36868.829,
       "meanN": 36612.829,
       "abortedShare": 0,
-      "ms": 40457
+      "ms": 14714
      },
      "standard-budget1000": {
       "runs": 1000,
@@ -3271,7 +3271,7 @@
       "meanIters": 1000,
       "meanN": 1000,
       "abortedShare": 1,
-      "ms": 1062
+      "ms": 399
      },
      "schnell-budget300": {
       "runs": 1000,
@@ -3290,7 +3290,7 @@
       "meanIters": 300,
       "meanN": 300,
       "abortedShare": 1,
-      "ms": 314
+      "ms": 116
      }
     }
    },
@@ -3299,7 +3299,7 @@
     "name": "2 Gegner Flop, kleine Ranges",
     "group": "Multiway",
     "exact": 0.48303042147091396,
-    "exactMs": 129,
+    "exactMs": 23,
     "configs": {
      "schnell": {
       "runs": 1000,
@@ -3318,7 +3318,7 @@
       "meanIters": 625,
       "meanN": 625,
       "abortedShare": 0,
-      "ms": 1130
+      "ms": 269
      },
      "standard": {
       "runs": 1000,
@@ -3337,7 +3337,7 @@
       "meanIters": 2755.969,
       "meanN": 2499.969,
       "abortedShare": 0,
-      "ms": 5158
+      "ms": 1248
      },
      "praezise": {
       "runs": 1000,
@@ -3356,7 +3356,7 @@
       "meanIters": 10255.751,
       "meanN": 9999.751,
       "abortedShare": 0,
-      "ms": 11669
+      "ms": 4396
      },
      "tief": {
       "runs": 1000,
@@ -3375,7 +3375,7 @@
       "meanIters": 40255.585,
       "meanN": 39999.585,
       "abortedShare": 0,
-      "ms": 43531
+      "ms": 18542
      },
      "standard-budget1000": {
       "runs": 1000,
@@ -3394,7 +3394,7 @@
       "meanIters": 1000,
       "meanN": 1000,
       "abortedShare": 1,
-      "ms": 1105
+      "ms": 480
      },
      "schnell-budget300": {
       "runs": 1000,
@@ -3413,7 +3413,7 @@
       "meanIters": 300,
       "meanN": 300,
       "abortedShare": 1,
-      "ms": 324
+      "ms": 148
      }
     }
    },
@@ -3422,7 +3422,7 @@
     "name": "3 Gegner Turn, Held nahe 1",
     "group": "Multiway",
     "exact": 0.8808333333333332,
-    "exactMs": 14,
+    "exactMs": 6,
     "configs": {
      "schnell": {
       "runs": 1000,
@@ -3441,7 +3441,7 @@
       "meanIters": 625,
       "meanN": 625,
       "abortedShare": 0,
-      "ms": 802
+      "ms": 331
      },
      "standard": {
       "runs": 1000,
@@ -3460,7 +3460,7 @@
       "meanIters": 1733.98,
       "meanN": 1477.98,
       "abortedShare": 0,
-      "ms": 2229
+      "ms": 922
      },
      "praezise": {
       "runs": 1000,
@@ -3479,7 +3479,7 @@
       "meanIters": 6170.742,
       "meanN": 5914.742,
       "abortedShare": 0,
-      "ms": 7657
+      "ms": 3040
      },
      "tief": {
       "runs": 1000,
@@ -3498,7 +3498,7 @@
       "meanIters": 23897.251,
       "meanN": 23641.251,
       "abortedShare": 0,
-      "ms": 32033
+      "ms": 12405
      },
      "standard-budget1000": {
       "runs": 1000,
@@ -3517,7 +3517,7 @@
       "meanIters": 1000,
       "meanN": 1000,
       "abortedShare": 1,
-      "ms": 1256
+      "ms": 458
      },
      "schnell-budget300": {
       "runs": 1000,
@@ -3536,7 +3536,7 @@
       "meanIters": 300,
       "meanN": 300,
       "abortedShare": 1,
-      "ms": 389
+      "ms": 137
      }
     }
    },
@@ -3545,7 +3545,7 @@
     "name": "2 Gegner River, Board spielt immer (konstant 1/3)",
     "group": "Konstant",
     "exact": 0.33333333333333326,
-    "exactMs": 0,
+    "exactMs": 1,
     "configs": {
      "schnell": {
       "runs": 1000,
@@ -3564,7 +3564,7 @@
       "meanIters": 625,
       "meanN": 625,
       "abortedShare": 0,
-      "ms": 208
+      "ms": 160
      },
      "standard": {
       "runs": 1000,
@@ -3583,7 +3583,7 @@
       "meanIters": 356,
       "meanN": 100,
       "abortedShare": 0,
-      "ms": 122
+      "ms": 98
      },
      "praezise": {
       "runs": 1000,
@@ -3602,7 +3602,7 @@
       "meanIters": 406,
       "meanN": 150,
       "abortedShare": 0,
-      "ms": 142
+      "ms": 107
      },
      "tief": {
       "runs": 1000,
@@ -3621,7 +3621,7 @@
       "meanIters": 686,
       "meanN": 430,
       "abortedShare": 0,
-      "ms": 242
+      "ms": 171
      },
      "standard-budget1000": {
       "runs": 1000,
@@ -3640,7 +3640,7 @@
       "meanIters": 1000,
       "meanN": 1000,
       "abortedShare": 1,
-      "ms": 419
+      "ms": 249
      },
      "schnell-budget300": {
       "runs": 1000,
@@ -3659,7 +3659,7 @@
       "meanIters": 300,
       "meanN": 300,
       "abortedShare": 1,
-      "ms": 104
+      "ms": 80
      }
     }
    },
@@ -3668,7 +3668,7 @@
     "name": "Preflop AA gegen KK",
     "group": "Preflop",
     "exact": 0.8125548967940273,
-    "exactMs": 4135,
+    "exactMs": 1619,
     "configs": {
      "schnell": {
       "runs": 1000,
@@ -3687,7 +3687,7 @@
       "meanIters": 625,
       "meanN": 625,
       "abortedShare": 0,
-      "ms": 672
+      "ms": 245
      },
      "standard": {
       "runs": 1000,
@@ -3706,7 +3706,7 @@
       "meanIters": 2164.476,
       "meanN": 1908.476,
       "abortedShare": 0,
-      "ms": 2106
+      "ms": 777
      },
      "praezise": {
       "runs": 1000,
@@ -3725,7 +3725,7 @@
       "meanIters": 7895.857,
       "meanN": 7639.857,
       "abortedShare": 0,
-      "ms": 8392
+      "ms": 3193
      },
      "tief": {
       "runs": 1000,
@@ -3744,7 +3744,7 @@
       "meanIters": 30797.255,
       "meanN": 30541.255,
       "abortedShare": 0,
-      "ms": 30774
+      "ms": 12654
      },
      "standard-budget1000": {
       "runs": 1000,
@@ -3763,7 +3763,7 @@
       "meanIters": 1000,
       "meanN": 1000,
       "abortedShare": 1,
-      "ms": 990
+      "ms": 483
      },
      "schnell-budget300": {
       "runs": 1000,
@@ -3782,7 +3782,7 @@
       "meanIters": 300,
       "meanN": 300,
       "abortedShare": 1,
-      "ms": 271
+      "ms": 126
      }
     }
    },
@@ -3791,7 +3791,7 @@
     "name": "Preflop 72o gegen AA (~0,12)",
     "group": "Preflop",
     "exact": 0.12577556321774638,
-    "exactMs": 4999,
+    "exactMs": 1744,
     "configs": {
      "schnell": {
       "runs": 1000,
@@ -3810,7 +3810,7 @@
       "meanIters": 625,
       "meanN": 625,
       "abortedShare": 0,
-      "ms": 623
+      "ms": 250
      },
      "standard": {
       "runs": 1000,
@@ -3829,7 +3829,7 @@
       "meanIters": 1784.733,
       "meanN": 1528.733,
       "abortedShare": 0,
-      "ms": 1878
+      "ms": 912
      },
      "praezise": {
       "runs": 1000,
@@ -3848,7 +3848,7 @@
       "meanIters": 6350.936,
       "meanN": 6094.936,
       "abortedShare": 0,
-      "ms": 7834
+      "ms": 2809
      },
      "tief": {
       "runs": 1000,
@@ -3867,7 +3867,7 @@
       "meanIters": 24585,
       "meanN": 24329,
       "abortedShare": 0,
-      "ms": 30587
+      "ms": 10256
      },
      "standard-budget1000": {
       "runs": 1000,
@@ -3886,7 +3886,7 @@
       "meanIters": 1000,
       "meanN": 1000,
       "abortedShare": 1,
-      "ms": 1349
+      "ms": 419
      },
      "schnell-budget300": {
       "runs": 1000,
@@ -3905,12 +3905,12 @@
       "meanIters": 300,
       "meanN": 300,
       "abortedShare": 1,
-      "ms": 346
+      "ms": 117
      }
     }
    }
   ],
-  "ms": 332979
+  "ms": 119890
  },
  "evalref7": {
   "hands": 133784560,
