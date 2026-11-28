@@ -1,0 +1,3009 @@
+{
+ "app": "2.3.1",
+ "date": "2026-11-28T12:45:25.810Z",
+ "node": "v22.23.5",
+ "cpus": 4,
+ "plan": "dev24b",
+ "method": {
+  "primary": "All-in-bereinigte BB/100 (unverzerrt, vor den Hauptläufen festgelegt); Rohwerte zusätzlich",
+  "bootstrap": {
+   "blockHands": 500,
+   "reps": 2000,
+   "stratified": "je Lauf"
+  },
+  "verdict": "belegt, wenn das 95-%-Intervall der Differenz ganz über 0 liegt",
+  "stacks": "Alle Stacks werden vor jeder Hand auf die Starttiefe gesetzt",
+  "clock": "Uhr im Coach-Kontext fest (keine Zeitbremse), Rechenzeit außerhalb gemessen",
+  "streams": "Karten: deal; Gegner: bots; Tisch/Rotation: tisch; Coach: Tisch-Seed|Hand|Aktionszahl"
+ },
+ "versions": {
+  "v21": {
+   "root": ".",
+   "version": "2.3.1",
+   "coachHash": "626b554ec0bb"
+  },
+  "v210": {
+   "root": "/home/user/wt-v210",
+   "version": "2.1.0",
+   "coachHash": "8aeb416982fb"
+  },
+  "v201": {
+   "root": "/home/user/wt-v201",
+   "version": "2.0.1",
+   "coachHash": "8977eca6b2c0"
+  },
+  "envHash": "ed79556ac3a3"
+ },
+ "heroes": {
+  "coach21": "Coach 2.1 (exploitativ)",
+  "coach201": "Coach 2.0.1 (exploitativ)",
+  "coach21-gto": "Coach 2.1 (gleichgewichtsnah)",
+  "coach21-rein": "Coach 2.1, reines Populationsmodell (Entwicklungsvariante)",
+  "coach201-gto": "Coach 2.0.1 (gleichgewichtsnah)",
+  "coach22": "Coach 2.2 (exploitativ)",
+  "coach22-gto": "Coach 2.2 (gleichgewichtsnah)",
+  "coach23": "Coach 2.3 (exploitativ)",
+  "coach23-gto": "Coach 2.3 (gleichgewichtsnah)",
+  "fA": "Robustes Basismodell (A)",
+  "fB": "Adaptives Modell (B)",
+  "fC": "Hybrides Modell (C)",
+  "varA": "Variante A: robustes Basismodell",
+  "varB": "Variante B: adaptives Modell",
+  "varC": "Variante C: kontrolliertes hybrides Modell",
+  "varS": "Variante S: Tabellen-Range, Reaktionsmodell 2.1 (aus der Ablation)",
+  "varC3": "Variante C3: hybrid, Reaktion mit robustem Vorwissen",
+  "t-C": "Abstimmung: C (Standard)",
+  "t-w0": "Abstimmung: C, Vorwissen 0,5",
+  "t-z": "Abstimmung: C, empfindlichere Schwellen",
+  "t-zr": "Abstimmung: C, empfindlich, Vorwissen 0,5, Reaktion robust vorab",
+  "varC5": "Variante C5: hybrid mit robuster Entscheidungsregel",
+  "varCz": "Variante C (abgestimmt auf Tr23): hybrid, empfindlichere Schwellen",
+  "t-zsq": "Abstimmung: C empfindlich, Reaktion quadratisch",
+  "t-z1": "Abstimmung: C sehr empfindlich",
+  "varCz1": "Variante C (abgestimmt auf Tr23/E): hybrid, sehr empfindliche Schwellen",
+  "varC7": "Variante C nach Prüfung A/B (Größensignale, aggressive und passive Aktionen getrennt geprüft)",
+  "varB7": "Variante B (Stand nach Prüfung A/B)",
+  "varC2": "Variante C2: hybride Range, Reaktionsmodell 2.1",
+  "abl-R": "Ablation: Range-Eingrenzung 2.1",
+  "abl-S": "Ablation: Reaktionsmodell 2.1",
+  "abl-A": "Ablation: ohne Gegneranpassung der Tabelle",
+  "abl-D": "Ablation: Datenlage nach Händen (2.1)",
+  "abl-RS": "Ablation: Range und Reaktion 2.1",
+  "abl-RSD": "Ablation: Range, Reaktion, Datenlage 2.1",
+  "g24-0": "gleichgewichtsnah, Stand 2.3",
+  "g24-R": "gleichgewichtsnah, Fold-Korrektur für Raises (2.0.1)",
+  "g24-P": "gleichgewichtsnah, alle Fold-Korrekturen 2.0.1",
+  "coach220": "Coach 2.2.0 (exploitativ)",
+  "coach220-gto": "Coach 2.2.0 (gleichgewichtsnah)",
+  "coach210": "Coach 2.1.0 (exploitativ)",
+  "coach210-gto": "Coach 2.1.0 (gleichgewichtsnah)",
+  "bot": "Gegner-KI als Held (Profil g004, Stil ausgeglichen)",
+  "potodds": "Referenz: Pot-Odds-Schwelle",
+  "pushfold": "Referenz: Push/Fold-Chart (≤ 20 BB), sonst Pot-Odds-Schwelle"
+ },
+ "runs": [
+  {
+   "id": "dTr_g24-0_p23-Tr_gemischt_100BB_s24501_2500",
+   "group": "dTr",
+   "hero": "g24-0",
+   "cond": "p23:Tr|gemischt|100",
+   "seed": 24501,
+   "hands": 2500,
+   "decisions": 3444,
+   "invalid": 0,
+   "bb100": 76.66,
+   "bb100Adj": 121.89,
+   "sdHand": 24.33,
+   "sdHandAdj": 18.99,
+   "allinHands": 73,
+   "avgMs": 20.8,
+   "maxMs": 200,
+   "maxIters": 5000,
+   "labels": {
+    "check": 316,
+    "⅓": 49,
+    "Raise Pot": 27,
+    "All-in": 65,
+    "fold": 122,
+    "call": 59,
+    "Overbet": 21,
+    "Raise 2,5×": 38,
+    "Pot": 88,
+    "Raise 3,5×": 10,
+    "¾": 25,
+    "½": 17
+   },
+   "preLabels": {
+    "fold": 1956,
+    "call": 187,
+    "Open": 332,
+    "3-Bet": 116,
+    "All-in": 7,
+    "4-Bet": 9
+   },
+   "classes": {
+    "eindeutig": 358,
+    "mehrere": 834,
+    "knapp": 1012,
+    "klar": 1240
+   },
+   "chartApplied": 978,
+   "chartGapBB": 280.04,
+   "wallMs": 74208,
+   "usedIn": [
+    "dTr-R0",
+    "dTr-0201"
+   ]
+  },
+  {
+   "id": "dTr_g24-R_p23-Tr_gemischt_100BB_s24501_2500",
+   "group": "dTr",
+   "hero": "g24-R",
+   "cond": "p23:Tr|gemischt|100",
+   "seed": 24501,
+   "hands": 2500,
+   "decisions": 3433,
+   "invalid": 0,
+   "bb100": 158.38,
+   "bb100Adj": 191.47,
+   "sdHand": 22.34,
+   "sdHandAdj": 18.49,
+   "allinHands": 49,
+   "avgMs": 20.2,
+   "maxMs": 215,
+   "maxIters": 5000,
+   "labels": {
+    "check": 324,
+    "⅓": 48,
+    "Raise 2,5×": 7,
+    "call": 90,
+    "fold": 143,
+    "Overbet": 22,
+    "Pot": 89,
+    "¾": 23,
+    "All-in": 49,
+    "½": 19,
+    "Raise Pot": 9,
+    "Raise 3,5×": 1,
+    "andere": 2
+   },
+   "preLabels": {
+    "fold": 1956,
+    "call": 187,
+    "Open": 332,
+    "3-Bet": 116,
+    "All-in": 7,
+    "4-Bet": 9
+   },
+   "classes": {
+    "eindeutig": 375,
+    "mehrere": 814,
+    "knapp": 989,
+    "klar": 1255
+   },
+   "chartApplied": 978,
+   "chartGapBB": 280.04,
+   "wallMs": 71973,
+   "usedIn": [
+    "dTr-R0",
+    "dTr-R201"
+   ]
+  },
+  {
+   "id": "dTr_coach201-gto_p23-Tr_gemischt_100BB_s24501_2500",
+   "group": "dTr",
+   "hero": "coach201-gto",
+   "cond": "p23:Tr|gemischt|100",
+   "seed": 24501,
+   "hands": 2500,
+   "decisions": 3378,
+   "invalid": 0,
+   "bb100": 129.47,
+   "bb100Adj": 154.09,
+   "sdHand": 21.94,
+   "sdHandAdj": 17.48,
+   "allinHands": 55,
+   "avgMs": 13.1,
+   "maxMs": 149,
+   "maxIters": 5000,
+   "labels": {
+    "check": 304,
+    "⅓": 49,
+    "Raise 2,5×": 25,
+    "call": 69,
+    "fold": 131,
+    "Pot": 75,
+    "½": 12,
+    "Overbet": 29,
+    "All-in": 59,
+    "¾": 10,
+    "Raise Pot": 8,
+    "andere": 3
+   },
+   "preLabels": {
+    "fold": 1977,
+    "call": 163,
+    "Open": 332,
+    "3-Bet": 116,
+    "All-in": 7,
+    "4-Bet": 9
+   },
+   "classes": {
+    "eindeutig": 370,
+    "mehrere": 745,
+    "knapp": 1041,
+    "klar": 1222
+   },
+   "chartApplied": 967,
+   "chartGapBB": 237.08,
+   "wallMs": 46706,
+   "usedIn": [
+    "dTr-R201",
+    "dTr-0201"
+   ]
+  },
+  {
+   "id": "dTr_g24-0_p23-Tr_gemischt_100BB_s24502_2500",
+   "group": "dTr",
+   "hero": "g24-0",
+   "cond": "p23:Tr|gemischt|100",
+   "seed": 24502,
+   "hands": 2500,
+   "decisions": 3356,
+   "invalid": 0,
+   "bb100": 97.76,
+   "bb100Adj": 88.06,
+   "sdHand": 24.61,
+   "sdHandAdj": 18.72,
+   "allinHands": 61,
+   "avgMs": 20.8,
+   "maxMs": 204,
+   "maxIters": 5000,
+   "labels": {
+    "½": 30,
+    "Raise Pot": 26,
+    "check": 282,
+    "fold": 129,
+    "⅓": 52,
+    "Pot": 64,
+    "All-in": 47,
+    "Raise 2,5×": 28,
+    "Overbet": 17,
+    "call": 59,
+    "Raise 3,5×": 17,
+    "¾": 26
+   },
+   "preLabels": {
+    "fold": 2000,
+    "call": 165,
+    "Open": 296,
+    "4-Bet": 9,
+    "3-Bet": 95,
+    "All-in": 14
+   },
+   "classes": {
+    "mehrere": 822,
+    "knapp": 995,
+    "klar": 1140,
+    "eindeutig": 399
+   },
+   "chartApplied": 920,
+   "chartGapBB": 267.3,
+   "wallMs": 72286,
+   "usedIn": [
+    "dTr-R0",
+    "dTr-0201"
+   ]
+  },
+  {
+   "id": "dTr_g24-R_p23-Tr_gemischt_100BB_s24502_2500",
+   "group": "dTr",
+   "hero": "g24-R",
+   "cond": "p23:Tr|gemischt|100",
+   "seed": 24502,
+   "hands": 2500,
+   "decisions": 3327,
+   "invalid": 0,
+   "bb100": 133.37,
+   "bb100Adj": 139.41,
+   "sdHand": 21.9,
+   "sdHandAdj": 17.92,
+   "allinHands": 41,
+   "avgMs": 20.8,
+   "maxMs": 184,
+   "maxIters": 5000,
+   "labels": {
+    "½": 30,
+    "call": 75,
+    "fold": 155,
+    "check": 282,
+    "⅓": 51,
+    "Pot": 64,
+    "All-in": 34,
+    "Overbet": 17,
+    "Raise 2,5×": 4,
+    "¾": 26,
+    "Raise Pot": 9,
+    "Raise 3,5×": 1
+   },
+   "preLabels": {
+    "fold": 2000,
+    "call": 165,
+    "Open": 296,
+    "4-Bet": 9,
+    "3-Bet": 95,
+    "All-in": 14
+   },
+   "classes": {
+    "mehrere": 786,
+    "knapp": 971,
+    "klar": 1146,
+    "eindeutig": 424
+   },
+   "chartApplied": 920,
+   "chartGapBB": 267.3,
+   "wallMs": 71702,
+   "usedIn": [
+    "dTr-R0",
+    "dTr-R201"
+   ]
+  },
+  {
+   "id": "dTr_coach201-gto_p23-Tr_gemischt_100BB_s24502_2500",
+   "group": "dTr",
+   "hero": "coach201-gto",
+   "cond": "p23:Tr|gemischt|100",
+   "seed": 24502,
+   "hands": 2500,
+   "decisions": 3278,
+   "invalid": 0,
+   "bb100": 101.01,
+   "bb100Adj": 107.98,
+   "sdHand": 19.12,
+   "sdHandAdj": 15.3,
+   "allinHands": 40,
+   "avgMs": 13,
+   "maxMs": 165,
+   "maxIters": 5000,
+   "labels": {
+    "¾": 10,
+    "fold": 139,
+    "check": 280,
+    "Overbet": 27,
+    "call": 54,
+    "Raise 2,5×": 18,
+    "⅓": 46,
+    "Pot": 55,
+    "All-in": 43,
+    "½": 19,
+    "Raise Pot": 9,
+    "Raise 3,5×": 1
+   },
+   "preLabels": {
+    "fold": 2026,
+    "call": 136,
+    "Open": 296,
+    "4-Bet": 9,
+    "3-Bet": 96,
+    "All-in": 14
+   },
+   "classes": {
+    "mehrere": 720,
+    "knapp": 999,
+    "klar": 1138,
+    "eindeutig": 421
+   },
+   "chartApplied": 906,
+   "chartGapBB": 190.27,
+   "wallMs": 44908,
+   "usedIn": [
+    "dTr-R201",
+    "dTr-0201"
+   ]
+  },
+  {
+   "id": "dTr_g24-0_p23-Tr_gemischt_100BB_s24503_2500",
+   "group": "dTr",
+   "hero": "g24-0",
+   "cond": "p23:Tr|gemischt|100",
+   "seed": 24503,
+   "hands": 2500,
+   "decisions": 3402,
+   "invalid": 0,
+   "bb100": 43.49,
+   "bb100Adj": 32.91,
+   "sdHand": 21.83,
+   "sdHandAdj": 16.46,
+   "allinHands": 64,
+   "avgMs": 21.3,
+   "maxMs": 228,
+   "maxIters": 5000,
+   "labels": {
+    "Pot": 72,
+    "Raise Pot": 23,
+    "call": 57,
+    "check": 247,
+    "fold": 139,
+    "All-in": 54,
+    "½": 38,
+    "Raise 2,5×": 34,
+    "⅓": 58,
+    "Overbet": 19,
+    "¾": 26,
+    "andere": 1,
+    "Raise 3,5×": 16
+   },
+   "preLabels": {
+    "fold": 1993,
+    "3-Bet": 91,
+    "Open": 332,
+    "call": 180,
+    "4-Bet": 12,
+    "All-in": 10
+   },
+   "classes": {
+    "knapp": 966,
+    "mehrere": 790,
+    "klar": 1250,
+    "eindeutig": 396
+   },
+   "chartApplied": 1001,
+   "chartGapBB": 313.25,
+   "wallMs": 74917,
+   "usedIn": [
+    "dTr-R0",
+    "dTr-0201"
+   ]
+  },
+  {
+   "id": "dTr_g24-R_p23-Tr_gemischt_100BB_s24503_2500",
+   "group": "dTr",
+   "hero": "g24-R",
+   "cond": "p23:Tr|gemischt|100",
+   "seed": 24503,
+   "hands": 2500,
+   "decisions": 3397,
+   "invalid": 0,
+   "bb100": 96.43,
+   "bb100Adj": 95.92,
+   "sdHand": 20.19,
+   "sdHandAdj": 15.95,
+   "allinHands": 49,
+   "avgMs": 21.5,
+   "maxMs": 254,
+   "maxIters": 5000,
+   "labels": {
+    "Pot": 71,
+    "Raise Pot": 8,
+    "call": 90,
+    "check": 258,
+    "fold": 154,
+    "Overbet": 21,
+    "½": 38,
+    "All-in": 43,
+    "⅓": 59,
+    "¾": 25,
+    "andere": 1,
+    "Raise 2,5×": 11
+   },
+   "preLabels": {
+    "fold": 1993,
+    "3-Bet": 91,
+    "Open": 332,
+    "call": 180,
+    "4-Bet": 12,
+    "All-in": 10
+   },
+   "classes": {
+    "knapp": 945,
+    "mehrere": 772,
+    "klar": 1256,
+    "eindeutig": 424
+   },
+   "chartApplied": 1001,
+   "chartGapBB": 313.25,
+   "wallMs": 75551,
+   "usedIn": [
+    "dTr-R0",
+    "dTr-R201"
+   ]
+  },
+  {
+   "id": "dTr_coach201-gto_p23-Tr_gemischt_100BB_s24503_2500",
+   "group": "dTr",
+   "hero": "coach201-gto",
+   "cond": "p23:Tr|gemischt|100",
+   "seed": 24503,
+   "hands": 2500,
+   "decisions": 3361,
+   "invalid": 0,
+   "bb100": 88.13,
+   "bb100Adj": 89.85,
+   "sdHand": 20.53,
+   "sdHandAdj": 16.9,
+   "allinHands": 53,
+   "avgMs": 13.1,
+   "maxMs": 171,
+   "maxIters": 5000,
+   "labels": {
+    "Pot": 64,
+    "Raise Pot": 10,
+    "All-in": 46,
+    "⅓": 54,
+    "fold": 139,
+    "check": 248,
+    "call": 86,
+    "Overbet": 36,
+    "½": 26,
+    "¾": 10,
+    "Raise 2,5×": 23,
+    "Raise 3,5×": 1
+   },
+   "preLabels": {
+    "fold": 2015,
+    "3-Bet": 91,
+    "Open": 332,
+    "call": 158,
+    "4-Bet": 12,
+    "All-in": 10
+   },
+   "classes": {
+    "knapp": 972,
+    "mehrere": 721,
+    "klar": 1223,
+    "eindeutig": 445
+   },
+   "chartApplied": 999,
+   "chartGapBB": 208.79,
+   "wallMs": 46336,
+   "usedIn": [
+    "dTr-R201",
+    "dTr-0201"
+   ]
+  },
+  {
+   "id": "dTr_g24-0_p23-Tr_gemischt_100BB_s24504_2500",
+   "group": "dTr",
+   "hero": "g24-0",
+   "cond": "p23:Tr|gemischt|100",
+   "seed": 24504,
+   "hands": 2500,
+   "decisions": 3466,
+   "invalid": 0,
+   "bb100": 67.36,
+   "bb100Adj": 67.51,
+   "sdHand": 21.72,
+   "sdHandAdj": 16.66,
+   "allinHands": 63,
+   "avgMs": 21.3,
+   "maxMs": 325,
+   "maxIters": 5000,
+   "labels": {
+    "¾": 32,
+    "Pot": 76,
+    "All-in": 46,
+    "Overbet": 23,
+    "fold": 143,
+    "check": 304,
+    "⅓": 56,
+    "call": 67,
+    "Raise Pot": 30,
+    "Raise 2,5×": 32,
+    "Raise 3,5×": 22,
+    "½": 38,
+    "andere": 1
+   },
+   "preLabels": {
+    "fold": 1955,
+    "Open": 349,
+    "call": 183,
+    "3-Bet": 90,
+    "4-Bet": 11,
+    "All-in": 8
+   },
+   "classes": {
+    "klar": 1187,
+    "knapp": 1055,
+    "eindeutig": 390,
+    "mehrere": 834
+   },
+   "chartApplied": 975,
+   "chartGapBB": 238.34,
+   "wallMs": 76258,
+   "usedIn": [
+    "dTr-R0",
+    "dTr-0201"
+   ]
+  },
+  {
+   "id": "dTr_g24-R_p23-Tr_gemischt_100BB_s24504_2500",
+   "group": "dTr",
+   "hero": "g24-R",
+   "cond": "p23:Tr|gemischt|100",
+   "seed": 24504,
+   "hands": 2500,
+   "decisions": 3440,
+   "invalid": 0,
+   "bb100": 122.49,
+   "bb100Adj": 127.1,
+   "sdHand": 20.29,
+   "sdHandAdj": 16.46,
+   "allinHands": 48,
+   "avgMs": 20.8,
+   "maxMs": 220,
+   "maxIters": 5000,
+   "labels": {
+    "¾": 34,
+    "Pot": 77,
+    "All-in": 38,
+    "Overbet": 25,
+    "fold": 153,
+    "check": 308,
+    "⅓": 57,
+    "call": 98,
+    "Raise Pot": 9,
+    "½": 37,
+    "Raise 2,5×": 7,
+    "andere": 1
+   },
+   "preLabels": {
+    "fold": 1955,
+    "Open": 349,
+    "call": 183,
+    "3-Bet": 90,
+    "4-Bet": 11,
+    "All-in": 8
+   },
+   "classes": {
+    "klar": 1197,
+    "knapp": 1043,
+    "eindeutig": 405,
+    "mehrere": 795
+   },
+   "chartApplied": 975,
+   "chartGapBB": 238.34,
+   "wallMs": 74114,
+   "usedIn": [
+    "dTr-R0",
+    "dTr-R201"
+   ]
+  },
+  {
+   "id": "dTr_coach201-gto_p23-Tr_gemischt_100BB_s24504_2500",
+   "group": "dTr",
+   "hero": "coach201-gto",
+   "cond": "p23:Tr|gemischt|100",
+   "seed": 24504,
+   "hands": 2500,
+   "decisions": 3411,
+   "invalid": 0,
+   "bb100": 154.94,
+   "bb100Adj": 142.62,
+   "sdHand": 21.29,
+   "sdHandAdj": 16.66,
+   "allinHands": 50,
+   "avgMs": 13.6,
+   "maxMs": 186,
+   "maxIters": 5000,
+   "labels": {
+    "¾": 23,
+    "Pot": 69,
+    "All-in": 44,
+    "Overbet": 34,
+    "fold": 139,
+    "check": 298,
+    "⅓": 62,
+    "call": 88,
+    "Raise 2,5×": 25,
+    "Raise Pot": 10,
+    "½": 22,
+    "Raise 3,5×": 1,
+    "andere": 1
+   },
+   "preLabels": {
+    "fold": 1973,
+    "Open": 349,
+    "call": 165,
+    "3-Bet": 89,
+    "4-Bet": 11,
+    "All-in": 8
+   },
+   "classes": {
+    "klar": 1157,
+    "knapp": 1093,
+    "eindeutig": 427,
+    "mehrere": 734
+   },
+   "chartApplied": 960,
+   "chartGapBB": 205.54,
+   "wallMs": 48870,
+   "usedIn": [
+    "dTr-R201",
+    "dTr-0201"
+   ]
+  },
+  {
+   "id": "dTr_g24-0_p23-Tr_gemischt_100BB_s24505_2500",
+   "group": "dTr",
+   "hero": "g24-0",
+   "cond": "p23:Tr|gemischt|100",
+   "seed": 24505,
+   "hands": 2500,
+   "decisions": 3373,
+   "invalid": 0,
+   "bb100": 127.33,
+   "bb100Adj": 148.79,
+   "sdHand": 23.05,
+   "sdHandAdj": 20.2,
+   "allinHands": 62,
+   "avgMs": 21.7,
+   "maxMs": 235,
+   "maxIters": 5000,
+   "labels": {
+    "check": 268,
+    "fold": 113,
+    "Pot": 81,
+    "All-in": 49,
+    "¾": 28,
+    "Raise Pot": 21,
+    "call": 60,
+    "⅓": 54,
+    "Raise 3,5×": 16,
+    "Overbet": 17,
+    "Raise 2,5×": 30,
+    "½": 22
+   },
+   "preLabels": {
+    "fold": 2005,
+    "call": 180,
+    "Open": 316,
+    "3-Bet": 95,
+    "4-Bet": 11,
+    "All-in": 7
+   },
+   "classes": {
+    "klar": 1178,
+    "mehrere": 796,
+    "knapp": 976,
+    "eindeutig": 423
+   },
+   "chartApplied": 950,
+   "chartGapBB": 223.13,
+   "wallMs": 75798,
+   "usedIn": [
+    "dTr-R0",
+    "dTr-0201"
+   ]
+  },
+  {
+   "id": "dTr_g24-R_p23-Tr_gemischt_100BB_s24505_2500",
+   "group": "dTr",
+   "hero": "g24-R",
+   "cond": "p23:Tr|gemischt|100",
+   "seed": 24505,
+   "hands": 2500,
+   "decisions": 3362,
+   "invalid": 0,
+   "bb100": 158.02,
+   "bb100Adj": 170.72,
+   "sdHand": 21.04,
+   "sdHandAdj": 18.63,
+   "allinHands": 44,
+   "avgMs": 21.5,
+   "maxMs": 208,
+   "maxIters": 5000,
+   "labels": {
+    "check": 279,
+    "fold": 133,
+    "Pot": 80,
+    "All-in": 41,
+    "¾": 27,
+    "call": 77,
+    "⅓": 54,
+    "Overbet": 18,
+    "Raise Pot": 6,
+    "Raise 2,5×": 10,
+    "½": 22,
+    "Raise 3,5×": 1
+   },
+   "preLabels": {
+    "fold": 2005,
+    "call": 180,
+    "Open": 316,
+    "3-Bet": 95,
+    "4-Bet": 11,
+    "All-in": 7
+   },
+   "classes": {
+    "klar": 1192,
+    "mehrere": 754,
+    "knapp": 974,
+    "eindeutig": 442
+   },
+   "chartApplied": 950,
+   "chartGapBB": 223.13,
+   "wallMs": 75087,
+   "usedIn": [
+    "dTr-R0",
+    "dTr-R201"
+   ]
+  },
+  {
+   "id": "dTr_coach201-gto_p23-Tr_gemischt_100BB_s24505_2500",
+   "group": "dTr",
+   "hero": "coach201-gto",
+   "cond": "p23:Tr|gemischt|100",
+   "seed": 24505,
+   "hands": 2500,
+   "decisions": 3292,
+   "invalid": 0,
+   "bb100": 170.83,
+   "bb100Adj": 179.14,
+   "sdHand": 21.65,
+   "sdHandAdj": 18.51,
+   "allinHands": 53,
+   "avgMs": 14.1,
+   "maxMs": 193,
+   "maxIters": 5000,
+   "labels": {
+    "check": 256,
+    "Pot": 56,
+    "All-in": 54,
+    "Overbet": 35,
+    "call": 56,
+    "fold": 118,
+    "⅓": 46,
+    "Raise 2,5×": 18,
+    "¾": 15,
+    "Raise Pot": 9,
+    "½": 14,
+    "Raise 3,5×": 2
+   },
+   "preLabels": {
+    "fold": 2030,
+    "call": 154,
+    "Open": 316,
+    "3-Bet": 95,
+    "4-Bet": 11,
+    "All-in": 7
+   },
+   "classes": {
+    "klar": 1140,
+    "knapp": 1008,
+    "eindeutig": 449,
+    "mehrere": 695
+   },
+   "chartApplied": 943,
+   "chartGapBB": 202,
+   "wallMs": 49002,
+   "usedIn": [
+    "dTr-R201",
+    "dTr-0201"
+   ]
+  },
+  {
+   "id": "dTr_g24-0_p23-Tr_gemischt_100BB_s24506_2500",
+   "group": "dTr",
+   "hero": "g24-0",
+   "cond": "p23:Tr|gemischt|100",
+   "seed": 24506,
+   "hands": 2500,
+   "decisions": 3448,
+   "invalid": 0,
+   "bb100": 76.49,
+   "bb100Adj": 52.39,
+   "sdHand": 20.53,
+   "sdHandAdj": 15.99,
+   "allinHands": 52,
+   "avgMs": 21.3,
+   "maxMs": 155,
+   "maxIters": 5000,
+   "labels": {
+    "Raise 2,5×": 40,
+    "All-in": 43,
+    "check": 299,
+    "fold": 127,
+    "¾": 27,
+    "Pot": 69,
+    "⅓": 71,
+    "call": 56,
+    "Raise 3,5×": 19,
+    "Raise Pot": 22,
+    "Overbet": 21,
+    "½": 39
+   },
+   "preLabels": {
+    "fold": 1968,
+    "3-Bet": 76,
+    "Open": 369,
+    "call": 182,
+    "4-Bet": 15,
+    "All-in": 5
+   },
+   "classes": {
+    "klar": 1169,
+    "mehrere": 813,
+    "eindeutig": 418,
+    "knapp": 1048
+   },
+   "chartApplied": 976,
+   "chartGapBB": 259.3,
+   "wallMs": 75964,
+   "usedIn": [
+    "dTr-R0",
+    "dTr-0201"
+   ]
+  },
+  {
+   "id": "dTr_g24-R_p23-Tr_gemischt_100BB_s24506_2500",
+   "group": "dTr",
+   "hero": "g24-R",
+   "cond": "p23:Tr|gemischt|100",
+   "seed": 24506,
+   "hands": 2500,
+   "decisions": 3419,
+   "invalid": 0,
+   "bb100": 114.51,
+   "bb100Adj": 100.43,
+   "sdHand": 19.07,
+   "sdHandAdj": 15.53,
+   "allinHands": 43,
+   "avgMs": 20.9,
+   "maxMs": 395,
+   "maxIters": 5000,
+   "labels": {
+    "Raise Pot": 11,
+    "All-in": 32,
+    "check": 294,
+    "fold": 145,
+    "¾": 26,
+    "Pot": 69,
+    "⅓": 70,
+    "call": 82,
+    "Overbet": 21,
+    "Raise 2,5×": 13,
+    "½": 39,
+    "Raise 3,5×": 2
+   },
+   "preLabels": {
+    "fold": 1968,
+    "3-Bet": 76,
+    "Open": 369,
+    "call": 182,
+    "4-Bet": 15,
+    "All-in": 5
+   },
+   "classes": {
+    "klar": 1194,
+    "mehrere": 776,
+    "eindeutig": 439,
+    "knapp": 1010
+   },
+   "chartApplied": 976,
+   "chartGapBB": 259.3,
+   "wallMs": 74103,
+   "usedIn": [
+    "dTr-R0",
+    "dTr-R201"
+   ]
+  },
+  {
+   "id": "dTr_coach201-gto_p23-Tr_gemischt_100BB_s24506_2500",
+   "group": "dTr",
+   "hero": "coach201-gto",
+   "cond": "p23:Tr|gemischt|100",
+   "seed": 24506,
+   "hands": 2500,
+   "decisions": 3389,
+   "invalid": 0,
+   "bb100": 128.51,
+   "bb100Adj": 120.55,
+   "sdHand": 19.83,
+   "sdHandAdj": 16.19,
+   "allinHands": 41,
+   "avgMs": 13.2,
+   "maxMs": 165,
+   "maxIters": 5000,
+   "labels": {
+    "check": 302,
+    "fold": 138,
+    "Pot": 58,
+    "All-in": 38,
+    "⅓": 60,
+    "call": 71,
+    "Overbet": 34,
+    "Raise 3,5×": 2,
+    "¾": 19,
+    "Raise Pot": 10,
+    "Raise 2,5×": 22,
+    "½": 22,
+    "andere": 1
+   },
+   "preLabels": {
+    "fold": 1980,
+    "3-Bet": 76,
+    "Open": 369,
+    "call": 167,
+    "4-Bet": 15,
+    "All-in": 5
+   },
+   "classes": {
+    "klar": 1163,
+    "mehrere": 719,
+    "eindeutig": 451,
+    "knapp": 1056
+   },
+   "chartApplied": 973,
+   "chartGapBB": 209.91,
+   "wallMs": 47087,
+   "usedIn": [
+    "dTr-R201",
+    "dTr-0201"
+   ]
+  },
+  {
+   "id": "dVa_g24-0_p23-Va_gemischt_100BB_s24511_2500",
+   "group": "dVa",
+   "hero": "g24-0",
+   "cond": "p23:Va|gemischt|100",
+   "seed": 24511,
+   "hands": 2500,
+   "decisions": 3402,
+   "invalid": 0,
+   "bb100": 133.58,
+   "bb100Adj": 95.73,
+   "sdHand": 23.87,
+   "sdHandAdj": 18.99,
+   "allinHands": 58,
+   "avgMs": 22.7,
+   "maxMs": 185,
+   "maxIters": 5000,
+   "labels": {
+    "½": 38,
+    "¾": 23,
+    "call": 49,
+    "check": 302,
+    "fold": 112,
+    "⅓": 57,
+    "Raise Pot": 26,
+    "Pot": 98,
+    "All-in": 52,
+    "Raise 2,5×": 29,
+    "Raise 3,5×": 8,
+    "Overbet": 21
+   },
+   "preLabels": {
+    "fold": 2046,
+    "3-Bet": 93,
+    "Open": 269,
+    "call": 165,
+    "4-Bet": 7,
+    "All-in": 7
+   },
+   "classes": {
+    "klar": 1228,
+    "mehrere": 790,
+    "eindeutig": 396,
+    "knapp": 988
+   },
+   "chartApplied": 1000,
+   "chartGapBB": 302.76,
+   "wallMs": 80155,
+   "usedIn": [
+    "dVa-R0",
+    "dVa-0201"
+   ]
+  },
+  {
+   "id": "dVa_g24-R_p23-Va_gemischt_100BB_s24511_2500",
+   "group": "dVa",
+   "hero": "g24-R",
+   "cond": "p23:Va|gemischt|100",
+   "seed": 24511,
+   "hands": 2500,
+   "decisions": 3376,
+   "invalid": 0,
+   "bb100": 163.92,
+   "bb100Adj": 117.57,
+   "sdHand": 22.14,
+   "sdHandAdj": 17.67,
+   "allinHands": 47,
+   "avgMs": 22.3,
+   "maxMs": 221,
+   "maxIters": 5000,
+   "labels": {
+    "½": 39,
+    "¾": 22,
+    "call": 64,
+    "check": 300,
+    "fold": 128,
+    "⅓": 55,
+    "Pot": 98,
+    "All-in": 46,
+    "Raise 2,5×": 7,
+    "Overbet": 22,
+    "Raise Pot": 6,
+    "Raise 3,5×": 2
+   },
+   "preLabels": {
+    "fold": 2046,
+    "3-Bet": 93,
+    "Open": 269,
+    "call": 165,
+    "4-Bet": 7,
+    "All-in": 7
+   },
+   "classes": {
+    "klar": 1237,
+    "mehrere": 762,
+    "eindeutig": 411,
+    "knapp": 966
+   },
+   "chartApplied": 1000,
+   "chartGapBB": 302.76,
+   "wallMs": 78140,
+   "usedIn": [
+    "dVa-R0",
+    "dVa-R201"
+   ]
+  },
+  {
+   "id": "dVa_coach201-gto_p23-Va_gemischt_100BB_s24511_2500",
+   "group": "dVa",
+   "hero": "coach201-gto",
+   "cond": "p23:Va|gemischt|100",
+   "seed": 24511,
+   "hands": 2500,
+   "decisions": 3330,
+   "invalid": 0,
+   "bb100": 239.32,
+   "bb100Adj": 174.78,
+   "sdHand": 22.46,
+   "sdHandAdj": 17.58,
+   "allinHands": 53,
+   "avgMs": 13.8,
+   "maxMs": 162,
+   "maxIters": 5000,
+   "labels": {
+    "Pot": 81,
+    "⅓": 53,
+    "call": 71,
+    "check": 293,
+    "fold": 104,
+    "All-in": 45,
+    "½": 16,
+    "Overbet": 40,
+    "¾": 15,
+    "Raise 2,5×": 15,
+    "Raise Pot": 8,
+    "Raise 3,5×": 2
+   },
+   "preLabels": {
+    "fold": 2073,
+    "3-Bet": 92,
+    "Open": 269,
+    "call": 139,
+    "4-Bet": 7,
+    "All-in": 7
+   },
+   "classes": {
+    "klar": 1209,
+    "mehrere": 721,
+    "eindeutig": 423,
+    "knapp": 977
+   },
+   "chartApplied": 983,
+   "chartGapBB": 211.14,
+   "wallMs": 48725,
+   "usedIn": [
+    "dVa-R201",
+    "dVa-0201"
+   ]
+  },
+  {
+   "id": "dVa_g24-0_p23-Va_gemischt_100BB_s24512_2500",
+   "group": "dVa",
+   "hero": "g24-0",
+   "cond": "p23:Va|gemischt|100",
+   "seed": 24512,
+   "hands": 2500,
+   "decisions": 3470,
+   "invalid": 0,
+   "bb100": 107.48,
+   "bb100Adj": 136.75,
+   "sdHand": 23.97,
+   "sdHandAdj": 19.41,
+   "allinHands": 64,
+   "avgMs": 22.4,
+   "maxMs": 217,
+   "maxIters": 5000,
+   "labels": {
+    "¾": 27,
+    "check": 324,
+    "⅓": 77,
+    "All-in": 62,
+    "fold": 122,
+    "Pot": 100,
+    "call": 41,
+    "½": 41,
+    "Overbet": 27,
+    "Raise Pot": 37,
+    "Raise 2,5×": 20,
+    "Raise 3,5×": 14
+   },
+   "preLabels": {
+    "fold": 1997,
+    "call": 175,
+    "Open": 300,
+    "4-Bet": 8,
+    "All-in": 7,
+    "3-Bet": 91
+   },
+   "classes": {
+    "mehrere": 851,
+    "eindeutig": 358,
+    "klar": 1244,
+    "knapp": 1017
+   },
+   "chartApplied": 998,
+   "chartGapBB": 265.29,
+   "wallMs": 80550,
+   "usedIn": [
+    "dVa-R0",
+    "dVa-0201"
+   ]
+  },
+  {
+   "id": "dVa_g24-R_p23-Va_gemischt_100BB_s24512_2500",
+   "group": "dVa",
+   "hero": "g24-R",
+   "cond": "p23:Va|gemischt|100",
+   "seed": 24512,
+   "hands": 2500,
+   "decisions": 3431,
+   "invalid": 0,
+   "bb100": 171.86,
+   "bb100Adj": 178.63,
+   "sdHand": 22.2,
+   "sdHandAdj": 18.07,
+   "allinHands": 52,
+   "avgMs": 22.5,
+   "maxMs": 196,
+   "maxIters": 5000,
+   "labels": {
+    "¾": 26,
+    "check": 311,
+    "⅓": 77,
+    "All-in": 53,
+    "fold": 142,
+    "Pot": 101,
+    "call": 62,
+    "½": 41,
+    "Overbet": 27,
+    "Raise 2,5×": 8,
+    "Raise 3,5×": 1,
+    "Raise Pot": 4
+   },
+   "preLabels": {
+    "fold": 1997,
+    "call": 175,
+    "Open": 300,
+    "4-Bet": 8,
+    "All-in": 7,
+    "3-Bet": 91
+   },
+   "classes": {
+    "mehrere": 803,
+    "eindeutig": 373,
+    "klar": 1274,
+    "knapp": 981
+   },
+   "chartApplied": 998,
+   "chartGapBB": 265.29,
+   "wallMs": 79774,
+   "usedIn": [
+    "dVa-R0",
+    "dVa-R201"
+   ]
+  },
+  {
+   "id": "dVa_coach201-gto_p23-Va_gemischt_100BB_s24512_2500",
+   "group": "dVa",
+   "hero": "coach201-gto",
+   "cond": "p23:Va|gemischt|100",
+   "seed": 24512,
+   "hands": 2500,
+   "decisions": 3412,
+   "invalid": 0,
+   "bb100": 198.29,
+   "bb100Adj": 198.98,
+   "sdHand": 21.61,
+   "sdHandAdj": 18.01,
+   "allinHands": 49,
+   "avgMs": 13.2,
+   "maxMs": 218,
+   "maxIters": 5000,
+   "labels": {
+    "Pot": 80,
+    "check": 341,
+    "⅓": 67,
+    "All-in": 66,
+    "fold": 120,
+    "call": 63,
+    "Overbet": 41,
+    "½": 24,
+    "Raise 2,5×": 12,
+    "¾": 11,
+    "Raise Pot": 9
+   },
+   "preLabels": {
+    "fold": 2012,
+    "call": 160,
+    "Open": 300,
+    "4-Bet": 8,
+    "All-in": 7,
+    "3-Bet": 91
+   },
+   "classes": {
+    "mehrere": 743,
+    "eindeutig": 396,
+    "klar": 1251,
+    "knapp": 1022
+   },
+   "chartApplied": 990,
+   "chartGapBB": 229.85,
+   "wallMs": 47571,
+   "usedIn": [
+    "dVa-R201",
+    "dVa-0201"
+   ]
+  },
+  {
+   "id": "dVa_g24-0_p23-Va_gemischt_100BB_s24513_2500",
+   "group": "dVa",
+   "hero": "g24-0",
+   "cond": "p23:Va|gemischt|100",
+   "seed": 24513,
+   "hands": 2500,
+   "decisions": 3472,
+   "invalid": 0,
+   "bb100": 74.01,
+   "bb100Adj": 87.32,
+   "sdHand": 23.18,
+   "sdHandAdj": 17.5,
+   "allinHands": 68,
+   "avgMs": 21.6,
+   "maxMs": 215,
+   "maxIters": 5000,
+   "labels": {
+    "Pot": 86,
+    "Overbet": 28,
+    "call": 44,
+    "fold": 92,
+    "½": 33,
+    "All-in": 58,
+    "check": 344,
+    "⅓": 71,
+    "¾": 40,
+    "Raise 3,5×": 8,
+    "Raise 2,5×": 33,
+    "Raise Pot": 23
+   },
+   "preLabels": {
+    "fold": 2036,
+    "Open": 280,
+    "4-Bet": 10,
+    "All-in": 8,
+    "3-Bet": 94,
+    "call": 184
+   },
+   "classes": {
+    "klar": 1265,
+    "mehrere": 791,
+    "knapp": 1055,
+    "eindeutig": 361
+   },
+   "chartApplied": 1014,
+   "chartGapBB": 320.58,
+   "wallMs": 77506,
+   "usedIn": [
+    "dVa-R0",
+    "dVa-0201"
+   ]
+  },
+  {
+   "id": "dVa_g24-R_p23-Va_gemischt_100BB_s24513_2500",
+   "group": "dVa",
+   "hero": "g24-R",
+   "cond": "p23:Va|gemischt|100",
+   "seed": 24513,
+   "hands": 2500,
+   "decisions": 3435,
+   "invalid": 0,
+   "bb100": 107.54,
+   "bb100Adj": 130.55,
+   "sdHand": 21.41,
+   "sdHandAdj": 17,
+   "allinHands": 56,
+   "avgMs": 21.2,
+   "maxMs": 203,
+   "maxIters": 5000,
+   "labels": {
+    "Pot": 85,
+    "Overbet": 29,
+    "call": 54,
+    "fold": 106,
+    "½": 33,
+    "All-in": 52,
+    "check": 340,
+    "⅓": 69,
+    "¾": 41,
+    "Raise 2,5×": 10,
+    "Raise Pot": 4
+   },
+   "preLabels": {
+    "fold": 2036,
+    "Open": 280,
+    "4-Bet": 10,
+    "All-in": 8,
+    "3-Bet": 94,
+    "call": 184
+   },
+   "classes": {
+    "klar": 1264,
+    "mehrere": 767,
+    "knapp": 1029,
+    "eindeutig": 375
+   },
+   "chartApplied": 1014,
+   "chartGapBB": 320.58,
+   "wallMs": 75645,
+   "usedIn": [
+    "dVa-R0",
+    "dVa-R201"
+   ]
+  },
+  {
+   "id": "dVa_coach201-gto_p23-Va_gemischt_100BB_s24513_2500",
+   "group": "dVa",
+   "hero": "coach201-gto",
+   "cond": "p23:Va|gemischt|100",
+   "seed": 24513,
+   "hands": 2500,
+   "decisions": 3446,
+   "invalid": 0,
+   "bb100": 148.69,
+   "bb100Adj": 177.88,
+   "sdHand": 23.15,
+   "sdHandAdj": 19.08,
+   "allinHands": 59,
+   "avgMs": 13.6,
+   "maxMs": 163,
+   "maxIters": 5000,
+   "labels": {
+    "check": 356,
+    "call": 57,
+    "Pot": 75,
+    "Overbet": 50,
+    "All-in": 60,
+    "fold": 97,
+    "½": 26,
+    "⅓": 66,
+    "¾": 19,
+    "Raise 2,5×": 16,
+    "Raise Pot": 8,
+    "Raise 3,5×": 1,
+    "andere": 1
+   },
+   "preLabels": {
+    "fold": 2040,
+    "call": 181,
+    "Open": 280,
+    "4-Bet": 11,
+    "All-in": 8,
+    "3-Bet": 94
+   },
+   "classes": {
+    "klar": 1241,
+    "mehrere": 739,
+    "knapp": 1063,
+    "eindeutig": 403
+   },
+   "chartApplied": 1003,
+   "chartGapBB": 238.85,
+   "wallMs": 49578,
+   "usedIn": [
+    "dVa-R201",
+    "dVa-0201"
+   ]
+  },
+  {
+   "id": "dVa_g24-0_p23-Va_gemischt_100BB_s24514_2500",
+   "group": "dVa",
+   "hero": "g24-0",
+   "cond": "p23:Va|gemischt|100",
+   "seed": 24514,
+   "hands": 2500,
+   "decisions": 3458,
+   "invalid": 0,
+   "bb100": 102.68,
+   "bb100Adj": 128.06,
+   "sdHand": 23.42,
+   "sdHandAdj": 19.03,
+   "allinHands": 74,
+   "avgMs": 20.9,
+   "maxMs": 226,
+   "maxIters": 5000,
+   "labels": {
+    "check": 351,
+    "fold": 107,
+    "Raise Pot": 25,
+    "Overbet": 23,
+    "⅓": 61,
+    "call": 42,
+    "Raise 3,5×": 9,
+    "All-in": 62,
+    "Pot": 82,
+    "¾": 33,
+    "½": 25,
+    "Raise 2,5×": 21
+   },
+   "preLabels": {
+    "fold": 2017,
+    "call": 179,
+    "Open": 296,
+    "4-Bet": 9,
+    "3-Bet": 105,
+    "All-in": 11
+   },
+   "classes": {
+    "eindeutig": 368,
+    "klar": 1247,
+    "knapp": 1006,
+    "mehrere": 837
+   },
+   "chartApplied": 980,
+   "chartGapBB": 254,
+   "wallMs": 74995,
+   "usedIn": [
+    "dVa-R0",
+    "dVa-0201"
+   ]
+  },
+  {
+   "id": "dVa_g24-R_p23-Va_gemischt_100BB_s24514_2500",
+   "group": "dVa",
+   "hero": "g24-R",
+   "cond": "p23:Va|gemischt|100",
+   "seed": 24514,
+   "hands": 2500,
+   "decisions": 3441,
+   "invalid": 0,
+   "bb100": 133.07,
+   "bb100Adj": 187.15,
+   "sdHand": 21.53,
+   "sdHandAdj": 18.35,
+   "allinHands": 63,
+   "avgMs": 21.2,
+   "maxMs": 194,
+   "maxIters": 5000,
+   "labels": {
+    "check": 356,
+    "fold": 115,
+    "Overbet": 24,
+    "⅓": 61,
+    "call": 59,
+    "Raise 2,5×": 13,
+    "All-in": 50,
+    "Pot": 82,
+    "¾": 33,
+    "½": 26,
+    "Raise Pot": 5
+   },
+   "preLabels": {
+    "fold": 2017,
+    "call": 179,
+    "Open": 296,
+    "4-Bet": 9,
+    "3-Bet": 105,
+    "All-in": 11
+   },
+   "classes": {
+    "eindeutig": 386,
+    "klar": 1257,
+    "knapp": 995,
+    "mehrere": 803
+   },
+   "chartApplied": 980,
+   "chartGapBB": 254,
+   "wallMs": 75659,
+   "usedIn": [
+    "dVa-R0",
+    "dVa-R201"
+   ]
+  },
+  {
+   "id": "dVa_coach201-gto_p23-Va_gemischt_100BB_s24514_2500",
+   "group": "dVa",
+   "hero": "coach201-gto",
+   "cond": "p23:Va|gemischt|100",
+   "seed": 24514,
+   "hands": 2500,
+   "decisions": 3433,
+   "invalid": 0,
+   "bb100": 147.44,
+   "bb100Adj": 214.81,
+   "sdHand": 20.75,
+   "sdHandAdj": 18.08,
+   "allinHands": 62,
+   "avgMs": 13,
+   "maxMs": 149,
+   "maxIters": 5000,
+   "labels": {
+    "fold": 105,
+    "check": 376,
+    "Overbet": 33,
+    "⅓": 63,
+    "call": 56,
+    "Raise 2,5×": 16,
+    "All-in": 54,
+    "½": 19,
+    "Pot": 69,
+    "Raise Pot": 5,
+    "¾": 19,
+    "Raise 3,5×": 1
+   },
+   "preLabels": {
+    "fold": 2029,
+    "call": 167,
+    "Open": 296,
+    "4-Bet": 9,
+    "3-Bet": 105,
+    "All-in": 11
+   },
+   "classes": {
+    "eindeutig": 397,
+    "klar": 1223,
+    "knapp": 1085,
+    "mehrere": 728
+   },
+   "chartApplied": 965,
+   "chartGapBB": 225.98,
+   "wallMs": 47097,
+   "usedIn": [
+    "dVa-R201",
+    "dVa-0201"
+   ]
+  },
+  {
+   "id": "dVa_g24-0_p23-Va_gemischt_100BB_s24515_2500",
+   "group": "dVa",
+   "hero": "g24-0",
+   "cond": "p23:Va|gemischt|100",
+   "seed": 24515,
+   "hands": 2500,
+   "decisions": 3417,
+   "invalid": 0,
+   "bb100": 47.5,
+   "bb100Adj": 74.15,
+   "sdHand": 20.69,
+   "sdHandAdj": 17.24,
+   "allinHands": 50,
+   "avgMs": 20.9,
+   "maxMs": 290,
+   "maxIters": 5000,
+   "labels": {
+    "check": 332,
+    "⅓": 59,
+    "fold": 125,
+    "¾": 30,
+    "call": 46,
+    "Raise 2,5×": 25,
+    "All-in": 49,
+    "Pot": 84,
+    "Overbet": 19,
+    "½": 38,
+    "Raise 3,5×": 6,
+    "Raise Pot": 20
+   },
+   "preLabels": {
+    "fold": 1981,
+    "3-Bet": 102,
+    "Open": 320,
+    "call": 170,
+    "4-Bet": 7,
+    "All-in": 4
+   },
+   "classes": {
+    "mehrere": 833,
+    "klar": 1197,
+    "knapp": 1037,
+    "eindeutig": 350
+   },
+   "chartApplied": 957,
+   "chartGapBB": 237.08,
+   "wallMs": 74036,
+   "usedIn": [
+    "dVa-R0",
+    "dVa-0201"
+   ]
+  },
+  {
+   "id": "dVa_g24-R_p23-Va_gemischt_100BB_s24515_2500",
+   "group": "dVa",
+   "hero": "g24-R",
+   "cond": "p23:Va|gemischt|100",
+   "seed": 24515,
+   "hands": 2500,
+   "decisions": 3399,
+   "invalid": 0,
+   "bb100": 108.97,
+   "bb100Adj": 116.21,
+   "sdHand": 19.31,
+   "sdHandAdj": 16.59,
+   "allinHands": 37,
+   "avgMs": 20.7,
+   "maxMs": 208,
+   "maxIters": 5000,
+   "labels": {
+    "check": 324,
+    "⅓": 59,
+    "fold": 139,
+    "¾": 30,
+    "call": 65,
+    "Raise Pot": 6,
+    "Pot": 84,
+    "Overbet": 22,
+    "All-in": 38,
+    "½": 38,
+    "Raise 3,5×": 2,
+    "Raise 2,5×": 8
+   },
+   "preLabels": {
+    "fold": 1981,
+    "3-Bet": 102,
+    "Open": 320,
+    "call": 170,
+    "4-Bet": 7,
+    "All-in": 4
+   },
+   "classes": {
+    "mehrere": 793,
+    "klar": 1221,
+    "knapp": 1011,
+    "eindeutig": 374
+   },
+   "chartApplied": 957,
+   "chartGapBB": 237.08,
+   "wallMs": 72676,
+   "usedIn": [
+    "dVa-R0",
+    "dVa-R201"
+   ]
+  },
+  {
+   "id": "dVa_coach201-gto_p23-Va_gemischt_100BB_s24515_2500",
+   "group": "dVa",
+   "hero": "coach201-gto",
+   "cond": "p23:Va|gemischt|100",
+   "seed": 24515,
+   "hands": 2500,
+   "decisions": 3366,
+   "invalid": 0,
+   "bb100": 97.53,
+   "bb100Adj": 103.86,
+   "sdHand": 18.13,
+   "sdHandAdj": 15.42,
+   "allinHands": 44,
+   "avgMs": 12.9,
+   "maxMs": 179,
+   "maxIters": 5000,
+   "labels": {
+    "check": 319,
+    "⅓": 63,
+    "fold": 120,
+    "Pot": 67,
+    "All-in": 54,
+    "call": 59,
+    "Raise Pot": 9,
+    "Overbet": 37,
+    "½": 21,
+    "¾": 20,
+    "Raise 2,5×": 10,
+    "Raise 3,5×": 1
+   },
+   "preLabels": {
+    "fold": 2000,
+    "3-Bet": 102,
+    "Open": 320,
+    "4-Bet": 7,
+    "call": 153,
+    "All-in": 4
+   },
+   "classes": {
+    "mehrere": 734,
+    "klar": 1197,
+    "knapp": 1057,
+    "eindeutig": 377,
+    "unsicher": 1
+   },
+   "chartApplied": 949,
+   "chartGapBB": 221.84,
+   "wallMs": 45865,
+   "usedIn": [
+    "dVa-R201",
+    "dVa-0201"
+   ]
+  },
+  {
+   "id": "dVa_g24-0_p23-Va_gemischt_100BB_s24516_2500",
+   "group": "dVa",
+   "hero": "g24-0",
+   "cond": "p23:Va|gemischt|100",
+   "seed": 24516,
+   "hands": 2500,
+   "decisions": 3462,
+   "invalid": 0,
+   "bb100": 186.38,
+   "bb100Adj": 167.22,
+   "sdHand": 26.95,
+   "sdHandAdj": 20.14,
+   "allinHands": 80,
+   "avgMs": 22.9,
+   "maxMs": 229,
+   "maxIters": 5000,
+   "labels": {
+    "Pot": 93,
+    "fold": 116,
+    "¾": 31,
+    "Raise 2,5×": 21,
+    "check": 313,
+    "Raise Pot": 28,
+    "All-in": 66,
+    "⅓": 62,
+    "½": 31,
+    "Raise 3,5×": 8,
+    "call": 57,
+    "Overbet": 22,
+    "andere": 2
+   },
+   "preLabels": {
+    "fold": 2007,
+    "3-Bet": 124,
+    "Open": 252,
+    "call": 201,
+    "4-Bet": 13,
+    "All-in": 15
+   },
+   "classes": {
+    "klar": 1192,
+    "eindeutig": 408,
+    "knapp": 1002,
+    "mehrere": 860
+   },
+   "chartApplied": 940,
+   "chartGapBB": 353.37,
+   "wallMs": 82064,
+   "usedIn": [
+    "dVa-R0",
+    "dVa-0201"
+   ]
+  },
+  {
+   "id": "dVa_g24-R_p23-Va_gemischt_100BB_s24516_2500",
+   "group": "dVa",
+   "hero": "g24-R",
+   "cond": "p23:Va|gemischt|100",
+   "seed": 24516,
+   "hands": 2500,
+   "decisions": 3443,
+   "invalid": 0,
+   "bb100": 204.11,
+   "bb100Adj": 217.53,
+   "sdHand": 25.4,
+   "sdHandAdj": 19.18,
+   "allinHands": 64,
+   "avgMs": 22.3,
+   "maxMs": 367,
+   "maxIters": 5000,
+   "labels": {
+    "Pot": 94,
+    "fold": 131,
+    "¾": 30,
+    "call": 76,
+    "check": 312,
+    "All-in": 55,
+    "⅓": 61,
+    "½": 31,
+    "Overbet": 23,
+    "Raise Pot": 9,
+    "Raise 2,5×": 7,
+    "andere": 1,
+    "Raise 3,5×": 1
+   },
+   "preLabels": {
+    "fold": 2007,
+    "3-Bet": 124,
+    "Open": 252,
+    "call": 201,
+    "4-Bet": 13,
+    "All-in": 15
+   },
+   "classes": {
+    "klar": 1217,
+    "eindeutig": 424,
+    "knapp": 1001,
+    "mehrere": 801
+   },
+   "chartApplied": 940,
+   "chartGapBB": 353.37,
+   "wallMs": 79554,
+   "usedIn": [
+    "dVa-R0",
+    "dVa-R201"
+   ]
+  },
+  {
+   "id": "dVa_coach201-gto_p23-Va_gemischt_100BB_s24516_2500",
+   "group": "dVa",
+   "hero": "coach201-gto",
+   "cond": "p23:Va|gemischt|100",
+   "seed": 24516,
+   "hands": 2500,
+   "decisions": 3395,
+   "invalid": 0,
+   "bb100": 213.11,
+   "bb100Adj": 229.14,
+   "sdHand": 24.96,
+   "sdHandAdj": 20.67,
+   "allinHands": 62,
+   "avgMs": 13,
+   "maxMs": 185,
+   "maxIters": 5000,
+   "labels": {
+    "Pot": 74,
+    "fold": 118,
+    "All-in": 59,
+    "check": 307,
+    "Raise 2,5×": 20,
+    "¾": 17,
+    "call": 63,
+    "⅓": 52,
+    "½": 32,
+    "Overbet": 32,
+    "Raise Pot": 10,
+    "Raise 3,5×": 1
+   },
+   "preLabels": {
+    "fold": 2033,
+    "3-Bet": 125,
+    "Open": 252,
+    "call": 172,
+    "4-Bet": 13,
+    "All-in": 15
+   },
+   "classes": {
+    "klar": 1175,
+    "eindeutig": 435,
+    "knapp": 1031,
+    "mehrere": 754
+   },
+   "chartApplied": 931,
+   "chartGapBB": 238.84,
+   "wallMs": 46623,
+   "usedIn": [
+    "dVa-R201",
+    "dVa-0201"
+   ]
+  }
+ ],
+ "absolute": [
+  {
+   "group": "dTr",
+   "hero": "coach201-gto",
+   "heroName": "Coach 2.0.1 (gleichgewichtsnah)",
+   "cond": "p23:Tr|gemischt|100",
+   "condName": "p23:Tr, 100 BB",
+   "startBB": 100,
+   "runs": [
+    "dTr_coach201-gto_p23-Tr_gemischt_100BB_s24501_2500",
+    "dTr_coach201-gto_p23-Tr_gemischt_100BB_s24502_2500",
+    "dTr_coach201-gto_p23-Tr_gemischt_100BB_s24503_2500",
+    "dTr_coach201-gto_p23-Tr_gemischt_100BB_s24504_2500",
+    "dTr_coach201-gto_p23-Tr_gemischt_100BB_s24505_2500",
+    "dTr_coach201-gto_p23-Tr_gemischt_100BB_s24506_2500"
+   ],
+   "seeds": [
+    24501,
+    24502,
+    24503,
+    24504,
+    24505,
+    24506
+   ],
+   "adj": {
+    "bb100": 132.37,
+    "lo": 111.52,
+    "hi": 153.72,
+    "se": 10.67,
+    "hands": 15000,
+    "blocks": 30
+   },
+   "raw": {
+    "bb100": 128.81,
+    "lo": 101.48,
+    "hi": 156.66,
+    "se": 14.3,
+    "hands": 15000,
+    "blocks": 30
+   },
+   "decisions": 20109,
+   "invalid": 0
+  },
+  {
+   "group": "dTr",
+   "hero": "g24-0",
+   "heroName": "gleichgewichtsnah, Stand 2.3",
+   "cond": "p23:Tr|gemischt|100",
+   "condName": "p23:Tr, 100 BB",
+   "startBB": 100,
+   "runs": [
+    "dTr_g24-0_p23-Tr_gemischt_100BB_s24501_2500",
+    "dTr_g24-0_p23-Tr_gemischt_100BB_s24502_2500",
+    "dTr_g24-0_p23-Tr_gemischt_100BB_s24503_2500",
+    "dTr_g24-0_p23-Tr_gemischt_100BB_s24504_2500",
+    "dTr_g24-0_p23-Tr_gemischt_100BB_s24505_2500",
+    "dTr_g24-0_p23-Tr_gemischt_100BB_s24506_2500"
+   ],
+   "seeds": [
+    24501,
+    24502,
+    24503,
+    24504,
+    24505,
+    24506
+   ],
+   "adj": {
+    "bb100": 85.26,
+    "lo": 60.41,
+    "hi": 111.22,
+    "se": 12.63,
+    "hands": 15000,
+    "blocks": 30
+   },
+   "raw": {
+    "bb100": 81.52,
+    "lo": 47.01,
+    "hi": 115.75,
+    "se": 17.02,
+    "hands": 15000,
+    "blocks": 30
+   },
+   "decisions": 20489,
+   "invalid": 0
+  },
+  {
+   "group": "dTr",
+   "hero": "g24-R",
+   "heroName": "gleichgewichtsnah, Fold-Korrektur für Raises (2.0.1)",
+   "cond": "p23:Tr|gemischt|100",
+   "condName": "p23:Tr, 100 BB",
+   "startBB": 100,
+   "runs": [
+    "dTr_g24-R_p23-Tr_gemischt_100BB_s24501_2500",
+    "dTr_g24-R_p23-Tr_gemischt_100BB_s24502_2500",
+    "dTr_g24-R_p23-Tr_gemischt_100BB_s24503_2500",
+    "dTr_g24-R_p23-Tr_gemischt_100BB_s24504_2500",
+    "dTr_g24-R_p23-Tr_gemischt_100BB_s24505_2500",
+    "dTr_g24-R_p23-Tr_gemischt_100BB_s24506_2500"
+   ],
+   "seeds": [
+    24501,
+    24502,
+    24503,
+    24504,
+    24505,
+    24506
+   ],
+   "adj": {
+    "bb100": 137.51,
+    "lo": 115.72,
+    "hi": 159.72,
+    "se": 11.21,
+    "hands": 15000,
+    "blocks": 30
+   },
+   "raw": {
+    "bb100": 130.53,
+    "lo": 99.83,
+    "hi": 161.23,
+    "se": 15.6,
+    "hands": 15000,
+    "blocks": 30
+   },
+   "decisions": 20378,
+   "invalid": 0
+  },
+  {
+   "group": "dVa",
+   "hero": "coach201-gto",
+   "heroName": "Coach 2.0.1 (gleichgewichtsnah)",
+   "cond": "p23:Va|gemischt|100",
+   "condName": "p23:Va, 100 BB",
+   "startBB": 100,
+   "runs": [
+    "dVa_coach201-gto_p23-Va_gemischt_100BB_s24511_2500",
+    "dVa_coach201-gto_p23-Va_gemischt_100BB_s24512_2500",
+    "dVa_coach201-gto_p23-Va_gemischt_100BB_s24513_2500",
+    "dVa_coach201-gto_p23-Va_gemischt_100BB_s24514_2500",
+    "dVa_coach201-gto_p23-Va_gemischt_100BB_s24515_2500",
+    "dVa_coach201-gto_p23-Va_gemischt_100BB_s24516_2500"
+   ],
+   "seeds": [
+    24511,
+    24512,
+    24513,
+    24514,
+    24515,
+    24516
+   ],
+   "adj": {
+    "bb100": 183.24,
+    "lo": 159.33,
+    "hi": 208.73,
+    "se": 12.97,
+    "hands": 15000,
+    "blocks": 30
+   },
+   "raw": {
+    "bb100": 174.06,
+    "lo": 146.48,
+    "hi": 203.24,
+    "se": 14.47,
+    "hands": 15000,
+    "blocks": 30
+   },
+   "decisions": 20382,
+   "invalid": 0
+  },
+  {
+   "group": "dVa",
+   "hero": "g24-0",
+   "heroName": "gleichgewichtsnah, Stand 2.3",
+   "cond": "p23:Va|gemischt|100",
+   "condName": "p23:Va, 100 BB",
+   "startBB": 100,
+   "runs": [
+    "dVa_g24-0_p23-Va_gemischt_100BB_s24511_2500",
+    "dVa_g24-0_p23-Va_gemischt_100BB_s24512_2500",
+    "dVa_g24-0_p23-Va_gemischt_100BB_s24513_2500",
+    "dVa_g24-0_p23-Va_gemischt_100BB_s24514_2500",
+    "dVa_g24-0_p23-Va_gemischt_100BB_s24515_2500",
+    "dVa_g24-0_p23-Va_gemischt_100BB_s24516_2500"
+   ],
+   "seeds": [
+    24511,
+    24512,
+    24513,
+    24514,
+    24515,
+    24516
+   ],
+   "adj": {
+    "bb100": 114.87,
+    "lo": 90.62,
+    "hi": 140.29,
+    "se": 12.66,
+    "hands": 15000,
+    "blocks": 30
+   },
+   "raw": {
+    "bb100": 108.61,
+    "lo": 76.01,
+    "hi": 146.1,
+    "se": 17.75,
+    "hands": 15000,
+    "blocks": 30
+   },
+   "decisions": 20681,
+   "invalid": 0
+  },
+  {
+   "group": "dVa",
+   "hero": "g24-R",
+   "heroName": "gleichgewichtsnah, Fold-Korrektur für Raises (2.0.1)",
+   "cond": "p23:Va|gemischt|100",
+   "condName": "p23:Va, 100 BB",
+   "startBB": 100,
+   "runs": [
+    "dVa_g24-R_p23-Va_gemischt_100BB_s24511_2500",
+    "dVa_g24-R_p23-Va_gemischt_100BB_s24512_2500",
+    "dVa_g24-R_p23-Va_gemischt_100BB_s24513_2500",
+    "dVa_g24-R_p23-Va_gemischt_100BB_s24514_2500",
+    "dVa_g24-R_p23-Va_gemischt_100BB_s24515_2500",
+    "dVa_g24-R_p23-Va_gemischt_100BB_s24516_2500"
+   ],
+   "seeds": [
+    24511,
+    24512,
+    24513,
+    24514,
+    24515,
+    24516
+   ],
+   "adj": {
+    "bb100": 157.94,
+    "lo": 132.34,
+    "hi": 185.08,
+    "se": 13.41,
+    "hands": 15000,
+    "blocks": 30
+   },
+   "raw": {
+    "bb100": 148.24,
+    "lo": 115.76,
+    "hi": 181.81,
+    "se": 17.2,
+    "hands": 15000,
+    "blocks": 30
+   },
+   "decisions": 20525,
+   "invalid": 0
+  }
+ ],
+ "comparisons": [
+  {
+   "id": "dTr-R0",
+   "title": "dTr: g24-R gegen g24-0",
+   "group": "dTr",
+   "a": "g24-R",
+   "b": "g24-0",
+   "aName": "gleichgewichtsnah, Fold-Korrektur für Raises (2.0.1)",
+   "bName": "gleichgewichtsnah, Stand 2.3",
+   "adj": {
+    "diff": 52.25,
+    "lo": 41.07,
+    "hi": 63.38,
+    "se": 5.67,
+    "hands": 15000,
+    "pairs": 6,
+    "blocks": 30
+   },
+   "raw": {
+    "diff": 49.02,
+    "lo": 32.4,
+    "hi": 65.02,
+    "se": 8.49,
+    "hands": 15000,
+    "pairs": 6,
+    "blocks": 30
+   },
+   "decisionsA": 20378,
+   "decisionsB": 20489,
+   "invalidA": 0,
+   "invalidB": 0,
+   "seeds": [
+    24501,
+    24502,
+    24503,
+    24504,
+    24505,
+    24506
+   ],
+   "runsA": [
+    "dTr_g24-R_p23-Tr_gemischt_100BB_s24501_2500",
+    "dTr_g24-R_p23-Tr_gemischt_100BB_s24502_2500",
+    "dTr_g24-R_p23-Tr_gemischt_100BB_s24503_2500",
+    "dTr_g24-R_p23-Tr_gemischt_100BB_s24504_2500",
+    "dTr_g24-R_p23-Tr_gemischt_100BB_s24505_2500",
+    "dTr_g24-R_p23-Tr_gemischt_100BB_s24506_2500"
+   ],
+   "runsB": [
+    "dTr_g24-0_p23-Tr_gemischt_100BB_s24501_2500",
+    "dTr_g24-0_p23-Tr_gemischt_100BB_s24502_2500",
+    "dTr_g24-0_p23-Tr_gemischt_100BB_s24503_2500",
+    "dTr_g24-0_p23-Tr_gemischt_100BB_s24504_2500",
+    "dTr_g24-0_p23-Tr_gemischt_100BB_s24505_2500",
+    "dTr_g24-0_p23-Tr_gemischt_100BB_s24506_2500"
+   ],
+   "verdict": "belegt besser",
+   "aAhead": 6,
+   "split": {},
+   "sharedRuns": [
+    "dTr_g24-0_p23-Tr_gemischt_100BB_s24501_2500",
+    "dTr_g24-0_p23-Tr_gemischt_100BB_s24502_2500",
+    "dTr_g24-0_p23-Tr_gemischt_100BB_s24503_2500",
+    "dTr_g24-0_p23-Tr_gemischt_100BB_s24504_2500",
+    "dTr_g24-0_p23-Tr_gemischt_100BB_s24505_2500",
+    "dTr_g24-0_p23-Tr_gemischt_100BB_s24506_2500",
+    "dTr_g24-R_p23-Tr_gemischt_100BB_s24501_2500",
+    "dTr_g24-R_p23-Tr_gemischt_100BB_s24502_2500",
+    "dTr_g24-R_p23-Tr_gemischt_100BB_s24503_2500",
+    "dTr_g24-R_p23-Tr_gemischt_100BB_s24504_2500",
+    "dTr_g24-R_p23-Tr_gemischt_100BB_s24505_2500",
+    "dTr_g24-R_p23-Tr_gemischt_100BB_s24506_2500"
+   ],
+   "sharedWith": [
+    "dTr-0201",
+    "dTr-R201"
+   ]
+  },
+  {
+   "id": "dTr-R201",
+   "title": "dTr: g24-R gegen 2.0.1",
+   "group": "dTr",
+   "a": "g24-R",
+   "b": "coach201-gto",
+   "aName": "gleichgewichtsnah, Fold-Korrektur für Raises (2.0.1)",
+   "bName": "Coach 2.0.1 (gleichgewichtsnah)",
+   "adj": {
+    "diff": 5.14,
+    "lo": -7.33,
+    "hi": 17.66,
+    "se": 6.43,
+    "hands": 15000,
+    "pairs": 6,
+    "blocks": 30
+   },
+   "raw": {
+    "diff": 1.72,
+    "lo": -11.56,
+    "hi": 15.49,
+    "se": 6.86,
+    "hands": 15000,
+    "pairs": 6,
+    "blocks": 30
+   },
+   "decisionsA": 20378,
+   "decisionsB": 20109,
+   "invalidA": 0,
+   "invalidB": 0,
+   "seeds": [
+    24501,
+    24502,
+    24503,
+    24504,
+    24505,
+    24506
+   ],
+   "runsA": [
+    "dTr_g24-R_p23-Tr_gemischt_100BB_s24501_2500",
+    "dTr_g24-R_p23-Tr_gemischt_100BB_s24502_2500",
+    "dTr_g24-R_p23-Tr_gemischt_100BB_s24503_2500",
+    "dTr_g24-R_p23-Tr_gemischt_100BB_s24504_2500",
+    "dTr_g24-R_p23-Tr_gemischt_100BB_s24505_2500",
+    "dTr_g24-R_p23-Tr_gemischt_100BB_s24506_2500"
+   ],
+   "runsB": [
+    "dTr_coach201-gto_p23-Tr_gemischt_100BB_s24501_2500",
+    "dTr_coach201-gto_p23-Tr_gemischt_100BB_s24502_2500",
+    "dTr_coach201-gto_p23-Tr_gemischt_100BB_s24503_2500",
+    "dTr_coach201-gto_p23-Tr_gemischt_100BB_s24504_2500",
+    "dTr_coach201-gto_p23-Tr_gemischt_100BB_s24505_2500",
+    "dTr_coach201-gto_p23-Tr_gemischt_100BB_s24506_2500"
+   ],
+   "verdict": "nicht belegt",
+   "aAhead": 3,
+   "split": {},
+   "sharedRuns": [
+    "dTr_coach201-gto_p23-Tr_gemischt_100BB_s24501_2500",
+    "dTr_coach201-gto_p23-Tr_gemischt_100BB_s24502_2500",
+    "dTr_coach201-gto_p23-Tr_gemischt_100BB_s24503_2500",
+    "dTr_coach201-gto_p23-Tr_gemischt_100BB_s24504_2500",
+    "dTr_coach201-gto_p23-Tr_gemischt_100BB_s24505_2500",
+    "dTr_coach201-gto_p23-Tr_gemischt_100BB_s24506_2500",
+    "dTr_g24-R_p23-Tr_gemischt_100BB_s24501_2500",
+    "dTr_g24-R_p23-Tr_gemischt_100BB_s24502_2500",
+    "dTr_g24-R_p23-Tr_gemischt_100BB_s24503_2500",
+    "dTr_g24-R_p23-Tr_gemischt_100BB_s24504_2500",
+    "dTr_g24-R_p23-Tr_gemischt_100BB_s24505_2500",
+    "dTr_g24-R_p23-Tr_gemischt_100BB_s24506_2500"
+   ],
+   "sharedWith": [
+    "dTr-0201",
+    "dTr-R0"
+   ]
+  },
+  {
+   "id": "dTr-0201",
+   "title": "dTr: g24-0 gegen 2.0.1",
+   "group": "dTr",
+   "a": "g24-0",
+   "b": "coach201-gto",
+   "aName": "gleichgewichtsnah, Stand 2.3",
+   "bName": "Coach 2.0.1 (gleichgewichtsnah)",
+   "adj": {
+    "diff": -47.11,
+    "lo": -63.33,
+    "hi": -31.49,
+    "se": 8.03,
+    "hands": 15000,
+    "pairs": 6,
+    "blocks": 30
+   },
+   "raw": {
+    "diff": -47.3,
+    "lo": -68.64,
+    "hi": -23.49,
+    "se": 11.53,
+    "hands": 15000,
+    "pairs": 6,
+    "blocks": 30
+   },
+   "decisionsA": 20489,
+   "decisionsB": 20109,
+   "invalidA": 0,
+   "invalidB": 0,
+   "seeds": [
+    24501,
+    24502,
+    24503,
+    24504,
+    24505,
+    24506
+   ],
+   "runsA": [
+    "dTr_g24-0_p23-Tr_gemischt_100BB_s24501_2500",
+    "dTr_g24-0_p23-Tr_gemischt_100BB_s24502_2500",
+    "dTr_g24-0_p23-Tr_gemischt_100BB_s24503_2500",
+    "dTr_g24-0_p23-Tr_gemischt_100BB_s24504_2500",
+    "dTr_g24-0_p23-Tr_gemischt_100BB_s24505_2500",
+    "dTr_g24-0_p23-Tr_gemischt_100BB_s24506_2500"
+   ],
+   "runsB": [
+    "dTr_coach201-gto_p23-Tr_gemischt_100BB_s24501_2500",
+    "dTr_coach201-gto_p23-Tr_gemischt_100BB_s24502_2500",
+    "dTr_coach201-gto_p23-Tr_gemischt_100BB_s24503_2500",
+    "dTr_coach201-gto_p23-Tr_gemischt_100BB_s24504_2500",
+    "dTr_coach201-gto_p23-Tr_gemischt_100BB_s24505_2500",
+    "dTr_coach201-gto_p23-Tr_gemischt_100BB_s24506_2500"
+   ],
+   "verdict": "belegt schlechter",
+   "aAhead": 0,
+   "split": {},
+   "sharedRuns": [
+    "dTr_coach201-gto_p23-Tr_gemischt_100BB_s24501_2500",
+    "dTr_coach201-gto_p23-Tr_gemischt_100BB_s24502_2500",
+    "dTr_coach201-gto_p23-Tr_gemischt_100BB_s24503_2500",
+    "dTr_coach201-gto_p23-Tr_gemischt_100BB_s24504_2500",
+    "dTr_coach201-gto_p23-Tr_gemischt_100BB_s24505_2500",
+    "dTr_coach201-gto_p23-Tr_gemischt_100BB_s24506_2500",
+    "dTr_g24-0_p23-Tr_gemischt_100BB_s24501_2500",
+    "dTr_g24-0_p23-Tr_gemischt_100BB_s24502_2500",
+    "dTr_g24-0_p23-Tr_gemischt_100BB_s24503_2500",
+    "dTr_g24-0_p23-Tr_gemischt_100BB_s24504_2500",
+    "dTr_g24-0_p23-Tr_gemischt_100BB_s24505_2500",
+    "dTr_g24-0_p23-Tr_gemischt_100BB_s24506_2500"
+   ],
+   "sharedWith": [
+    "dTr-R201",
+    "dTr-R0"
+   ]
+  },
+  {
+   "id": "dVa-R0",
+   "title": "dVa: g24-R gegen g24-0",
+   "group": "dVa",
+   "a": "g24-R",
+   "b": "g24-0",
+   "aName": "gleichgewichtsnah, Fold-Korrektur für Raises (2.0.1)",
+   "bName": "gleichgewichtsnah, Stand 2.3",
+   "adj": {
+    "diff": 43.07,
+    "lo": 32.35,
+    "hi": 55.17,
+    "se": 5.9,
+    "hands": 15000,
+    "pairs": 6,
+    "blocks": 30
+   },
+   "raw": {
+    "diff": 39.64,
+    "lo": 26.67,
+    "hi": 52.92,
+    "se": 6.6,
+    "hands": 15000,
+    "pairs": 6,
+    "blocks": 30
+   },
+   "decisionsA": 20525,
+   "decisionsB": 20681,
+   "invalidA": 0,
+   "invalidB": 0,
+   "seeds": [
+    24511,
+    24512,
+    24513,
+    24514,
+    24515,
+    24516
+   ],
+   "runsA": [
+    "dVa_g24-R_p23-Va_gemischt_100BB_s24511_2500",
+    "dVa_g24-R_p23-Va_gemischt_100BB_s24512_2500",
+    "dVa_g24-R_p23-Va_gemischt_100BB_s24513_2500",
+    "dVa_g24-R_p23-Va_gemischt_100BB_s24514_2500",
+    "dVa_g24-R_p23-Va_gemischt_100BB_s24515_2500",
+    "dVa_g24-R_p23-Va_gemischt_100BB_s24516_2500"
+   ],
+   "runsB": [
+    "dVa_g24-0_p23-Va_gemischt_100BB_s24511_2500",
+    "dVa_g24-0_p23-Va_gemischt_100BB_s24512_2500",
+    "dVa_g24-0_p23-Va_gemischt_100BB_s24513_2500",
+    "dVa_g24-0_p23-Va_gemischt_100BB_s24514_2500",
+    "dVa_g24-0_p23-Va_gemischt_100BB_s24515_2500",
+    "dVa_g24-0_p23-Va_gemischt_100BB_s24516_2500"
+   ],
+   "verdict": "belegt besser",
+   "aAhead": 6,
+   "split": {},
+   "sharedRuns": [
+    "dVa_g24-0_p23-Va_gemischt_100BB_s24511_2500",
+    "dVa_g24-0_p23-Va_gemischt_100BB_s24512_2500",
+    "dVa_g24-0_p23-Va_gemischt_100BB_s24513_2500",
+    "dVa_g24-0_p23-Va_gemischt_100BB_s24514_2500",
+    "dVa_g24-0_p23-Va_gemischt_100BB_s24515_2500",
+    "dVa_g24-0_p23-Va_gemischt_100BB_s24516_2500",
+    "dVa_g24-R_p23-Va_gemischt_100BB_s24511_2500",
+    "dVa_g24-R_p23-Va_gemischt_100BB_s24512_2500",
+    "dVa_g24-R_p23-Va_gemischt_100BB_s24513_2500",
+    "dVa_g24-R_p23-Va_gemischt_100BB_s24514_2500",
+    "dVa_g24-R_p23-Va_gemischt_100BB_s24515_2500",
+    "dVa_g24-R_p23-Va_gemischt_100BB_s24516_2500"
+   ],
+   "sharedWith": [
+    "dVa-0201",
+    "dVa-R201"
+   ]
+  },
+  {
+   "id": "dVa-R201",
+   "title": "dVa: g24-R gegen 2.0.1",
+   "group": "dVa",
+   "a": "g24-R",
+   "b": "coach201-gto",
+   "aName": "gleichgewichtsnah, Fold-Korrektur für Raises (2.0.1)",
+   "bName": "Coach 2.0.1 (gleichgewichtsnah)",
+   "adj": {
+    "diff": -25.3,
+    "lo": -43.28,
+    "hi": -7.74,
+    "se": 9.24,
+    "hands": 15000,
+    "pairs": 6,
+    "blocks": 30
+   },
+   "raw": {
+    "diff": -25.82,
+    "lo": -45.03,
+    "hi": -6.14,
+    "se": 9.8,
+    "hands": 15000,
+    "pairs": 6,
+    "blocks": 30
+   },
+   "decisionsA": 20525,
+   "decisionsB": 20382,
+   "invalidA": 0,
+   "invalidB": 0,
+   "seeds": [
+    24511,
+    24512,
+    24513,
+    24514,
+    24515,
+    24516
+   ],
+   "runsA": [
+    "dVa_g24-R_p23-Va_gemischt_100BB_s24511_2500",
+    "dVa_g24-R_p23-Va_gemischt_100BB_s24512_2500",
+    "dVa_g24-R_p23-Va_gemischt_100BB_s24513_2500",
+    "dVa_g24-R_p23-Va_gemischt_100BB_s24514_2500",
+    "dVa_g24-R_p23-Va_gemischt_100BB_s24515_2500",
+    "dVa_g24-R_p23-Va_gemischt_100BB_s24516_2500"
+   ],
+   "runsB": [
+    "dVa_coach201-gto_p23-Va_gemischt_100BB_s24511_2500",
+    "dVa_coach201-gto_p23-Va_gemischt_100BB_s24512_2500",
+    "dVa_coach201-gto_p23-Va_gemischt_100BB_s24513_2500",
+    "dVa_coach201-gto_p23-Va_gemischt_100BB_s24514_2500",
+    "dVa_coach201-gto_p23-Va_gemischt_100BB_s24515_2500",
+    "dVa_coach201-gto_p23-Va_gemischt_100BB_s24516_2500"
+   ],
+   "verdict": "belegt schlechter",
+   "aAhead": 1,
+   "split": {},
+   "sharedRuns": [
+    "dVa_coach201-gto_p23-Va_gemischt_100BB_s24511_2500",
+    "dVa_coach201-gto_p23-Va_gemischt_100BB_s24512_2500",
+    "dVa_coach201-gto_p23-Va_gemischt_100BB_s24513_2500",
+    "dVa_coach201-gto_p23-Va_gemischt_100BB_s24514_2500",
+    "dVa_coach201-gto_p23-Va_gemischt_100BB_s24515_2500",
+    "dVa_coach201-gto_p23-Va_gemischt_100BB_s24516_2500",
+    "dVa_g24-R_p23-Va_gemischt_100BB_s24511_2500",
+    "dVa_g24-R_p23-Va_gemischt_100BB_s24512_2500",
+    "dVa_g24-R_p23-Va_gemischt_100BB_s24513_2500",
+    "dVa_g24-R_p23-Va_gemischt_100BB_s24514_2500",
+    "dVa_g24-R_p23-Va_gemischt_100BB_s24515_2500",
+    "dVa_g24-R_p23-Va_gemischt_100BB_s24516_2500"
+   ],
+   "sharedWith": [
+    "dVa-0201",
+    "dVa-R0"
+   ]
+  },
+  {
+   "id": "dVa-0201",
+   "title": "dVa: g24-0 gegen 2.0.1",
+   "group": "dVa",
+   "a": "g24-0",
+   "b": "coach201-gto",
+   "aName": "gleichgewichtsnah, Stand 2.3",
+   "bName": "Coach 2.0.1 (gleichgewichtsnah)",
+   "adj": {
+    "diff": -68.37,
+    "lo": -87.58,
+    "hi": -50.14,
+    "se": 9.47,
+    "hands": 15000,
+    "pairs": 6,
+    "blocks": 30
+   },
+   "raw": {
+    "diff": -65.46,
+    "lo": -83.75,
+    "hi": -45.07,
+    "se": 9.65,
+    "hands": 15000,
+    "pairs": 6,
+    "blocks": 30
+   },
+   "decisionsA": 20681,
+   "decisionsB": 20382,
+   "invalidA": 0,
+   "invalidB": 0,
+   "seeds": [
+    24511,
+    24512,
+    24513,
+    24514,
+    24515,
+    24516
+   ],
+   "runsA": [
+    "dVa_g24-0_p23-Va_gemischt_100BB_s24511_2500",
+    "dVa_g24-0_p23-Va_gemischt_100BB_s24512_2500",
+    "dVa_g24-0_p23-Va_gemischt_100BB_s24513_2500",
+    "dVa_g24-0_p23-Va_gemischt_100BB_s24514_2500",
+    "dVa_g24-0_p23-Va_gemischt_100BB_s24515_2500",
+    "dVa_g24-0_p23-Va_gemischt_100BB_s24516_2500"
+   ],
+   "runsB": [
+    "dVa_coach201-gto_p23-Va_gemischt_100BB_s24511_2500",
+    "dVa_coach201-gto_p23-Va_gemischt_100BB_s24512_2500",
+    "dVa_coach201-gto_p23-Va_gemischt_100BB_s24513_2500",
+    "dVa_coach201-gto_p23-Va_gemischt_100BB_s24514_2500",
+    "dVa_coach201-gto_p23-Va_gemischt_100BB_s24515_2500",
+    "dVa_coach201-gto_p23-Va_gemischt_100BB_s24516_2500"
+   ],
+   "verdict": "belegt schlechter",
+   "aAhead": 0,
+   "split": {},
+   "sharedRuns": [
+    "dVa_coach201-gto_p23-Va_gemischt_100BB_s24511_2500",
+    "dVa_coach201-gto_p23-Va_gemischt_100BB_s24512_2500",
+    "dVa_coach201-gto_p23-Va_gemischt_100BB_s24513_2500",
+    "dVa_coach201-gto_p23-Va_gemischt_100BB_s24514_2500",
+    "dVa_coach201-gto_p23-Va_gemischt_100BB_s24515_2500",
+    "dVa_coach201-gto_p23-Va_gemischt_100BB_s24516_2500",
+    "dVa_g24-0_p23-Va_gemischt_100BB_s24511_2500",
+    "dVa_g24-0_p23-Va_gemischt_100BB_s24512_2500",
+    "dVa_g24-0_p23-Va_gemischt_100BB_s24513_2500",
+    "dVa_g24-0_p23-Va_gemischt_100BB_s24514_2500",
+    "dVa_g24-0_p23-Va_gemischt_100BB_s24515_2500",
+    "dVa_g24-0_p23-Va_gemischt_100BB_s24516_2500"
+   ],
+   "sharedWith": [
+    "dVa-R201",
+    "dVa-R0"
+   ]
+  }
+ ],
+ "shared": [
+  {
+   "id": "dTr_g24-0_p23-Tr_gemischt_100BB_s24501_2500",
+   "hero": "g24-0",
+   "usedIn": [
+    "dTr-R0",
+    "dTr-0201"
+   ]
+  },
+  {
+   "id": "dTr_g24-R_p23-Tr_gemischt_100BB_s24501_2500",
+   "hero": "g24-R",
+   "usedIn": [
+    "dTr-R0",
+    "dTr-R201"
+   ]
+  },
+  {
+   "id": "dTr_coach201-gto_p23-Tr_gemischt_100BB_s24501_2500",
+   "hero": "coach201-gto",
+   "usedIn": [
+    "dTr-R201",
+    "dTr-0201"
+   ]
+  },
+  {
+   "id": "dTr_g24-0_p23-Tr_gemischt_100BB_s24502_2500",
+   "hero": "g24-0",
+   "usedIn": [
+    "dTr-R0",
+    "dTr-0201"
+   ]
+  },
+  {
+   "id": "dTr_g24-R_p23-Tr_gemischt_100BB_s24502_2500",
+   "hero": "g24-R",
+   "usedIn": [
+    "dTr-R0",
+    "dTr-R201"
+   ]
+  },
+  {
+   "id": "dTr_coach201-gto_p23-Tr_gemischt_100BB_s24502_2500",
+   "hero": "coach201-gto",
+   "usedIn": [
+    "dTr-R201",
+    "dTr-0201"
+   ]
+  },
+  {
+   "id": "dTr_g24-0_p23-Tr_gemischt_100BB_s24503_2500",
+   "hero": "g24-0",
+   "usedIn": [
+    "dTr-R0",
+    "dTr-0201"
+   ]
+  },
+  {
+   "id": "dTr_g24-R_p23-Tr_gemischt_100BB_s24503_2500",
+   "hero": "g24-R",
+   "usedIn": [
+    "dTr-R0",
+    "dTr-R201"
+   ]
+  },
+  {
+   "id": "dTr_coach201-gto_p23-Tr_gemischt_100BB_s24503_2500",
+   "hero": "coach201-gto",
+   "usedIn": [
+    "dTr-R201",
+    "dTr-0201"
+   ]
+  },
+  {
+   "id": "dTr_g24-0_p23-Tr_gemischt_100BB_s24504_2500",
+   "hero": "g24-0",
+   "usedIn": [
+    "dTr-R0",
+    "dTr-0201"
+   ]
+  },
+  {
+   "id": "dTr_g24-R_p23-Tr_gemischt_100BB_s24504_2500",
+   "hero": "g24-R",
+   "usedIn": [
+    "dTr-R0",
+    "dTr-R201"
+   ]
+  },
+  {
+   "id": "dTr_coach201-gto_p23-Tr_gemischt_100BB_s24504_2500",
+   "hero": "coach201-gto",
+   "usedIn": [
+    "dTr-R201",
+    "dTr-0201"
+   ]
+  },
+  {
+   "id": "dTr_g24-0_p23-Tr_gemischt_100BB_s24505_2500",
+   "hero": "g24-0",
+   "usedIn": [
+    "dTr-R0",
+    "dTr-0201"
+   ]
+  },
+  {
+   "id": "dTr_g24-R_p23-Tr_gemischt_100BB_s24505_2500",
+   "hero": "g24-R",
+   "usedIn": [
+    "dTr-R0",
+    "dTr-R201"
+   ]
+  },
+  {
+   "id": "dTr_coach201-gto_p23-Tr_gemischt_100BB_s24505_2500",
+   "hero": "coach201-gto",
+   "usedIn": [
+    "dTr-R201",
+    "dTr-0201"
+   ]
+  },
+  {
+   "id": "dTr_g24-0_p23-Tr_gemischt_100BB_s24506_2500",
+   "hero": "g24-0",
+   "usedIn": [
+    "dTr-R0",
+    "dTr-0201"
+   ]
+  },
+  {
+   "id": "dTr_g24-R_p23-Tr_gemischt_100BB_s24506_2500",
+   "hero": "g24-R",
+   "usedIn": [
+    "dTr-R0",
+    "dTr-R201"
+   ]
+  },
+  {
+   "id": "dTr_coach201-gto_p23-Tr_gemischt_100BB_s24506_2500",
+   "hero": "coach201-gto",
+   "usedIn": [
+    "dTr-R201",
+    "dTr-0201"
+   ]
+  },
+  {
+   "id": "dVa_g24-0_p23-Va_gemischt_100BB_s24511_2500",
+   "hero": "g24-0",
+   "usedIn": [
+    "dVa-R0",
+    "dVa-0201"
+   ]
+  },
+  {
+   "id": "dVa_g24-R_p23-Va_gemischt_100BB_s24511_2500",
+   "hero": "g24-R",
+   "usedIn": [
+    "dVa-R0",
+    "dVa-R201"
+   ]
+  },
+  {
+   "id": "dVa_coach201-gto_p23-Va_gemischt_100BB_s24511_2500",
+   "hero": "coach201-gto",
+   "usedIn": [
+    "dVa-R201",
+    "dVa-0201"
+   ]
+  },
+  {
+   "id": "dVa_g24-0_p23-Va_gemischt_100BB_s24512_2500",
+   "hero": "g24-0",
+   "usedIn": [
+    "dVa-R0",
+    "dVa-0201"
+   ]
+  },
+  {
+   "id": "dVa_g24-R_p23-Va_gemischt_100BB_s24512_2500",
+   "hero": "g24-R",
+   "usedIn": [
+    "dVa-R0",
+    "dVa-R201"
+   ]
+  },
+  {
+   "id": "dVa_coach201-gto_p23-Va_gemischt_100BB_s24512_2500",
+   "hero": "coach201-gto",
+   "usedIn": [
+    "dVa-R201",
+    "dVa-0201"
+   ]
+  },
+  {
+   "id": "dVa_g24-0_p23-Va_gemischt_100BB_s24513_2500",
+   "hero": "g24-0",
+   "usedIn": [
+    "dVa-R0",
+    "dVa-0201"
+   ]
+  },
+  {
+   "id": "dVa_g24-R_p23-Va_gemischt_100BB_s24513_2500",
+   "hero": "g24-R",
+   "usedIn": [
+    "dVa-R0",
+    "dVa-R201"
+   ]
+  },
+  {
+   "id": "dVa_coach201-gto_p23-Va_gemischt_100BB_s24513_2500",
+   "hero": "coach201-gto",
+   "usedIn": [
+    "dVa-R201",
+    "dVa-0201"
+   ]
+  },
+  {
+   "id": "dVa_g24-0_p23-Va_gemischt_100BB_s24514_2500",
+   "hero": "g24-0",
+   "usedIn": [
+    "dVa-R0",
+    "dVa-0201"
+   ]
+  },
+  {
+   "id": "dVa_g24-R_p23-Va_gemischt_100BB_s24514_2500",
+   "hero": "g24-R",
+   "usedIn": [
+    "dVa-R0",
+    "dVa-R201"
+   ]
+  },
+  {
+   "id": "dVa_coach201-gto_p23-Va_gemischt_100BB_s24514_2500",
+   "hero": "coach201-gto",
+   "usedIn": [
+    "dVa-R201",
+    "dVa-0201"
+   ]
+  },
+  {
+   "id": "dVa_g24-0_p23-Va_gemischt_100BB_s24515_2500",
+   "hero": "g24-0",
+   "usedIn": [
+    "dVa-R0",
+    "dVa-0201"
+   ]
+  },
+  {
+   "id": "dVa_g24-R_p23-Va_gemischt_100BB_s24515_2500",
+   "hero": "g24-R",
+   "usedIn": [
+    "dVa-R0",
+    "dVa-R201"
+   ]
+  },
+  {
+   "id": "dVa_coach201-gto_p23-Va_gemischt_100BB_s24515_2500",
+   "hero": "coach201-gto",
+   "usedIn": [
+    "dVa-R201",
+    "dVa-0201"
+   ]
+  },
+  {
+   "id": "dVa_g24-0_p23-Va_gemischt_100BB_s24516_2500",
+   "hero": "g24-0",
+   "usedIn": [
+    "dVa-R0",
+    "dVa-0201"
+   ]
+  },
+  {
+   "id": "dVa_g24-R_p23-Va_gemischt_100BB_s24516_2500",
+   "hero": "g24-R",
+   "usedIn": [
+    "dVa-R0",
+    "dVa-R201"
+   ]
+  },
+  {
+   "id": "dVa_coach201-gto_p23-Va_gemischt_100BB_s24516_2500",
+   "hero": "coach201-gto",
+   "usedIn": [
+    "dVa-R201",
+    "dVa-0201"
+   ]
+  }
+ ],
+ "totals": {
+  "runs": 36,
+  "hands": 90000,
+  "coachDecisions": 122564,
+  "invalidCoach": 0,
+  "cpuSeconds": 2391
+ }
+}

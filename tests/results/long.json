@@ -1,6 +1,6 @@
 {
- "app": "2.1.0",
- "date": "2026-11-27T09:23:50.849Z",
+ "app": "2.3.0",
+ "date": "2026-11-28T10:31:30.618Z",
  "node": "v22.23.5",
  "cpus": 2,
  "eval7": {
@@ -29,22 +29,22 @@
   ],
   "ok": true,
   "distinct": 4824,
-  "ms": 12134
+  "ms": 12975
  },
  "sim": {
   "hands": 1000000,
-  "actions": 8840507,
+  "actions": 8842931,
   "errorCount": 0,
   "errors": [],
-  "invalidRejected": 32671,
+  "invalidRejected": 32730,
   "botFallbacks": 0,
-  "showdowns": 244982,
-  "sidePots": 8679,
-  "splitPots": 9118,
-  "allIns": 117288,
+  "showdowns": 240884,
+  "sidePots": 8659,
+  "splitPots": 8778,
+  "allIns": 118442,
   "swaps": 41662,
-  "rebuys": 74032,
-  "maxActions": 30,
+  "rebuys": 74825,
+  "maxActions": 31,
   "configs": [
    "{\"cfg\":{},\"heroMode\":null}",
    "{\"cfg\":{},\"heroMode\":null}",
@@ -55,7 +55,7 @@
    "{\"cfg\":{\"startBB\":300},\"heroMode\":null}",
    "{\"cfg\":{\"difficulty\":\"experte\",\"swapEvery\":10},\"heroMode\":\"random\"}"
   ],
-  "ms": 218381
+  "ms": 327176
  },
  "calib": {
   "hands": 200000,
@@ -65,23 +65,23 @@
     "hands": 197210,
     "stats": {
      "vpip": 33.4,
-     "pfr": 8.6,
+     "pfr": 8.7,
      "threeBet": 4.8,
-     "fourBet": 2.2,
-     "foldTo3Bet": 34.7,
-     "foldTo4Bet": 67.6,
+     "fourBet": 2.1,
+     "foldTo3Bet": 34,
+     "foldTo4Bet": 66.9,
      "steal": 17.6,
-     "foldToSteal": 38.9,
-     "cbetFlop": 47.1,
-     "cbetTurn": 38.4,
-     "cbetRiver": 41.4,
-     "foldToCbet": 45.2,
-     "foldToCbetTurn": 31.7,
-     "checkRaise": 2.4,
-     "afq": 27.1,
-     "wtsd": 43.1,
+     "foldToSteal": 39,
+     "cbetFlop": 47.6,
+     "cbetTurn": 39.1,
+     "cbetRiver": 41.3,
+     "foldToCbet": 44,
+     "foldToCbetTurn": 33.2,
+     "checkRaise": 2.6,
+     "afq": 26.9,
+     "wtsd": 42.6,
      "wsd": 52.4,
-     "af": 0.75
+     "af": 0.73
     },
     "targets": {
      "vpip": [
@@ -117,21 +117,21 @@
      "vpip": 44.1,
      "pfr": 24.9,
      "threeBet": 12.8,
-     "fourBet": 7,
-     "foldTo3Bet": 40.3,
-     "foldTo4Bet": 73.5,
-     "steal": 51.1,
-     "foldToSteal": 38.1,
-     "cbetFlop": 64.9,
-     "cbetTurn": 48.6,
-     "cbetRiver": 41.6,
-     "foldToCbet": 55.3,
-     "foldToCbetTurn": 35.9,
-     "checkRaise": 6,
-     "afq": 51.4,
-     "wtsd": 29.4,
-     "wsd": 45.3,
-     "af": 2.61
+     "fourBet": 6.9,
+     "foldTo3Bet": 40.5,
+     "foldTo4Bet": 73.9,
+     "steal": 51.3,
+     "foldToSteal": 38.3,
+     "cbetFlop": 65.5,
+     "cbetTurn": 50,
+     "cbetRiver": 41.9,
+     "foldToCbet": 55.2,
+     "foldToCbetTurn": 34.4,
+     "checkRaise": 5.9,
+     "afq": 51.1,
+     "wtsd": 29.3,
+     "wsd": 44.9,
+     "af": 2.51
     },
     "targets": {
      "vpip": [
@@ -160,23 +160,23 @@
     "hands": 142290,
     "stats": {
      "vpip": 11.5,
-     "pfr": 8.4,
-     "threeBet": 2.5,
-     "fourBet": 2.4,
-     "foldTo3Bet": 76.9,
-     "foldTo4Bet": 40.2,
-     "steal": 19.9,
-     "foldToSteal": 86.8,
-     "cbetFlop": 55.3,
-     "cbetTurn": 42.8,
-     "cbetRiver": 43.3,
-     "foldToCbet": 53.7,
-     "foldToCbetTurn": 43.1,
-     "checkRaise": 3.3,
-     "afq": 47.3,
-     "wtsd": 39,
-     "wsd": 57.2,
-     "af": 2.6
+     "pfr": 8.5,
+     "threeBet": 2.6,
+     "fourBet": 2.5,
+     "foldTo3Bet": 76.4,
+     "foldTo4Bet": 42.1,
+     "steal": 20,
+     "foldToSteal": 86.9,
+     "cbetFlop": 56.6,
+     "cbetTurn": 44.9,
+     "cbetRiver": 43.1,
+     "foldToCbet": 54.3,
+     "foldToCbetTurn": 45.4,
+     "checkRaise": 3.5,
+     "afq": 48,
+     "wtsd": 37.9,
+     "wsd": 57,
+     "af": 2.77
     },
     "targets": {
      "vpip": [
@@ -202,21 +202,21 @@
      "vpip": 21.1,
      "pfr": 16.9,
      "threeBet": 7,
-     "fourBet": 4.8,
-     "foldTo3Bet": 65.5,
-     "foldTo4Bet": 71,
+     "fourBet": 4.9,
+     "foldTo3Bet": 65.3,
+     "foldTo4Bet": 71.2,
      "steal": 38.4,
-     "foldToSteal": 74.7,
-     "cbetFlop": 62,
-     "cbetTurn": 49.8,
-     "cbetRiver": 42.3,
-     "foldToCbet": 51.1,
-     "foldToCbetTurn": 42.2,
-     "checkRaise": 5.8,
+     "foldToSteal": 74.8,
+     "cbetFlop": 63,
+     "cbetTurn": 51.2,
+     "cbetRiver": 43.8,
+     "foldToCbet": 52.6,
+     "foldToCbetTurn": 44.3,
+     "checkRaise": 5.7,
      "afq": 56.3,
-     "wtsd": 34.5,
-     "wsd": 50.8,
-     "af": 3.2
+     "wtsd": 32.8,
+     "wsd": 50.6,
+     "af": 3.29
     },
     "targets": {
      "vpip": [
@@ -249,24 +249,24 @@
     "players": 30,
     "hands": 151370,
     "stats": {
-     "vpip": 30.6,
+     "vpip": 30.5,
      "pfr": 25.3,
      "threeBet": 10.6,
-     "fourBet": 7.4,
-     "foldTo3Bet": 58.7,
-     "foldTo4Bet": 76,
-     "steal": 57.1,
-     "foldToSteal": 64.8,
-     "cbetFlop": 65.9,
-     "cbetTurn": 51.2,
-     "cbetRiver": 46.4,
-     "foldToCbet": 53.8,
-     "foldToCbetTurn": 40.3,
-     "checkRaise": 7.3,
+     "fourBet": 7.2,
+     "foldTo3Bet": 59.3,
+     "foldTo4Bet": 75.5,
+     "steal": 57,
+     "foldToSteal": 64.7,
+     "cbetFlop": 68.2,
+     "cbetTurn": 54.9,
+     "cbetRiver": 48.7,
+     "foldToCbet": 54.3,
+     "foldToCbetTurn": 41.6,
+     "checkRaise": 6.8,
      "afq": 60.2,
-     "wtsd": 30.6,
-     "wsd": 46.3,
-     "af": 3.79
+     "wtsd": 28.6,
+     "wsd": 46.2,
+     "af": 3.86
     },
     "targets": {
      "vpip": [
@@ -293,7 +293,7 @@
      "threeBet": true,
      "af": true
     },
-    "hudTypeMatch": "29/30"
+    "hudTypeMatch": "28/30"
    },
    "bal": {
     "players": 20,
@@ -302,21 +302,21 @@
      "vpip": 22.7,
      "pfr": 18,
      "threeBet": 7.8,
-     "fourBet": 5.1,
-     "foldTo3Bet": 64.3,
-     "foldTo4Bet": 71.2,
+     "fourBet": 5.2,
+     "foldTo3Bet": 64.2,
+     "foldTo4Bet": 71.4,
      "steal": 39.9,
      "foldToSteal": 72,
-     "cbetFlop": 60.5,
-     "cbetTurn": 47.7,
-     "cbetRiver": 40.9,
-     "foldToCbet": 54,
-     "foldToCbetTurn": 40.3,
-     "checkRaise": 6.4,
-     "afq": 56.6,
-     "wtsd": 32.9,
-     "wsd": 50.9,
-     "af": 3.41
+     "cbetFlop": 61.1,
+     "cbetTurn": 48.9,
+     "cbetRiver": 42.6,
+     "foldToCbet": 54.6,
+     "foldToCbetTurn": 43.8,
+     "checkRaise": 6.1,
+     "afq": 56.1,
+     "wtsd": 31.7,
+     "wsd": 50.1,
+     "af": 3.37
     },
     "targets": {
      "vpip": [
@@ -341,67 +341,67 @@
     "hudTypeMatch": "20/20"
    }
   },
-  "ms": 48762,
+  "ms": 64533,
   "ok": true
  },
  "coach": {
   "exploit": [
    {
     "seed": 21,
-    "coachBB100": 61.6,
-    "botBB100": 16.5,
-    "avgMs": 25.1,
-    "maxMs": 291,
+    "coachBB100": 82.1,
+    "botBB100": 6.3,
+    "avgMs": 75.3,
+    "maxMs": 1301,
     "maxIt": 5000
    },
    {
     "seed": 22,
-    "coachBB100": 28,
-    "botBB100": -10.1,
-    "avgMs": 25,
-    "maxMs": 345,
-    "maxIt": 4800
+    "coachBB100": 52.8,
+    "botBB100": 0.6,
+    "avgMs": 74.2,
+    "maxMs": 1389,
+    "maxIt": 5000
    },
    {
     "seed": 23,
-    "coachBB100": -18.1,
-    "botBB100": -15.7,
-    "avgMs": 24.6,
-    "maxMs": 314,
-    "maxIt": 4800
+    "coachBB100": 32.4,
+    "botBB100": -3.1,
+    "avgMs": 74,
+    "maxMs": 1441,
+    "maxIt": 5000
    },
    {
     "seed": 24,
-    "coachBB100": 8.3,
-    "botBB100": 28.3,
-    "avgMs": 23.3,
-    "maxMs": 344,
-    "maxIt": 4800
+    "coachBB100": 50.9,
+    "botBB100": 44.6,
+    "avgMs": 73.3,
+    "maxMs": 1307,
+    "maxIt": 5000
    }
   ],
   "gto": [
    {
     "seed": 21,
-    "coachBB100": 43.1,
-    "botBB100": 16.5,
-    "avgMs": 25,
-    "maxMs": 318,
-    "maxIt": 4800
+    "coachBB100": 11.6,
+    "botBB100": 6.3,
+    "avgMs": 74.4,
+    "maxMs": 1403,
+    "maxIt": 5000
    },
    {
     "seed": 22,
-    "coachBB100": 17.7,
-    "botBB100": -10.1,
-    "avgMs": 25.1,
-    "maxMs": 372,
-    "maxIt": 4800
+    "coachBB100": -2.4,
+    "botBB100": 0.6,
+    "avgMs": 75.7,
+    "maxMs": 1310,
+    "maxIt": 5000
    }
   ],
-  "exploitAvgCoach": 19.95,
-  "exploitAvgBot": 4.75,
-  "gtoAvgCoach": 30.4,
-  "gtoAvgBot": 3.2,
-  "ms": 94262
+  "exploitAvgCoach": 54.55,
+  "exploitAvgBot": 12.1,
+  "gtoAvgCoach": 4.6,
+  "gtoAvgBot": 3.4499999999999997,
+  "ms": 278146
  },
  "evalref": {
   "reference": "tests/ref/handref.js (konstruktive Aufzählung der 7.462 Klassen, Zuordnung über Rang-Multimenge + Flush-Bit, bestes der 21 Fünfer-Blätter)",
@@ -1204,7 +1204,7 @@
   },
   "examples": [],
   "scale": 1,
-  "ms": 39069,
+  "ms": 13892,
   "ok": true
  },
  "mccov": {
@@ -1331,7 +1331,7 @@
     "name": "HU Flop, Top Pair gegen Top 30 %",
     "group": "HU Flop",
     "exact": 0.8827947796315083,
-    "exactMs": 1152,
+    "exactMs": 368,
     "configs": {
      "schnell": {
       "runs": 1000,
@@ -1350,7 +1350,7 @@
       "meanIters": 625,
       "meanN": 625,
       "abortedShare": 0,
-      "ms": 572
+      "ms": 305
      },
      "standard": {
       "runs": 1000,
@@ -1369,7 +1369,7 @@
       "meanIters": 1711.817,
       "meanN": 1455.817,
       "abortedShare": 0,
-      "ms": 2079
+      "ms": 631
      },
      "praezise": {
       "runs": 1000,
@@ -1388,7 +1388,7 @@
       "meanIters": 6065.209,
       "meanN": 5809.209,
       "abortedShare": 0,
-      "ms": 5972
+      "ms": 2391
      },
      "tief": {
       "runs": 1000,
@@ -1407,7 +1407,7 @@
       "meanIters": 23508.528,
       "meanN": 23252.528,
       "abortedShare": 0,
-      "ms": 27432
+      "ms": 9013
      },
      "standard-budget1000": {
       "runs": 1000,
@@ -1426,7 +1426,7 @@
       "meanIters": 1000,
       "meanN": 1000,
       "abortedShare": 1,
-      "ms": 994
+      "ms": 464
      },
      "schnell-budget300": {
       "runs": 1000,
@@ -1445,7 +1445,7 @@
       "meanIters": 300,
       "meanN": 300,
       "abortedShare": 1,
-      "ms": 265
+      "ms": 187
      }
     }
    },
@@ -1454,7 +1454,7 @@
     "name": "HU Flop, Flushdraw gegen Top 50 %",
     "group": "HU Flop",
     "exact": 0.7166652103268627,
-    "exactMs": 1188,
+    "exactMs": 624,
     "configs": {
      "schnell": {
       "runs": 1000,
@@ -1473,7 +1473,7 @@
       "meanIters": 625,
       "meanN": 625,
       "abortedShare": 0,
-      "ms": 506
+      "ms": 345
      },
      "standard": {
       "runs": 1000,
@@ -1492,7 +1492,7 @@
       "meanIters": 2553.092,
       "meanN": 2297.092,
       "abortedShare": 0,
-      "ms": 2637
+      "ms": 1062
      },
      "praezise": {
       "runs": 1000,
@@ -1511,7 +1511,7 @@
       "meanIters": 9439.992,
       "meanN": 9183.992,
       "abortedShare": 0,
-      "ms": 8782
+      "ms": 3740
      },
      "tief": {
       "runs": 1000,
@@ -1530,7 +1530,7 @@
       "meanIters": 37013.23,
       "meanN": 36757.23,
       "abortedShare": 0,
-      "ms": 47624
+      "ms": 15415
      },
      "standard-budget1000": {
       "runs": 1000,
@@ -1549,7 +1549,7 @@
       "meanIters": 1000,
       "meanN": 1000,
       "abortedShare": 1,
-      "ms": 1483
+      "ms": 519
      },
      "schnell-budget300": {
       "runs": 1000,
@@ -1568,7 +1568,7 @@
       "meanIters": 300,
       "meanN": 300,
       "abortedShare": 1,
-      "ms": 617
+      "ms": 147
      }
     }
    },
@@ -1577,7 +1577,7 @@
     "name": "HU Flop, Set gegen Overpairs (nahe 1)",
     "group": "HU Flop",
     "exact": 0.9101010101010097,
-    "exactMs": 50,
+    "exactMs": 29,
     "configs": {
      "schnell": {
       "runs": 1000,
@@ -1596,7 +1596,7 @@
       "meanIters": 625,
       "meanN": 625,
       "abortedShare": 0,
-      "ms": 429
+      "ms": 226
      },
      "standard": {
       "runs": 1000,
@@ -1615,7 +1615,7 @@
       "meanIters": 1502.465,
       "meanN": 1246.465,
       "abortedShare": 0,
-      "ms": 1014
+      "ms": 581
      },
      "praezise": {
       "runs": 1000,
@@ -1634,7 +1634,7 @@
       "meanIters": 5221.435,
       "meanN": 4965.435,
       "abortedShare": 0,
-      "ms": 6821
+      "ms": 2101
      },
      "tief": {
       "runs": 1000,
@@ -1653,7 +1653,7 @@
       "meanIters": 20353.971,
       "meanN": 20097.971,
       "abortedShare": 0,
-      "ms": 16340
+      "ms": 7177
      },
      "standard-budget1000": {
       "runs": 1000,
@@ -1672,7 +1672,7 @@
       "meanIters": 1000,
       "meanN": 1000,
       "abortedShare": 1,
-      "ms": 644
+      "ms": 347
      },
      "schnell-budget300": {
       "runs": 1000,
@@ -1691,7 +1691,7 @@
       "meanIters": 300,
       "meanN": 300,
       "abortedShare": 1,
-      "ms": 179
+      "ms": 111
      }
     }
    },
@@ -1700,7 +1700,7 @@
     "name": "HU Flop, Runner-Runner (nahe 0)",
     "group": "HU Flop",
     "exact": 0.00016835016835016836,
-    "exactMs": 18,
+    "exactMs": 9,
     "configs": {
      "schnell": {
       "runs": 1000,
@@ -1719,7 +1719,7 @@
       "meanIters": 625,
       "meanN": 625,
       "abortedShare": 0,
-      "ms": 396
+      "ms": 171
      },
      "standard": {
       "runs": 1000,
@@ -1738,7 +1738,7 @@
       "meanIters": 505.657,
       "meanN": 249.657,
       "abortedShare": 0,
-      "ms": 376
+      "ms": 134
      },
      "praezise": {
       "runs": 1000,
@@ -1757,7 +1757,7 @@
       "meanIters": 1253.58,
       "meanN": 997.58,
       "abortedShare": 0,
-      "ms": 897
+      "ms": 405
      },
      "tief": {
       "runs": 1000,
@@ -1776,7 +1776,7 @@
       "meanIters": 4252.779,
       "meanN": 3996.779,
       "abortedShare": 0,
-      "ms": 2473
+      "ms": 1466
      },
      "standard-budget1000": {
       "runs": 1000,
@@ -1795,7 +1795,7 @@
       "meanIters": 1000,
       "meanN": 1000,
       "abortedShare": 1,
-      "ms": 538
+      "ms": 320
      },
      "schnell-budget300": {
       "runs": 1000,
@@ -1814,7 +1814,7 @@
       "meanIters": 300,
       "meanN": 300,
       "abortedShare": 1,
-      "ms": 116
+      "ms": 87
      }
     }
    },
@@ -1842,7 +1842,7 @@
       "meanIters": 625,
       "meanN": 625,
       "abortedShare": 0,
-      "ms": 274
+      "ms": 169
      },
      "standard": {
       "runs": 1000,
@@ -1861,7 +1861,7 @@
       "meanIters": 1518.176,
       "meanN": 1262.176,
       "abortedShare": 0,
-      "ms": 747
+      "ms": 406
      },
      "praezise": {
       "runs": 1000,
@@ -1880,7 +1880,7 @@
       "meanIters": 5280.118,
       "meanN": 5024.118,
       "abortedShare": 0,
-      "ms": 3736
+      "ms": 1356
      },
      "tief": {
       "runs": 1000,
@@ -1899,7 +1899,7 @@
       "meanIters": 20237.187,
       "meanN": 19981.187,
       "abortedShare": 0,
-      "ms": 14671
+      "ms": 5175
      },
      "standard-budget1000": {
       "runs": 1000,
@@ -1918,7 +1918,7 @@
       "meanIters": 1000,
       "meanN": 1000,
       "abortedShare": 1,
-      "ms": 744
+      "ms": 250
      },
      "schnell-budget300": {
       "runs": 1000,
@@ -1937,7 +1937,7 @@
       "meanIters": 300,
       "meanN": 300,
       "abortedShare": 1,
-      "ms": 133
+      "ms": 81
      }
     }
    },
@@ -1946,7 +1946,7 @@
     "name": "HU Turn, 2 Outs (~2,6 %)",
     "group": "HU Turn",
     "exact": 0.025974025974025976,
-    "exactMs": 4,
+    "exactMs": 0,
     "configs": {
      "schnell": {
       "runs": 1000,
@@ -1965,7 +1965,7 @@
       "meanIters": 625,
       "meanN": 625,
       "abortedShare": 0,
-      "ms": 236
+      "ms": 159
      },
      "standard": {
       "runs": 1000,
@@ -1984,7 +1984,7 @@
       "meanIters": 872.684,
       "meanN": 616.684,
       "abortedShare": 0,
-      "ms": 553
+      "ms": 219
      },
      "praezise": {
       "runs": 1000,
@@ -2003,7 +2003,7 @@
       "meanIters": 2697.448,
       "meanN": 2441.448,
       "abortedShare": 0,
-      "ms": 2034
+      "ms": 744
      },
      "tief": {
       "runs": 1000,
@@ -2022,7 +2022,7 @@
       "meanIters": 10107.674,
       "meanN": 9851.674,
       "abortedShare": 0,
-      "ms": 8173
+      "ms": 2649
      },
      "standard-budget1000": {
       "runs": 1000,
@@ -2041,7 +2041,7 @@
       "meanIters": 1000,
       "meanN": 1000,
       "abortedShare": 1,
-      "ms": 728
+      "ms": 264
      },
      "schnell-budget300": {
       "runs": 1000,
@@ -2060,7 +2060,7 @@
       "meanIters": 300,
       "meanN": 300,
       "abortedShare": 1,
-      "ms": 223
+      "ms": 84
      }
     }
    },
@@ -2069,7 +2069,7 @@
     "name": "HU Turn, Held klar vorn (~0,99)",
     "group": "HU Turn",
     "exact": 0.9886363636363636,
-    "exactMs": 0,
+    "exactMs": 1,
     "configs": {
      "schnell": {
       "runs": 1000,
@@ -2088,7 +2088,7 @@
       "meanIters": 625,
       "meanN": 625,
       "abortedShare": 0,
-      "ms": 590
+      "ms": 181
      },
      "standard": {
       "runs": 1000,
@@ -2107,7 +2107,7 @@
       "meanIters": 680.588,
       "meanN": 424.588,
       "abortedShare": 0,
-      "ms": 509
+      "ms": 195
      },
      "praezise": {
       "runs": 1000,
@@ -2126,7 +2126,7 @@
       "meanIters": 1941.242,
       "meanN": 1685.242,
       "abortedShare": 0,
-      "ms": 1254
+      "ms": 576
      },
      "tief": {
       "runs": 1000,
@@ -2145,7 +2145,7 @@
       "meanIters": 6987.371,
       "meanN": 6731.371,
       "abortedShare": 0,
-      "ms": 4929
+      "ms": 1908
      },
      "standard-budget1000": {
       "runs": 1000,
@@ -2164,7 +2164,7 @@
       "meanIters": 1000,
       "meanN": 1000,
       "abortedShare": 1,
-      "ms": 460
+      "ms": 300
      },
      "schnell-budget300": {
       "runs": 1000,
@@ -2183,7 +2183,7 @@
       "meanIters": 300,
       "meanN": 300,
       "abortedShare": 1,
-      "ms": 143
+      "ms": 80
      }
     }
    },
@@ -2192,7 +2192,7 @@
     "name": "HU Turn, Held ohne Outs (exakt 0)",
     "group": "Rand",
     "exact": 0,
-    "exactMs": 0,
+    "exactMs": 1,
     "configs": {
      "schnell": {
       "runs": 1000,
@@ -2211,7 +2211,7 @@
       "meanIters": 625,
       "meanN": 625,
       "abortedShare": 0,
-      "ms": 475
+      "ms": 184
      },
      "standard": {
       "runs": 1000,
@@ -2230,7 +2230,7 @@
       "meanIters": 503,
       "meanN": 247,
       "abortedShare": 0,
-      "ms": 479
+      "ms": 150
      },
      "praezise": {
       "runs": 1000,
@@ -2249,7 +2249,7 @@
       "meanIters": 1241,
       "meanN": 985,
       "abortedShare": 0,
-      "ms": 1342
+      "ms": 345
      },
      "tief": {
       "runs": 1000,
@@ -2268,7 +2268,7 @@
       "meanIters": 4196,
       "meanN": 3940,
       "abortedShare": 0,
-      "ms": 3861
+      "ms": 1197
      },
      "standard-budget1000": {
       "runs": 1000,
@@ -2287,7 +2287,7 @@
       "meanIters": 1000,
       "meanN": 1000,
       "abortedShare": 1,
-      "ms": 797
+      "ms": 301
      },
      "schnell-budget300": {
       "runs": 1000,
@@ -2306,7 +2306,7 @@
       "meanIters": 300,
       "meanN": 300,
       "abortedShare": 1,
-      "ms": 190
+      "ms": 86
      }
     }
    },
@@ -2315,7 +2315,7 @@
     "name": "HU Turn, Split-lastig (Nut Straight, seltene Verluste)",
     "group": "Split",
     "exact": 0.608879492600423,
-    "exactMs": 10,
+    "exactMs": 8,
     "configs": {
      "schnell": {
       "runs": 1000,
@@ -2334,7 +2334,7 @@
       "meanIters": 625,
       "meanN": 625,
       "abortedShare": 0,
-      "ms": 303
+      "ms": 172
      },
      "standard": {
       "runs": 1000,
@@ -2353,7 +2353,7 @@
       "meanIters": 953.777,
       "meanN": 697.777,
       "abortedShare": 0,
-      "ms": 476
+      "ms": 266
      },
      "praezise": {
       "runs": 1000,
@@ -2372,7 +2372,7 @@
       "meanIters": 3020.925,
       "meanN": 2764.925,
       "abortedShare": 0,
-      "ms": 1479
+      "ms": 845
      },
      "tief": {
       "runs": 1000,
@@ -2391,7 +2391,7 @@
       "meanIters": 11312.092,
       "meanN": 11056.092,
       "abortedShare": 0,
-      "ms": 6885
+      "ms": 2982
      },
      "standard-budget1000": {
       "runs": 1000,
@@ -2410,7 +2410,7 @@
       "meanIters": 1000,
       "meanN": 1000,
       "abortedShare": 1,
-      "ms": 800
+      "ms": 253
      },
      "schnell-budget300": {
       "runs": 1000,
@@ -2429,7 +2429,7 @@
       "meanIters": 300,
       "meanN": 300,
       "abortedShare": 1,
-      "ms": 333
+      "ms": 82
      }
     }
    },
@@ -2438,7 +2438,7 @@
     "name": "HU River, gewichtete Range mit Splits",
     "group": "HU River",
     "exact": 0.7166666666666667,
-    "exactMs": 1,
+    "exactMs": 0,
     "configs": {
      "schnell": {
       "runs": 1000,
@@ -2457,7 +2457,7 @@
       "meanIters": 625,
       "meanN": 625,
       "abortedShare": 0,
-      "ms": 328
+      "ms": 145
      },
      "standard": {
       "runs": 1000,
@@ -2476,7 +2476,7 @@
       "meanIters": 2477.346,
       "meanN": 2221.346,
       "abortedShare": 0,
-      "ms": 1254
+      "ms": 556
      },
      "praezise": {
       "runs": 1000,
@@ -2495,7 +2495,7 @@
       "meanIters": 9152.374,
       "meanN": 8896.374,
       "abortedShare": 0,
-      "ms": 3714
+      "ms": 2088
      },
      "tief": {
       "runs": 1000,
@@ -2514,7 +2514,7 @@
       "meanIters": 35902.457,
       "meanN": 35646.457,
       "abortedShare": 0,
-      "ms": 20485
+      "ms": 8322
      },
      "standard-budget1000": {
       "runs": 1000,
@@ -2533,7 +2533,7 @@
       "meanIters": 1000,
       "meanN": 1000,
       "abortedShare": 1,
-      "ms": 509
+      "ms": 244
      },
      "schnell-budget300": {
       "runs": 1000,
@@ -2552,7 +2552,7 @@
       "meanIters": 300,
       "meanN": 300,
       "abortedShare": 1,
-      "ms": 233
+      "ms": 76
      }
     }
    },
@@ -2561,7 +2561,7 @@
     "name": "HU River, Board spielt meist (Split-lastig)",
     "group": "Split",
     "exact": 0.4426229508196721,
-    "exactMs": 13,
+    "exactMs": 1,
     "configs": {
      "schnell": {
       "runs": 1000,
@@ -2580,7 +2580,7 @@
       "meanIters": 625,
       "meanN": 625,
       "abortedShare": 0,
-      "ms": 533
+      "ms": 136
      },
      "standard": {
       "runs": 1000,
@@ -2599,7 +2599,7 @@
       "meanIters": 593.302,
       "meanN": 337.302,
       "abortedShare": 0,
-      "ms": 456
+      "ms": 126
      },
      "praezise": {
       "runs": 1000,
@@ -2618,7 +2618,7 @@
       "meanIters": 1606.46,
       "meanN": 1350.46,
       "abortedShare": 0,
-      "ms": 1127
+      "ms": 345
      },
      "tief": {
       "runs": 1000,
@@ -2637,7 +2637,7 @@
       "meanIters": 5642.526,
       "meanN": 5386.526,
       "abortedShare": 0,
-      "ms": 3803
+      "ms": 1390
      },
      "standard-budget1000": {
       "runs": 1000,
@@ -2656,7 +2656,7 @@
       "meanIters": 1000,
       "meanN": 1000,
       "abortedShare": 1,
-      "ms": 531
+      "ms": 249
      },
      "schnell-budget300": {
       "runs": 1000,
@@ -2675,7 +2675,7 @@
       "meanIters": 300,
       "meanN": 300,
       "abortedShare": 1,
-      "ms": 296
+      "ms": 78
      }
     }
    },
@@ -2703,7 +2703,7 @@
       "meanIters": 625,
       "meanN": 625,
       "abortedShare": 0,
-      "ms": 446
+      "ms": 198
      },
      "standard": {
       "runs": 1000,
@@ -2722,7 +2722,7 @@
       "meanIters": 1545.578,
       "meanN": 1289.578,
       "abortedShare": 0,
-      "ms": 965
+      "ms": 527
      },
      "praezise": {
       "runs": 1000,
@@ -2741,7 +2741,7 @@
       "meanIters": 5398.804,
       "meanN": 5142.804,
       "abortedShare": 0,
-      "ms": 4904
+      "ms": 1723
      },
      "tief": {
       "runs": 1000,
@@ -2760,7 +2760,7 @@
       "meanIters": 20824.806,
       "meanN": 20568.806,
       "abortedShare": 0,
-      "ms": 14113
+      "ms": 6550
      },
      "standard-budget1000": {
       "runs": 1000,
@@ -2779,7 +2779,7 @@
       "meanIters": 1000,
       "meanN": 1000,
       "abortedShare": 1,
-      "ms": 769
+      "ms": 322
      },
      "schnell-budget300": {
       "runs": 1000,
@@ -2798,7 +2798,7 @@
       "meanIters": 300,
       "meanN": 300,
       "abortedShare": 1,
-      "ms": 163
+      "ms": 93
      }
     }
    },
@@ -2807,7 +2807,7 @@
     "name": "2 Gegner Turn, Held ohne Outs (exakt 0)",
     "group": "Rand",
     "exact": 0,
-    "exactMs": 4,
+    "exactMs": 2,
     "configs": {
      "schnell": {
       "runs": 1000,
@@ -2826,7 +2826,7 @@
       "meanIters": 625,
       "meanN": 625,
       "abortedShare": 0,
-      "ms": 781
+      "ms": 208
      },
      "standard": {
       "runs": 1000,
@@ -2845,7 +2845,7 @@
       "meanIters": 503,
       "meanN": 247,
       "abortedShare": 0,
-      "ms": 794
+      "ms": 169
      },
      "praezise": {
       "runs": 1000,
@@ -2864,7 +2864,7 @@
       "meanIters": 1241,
       "meanN": 985,
       "abortedShare": 0,
-      "ms": 1017
+      "ms": 408
      },
      "tief": {
       "runs": 1000,
@@ -2883,7 +2883,7 @@
       "meanIters": 4196,
       "meanN": 3940,
       "abortedShare": 0,
-      "ms": 4051
+      "ms": 1425
      },
      "standard-budget1000": {
       "runs": 1000,
@@ -2902,7 +2902,7 @@
       "meanIters": 1000,
       "meanN": 1000,
       "abortedShare": 1,
-      "ms": 1043
+      "ms": 426
      },
      "schnell-budget300": {
       "runs": 1000,
@@ -2921,7 +2921,7 @@
       "meanIters": 300,
       "meanN": 300,
       "abortedShare": 1,
-      "ms": 392
+      "ms": 118
      }
     }
    },
@@ -2949,7 +2949,7 @@
       "meanIters": 625,
       "meanN": 625,
       "abortedShare": 0,
-      "ms": 463
+      "ms": 262
      },
      "standard": {
       "runs": 1000,
@@ -2968,7 +2968,7 @@
       "meanIters": 2755.903,
       "meanN": 2499.903,
       "abortedShare": 0,
-      "ms": 2403
+      "ms": 826
      },
      "praezise": {
       "runs": 1000,
@@ -2987,7 +2987,7 @@
       "meanIters": 10255.424,
       "meanN": 9999.424,
       "abortedShare": 0,
-      "ms": 10082
+      "ms": 3409
      },
      "tief": {
       "runs": 1000,
@@ -3006,7 +3006,7 @@
       "meanIters": 40254.233,
       "meanN": 39998.233,
       "abortedShare": 0,
-      "ms": 39959
+      "ms": 13028
      },
      "standard-budget1000": {
       "runs": 1000,
@@ -3025,7 +3025,7 @@
       "meanIters": 1000,
       "meanN": 1000,
       "abortedShare": 1,
-      "ms": 998
+      "ms": 331
      },
      "schnell-budget300": {
       "runs": 1000,
@@ -3044,7 +3044,7 @@
       "meanIters": 300,
       "meanN": 300,
       "abortedShare": 1,
-      "ms": 282
+      "ms": 108
      }
     }
    },
@@ -3072,7 +3072,7 @@
       "meanIters": 625,
       "meanN": 625,
       "abortedShare": 0,
-      "ms": 449
+      "ms": 246
      },
      "standard": {
       "runs": 1000,
@@ -3091,7 +3091,7 @@
       "meanIters": 2127.236,
       "meanN": 1871.236,
       "abortedShare": 0,
-      "ms": 2110
+      "ms": 797
      },
      "praezise": {
       "runs": 1000,
@@ -3110,7 +3110,7 @@
       "meanIters": 7784.552,
       "meanN": 7528.552,
       "abortedShare": 0,
-      "ms": 7202
+      "ms": 2982
      },
      "tief": {
       "runs": 1000,
@@ -3129,7 +3129,7 @@
       "meanIters": 30270.941,
       "meanN": 30014.941,
       "abortedShare": 0,
-      "ms": 20667
+      "ms": 11719
      },
      "standard-budget1000": {
       "runs": 1000,
@@ -3148,7 +3148,7 @@
       "meanIters": 1000,
       "meanN": 1000,
       "abortedShare": 1,
-      "ms": 402
+      "ms": 349
      },
      "schnell-budget300": {
       "runs": 1000,
@@ -3167,7 +3167,7 @@
       "meanIters": 300,
       "meanN": 300,
       "abortedShare": 1,
-      "ms": 128
+      "ms": 111
      }
     }
    },
@@ -3176,7 +3176,7 @@
     "name": "2 Gegner Turn, gewichtet mit Kartenüberschneidung",
     "group": "Multiway",
     "exact": 0.28139329805996477,
-    "exactMs": 2,
+    "exactMs": 3,
     "configs": {
      "schnell": {
       "runs": 1000,
@@ -3195,7 +3195,7 @@
       "meanIters": 625,
       "meanN": 625,
       "abortedShare": 0,
-      "ms": 982
+      "ms": 260
      },
      "standard": {
       "runs": 1000,
@@ -3214,7 +3214,7 @@
       "meanIters": 2545.974,
       "meanN": 2289.974,
       "abortedShare": 0,
-      "ms": 3458
+      "ms": 1114
      },
      "praezise": {
       "runs": 1000,
@@ -3233,7 +3233,7 @@
       "meanIters": 9410.27,
       "meanN": 9154.27,
       "abortedShare": 0,
-      "ms": 7996
+      "ms": 3712
      },
      "tief": {
       "runs": 1000,
@@ -3252,7 +3252,7 @@
       "meanIters": 36868.829,
       "meanN": 36612.829,
       "abortedShare": 0,
-      "ms": 39666
+      "ms": 14714
      },
      "standard-budget1000": {
       "runs": 1000,
@@ -3271,7 +3271,7 @@
       "meanIters": 1000,
       "meanN": 1000,
       "abortedShare": 1,
-      "ms": 683
+      "ms": 399
      },
      "schnell-budget300": {
       "runs": 1000,
@@ -3290,7 +3290,7 @@
       "meanIters": 300,
       "meanN": 300,
       "abortedShare": 1,
-      "ms": 200
+      "ms": 116
      }
     }
    },
@@ -3299,7 +3299,7 @@
     "name": "2 Gegner Flop, kleine Ranges",
     "group": "Multiway",
     "exact": 0.48303042147091396,
-    "exactMs": 68,
+    "exactMs": 23,
     "configs": {
      "schnell": {
       "runs": 1000,
@@ -3318,7 +3318,7 @@
       "meanIters": 625,
       "meanN": 625,
       "abortedShare": 0,
-      "ms": 837
+      "ms": 269
      },
      "standard": {
       "runs": 1000,
@@ -3337,7 +3337,7 @@
       "meanIters": 2755.969,
       "meanN": 2499.969,
       "abortedShare": 0,
-      "ms": 3349
+      "ms": 1248
      },
      "praezise": {
       "runs": 1000,
@@ -3356,7 +3356,7 @@
       "meanIters": 10255.751,
       "meanN": 9999.751,
       "abortedShare": 0,
-      "ms": 11412
+      "ms": 4396
      },
      "tief": {
       "runs": 1000,
@@ -3375,7 +3375,7 @@
       "meanIters": 40255.585,
       "meanN": 39999.585,
       "abortedShare": 0,
-      "ms": 40643
+      "ms": 18542
      },
      "standard-budget1000": {
       "runs": 1000,
@@ -3394,7 +3394,7 @@
       "meanIters": 1000,
       "meanN": 1000,
       "abortedShare": 1,
-      "ms": 1060
+      "ms": 480
      },
      "schnell-budget300": {
       "runs": 1000,
@@ -3413,7 +3413,7 @@
       "meanIters": 300,
       "meanN": 300,
       "abortedShare": 1,
-      "ms": 317
+      "ms": 148
      }
     }
    },
@@ -3422,7 +3422,7 @@
     "name": "3 Gegner Turn, Held nahe 1",
     "group": "Multiway",
     "exact": 0.8808333333333332,
-    "exactMs": 8,
+    "exactMs": 6,
     "configs": {
      "schnell": {
       "runs": 1000,
@@ -3441,7 +3441,7 @@
       "meanIters": 625,
       "meanN": 625,
       "abortedShare": 0,
-      "ms": 936
+      "ms": 331
      },
      "standard": {
       "runs": 1000,
@@ -3460,7 +3460,7 @@
       "meanIters": 1733.98,
       "meanN": 1477.98,
       "abortedShare": 0,
-      "ms": 1967
+      "ms": 922
      },
      "praezise": {
       "runs": 1000,
@@ -3479,7 +3479,7 @@
       "meanIters": 6170.742,
       "meanN": 5914.742,
       "abortedShare": 0,
-      "ms": 7932
+      "ms": 3040
      },
      "tief": {
       "runs": 1000,
@@ -3498,7 +3498,7 @@
       "meanIters": 23897.251,
       "meanN": 23641.251,
       "abortedShare": 0,
-      "ms": 29990
+      "ms": 12405
      },
      "standard-budget1000": {
       "runs": 1000,
@@ -3517,7 +3517,7 @@
       "meanIters": 1000,
       "meanN": 1000,
       "abortedShare": 1,
-      "ms": 1443
+      "ms": 458
      },
      "schnell-budget300": {
       "runs": 1000,
@@ -3536,7 +3536,7 @@
       "meanIters": 300,
       "meanN": 300,
       "abortedShare": 1,
-      "ms": 522
+      "ms": 137
      }
     }
    },
@@ -3545,7 +3545,7 @@
     "name": "2 Gegner River, Board spielt immer (konstant 1/3)",
     "group": "Konstant",
     "exact": 0.33333333333333326,
-    "exactMs": 0,
+    "exactMs": 1,
     "configs": {
      "schnell": {
       "runs": 1000,
@@ -3564,7 +3564,7 @@
       "meanIters": 625,
       "meanN": 625,
       "abortedShare": 0,
-      "ms": 174
+      "ms": 160
      },
      "standard": {
       "runs": 1000,
@@ -3583,7 +3583,7 @@
       "meanIters": 356,
       "meanN": 100,
       "abortedShare": 0,
-      "ms": 102
+      "ms": 98
      },
      "praezise": {
       "runs": 1000,
@@ -3591,18 +3591,18 @@
       "mean": 0.3333333333333318,
       "bias": -1.4432899320127035e-15,
       "z": 0,
-      "sd": 5.6195798014525375e-8,
-      "rmse": 5.6167693087528946e-8,
-      "meanSE": 0.00686971342818759,
-      "seRatio": 122246.03388338609,
+      "sd": 5.657422517254943e-8,
+      "rmse": 5.654593098464693e-8,
+      "meanSE": 0.004952558843403753,
+      "seRatio": 87540.90450728437,
       "coverage": 1,
       "missLow": 0,
       "missHigh": 0,
-      "meanWidth": 0.026919175541191713,
-      "meanIters": 364,
-      "meanN": 108,
+      "meanWidth": 0.019410073649120774,
+      "meanIters": 406,
+      "meanN": 150,
       "abortedShare": 0,
-      "ms": 98
+      "ms": 107
      },
      "tief": {
       "runs": 1000,
@@ -3621,7 +3621,7 @@
       "meanIters": 686,
       "meanN": 430,
       "abortedShare": 0,
-      "ms": 188
+      "ms": 171
      },
      "standard-budget1000": {
       "runs": 1000,
@@ -3640,7 +3640,7 @@
       "meanIters": 1000,
       "meanN": 1000,
       "abortedShare": 1,
-      "ms": 267
+      "ms": 249
      },
      "schnell-budget300": {
       "runs": 1000,
@@ -3659,7 +3659,7 @@
       "meanIters": 300,
       "meanN": 300,
       "abortedShare": 1,
-      "ms": 84
+      "ms": 80
      }
     }
    },
@@ -3668,7 +3668,7 @@
     "name": "Preflop AA gegen KK",
     "group": "Preflop",
     "exact": 0.8125548967940273,
-    "exactMs": 3090,
+    "exactMs": 1619,
     "configs": {
      "schnell": {
       "runs": 1000,
@@ -3687,7 +3687,7 @@
       "meanIters": 625,
       "meanN": 625,
       "abortedShare": 0,
-      "ms": 620
+      "ms": 245
      },
      "standard": {
       "runs": 1000,
@@ -3706,7 +3706,7 @@
       "meanIters": 2164.476,
       "meanN": 1908.476,
       "abortedShare": 0,
-      "ms": 2264
+      "ms": 777
      },
      "praezise": {
       "runs": 1000,
@@ -3725,7 +3725,7 @@
       "meanIters": 7895.857,
       "meanN": 7639.857,
       "abortedShare": 0,
-      "ms": 7067
+      "ms": 3193
      },
      "tief": {
       "runs": 1000,
@@ -3744,7 +3744,7 @@
       "meanIters": 30797.255,
       "meanN": 30541.255,
       "abortedShare": 0,
-      "ms": 31038
+      "ms": 12654
      },
      "standard-budget1000": {
       "runs": 1000,
@@ -3763,7 +3763,7 @@
       "meanIters": 1000,
       "meanN": 1000,
       "abortedShare": 1,
-      "ms": 732
+      "ms": 483
      },
      "schnell-budget300": {
       "runs": 1000,
@@ -3782,7 +3782,7 @@
       "meanIters": 300,
       "meanN": 300,
       "abortedShare": 1,
-      "ms": 223
+      "ms": 126
      }
     }
    },
@@ -3791,7 +3791,7 @@
     "name": "Preflop 72o gegen AA (~0,12)",
     "group": "Preflop",
     "exact": 0.12577556321774638,
-    "exactMs": 4454,
+    "exactMs": 1744,
     "configs": {
      "schnell": {
       "runs": 1000,
@@ -3810,7 +3810,7 @@
       "meanIters": 625,
       "meanN": 625,
       "abortedShare": 0,
-      "ms": 543
+      "ms": 250
      },
      "standard": {
       "runs": 1000,
@@ -3829,7 +3829,7 @@
       "meanIters": 1784.733,
       "meanN": 1528.733,
       "abortedShare": 0,
-      "ms": 1249
+      "ms": 912
      },
      "praezise": {
       "runs": 1000,
@@ -3848,7 +3848,7 @@
       "meanIters": 6350.936,
       "meanN": 6094.936,
       "abortedShare": 0,
-      "ms": 4890
+      "ms": 2809
      },
      "tief": {
       "runs": 1000,
@@ -3867,7 +3867,7 @@
       "meanIters": 24585,
       "meanN": 24329,
       "abortedShare": 0,
-      "ms": 25777
+      "ms": 10256
      },
      "standard-budget1000": {
       "runs": 1000,
@@ -3886,7 +3886,7 @@
       "meanIters": 1000,
       "meanN": 1000,
       "abortedShare": 1,
-      "ms": 867
+      "ms": 419
      },
      "schnell-budget300": {
       "runs": 1000,
@@ -3905,12 +3905,12 @@
       "meanIters": 300,
       "meanN": 300,
       "abortedShare": 1,
-      "ms": 249
+      "ms": 117
      }
     }
    }
   ],
-  "ms": 292106
+  "ms": 119890
  },
  "evalref7": {
   "hands": 133784560,

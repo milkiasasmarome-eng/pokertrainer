@@ -1,6 +1,6 @@
 # Hinweise für KI-Assistenten und Mitwirkende
 
-Dieses Repository enthält den PokerTrainer 2.1: einen eigenständigen No-Limit-Hold'em-Trainer (6-max Cash Game, Spielgeld), der vollständig im Browser läuft und über GitHub Pages veröffentlicht wird.
+Dieses Repository enthält den PokerTrainer 2.3: einen eigenständigen No-Limit-Hold'em-Trainer (6-max Cash Game, Spielgeld), der vollständig im Browser läuft und über GitHub Pages veröffentlicht wird.
 
 ## Grundsätze (nicht verhandelbar)
 
@@ -30,7 +30,7 @@ node tests/e2e.js                                  # Browser-Tests (Playwright +
 - Versionsnummer: `PT.VERSION` in `core.js`, `?v=` in `index.html` und `worker.js`, `CHANGELOG.md`. `tools/build.js` bricht ab, wenn `index.html` nicht zur Version passt.
 - Die Obergrenze von 5.000 Simulationen je Live-Entscheidung (Stufen Schnell/Standard) ist eine Projektvorgabe; Tests prüfen sie.
 - Neue Fehler: reproduzierbaren Test in `tests/run.js` ergänzen.
-- Projektstand und Lernprotokoll werden außerhalb des Repos im Claude-Projekt „Poker“ gepflegt (`PokerTrainer_Stand`).
+- Projektstand und Lernprotokoll: `docs/PROJEKTSTAND.md`, `docs/LERNPROTOKOLL.md` (ab 2.4 im Repository; bis 2.3.0 im Claude-Projekt „Poker“, `PokerTrainer_Stand`). Kurzanweisung für Claude Code: `CLAUDE.md`.
 
 ## Hinweise aus der unabhängigen Prüfung (2.0.1)
 - Preflop folgt der Coach dem Faustregel-Chart; Abweichungen nur bei belegtem Exploit (`coach.preflopAnchor`). Wer die EV-Annahmen ändert, muss `tests/run.js` „Regression Prüfer C“ grün halten.
@@ -54,3 +54,20 @@ node tests/e2e.js                                  # Browser-Tests (Playwright +
 - Exploit-Beleg (`coach.preflopAnchor`): Posterior der tatsächlich im Modell verwendeten Fold-Rate, skeptischer Prior an der Break-even-Schwelle, mindestens eine eigene Beobachtung.
 - Gegner-KI: Calls hängen von Einsatzgröße und Stil ab. Nach jeder Änderung an `bots.js` Kalibrierung prüfen (`node tests/long.js calib`) und das Populationsmodell neu anpassen (siehe oben).
 - Caches (`equity`, `ev.comboEquities`) nur für denselben Zufallsstrom und Umfang; `PT.equity.cacheClear()` leert beide. Analysen müssen unabhängig von der Reihenfolge der Modi bleiben (`tests/unit/strategie-pruefer-b.js`).
+
+## Hinweise ab 2.2
+- Range-Likelihoods und Reaktionstabelle sind an die Gegnergruppe E angepasst. Wer `bots.js`, `stats.js` oder die Zellen in `ranges.js` ändert, sammelt neu
+  (`node tests/strategy/fit-likelihood.js <Seed> 300000 E <Datei>`), baut die Tabelle (`node tools/build-likelihood.js <Datei>`) und prüft auf V und T
+  (`sh tools/messungen-2.2.sh`). Modellwahl nur auf V; T und die Strategien `FINAL` in `tests/strategy/strategies.js` nur für abschließende Tests.
+- Push/Fold-Modellspiel neu lösen: `node tools/solve-pushfold.js --iter 6000 --write` (Exploitability ≤ 0,005 BB je Hand, Test in `tests/unit/strategie-22.js`).
+- Vergleiche mit veränderter Gegner-KI immer zusätzlich in der Referenzumgebung (`env: 'ref'` im Plan, unveränderte Gegner-KI aus `sicherung-2.1.0`).
+- Kriterien vor den Läufen festlegen (`docs/ABNAHMEKRITERIEN_2.2.md`), Berichte nur aus Rohdaten (`node tools/report-22.js`).
+- Ereignisstrom für unabhängige Engines: `PT.events` (export.js). Der Kanal `pai` wird vom Trainer nie gefüllt.
+- Bekannte Schwäche 2.2 (H4 in `docs/TESTBERICHT_2.2.md`): gegen unbekannte Strategien (Polarisierer, Fallensteller) schwächer als 2.1.0. Änderungen an
+  Reaktionsmodell oder Range-Tabelle zusätzlich gegen `FINAL` prüfen, nicht nur gegen V und T.
+
+## Hinweise ab 2.3
+- Produktstand Coach: hybrides Modell C (`PT.ranges.ABL = { hybrid: true }`); A/B/Ablationen nur über Schalter in Vergleichsläufen (Test „Wächter“).
+- Wer Tabelle, Gegner-KI oder `shownEntry` ändert, bestimmt die Referenzwerte von `FIT` neu (`node tests/strategy/fit-hybrid.js bots@E 8000 <Seed>`,
+  mehrere Seeds) und wiederholt die Modellwahl (`sel23`) – Abstimmung nur auf Tr23/E, Wahl auf Va23/V, F23 nur abschließend (versiegelt).
+- Abschließende Vergleiche: Plan `v23`, Kriterien `docs/ABNAHMEKRITERIEN_2.3.md`, Bericht `node tools/report-23.js`.

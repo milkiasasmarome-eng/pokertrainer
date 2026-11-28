@@ -205,7 +205,7 @@ function splitRange(w, sc, contFrac, raiseFrac) {
  * Keine verdeckten Karten, keine internen Spielstile. Modellannahme, kein Solver-Ergebnis.
  */
 // Neu kalibriert nach Prüfer B (Gegner-KI B3, Lead-Ranges B11): Seeds 503/504, je 3.500 Hände, strategy.json responseFit.final
-var POP = { c0: [0, 0.1798, 0.0364, 0.258], c1: [0, 1.8703, 2.3214, 2.0446], c2: 0.0301, c3: -0.0772, tau: 0.1353, c4: -0.1876, taud: 0.015, lf: 0.0142, lw: -0.1309, r0: 0.364, r1: 0.9141, rd: 0.1525, lv: -0.0265, lp: -0.7811, blend: 0.5, tauC: 0.03 };
+var POP = { c0: [0, 0.1798, 0.0364, 0.258], c1: [0, 1.8703, 2.3214, 2.0446], c2: 0.0301, c3: -0.0772, tau: 0.1353, c4: -0.1876, taud: 0.015, lf: 0.0142, lw: -0.1309, r0: 0.364, r1: 0.9141, rd: 0.1525, lv: -0.0265, lp: -0.7811, blend: 0.5, tauC: 0.03, tabBlend: 0.5 };
 function logit(p) { p = clamp(p, 0.01, 0.99); return Math.log(p / (1 - p)); }
 function sigm(z) { return 1 / (1 + Math.exp(-z)); }
 /** Anteil der Range, der bei Schwelle th weiterspielt */
@@ -262,10 +262,56 @@ function popRespond(opp, ctx, heroAdd, potBefore, nResp, kind, target) {
     basis: 'Populationsmodell, angepasst an Gegnerwerte (' + nObs + ' Beobachtungen)', model: 'pop', theta: th, price: price };
 }
 /**
+ * 2.2 (Arbeitspaket 2): Reaktion aus der datenbasierten Aktionstabelle (PT.ranges.likDist). Für jede Kombination der geschätzten Range:
+ * P(Fold/Call/Raise | absolute Stärke, Draw, Straße, Preis-Klasse der Einsatzgröße, Mehrgegner), angepasst an die beobachteten Werte des
+ * Gegners (Fold gegen Einsätze, Fold gegen C-Bets, WTSD; PT.ranges.oppAdjust). Dieselbe Tabelle beschreibt die Range-Aktualisierung
+ * nach Aktionen; Reaktion und Range-Schätzung sind damit konsistent. Größen über 2 Pot liegen außerhalb der Daten (Klasse s6).
+ */
+function likRespond(opp, ctx, heroAdd, potBefore, nResp) {
+  if (!R.likDist || !R.likelihoodTable || !R.likelihoodTable()) return null;
+  var st = ctx.street, A = absStrength(ctx.board), w = opp.w;
+  var callAmt = Math.max(0, Math.min(ctx.me.bet + heroAdd, opp.p.bet + opp.p.stack) - opp.p.bet);
+  var f = callAmt / Math.max(1, potBefore + heroAdd - callAmt), facingRaise = ctx.L.toCall > 0;  // wie in den Daten: Einsatz / Pot vor dem Einsatz
+  var nLive = ctx.opps ? ctx.opps.length : nResp;   // 2.3 (A-15): wie in den Daten zählen alle nicht gefoldeten Gegner, auch All-in
+  var sk = facingRaise ? 'rr' : R.sizeKey(f), key = st + '|' + sk + '|' + (Math.max(nResp, nLive) > 1 ? 'm' : 'h'), cache = {};
+  var canRaise = opp.p.stack > callAmt, contW = new Float64Array(NC), callW = new Float64Array(NC), raiseW = new Float64Array(NC), W = 0, Cn = 0, Rs = 0, miss = 0;
+  for (var k = 0; k < NC; k++) {
+    var x0 = w[k]; if (!(x0 > 0)) continue;
+    var xa = A.x[k], dr = st < 3 && A.d[k] ? 1 : 0, d = R.likDist(key, dr, R.xaBucket(xa));
+    if (!d) { miss++; continue; }
+    d = R.oppAdjust(d, true, xa, null, key, opp.sm, cache);
+    var pc = clamp((d.c || 0) + (d.r || 0), 0, 1), pr = canRaise ? clamp(d.r || 0, 0, pc) : 0;
+    W += x0; Cn += x0 * pc; Rs += x0 * pr;
+    contW[k] = x0 * pc; raiseW[k] = x0 * pr; callW[k] = x0 * (pc - pr);
+  }
+  if (!(W > 0) || miss > 0) return null;
+  var nObs = opp.raw && opp.raw.foldToCbet ? opp.raw.foldToCbet[1] : 0;
+  return { f: clamp(1 - Cn / W, 0, 1), c: Math.max(0, (Cn - Rs) / W), r: Rs / W, contW: contW, callW: callW, raiseW: raiseW,
+    basis: 'Aktionstabelle der Population, angepasst an Gegnerwerte (' + nObs + ' Beobachtungen)', model: 'tab', sk: sk, price: callAmt / Math.max(1, potBefore + heroAdd + callAmt) };
+}
+/**
  * Reaktion eines Gegners auf einen Einsatz. heroAdd: Chips, die der Held hinzufügt; potBefore: Pot vor der Aktion.
  * Rückgabe: {f, c, r} (Wahrscheinlichkeiten), contW/callW/raiseW (Ranges), basis (Text)
  */
+/** 2.3: Gewicht der Aktionstabelle in der Reaktion je Größenklasse (Prüfbefund B-6: Overbets s5/s6 eigenes Gewicht, auf V gewählt) */
+function tabWeight(sk) { if ((sk === 's5' || sk === 's6') && POP.tabBlendBig != null) return POP.tabBlendBig; return POP.tabBlend; }
 function respond(opp, ctx, heroAdd, potBefore, nResp, kind) {
+  if (ctx.street > 0 && ctx.mode !== 'gto' && !POP.off && !POP.tabOff && !R.ABL.respLegacy && !respond.inner) {
+    var tr = likRespond(opp, ctx, heroAdd, potBefore, nResp), a = tr ? tabWeight(tr.sk) * (opp.wResp != null ? opp.wResp : opp.wTab != null ? opp.wTab : 1) : 0;   // 2.3: Modell C skaliert das Tabellengewicht je Gegner
+    if (tr && a > 0 && a < 1) {
+      // Modellmittelung (2.2): Mischung aus Aktionstabelle und Reaktionsmodell 2.1 (Populationsmodell gemittelt mit MDF). Die Tabelle
+      // überschätzt Folds gegen kleine Einsätze, das 2.1-Modell unterschätzt sie gegen große (Größenstudie Gruppe V, docs/STRATEGIE.md);
+      // die Mischung ist über alle Größen am genauesten. Gemischt werden die Reaktionsranges, Fold-Rate und Zusammensetzung folgen daraus.
+      var alt, prevOff = POP.tabOff; POP.tabOff = true; try { alt = respond(opp, ctx, heroAdd, potBefore, nResp, kind); } finally { POP.tabOff = prevOff; }
+      if (alt && alt.contW) {
+        var cw = new Float64Array(NC), cl = new Float64Array(NC), rw = new Float64Array(NC);
+        for (var q = 0; q < NC; q++) { cw[q] = a * tr.contW[q] + (1 - a) * alt.contW[q]; cl[q] = a * tr.callW[q] + (1 - a) * alt.callW[q]; rw[q] = a * tr.raiseW[q] + (1 - a) * alt.raiseW[q]; }
+        return { f: a * tr.f + (1 - a) * alt.f, c: a * tr.c + (1 - a) * alt.c, r: a * tr.r + (1 - a) * alt.r, contW: cw, callW: cl, raiseW: rw,
+          basis: 'Aktionstabelle gemittelt mit Populations-/MDF-Modell, angepasst an Gegnerwerte', model: 'tab+pop', price: tr.price };
+      }
+    }
+    if (tr && a >= 1) return tr;   // 2.3 (D-6): Gewicht 0 heißt Modell 2.1, nicht reine Tabelle
+  }
   if (ctx.street > 0 && ctx.mode !== 'gto' && !POP.off && !respond.inner) {  // POP.off: nur für Studien (Reaktionsmodell 2.0.1)
     var pr0 = popRespond(opp, ctx, heroAdd, potBefore, nResp, kind);
     if (pr0 && POP.blend > 0) {
@@ -325,7 +371,10 @@ function respond(opp, ctx, heroAdd, potBefore, nResp, kind) {
   // Prüfer B, Befund 7: Im gleichgewichtsnahen Modus gilt die Gleichgewichtsannahme MDF ohne die Populationskorrekturen (Overbet-/Raise-
   // Korrektur und konservativer Abschlag). Diese machten jeden reinen Bluff strukturell −EV (Fold-Rate unter der Break-even-Rate),
   // sodass der Modus praktisch nie bluffte; im Gleichgewicht ist ein Bluff gegen MDF-Verteidigung gerade indifferent.
-  var popAdj = ctx.mode !== 'gto';
+  // 2.3.1 (docs/ABNAHMEKRITERIEN_2.4.md, H-G1): Raises und Jams gegen einen Einsatz bekommen auch im gleichgewichtsnahen Modus die Fold-Korrekturen 2.0.1;
+  // ohne sie raiste der Modus seit 2.1 dreimal so oft wie 2.0.1. Bets bleiben bei reiner MDF-Annahme (Prüfer B 7). Schalter gtoRaise23 = Stand 2.3.
+  var raiseK = kind === 'raise' || kind === 'jam' && ctx.L.toCall > 0;
+  var popAdj = ctx.mode !== 'gto' || !!R.ABL.gtoPopAdj || (raiseK && !R.ABL.gtoRaise23);
   if (ctx.street > 0 && popAdj) {
     // Korrektur für Overbets und Raises: polarisierte große Einsätze und Raises gegen eine gezeigte Bet werden seltener gefoldet,
     // als die reine MDF-Annahme für eine Einzelhand nahelegt (Modellannahme).
@@ -498,7 +547,10 @@ function candidates(ctx) {
     if (to > L.maxTo) to = L.maxTo;
     return to;
   }
-  function add(to, label, kind) { to = fit(to); if (seen[to]) return; seen[to] = 1; out.push({ type: L.isBet ? 'bet' : 'raise', amount: to, label: label, kind: kind }); }
+  function add(to, label, kind) { var nominal = to; to = fit(to); if (seen[to]) return; seen[to] = 1;
+    // 2.3 (Prüfbefund D-11): liegt der Stack unter der Nenngröße, nennt die Beschriftung den tatsächlichen Betrag
+    if (to === L.maxTo && nominal > to + 0.5 && label !== 'All-in') label = 'All-in ' + U.fmt(to);
+    out.push({ type: L.isBet ? 'bet' : 'raise', amount: to, label: label, kind: kind }); }
   if (L.canFold) out.push({ type: 'fold', label: 'Fold' });
   if (L.canCheck) out.push({ type: 'check', label: 'Check' });
   if (L.canCall) out.push({ type: 'call', amount: L.callAmt, label: 'Call ' + U.fmt(L.callAmt) });
@@ -537,7 +589,7 @@ function candidates(ctx) {
       add(ctx.cur + (pot + ctx.L.toCall), 'Raise Pot', 'raise');
       if (L.maxTo - me.bet <= 3 * (pot + ctx.L.toCall)) add(L.maxTo, 'All-in', 'jam');
     }
-    out.forEach(function (a) { if ((a.type === 'bet' || a.type === 'raise') && a.amount === L.maxTo) a.label = (a.label === 'All-in' ? 'All-in' : a.label + ' (All-in)'), a.allin = true; });
+    out.forEach(function (a) { if ((a.type === 'bet' || a.type === 'raise') && a.amount === L.maxTo) a.label = (/^All-in/.test(a.label) ? a.label : a.label + ' (All-in)'), a.allin = true; });
   }
   return out;
 }
@@ -565,6 +617,6 @@ function evaluateAction(ctx, act) {
 
 // PT.equity.cacheClear leert auch diesen Cache (Prüfer B, Befund 6)
 if (Q.onClear) Q.onClear(function () { ceCache.clear(); });
-PT.ev = { absStrength: absStrength, POP: POP, popRespond: popRespond, pfTable: pfTable, eqClass: eqClass, comboEquities: comboEquities, rangeEq: rangeEq, respond: respond, splitRange: splitRange,
+PT.ev = { absStrength: absStrength, POP: POP, popRespond: popRespond, likRespond: likRespond, pfTable: pfTable, eqClass: eqClass, comboEquities: comboEquities, rangeEq: rangeEq, respond: respond, splitRange: splitRange,
   realization: realization, playability: playability, potOdds: potOdds, evCheck: evCheck, evCall: evCall, evBet: evBet, candidates: candidates, evaluateAction: evaluateAction, subsetEq: subsetEq };
 })(typeof globalThis !== 'undefined' ? globalThis : (typeof self !== 'undefined' ? self : this));

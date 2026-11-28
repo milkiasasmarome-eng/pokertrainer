@@ -44,6 +44,14 @@ var POOL = [], BOT = {}, NAME_OF = {};
       P[key] = v;
     });
     P.noise = clamp(0.35 - 0.3 * P.skill, 0.04, 0.35);
+    // 2.2 (Arbeitspaket 5): zusätzliche, je Gegner feste Eigenheiten (eigener Zufallsstrom, die Stilparameter oben bleiben unverändert)
+    var tr = PT.makeRng('eigenheiten-2.2|' + i2), u1 = tr(), u2 = tr(), u3 = tr(), u4 = tr();
+    var passiveStyle = styleOf[i2] === 'lp' || styleOf[i2] === 'vl';
+    P.sizeSens = u1 < 0.2 ? (passiveStyle ? 0.45 : 1.6) : 1;                     // Reaktion auf Einsatzgrößen: Calling Stations kaum, andere stark größenabhängig
+    P.posAgg = u2 < 0.25 ? 0.25 + 0.25 * tr() : 0;                                // in Position aggressiver, ohne Position passiver
+    P.shift = u3 < 0.12 ? Math.round(120 + 130 * tr()) : 0;                       // wechselnde Spielweise: Phasenlänge in Händen
+    P.shiftPhase = Math.floor(tr() * 2);
+    P.rare = u4 < 0.15 ? 0.03 + 0.03 * tr() : 0;                                   // seltene Linien (River-Overbet-Bluff, Check-Raise-Bluff)
     POOL.push({ id: id, name: nm });
     BOT[id] = { style: styleOf[i2], P: P };
     NAME_OF[id] = nm;
@@ -55,7 +63,7 @@ function nameOf(id) { return id === 'hero' ? 'Du' : (NAME_OF[id] || id); }
 /** Was ein Spieler am Tisch sehen darf: Aktionen, Board, Stacks und nur die eigenen Karten. */
 function publicView(h, seat) {
   return {
-    seat: seat, street: h.street, board: h.board.slice(), button: h.button, bb: h.bb, sb: h.sb, n: h.N,
+    seat: seat, street: h.street, board: h.board.slice(), button: h.button, bb: h.bb, sb: h.sb, n: h.N, no: h.no,
     cards: h.p[seat].cards.slice(), pot: h.potTotal(), cur: h.cur, raises: h.raises, pfa: h.pfa, opener: h.opener,
     limpers: h.limpers, callsSince: h.callsSince, lastFull: h.lastFull, legal: h.legal(seat),
     players: h.p.map(function (q) {
@@ -243,6 +251,11 @@ function postflop(v, P, rng, ctx) {
     thinMul = clamp(1 + P.adapt * st * 4, 0.7, 2.2);
   }
   var mw = nOpp > 1 ? Math.pow(0.6, nOpp - 1) : 1;
+  // 2.2: Eigenheiten. Wechselnde Spielweise (Phase aus der öffentlichen Handnummer), Positionsabhängigkeit
+  var phaseAgg = 0;
+  if (P.shift > 0 && v.no != null) phaseAgg = ((Math.floor(v.no / P.shift) + P.shiftPhase) % 2 === 0) ? 1 : -1;
+  if (phaseAgg) bluffMul *= phaseAgg > 0 ? 1.6 : 0.55;
+  if (P.posAgg > 0) bluffMul *= ip ? 1 + P.posAgg : 1 - P.posAgg / 2;
   if (L.toCall === 0) {
     if (!L.canRaise) return { type: 'check' };
     var bet = function (kind) { return raiseTo(v, L, me.bet + Math.max(v.bb, pot * sizeFor(v, P, tex, kind))); };
@@ -278,6 +291,8 @@ function postflop(v, P, rng, ctx) {
       } else if (ip && (cls === 'air') && v.street === 1) pB = Math.max(pB, P.float * mw);
       if (hsI.aggrPrev >= 0 && hsI.aggrPrev !== v.seat && !v.players[hsI.aggrPrev].folded && !(PT.POS_ORDER_POST[v.players[hsI.aggrPrev].pos] < PT.POS_ORDER_POST[me.pos])) pB *= 0.5;
     }
+    // seltene Linie: River-Overbet-Bluff, nur als Aggressor oder in Position, mit Mehrspielerfaktor (Prüfer B 2.2, B-7)
+    if (P.rare > 0 && v.street === 3 && cls === 'air' && L.canRaise && (isPfa || ip) && rng() < P.rare * mw) return bet('overbet');
     if (rng() < clamp(pB, 0, 0.98)) {
       if (v.street === 3 && cls === 'monster' && rng() < P.over_b * 3) return bet('overbet');
       if (v.street >= 2 && (cls === 'air') && P.skill > 0.6 && rng() < P.over_b) return bet('overbet');
@@ -292,7 +307,9 @@ function postflop(v, P, rng, ctx) {
   if (bettor >= 0 && v.players[bettor].hero && hs && hs.sm) bluffy = clamp(0.15 + (hs.sm.afq - 0.3) * 0.9, 0.1, 0.6);
   // Prüfer B, Befund 3: Die Schwelle steigt auch oberhalb von 1,6 Pot weiter (logarithmisch); früher war sie dort konstant, sodass ein
   // 17-facher Pot-Shove wie eine 1,6-Pot-Bet behandelt wurde.
-  var t0 = clamp(0.57 + 0.2 * Math.min(f, 1.6) + 0.08 * Math.log(Math.max(1, f / 1.6)) - 0.3 * bluffy + (v.street - 1) * 0.06 + (v.raises >= 2 ? 0.1 : 0) + (nOpp > 1 ? 0.04 : 0), 0.35, 0.97);
+  var ss = P.sizeSens || 1;
+  // Größenempfindlichkeit um ⅓ Pot zentriert (Prüfer B 2.2, B-7): Calling Stations folden gegen kleine Einsätze nicht häufiger, gegen große seltener
+  var t0 = clamp(0.57 + 0.2 * ss * (Math.min(f, 1.6) - 0.33) + 0.066 + 0.08 * ss * Math.log(Math.max(1, f / 1.6)) - 0.3 * bluffy + (v.street - 1) * 0.06 + (v.raises >= 2 ? 0.1 : 0) + (nOpp > 1 ? 0.04 : 0) - (phaseAgg > 0 ? 0.04 : phaseAgg < 0 ? -0.04 : 0), 0.35, 0.97);
   var eq = clamp((p - t0) / Math.max(0.05, 1 - t0), 0, 1);
   if (di.strong && v.street < 3) {
     var outs = (di.fd ? 9 : 0) + (di.oesd ? 8 : di.gut ? 4 : 0) - (di.fd && di.so ? 2 : 0);
@@ -315,7 +332,7 @@ function postflop(v, P, rng, ctx) {
     if (cls === 'monster') pr2 = (1 - P.slow * 0.6) * (hsI.iCheckedThis ? 0.5 + P.cr * 3 : 0.6);
     else if (cls === 'strong' && strongCont) pr2 = (hsI.iCheckedThis ? P.cr * 2.2 : P.cr * 1.5) * (v.raises >= 2 ? 0.2 : 1);
     else if (di.strong && v.street < 3) pr2 = P.cr * 1.4 * P.semi * 2 * (v.raises >= 2 ? 0.1 : 1);
-    else if (cls === 'air' && v.raises === 1) pr2 = P.cr * 0.4 * P.bluff * 2 * bluffMul;
+    else if (cls === 'air' && v.raises === 1) pr2 = P.cr * 0.4 * P.bluff * 2 * bluffMul + (P.rare > 0 && v.street === 2 && hsI.iCheckedThis ? P.rare : 0);  // seltene Linie: Check-Raise-Bluff am Turn (nur nach eigenem Check, B-7)
     if (spr < 1.5 && (cls === 'monster' || (cls === 'strong' && strongCont))) return { type: 'allin' };
     if (rng() < clamp(pr2 * mw, 0, 0.9)) return raiseTo(v, L, v.cur * (v.street === 3 ? 2.8 : 3) + (pot - v.cur - me.bet) * 0.25);
   }

@@ -628,8 +628,10 @@ test('Regression Prüfer C: Preflop nach Faustregel-Chart (kein 3-Bet/Open mit b
 });
 
 test('Regression Prüfer C: keine Multiway-Bluffs ohne Rückhalt, keine Flop-Overbets, Live-Tipp ≤ 5.000 Simulationen', () => {
-  const h = spot('BB', 'Ks8c', '6s4c3sQd2h', [['HJ', 'raise', 2.5], ['CO', 'call'], ['BTN', 'call'], ['H', 'call']]);
-  const a = coachOn(h, 'exploit'); ok(a.best === 'check', 'Ks8c auf 6s4c3s gegen 3 Gegner: Check (ist ' + a.bestLabel + ')');
+  // 2.2: Spot ohne jeden Rückhalt (keine Overcards zum Board, kein Backdoor-Draw). Der frühere Spot Ks8c auf 6s4c3s hat Overcard und
+  // Backdoor-Flush; dort ist ein Bet gegen die gemessenen Fold-Raten der Gegner-KI im Mehrspielerpot vertretbar (docs/audit-2.2/FOLGEAUDIT.md).
+  const h = spot('BB', '7c2d', 'AsKsQhJd3h', [['HJ', 'raise', 2.5], ['CO', 'call'], ['BTN', 'call'], ['H', 'call']]);
+  const a = coachOn(h, 'exploit'); ok(a.best === 'check', '7c2d auf AsKsQh gegen 3 Gegner: Check (ist ' + a.bestLabel + ')');
   const f = coachOn(spot('BTN', 'KhKd', 'Tc4cJs', [['H', 'raise', 2.5], ['BB', 'call'], ['BB', 'check']]), 'exploit');
   ok(!f.actions.some(x => /Overbet/.test(x.label)), 'keine Overbet-Kandidaten auf dem Flop');
   const deep = PT.coach.analyze({ view: PT.bots.publicView(h, 0), opps: {}, settings: { mode: 'exploit', level: 'tief' }, seed: 1, live: true });

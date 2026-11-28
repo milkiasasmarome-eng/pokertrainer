@@ -1,0 +1,2318 @@
+{
+ "app": "2.3.0",
+ "date": "2026-11-28T12:05:24.304Z",
+ "node": "v22.23.5",
+ "cpus": 4,
+ "plan": "dev24",
+ "method": {
+  "primary": "All-in-bereinigte BB/100 (unverzerrt, vor den Hauptläufen festgelegt); Rohwerte zusätzlich",
+  "bootstrap": {
+   "blockHands": 500,
+   "reps": 2000,
+   "stratified": "je Lauf"
+  },
+  "verdict": "belegt, wenn das 95-%-Intervall der Differenz ganz über 0 liegt",
+  "stacks": "Alle Stacks werden vor jeder Hand auf die Starttiefe gesetzt",
+  "clock": "Uhr im Coach-Kontext fest (keine Zeitbremse), Rechenzeit außerhalb gemessen",
+  "streams": "Karten: deal; Gegner: bots; Tisch/Rotation: tisch; Coach: Tisch-Seed|Hand|Aktionszahl"
+ },
+ "versions": {
+  "v21": {
+   "root": ".",
+   "version": "2.3.0",
+   "coachHash": "18b5d4919e41"
+  },
+  "v210": {
+   "root": "/home/user/wt-v210",
+   "version": "2.1.0",
+   "coachHash": "8aeb416982fb"
+  },
+  "v201": {
+   "root": "/home/user/wt-v201",
+   "version": "2.0.1",
+   "coachHash": "8977eca6b2c0"
+  },
+  "envHash": "7664ae1e00ed"
+ },
+ "heroes": {
+  "coach21": "Coach 2.1 (exploitativ)",
+  "coach201": "Coach 2.0.1 (exploitativ)",
+  "coach21-gto": "Coach 2.1 (gleichgewichtsnah)",
+  "coach21-rein": "Coach 2.1, reines Populationsmodell (Entwicklungsvariante)",
+  "coach201-gto": "Coach 2.0.1 (gleichgewichtsnah)",
+  "coach22": "Coach 2.2 (exploitativ)",
+  "coach22-gto": "Coach 2.2 (gleichgewichtsnah)",
+  "coach23": "Coach 2.3 (exploitativ)",
+  "coach23-gto": "Coach 2.3 (gleichgewichtsnah)",
+  "fA": "Robustes Basismodell (A)",
+  "fB": "Adaptives Modell (B)",
+  "fC": "Hybrides Modell (C)",
+  "varA": "Variante A: robustes Basismodell",
+  "varB": "Variante B: adaptives Modell",
+  "varC": "Variante C: kontrolliertes hybrides Modell",
+  "varS": "Variante S: Tabellen-Range, Reaktionsmodell 2.1 (aus der Ablation)",
+  "varC3": "Variante C3: hybrid, Reaktion mit robustem Vorwissen",
+  "t-C": "Abstimmung: C (Standard)",
+  "t-w0": "Abstimmung: C, Vorwissen 0,5",
+  "t-z": "Abstimmung: C, empfindlichere Schwellen",
+  "t-zr": "Abstimmung: C, empfindlich, Vorwissen 0,5, Reaktion robust vorab",
+  "varC5": "Variante C5: hybrid mit robuster Entscheidungsregel",
+  "varCz": "Variante C (abgestimmt auf Tr23): hybrid, empfindlichere Schwellen",
+  "t-zsq": "Abstimmung: C empfindlich, Reaktion quadratisch",
+  "t-z1": "Abstimmung: C sehr empfindlich",
+  "varCz1": "Variante C (abgestimmt auf Tr23/E): hybrid, sehr empfindliche Schwellen",
+  "varC7": "Variante C nach Prüfung A/B (Größensignale, aggressive und passive Aktionen getrennt geprüft)",
+  "varB7": "Variante B (Stand nach Prüfung A/B)",
+  "varC2": "Variante C2: hybride Range, Reaktionsmodell 2.1",
+  "abl-R": "Ablation: Range-Eingrenzung 2.1",
+  "abl-S": "Ablation: Reaktionsmodell 2.1",
+  "abl-A": "Ablation: ohne Gegneranpassung der Tabelle",
+  "abl-D": "Ablation: Datenlage nach Händen (2.1)",
+  "abl-RS": "Ablation: Range und Reaktion 2.1",
+  "abl-RSD": "Ablation: Range, Reaktion, Datenlage 2.1",
+  "g24-0": "gleichgewichtsnah, Stand 2.3",
+  "g24-R": "gleichgewichtsnah, Fold-Korrektur für Raises (2.0.1)",
+  "g24-P": "gleichgewichtsnah, alle Fold-Korrekturen 2.0.1",
+  "coach220": "Coach 2.2.0 (exploitativ)",
+  "coach220-gto": "Coach 2.2.0 (gleichgewichtsnah)",
+  "coach210": "Coach 2.1.0 (exploitativ)",
+  "coach210-gto": "Coach 2.1.0 (gleichgewichtsnah)",
+  "bot": "Gegner-KI als Held (Profil g004, Stil ausgeglichen)",
+  "potodds": "Referenz: Pot-Odds-Schwelle",
+  "pushfold": "Referenz: Push/Fold-Chart (≤ 20 BB), sonst Pot-Odds-Schwelle"
+ },
+ "runs": [
+  {
+   "id": "dG_g24-0_bots_gemischt_100BB_s24001_2500",
+   "group": "dG",
+   "hero": "g24-0",
+   "cond": "bots|gemischt|100",
+   "seed": 24001,
+   "hands": 2500,
+   "decisions": 3441,
+   "invalid": 0,
+   "bb100": -2.87,
+   "bb100Adj": 13.26,
+   "sdHand": 12.05,
+   "sdHandAdj": 10.49,
+   "allinHands": 21,
+   "avgMs": 18,
+   "maxMs": 117,
+   "maxIters": 5000,
+   "labels": {
+    "Pot": 116,
+    "Overbet": 25,
+    "All-in": 21,
+    "check": 352,
+    "Raise Pot": 36,
+    "fold": 102,
+    "call": 33,
+    "¾": 38,
+    "⅓": 67,
+    "Raise 2,5×": 33,
+    "½": 29,
+    "Raise 3,5×": 22
+   },
+   "preLabels": {
+    "fold": 1888,
+    "Open": 320,
+    "call": 174,
+    "3-Bet": 109,
+    "check": 31,
+    "Iso-Raise": 29,
+    "All-in": 4,
+    "4-Bet": 12
+   },
+   "classes": {
+    "klar": 1194,
+    "knapp": 1115,
+    "eindeutig": 282,
+    "mehrere": 850
+   },
+   "chartApplied": 985,
+   "chartGapBB": 222.58,
+   "wallMs": 64159,
+   "usedIn": [
+    "dG-g24-0"
+   ]
+  },
+  {
+   "id": "dG_g24-R_bots_gemischt_100BB_s24001_2500",
+   "group": "dG",
+   "hero": "g24-R",
+   "cond": "bots|gemischt|100",
+   "seed": 24001,
+   "hands": 2500,
+   "decisions": 3415,
+   "invalid": 0,
+   "bb100": -5.75,
+   "bb100Adj": 9.66,
+   "sdHand": 10.61,
+   "sdHandAdj": 8.74,
+   "allinHands": 20,
+   "avgMs": 18,
+   "maxMs": 136,
+   "maxIters": 5000,
+   "labels": {
+    "Pot": 111,
+    "Overbet": 25,
+    "All-in": 17,
+    "check": 348,
+    "call": 68,
+    "fold": 137,
+    "¾": 33,
+    "⅓": 65,
+    "Raise Pot": 7,
+    "½": 28,
+    "Raise 2,5×": 9
+   },
+   "preLabels": {
+    "fold": 1888,
+    "Open": 320,
+    "call": 174,
+    "3-Bet": 109,
+    "check": 31,
+    "Iso-Raise": 29,
+    "All-in": 4,
+    "4-Bet": 12
+   },
+   "classes": {
+    "klar": 1209,
+    "knapp": 1123,
+    "eindeutig": 276,
+    "mehrere": 807
+   },
+   "chartApplied": 985,
+   "chartGapBB": 222.58,
+   "wallMs": 63559,
+   "usedIn": [
+    "dG-g24-R"
+   ]
+  },
+  {
+   "id": "dG_g24-P_bots_gemischt_100BB_s24001_2500",
+   "group": "dG",
+   "hero": "g24-P",
+   "cond": "bots|gemischt|100",
+   "seed": 24001,
+   "hands": 2500,
+   "decisions": 3446,
+   "invalid": 0,
+   "bb100": -2.99,
+   "bb100Adj": 4.77,
+   "sdHand": 10.31,
+   "sdHandAdj": 8.38,
+   "allinHands": 21,
+   "avgMs": 18.1,
+   "maxMs": 126,
+   "maxIters": 5000,
+   "labels": {
+    "Pot": 78,
+    "Overbet": 42,
+    "All-in": 18,
+    "check": 396,
+    "call": 69,
+    "fold": 143,
+    "⅓": 66,
+    "Raise Pot": 7,
+    "Raise 2,5×": 12,
+    "½": 23,
+    "¾": 25
+   },
+   "preLabels": {
+    "fold": 1888,
+    "Open": 320,
+    "call": 174,
+    "3-Bet": 109,
+    "check": 31,
+    "Iso-Raise": 29,
+    "All-in": 4,
+    "4-Bet": 12
+   },
+   "classes": {
+    "klar": 1197,
+    "knapp": 1183,
+    "eindeutig": 290,
+    "mehrere": 776
+   },
+   "chartApplied": 985,
+   "chartGapBB": 222.58,
+   "wallMs": 64536,
+   "usedIn": [
+    "dG-g24-P"
+   ]
+  },
+  {
+   "id": "dG_coach201-gto_bots_gemischt_100BB_s24001_2500",
+   "group": "dG",
+   "hero": "coach201-gto",
+   "cond": "bots|gemischt|100",
+   "seed": 24001,
+   "hands": 2500,
+   "decisions": 3354,
+   "invalid": 0,
+   "bb100": -13.05,
+   "bb100Adj": -4.42,
+   "sdHand": 9.72,
+   "sdHandAdj": 8.02,
+   "allinHands": 17,
+   "avgMs": 11.4,
+   "maxMs": 182,
+   "maxIters": 4038,
+   "labels": {
+    "Pot": 66,
+    "Overbet": 37,
+    "All-in": 17,
+    "call": 53,
+    "check": 344,
+    "fold": 112,
+    "Raise Pot": 7,
+    "⅓": 68,
+    "Raise 2,5×": 20,
+    "¾": 32,
+    "½": 25,
+    "Raise 3,5×": 1
+   },
+   "preLabels": {
+    "fold": 1942,
+    "Open": 317,
+    "call": 143,
+    "3-Bet": 108,
+    "check": 30,
+    "Iso-Raise": 18,
+    "4-Bet": 12,
+    "All-in": 2
+   },
+   "classes": {
+    "klar": 1173,
+    "knapp": 1120,
+    "eindeutig": 279,
+    "mehrere": 782
+   },
+   "chartApplied": 969,
+   "chartGapBB": 189.96,
+   "wallMs": 40455,
+   "usedIn": [
+    "dG-g24-0",
+    "dG-g24-R",
+    "dG-g24-P"
+   ]
+  },
+  {
+   "id": "dG_g24-0_bots_gemischt_100BB_s24002_2500",
+   "group": "dG",
+   "hero": "g24-0",
+   "cond": "bots|gemischt|100",
+   "seed": 24002,
+   "hands": 2500,
+   "decisions": 3532,
+   "invalid": 0,
+   "bb100": 10.63,
+   "bb100Adj": 2.82,
+   "sdHand": 11.16,
+   "sdHandAdj": 9.77,
+   "allinHands": 16,
+   "avgMs": 19.1,
+   "maxMs": 173,
+   "maxIters": 5000,
+   "labels": {
+    "check": 424,
+    "fold": 98,
+    "Pot": 118,
+    "Raise Pot": 34,
+    "½": 53,
+    "⅓": 97,
+    "Raise 2,5×": 33,
+    "Overbet": 28,
+    "call": 29,
+    "¾": 44,
+    "All-in": 14,
+    "Raise 3,5×": 10
+   },
+   "preLabels": {
+    "fold": 1898,
+    "Open": 333,
+    "3-Bet": 86,
+    "call": 177,
+    "4-Bet": 6,
+    "Iso-Raise": 23,
+    "check": 23,
+    "All-in": 4
+   },
+   "classes": {
+    "klar": 1209,
+    "mehrere": 896,
+    "knapp": 1123,
+    "eindeutig": 304
+   },
+   "chartApplied": 1023,
+   "chartGapBB": 223,
+   "wallMs": 69609,
+   "usedIn": [
+    "dG-g24-0"
+   ]
+  },
+  {
+   "id": "dG_g24-R_bots_gemischt_100BB_s24002_2500",
+   "group": "dG",
+   "hero": "g24-R",
+   "cond": "bots|gemischt|100",
+   "seed": 24002,
+   "hands": 2500,
+   "decisions": 3490,
+   "invalid": 0,
+   "bb100": 21.61,
+   "bb100Adj": 12.79,
+   "sdHand": 10.53,
+   "sdHandAdj": 8.95,
+   "allinHands": 16,
+   "avgMs": 19.3,
+   "maxMs": 146,
+   "maxIters": 5000,
+   "labels": {
+    "check": 391,
+    "fold": 134,
+    "Pot": 116,
+    "call": 58,
+    "½": 51,
+    "⅓": 100,
+    "Overbet": 27,
+    "¾": 44,
+    "Raise Pot": 3,
+    "Raise 3,5×": 2,
+    "Raise 2,5×": 7,
+    "All-in": 7
+   },
+   "preLabels": {
+    "fold": 1898,
+    "Open": 333,
+    "3-Bet": 86,
+    "call": 177,
+    "4-Bet": 6,
+    "Iso-Raise": 23,
+    "check": 23,
+    "All-in": 4
+   },
+   "classes": {
+    "klar": 1216,
+    "mehrere": 850,
+    "knapp": 1113,
+    "eindeutig": 311
+   },
+   "chartApplied": 1023,
+   "chartGapBB": 223,
+   "wallMs": 69575,
+   "usedIn": [
+    "dG-g24-R"
+   ]
+  },
+  {
+   "id": "dG_g24-P_bots_gemischt_100BB_s24002_2500",
+   "group": "dG",
+   "hero": "g24-P",
+   "cond": "bots|gemischt|100",
+   "seed": 24002,
+   "hands": 2500,
+   "decisions": 3489,
+   "invalid": 0,
+   "bb100": 12.06,
+   "bb100Adj": 5.92,
+   "sdHand": 10.48,
+   "sdHandAdj": 8.77,
+   "allinHands": 20,
+   "avgMs": 18.9,
+   "maxMs": 158,
+   "maxIters": 5000,
+   "labels": {
+    "check": 422,
+    "fold": 135,
+    "Pot": 94,
+    "call": 55,
+    "¾": 18,
+    "½": 38,
+    "⅓": 85,
+    "All-in": 18,
+    "Overbet": 61,
+    "Raise Pot": 3,
+    "Raise 3,5×": 2,
+    "Raise 2,5×": 8
+   },
+   "preLabels": {
+    "fold": 1898,
+    "Open": 333,
+    "3-Bet": 86,
+    "call": 177,
+    "4-Bet": 6,
+    "Iso-Raise": 23,
+    "check": 23,
+    "All-in": 4
+   },
+   "classes": {
+    "klar": 1187,
+    "mehrere": 770,
+    "knapp": 1192,
+    "eindeutig": 340
+   },
+   "chartApplied": 1023,
+   "chartGapBB": 223,
+   "wallMs": 68092,
+   "usedIn": [
+    "dG-g24-P"
+   ]
+  },
+  {
+   "id": "dG_coach201-gto_bots_gemischt_100BB_s24002_2500",
+   "group": "dG",
+   "hero": "coach201-gto",
+   "cond": "bots|gemischt|100",
+   "seed": 24002,
+   "hands": 2500,
+   "decisions": 3429,
+   "invalid": 0,
+   "bb100": 13.53,
+   "bb100Adj": 10.38,
+   "sdHand": 10.45,
+   "sdHandAdj": 9.1,
+   "allinHands": 20,
+   "avgMs": 11.8,
+   "maxMs": 139,
+   "maxIters": 4078,
+   "labels": {
+    "check": 375,
+    "fold": 111,
+    "Pot": 91,
+    "call": 45,
+    "¾": 17,
+    "½": 44,
+    "⅓": 92,
+    "Raise 2,5×": 21,
+    "Overbet": 57,
+    "All-in": 21,
+    "Raise Pot": 3,
+    "Raise 3,5×": 1
+   },
+   "preLabels": {
+    "fold": 1935,
+    "Open": 333,
+    "3-Bet": 85,
+    "call": 150,
+    "4-Bet": 8,
+    "Iso-Raise": 15,
+    "check": 23,
+    "All-in": 2
+   },
+   "classes": {
+    "klar": 1181,
+    "mehrere": 751,
+    "knapp": 1166,
+    "eindeutig": 331
+   },
+   "chartApplied": 1017,
+   "chartGapBB": 204.39,
+   "wallMs": 42657,
+   "usedIn": [
+    "dG-g24-0",
+    "dG-g24-R",
+    "dG-g24-P"
+   ]
+  },
+  {
+   "id": "dG_g24-0_bots_gemischt_100BB_s24003_2500",
+   "group": "dG",
+   "hero": "g24-0",
+   "cond": "bots|gemischt|100",
+   "seed": 24003,
+   "hands": 2500,
+   "decisions": 3557,
+   "invalid": 0,
+   "bb100": 18.34,
+   "bb100Adj": 25.91,
+   "sdHand": 12.31,
+   "sdHandAdj": 10.01,
+   "allinHands": 25,
+   "avgMs": 19.3,
+   "maxMs": 143,
+   "maxIters": 5000,
+   "labels": {
+    "check": 414,
+    "⅓": 96,
+    "call": 26,
+    "fold": 103,
+    "Overbet": 37,
+    "Pot": 116,
+    "½": 42,
+    "All-in": 24,
+    "Raise 2,5×": 29,
+    "Raise Pot": 28,
+    "Raise 3,5×": 13,
+    "¾": 46
+   },
+   "preLabels": {
+    "fold": 1898,
+    "Open": 328,
+    "call": 186,
+    "Iso-Raise": 35,
+    "check": 37,
+    "3-Bet": 79,
+    "4-Bet": 13,
+    "All-in": 7
+   },
+   "classes": {
+    "klar": 1192,
+    "knapp": 1093,
+    "mehrere": 927,
+    "eindeutig": 345
+   },
+   "chartApplied": 991,
+   "chartGapBB": 228.38,
+   "wallMs": 71038,
+   "usedIn": [
+    "dG-g24-0"
+   ]
+  },
+  {
+   "id": "dG_g24-R_bots_gemischt_100BB_s24003_2500",
+   "group": "dG",
+   "hero": "g24-R",
+   "cond": "bots|gemischt|100",
+   "seed": 24003,
+   "hands": 2500,
+   "decisions": 3525,
+   "invalid": 0,
+   "bb100": 29.97,
+   "bb100Adj": 28.59,
+   "sdHand": 10.16,
+   "sdHandAdj": 8.7,
+   "allinHands": 17,
+   "avgMs": 19.6,
+   "maxMs": 164,
+   "maxIters": 5000,
+   "labels": {
+    "check": 405,
+    "⅓": 88,
+    "call": 62,
+    "fold": 127,
+    "Overbet": 36,
+    "Pot": 116,
+    "½": 42,
+    "All-in": 14,
+    "¾": 43,
+    "Raise 2,5×": 5,
+    "Raise Pot": 4
+   },
+   "preLabels": {
+    "fold": 1898,
+    "Open": 328,
+    "call": 186,
+    "Iso-Raise": 35,
+    "check": 37,
+    "3-Bet": 79,
+    "4-Bet": 13,
+    "All-in": 7
+   },
+   "classes": {
+    "klar": 1211,
+    "knapp": 1086,
+    "mehrere": 880,
+    "eindeutig": 348
+   },
+   "chartApplied": 991,
+   "chartGapBB": 228.38,
+   "wallMs": 71563,
+   "usedIn": [
+    "dG-g24-R"
+   ]
+  },
+  {
+   "id": "dG_g24-P_bots_gemischt_100BB_s24003_2500",
+   "group": "dG",
+   "hero": "g24-P",
+   "cond": "bots|gemischt|100",
+   "seed": 24003,
+   "hands": 2500,
+   "decisions": 3539,
+   "invalid": 0,
+   "bb100": 9.74,
+   "bb100Adj": 10.66,
+   "sdHand": 10.07,
+   "sdHandAdj": 8.58,
+   "allinHands": 17,
+   "avgMs": 19.3,
+   "maxMs": 172,
+   "maxIters": 5000,
+   "labels": {
+    "check": 441,
+    "⅓": 77,
+    "call": 66,
+    "fold": 129,
+    "Overbet": 72,
+    "Pot": 88,
+    "½": 27,
+    "¾": 28,
+    "All-in": 19,
+    "Raise 2,5×": 5,
+    "Raise Pot": 4
+   },
+   "preLabels": {
+    "fold": 1898,
+    "Open": 328,
+    "call": 186,
+    "Iso-Raise": 35,
+    "check": 37,
+    "3-Bet": 79,
+    "4-Bet": 13,
+    "All-in": 7
+   },
+   "classes": {
+    "klar": 1201,
+    "knapp": 1170,
+    "mehrere": 795,
+    "eindeutig": 373
+   },
+   "chartApplied": 991,
+   "chartGapBB": 228.38,
+   "wallMs": 70666,
+   "usedIn": [
+    "dG-g24-P"
+   ]
+  },
+  {
+   "id": "dG_coach201-gto_bots_gemischt_100BB_s24003_2500",
+   "group": "dG",
+   "hero": "coach201-gto",
+   "cond": "bots|gemischt|100",
+   "seed": 24003,
+   "hands": 2500,
+   "decisions": 3467,
+   "invalid": 0,
+   "bb100": 15.31,
+   "bb100Adj": 17.13,
+   "sdHand": 10.19,
+   "sdHandAdj": 8.64,
+   "allinHands": 19,
+   "avgMs": 11.7,
+   "maxMs": 158,
+   "maxIters": 5000,
+   "labels": {
+    "check": 405,
+    "⅓": 83,
+    "call": 50,
+    "fold": 109,
+    "Overbet": 67,
+    "¾": 18,
+    "Pot": 84,
+    "½": 29,
+    "All-in": 21,
+    "Raise 2,5×": 10,
+    "Raise Pot": 3
+   },
+   "preLabels": {
+    "fold": 1946,
+    "Open": 327,
+    "call": 154,
+    "Iso-Raise": 25,
+    "check": 37,
+    "3-Bet": 79,
+    "4-Bet": 15,
+    "All-in": 5
+   },
+   "classes": {
+    "klar": 1190,
+    "knapp": 1119,
+    "mehrere": 793,
+    "eindeutig": 365
+   },
+   "chartApplied": 972,
+   "chartGapBB": 198.47,
+   "wallMs": 42720,
+   "usedIn": [
+    "dG-g24-0",
+    "dG-g24-R",
+    "dG-g24-P"
+   ]
+  },
+  {
+   "id": "dG_g24-0_bots_gemischt_100BB_s24004_2500",
+   "group": "dG",
+   "hero": "g24-0",
+   "cond": "bots|gemischt|100",
+   "seed": 24004,
+   "hands": 2500,
+   "decisions": 3477,
+   "invalid": 0,
+   "bb100": -47.96,
+   "bb100Adj": -27.66,
+   "sdHand": 12.47,
+   "sdHandAdj": 10.71,
+   "allinHands": 22,
+   "avgMs": 17.9,
+   "maxMs": 155,
+   "maxIters": 5000,
+   "labels": {
+    "check": 412,
+    "Pot": 115,
+    "Overbet": 40,
+    "call": 38,
+    "Raise 2,5×": 38,
+    "Raise Pot": 25,
+    "fold": 76,
+    "¾": 33,
+    "⅓": 84,
+    "All-in": 22,
+    "½": 41,
+    "Raise 3,5×": 13
+   },
+   "preLabels": {
+    "fold": 1891,
+    "4-Bet": 7,
+    "call": 172,
+    "Open": 330,
+    "Iso-Raise": 22,
+    "3-Bet": 91,
+    "All-in": 2,
+    "check": 25
+   },
+   "classes": {
+    "klar": 1232,
+    "mehrere": 885,
+    "eindeutig": 260,
+    "knapp": 1100
+   },
+   "chartApplied": 1033,
+   "chartGapBB": 198.63,
+   "wallMs": 64534,
+   "usedIn": [
+    "dG-g24-0"
+   ]
+  },
+  {
+   "id": "dG_g24-R_bots_gemischt_100BB_s24004_2500",
+   "group": "dG",
+   "hero": "g24-R",
+   "cond": "bots|gemischt|100",
+   "seed": 24004,
+   "hands": 2500,
+   "decisions": 3434,
+   "invalid": 0,
+   "bb100": -30.66,
+   "bb100Adj": -26.88,
+   "sdHand": 10.58,
+   "sdHandAdj": 9.01,
+   "allinHands": 15,
+   "avgMs": 18,
+   "maxMs": 128,
+   "maxIters": 5000,
+   "labels": {
+    "check": 388,
+    "Pot": 114,
+    "Overbet": 39,
+    "call": 63,
+    "fold": 118,
+    "¾": 32,
+    "⅓": 79,
+    "½": 40,
+    "All-in": 9,
+    "Raise 3,5×": 1,
+    "Raise 2,5×": 5,
+    "Raise Pot": 6
+   },
+   "preLabels": {
+    "fold": 1891,
+    "4-Bet": 7,
+    "call": 172,
+    "Open": 330,
+    "Iso-Raise": 22,
+    "3-Bet": 91,
+    "All-in": 2,
+    "check": 25
+   },
+   "classes": {
+    "klar": 1236,
+    "mehrere": 852,
+    "eindeutig": 265,
+    "knapp": 1081
+   },
+   "chartApplied": 1033,
+   "chartGapBB": 198.63,
+   "wallMs": 63981,
+   "usedIn": [
+    "dG-g24-R"
+   ]
+  },
+  {
+   "id": "dG_g24-P_bots_gemischt_100BB_s24004_2500",
+   "group": "dG",
+   "hero": "g24-P",
+   "cond": "bots|gemischt|100",
+   "seed": 24004,
+   "hands": 2500,
+   "decisions": 3447,
+   "invalid": 0,
+   "bb100": -31.85,
+   "bb100Adj": -24.95,
+   "sdHand": 10.26,
+   "sdHandAdj": 8.54,
+   "allinHands": 16,
+   "avgMs": 17.9,
+   "maxMs": 157,
+   "maxIters": 4765,
+   "labels": {
+    "check": 431,
+    "Pot": 87,
+    "Overbet": 61,
+    "call": 64,
+    "fold": 118,
+    "⅓": 70,
+    "½": 30,
+    "All-in": 15,
+    "¾": 20,
+    "Raise 3,5×": 1,
+    "Raise 2,5×": 4,
+    "Raise Pot": 6
+   },
+   "preLabels": {
+    "fold": 1891,
+    "4-Bet": 7,
+    "call": 172,
+    "Open": 330,
+    "Iso-Raise": 22,
+    "3-Bet": 91,
+    "All-in": 2,
+    "check": 25
+   },
+   "classes": {
+    "klar": 1215,
+    "mehrere": 813,
+    "eindeutig": 286,
+    "knapp": 1133
+   },
+   "chartApplied": 1033,
+   "chartGapBB": 198.63,
+   "wallMs": 63861,
+   "usedIn": [
+    "dG-g24-P"
+   ]
+  },
+  {
+   "id": "dG_coach201-gto_bots_gemischt_100BB_s24004_2500",
+   "group": "dG",
+   "hero": "coach201-gto",
+   "cond": "bots|gemischt|100",
+   "seed": 24004,
+   "hands": 2500,
+   "decisions": 3382,
+   "invalid": 0,
+   "bb100": -46.6,
+   "bb100Adj": -23.52,
+   "sdHand": 11.07,
+   "sdHandAdj": 9.66,
+   "allinHands": 16,
+   "avgMs": 11.9,
+   "maxMs": 138,
+   "maxIters": 5000,
+   "labels": {
+    "check": 393,
+    "Pot": 83,
+    "Overbet": 58,
+    "call": 54,
+    "Raise 2,5×": 16,
+    "fold": 86,
+    "⅓": 69,
+    "¾": 27,
+    "½": 33,
+    "All-in": 14,
+    "Raise Pot": 9,
+    "Raise 3,5×": 1
+   },
+   "preLabels": {
+    "fold": 1924,
+    "4-Bet": 8,
+    "call": 144,
+    "Open": 327,
+    "Iso-Raise": 18,
+    "3-Bet": 91,
+    "All-in": 2,
+    "check": 25
+   },
+   "classes": {
+    "klar": 1221,
+    "mehrere": 802,
+    "eindeutig": 272,
+    "knapp": 1087
+   },
+   "chartApplied": 1028,
+   "chartGapBB": 182.61,
+   "wallMs": 42248,
+   "usedIn": [
+    "dG-g24-0",
+    "dG-g24-R",
+    "dG-g24-P"
+   ]
+  },
+  {
+   "id": "dG_g24-0_bots_gemischt_100BB_s24005_2500",
+   "group": "dG",
+   "hero": "g24-0",
+   "cond": "bots|gemischt|100",
+   "seed": 24005,
+   "hands": 2500,
+   "decisions": 3639,
+   "invalid": 0,
+   "bb100": 37.36,
+   "bb100Adj": 42.33,
+   "sdHand": 11.73,
+   "sdHandAdj": 10.35,
+   "allinHands": 17,
+   "avgMs": 18.7,
+   "maxMs": 149,
+   "maxIters": 5000,
+   "labels": {
+    "check": 457,
+    "Raise 2,5×": 30,
+    "Raise Pot": 30,
+    "Overbet": 40,
+    "fold": 100,
+    "Pot": 133,
+    "All-in": 29,
+    "Raise 3,5×": 27,
+    "½": 51,
+    "⅓": 73,
+    "¾": 60,
+    "call": 26
+   },
+   "preLabels": {
+    "fold": 1871,
+    "3-Bet": 65,
+    "Iso-Raise": 51,
+    "Open": 341,
+    "call": 190,
+    "check": 50,
+    "4-Bet": 12,
+    "All-in": 3
+   },
+   "classes": {
+    "mehrere": 915,
+    "knapp": 1115,
+    "eindeutig": 297,
+    "klar": 1312
+   },
+   "chartApplied": 1088,
+   "chartGapBB": 253.61,
+   "wallMs": 70280,
+   "usedIn": [
+    "dG-g24-0"
+   ]
+  },
+  {
+   "id": "dG_g24-R_bots_gemischt_100BB_s24005_2500",
+   "group": "dG",
+   "hero": "g24-R",
+   "cond": "bots|gemischt|100",
+   "seed": 24005,
+   "hands": 2500,
+   "decisions": 3587,
+   "invalid": 0,
+   "bb100": 43.46,
+   "bb100Adj": 42.49,
+   "sdHand": 9.71,
+   "sdHandAdj": 8.59,
+   "allinHands": 13,
+   "avgMs": 19.1,
+   "maxMs": 155,
+   "maxIters": 5000,
+   "labels": {
+    "check": 421,
+    "fold": 142,
+    "Overbet": 40,
+    "Pot": 129,
+    "All-in": 21,
+    "call": 55,
+    "½": 53,
+    "⅓": 76,
+    "¾": 55,
+    "Raise 2,5×": 8,
+    "Raise Pot": 4
+   },
+   "preLabels": {
+    "fold": 1871,
+    "3-Bet": 65,
+    "Iso-Raise": 51,
+    "Open": 341,
+    "call": 190,
+    "check": 50,
+    "4-Bet": 12,
+    "All-in": 3
+   },
+   "classes": {
+    "mehrere": 873,
+    "knapp": 1089,
+    "eindeutig": 307,
+    "klar": 1318
+   },
+   "chartApplied": 1088,
+   "chartGapBB": 253.61,
+   "wallMs": 70712,
+   "usedIn": [
+    "dG-g24-R"
+   ]
+  },
+  {
+   "id": "dG_g24-P_bots_gemischt_100BB_s24005_2500",
+   "group": "dG",
+   "hero": "g24-P",
+   "cond": "bots|gemischt|100",
+   "seed": 24005,
+   "hands": 2500,
+   "decisions": 3603,
+   "invalid": 0,
+   "bb100": 51.21,
+   "bb100Adj": 45.07,
+   "sdHand": 11.16,
+   "sdHandAdj": 9.46,
+   "allinHands": 16,
+   "avgMs": 18.8,
+   "maxMs": 148,
+   "maxIters": 5000,
+   "labels": {
+    "check": 472,
+    "fold": 140,
+    "Overbet": 72,
+    "Pot": 112,
+    "call": 64,
+    "¾": 31,
+    "½": 37,
+    "All-in": 22,
+    "⅓": 57,
+    "Raise 2,5×": 9,
+    "Raise Pot": 4
+   },
+   "preLabels": {
+    "fold": 1871,
+    "3-Bet": 65,
+    "Iso-Raise": 51,
+    "Open": 341,
+    "call": 190,
+    "check": 50,
+    "4-Bet": 12,
+    "All-in": 3
+   },
+   "classes": {
+    "mehrere": 801,
+    "knapp": 1178,
+    "eindeutig": 318,
+    "klar": 1306
+   },
+   "chartApplied": 1088,
+   "chartGapBB": 253.61,
+   "wallMs": 70063,
+   "usedIn": [
+    "dG-g24-P"
+   ]
+  },
+  {
+   "id": "dG_coach201-gto_bots_gemischt_100BB_s24005_2500",
+   "group": "dG",
+   "hero": "coach201-gto",
+   "cond": "bots|gemischt|100",
+   "seed": 24005,
+   "hands": 2500,
+   "decisions": 3544,
+   "invalid": 0,
+   "bb100": 43.46,
+   "bb100Adj": 36.36,
+   "sdHand": 11.01,
+   "sdHandAdj": 9.62,
+   "allinHands": 14,
+   "avgMs": 11.9,
+   "maxMs": 136,
+   "maxIters": 4973,
+   "labels": {
+    "check": 432,
+    "fold": 125,
+    "Overbet": 69,
+    "call": 54,
+    "Pot": 106,
+    "¾": 26,
+    "½": 34,
+    "All-in": 21,
+    "⅓": 71,
+    "Raise 2,5×": 20,
+    "Raise Pot": 4
+   },
+   "preLabels": {
+    "fold": 1910,
+    "3-Bet": 62,
+    "Iso-Raise": 35,
+    "Open": 341,
+    "call": 169,
+    "check": 50,
+    "4-Bet": 15
+   },
+   "classes": {
+    "mehrere": 787,
+    "eindeutig": 315,
+    "knapp": 1153,
+    "klar": 1289
+   },
+   "chartApplied": 1076,
+   "chartGapBB": 226.82,
+   "wallMs": 44522,
+   "usedIn": [
+    "dG-g24-0",
+    "dG-g24-R",
+    "dG-g24-P"
+   ]
+  },
+  {
+   "id": "dG_g24-0_bots_gemischt_100BB_s24006_2500",
+   "group": "dG",
+   "hero": "g24-0",
+   "cond": "bots|gemischt|100",
+   "seed": 24006,
+   "hands": 2500,
+   "decisions": 3634,
+   "invalid": 0,
+   "bb100": 7.57,
+   "bb100Adj": 23.11,
+   "sdHand": 11.21,
+   "sdHandAdj": 10.28,
+   "allinHands": 17,
+   "avgMs": 20,
+   "maxMs": 147,
+   "maxIters": 5000,
+   "labels": {
+    "½": 43,
+    "⅓": 101,
+    "check": 506,
+    "Raise 2,5×": 44,
+    "Raise 3,5×": 21,
+    "call": 28,
+    "Pot": 107,
+    "fold": 98,
+    "Raise Pot": 31,
+    "Overbet": 44,
+    "¾": 44,
+    "All-in": 18
+   },
+   "preLabels": {
+    "fold": 1873,
+    "Open": 341,
+    "call": 170,
+    "3-Bet": 76,
+    "Iso-Raise": 38,
+    "4-Bet": 8,
+    "check": 41,
+    "All-in": 2
+   },
+   "classes": {
+    "klar": 1211,
+    "knapp": 1188,
+    "mehrere": 961,
+    "eindeutig": 274
+   },
+   "chartApplied": 1038,
+   "chartGapBB": 225.71,
+   "wallMs": 74867,
+   "usedIn": [
+    "dG-g24-0"
+   ]
+  },
+  {
+   "id": "dG_g24-R_bots_gemischt_100BB_s24006_2500",
+   "group": "dG",
+   "hero": "g24-R",
+   "cond": "bots|gemischt|100",
+   "seed": 24006,
+   "hands": 2500,
+   "decisions": 3540,
+   "invalid": 0,
+   "bb100": -7.92,
+   "bb100Adj": 6.23,
+   "sdHand": 8.98,
+   "sdHandAdj": 8.28,
+   "allinHands": 12,
+   "avgMs": 19.4,
+   "maxMs": 135,
+   "maxIters": 5000,
+   "labels": {
+    "½": 41,
+    "⅓": 99,
+    "check": 445,
+    "fold": 143,
+    "Raise 2,5×": 10,
+    "call": 48,
+    "Pot": 103,
+    "Overbet": 43,
+    "Raise Pot": 8,
+    "All-in": 12,
+    "¾": 39
+   },
+   "preLabels": {
+    "fold": 1873,
+    "Open": 341,
+    "call": 170,
+    "3-Bet": 76,
+    "Iso-Raise": 38,
+    "4-Bet": 8,
+    "check": 41,
+    "All-in": 2
+   },
+   "classes": {
+    "klar": 1226,
+    "knapp": 1152,
+    "mehrere": 898,
+    "eindeutig": 264
+   },
+   "chartApplied": 1038,
+   "chartGapBB": 225.71,
+   "wallMs": 70913,
+   "usedIn": [
+    "dG-g24-R"
+   ]
+  },
+  {
+   "id": "dG_g24-P_bots_gemischt_100BB_s24006_2500",
+   "group": "dG",
+   "hero": "g24-P",
+   "cond": "bots|gemischt|100",
+   "seed": 24006,
+   "hands": 2500,
+   "decisions": 3560,
+   "invalid": 0,
+   "bb100": -15.66,
+   "bb100Adj": 0.2,
+   "sdHand": 9.63,
+   "sdHandAdj": 8.73,
+   "allinHands": 14,
+   "avgMs": 19.7,
+   "maxMs": 144,
+   "maxIters": 5000,
+   "labels": {
+    "⅓": 87,
+    "½": 32,
+    "check": 488,
+    "fold": 140,
+    "Raise 2,5×": 14,
+    "call": 51,
+    "Pot": 87,
+    "Overbet": 63,
+    "Raise Pot": 8,
+    "All-in": 17,
+    "¾": 24
+   },
+   "preLabels": {
+    "fold": 1873,
+    "Open": 341,
+    "call": 170,
+    "3-Bet": 76,
+    "Iso-Raise": 38,
+    "4-Bet": 8,
+    "check": 41,
+    "All-in": 2
+   },
+   "classes": {
+    "klar": 1201,
+    "knapp": 1262,
+    "mehrere": 805,
+    "eindeutig": 292
+   },
+   "chartApplied": 1038,
+   "chartGapBB": 225.71,
+   "wallMs": 72329,
+   "usedIn": [
+    "dG-g24-P"
+   ]
+  },
+  {
+   "id": "dG_coach201-gto_bots_gemischt_100BB_s24006_2500",
+   "group": "dG",
+   "hero": "coach201-gto",
+   "cond": "bots|gemischt|100",
+   "seed": 24006,
+   "hands": 2500,
+   "decisions": 3487,
+   "invalid": 0,
+   "bb100": -20.72,
+   "bb100Adj": -3.32,
+   "sdHand": 9.31,
+   "sdHandAdj": 8.35,
+   "allinHands": 13,
+   "avgMs": 12.6,
+   "maxMs": 145,
+   "maxIters": 4841,
+   "labels": {
+    "⅓": 80,
+    "½": 44,
+    "check": 449,
+    "fold": 117,
+    "Raise 2,5×": 15,
+    "call": 49,
+    "Pot": 80,
+    "Overbet": 55,
+    "Raise Pot": 6,
+    "All-in": 17,
+    "¾": 31
+   },
+   "preLabels": {
+    "fold": 1911,
+    "Open": 339,
+    "call": 141,
+    "3-Bet": 75,
+    "Iso-Raise": 29,
+    "4-Bet": 8,
+    "check": 39,
+    "All-in": 2
+   },
+   "classes": {
+    "klar": 1178,
+    "knapp": 1227,
+    "mehrere": 796,
+    "eindeutig": 286
+   },
+   "chartApplied": 1013,
+   "chartGapBB": 181.67,
+   "wallMs": 46188,
+   "usedIn": [
+    "dG-g24-0",
+    "dG-g24-R",
+    "dG-g24-P"
+   ]
+  },
+  {
+   "id": "dG_g24-0_bots_gemischt_100BB_s24007_2500",
+   "group": "dG",
+   "hero": "g24-0",
+   "cond": "bots|gemischt|100",
+   "seed": 24007,
+   "hands": 2500,
+   "decisions": 3447,
+   "invalid": 0,
+   "bb100": 12.71,
+   "bb100Adj": -13.71,
+   "sdHand": 11.69,
+   "sdHandAdj": 9.95,
+   "allinHands": 17,
+   "avgMs": 18.7,
+   "maxMs": 128,
+   "maxIters": 5000,
+   "labels": {
+    "check": 375,
+    "fold": 103,
+    "Raise 3,5×": 16,
+    "½": 56,
+    "Raise 2,5×": 31,
+    "Pot": 98,
+    "All-in": 21,
+    "⅓": 71,
+    "¾": 31,
+    "call": 34,
+    "Raise Pot": 37,
+    "Overbet": 29
+   },
+   "preLabels": {
+    "fold": 1883,
+    "Open": 311,
+    "call": 174,
+    "3-Bet": 96,
+    "check": 38,
+    "Iso-Raise": 35,
+    "All-in": 3,
+    "4-Bet": 5
+   },
+   "classes": {
+    "knapp": 1099,
+    "mehrere": 866,
+    "eindeutig": 303,
+    "klar": 1179
+   },
+   "chartApplied": 1000,
+   "chartGapBB": 228.68,
+   "wallMs": 66776,
+   "usedIn": [
+    "dG-g24-0"
+   ]
+  },
+  {
+   "id": "dG_g24-R_bots_gemischt_100BB_s24007_2500",
+   "group": "dG",
+   "hero": "g24-R",
+   "cond": "bots|gemischt|100",
+   "seed": 24007,
+   "hands": 2500,
+   "decisions": 3420,
+   "invalid": 0,
+   "bb100": 15.03,
+   "bb100Adj": -1.75,
+   "sdHand": 10.26,
+   "sdHandAdj": 8.68,
+   "allinHands": 16,
+   "avgMs": 18.4,
+   "maxMs": 145,
+   "maxIters": 5000,
+   "labels": {
+    "check": 361,
+    "fold": 133,
+    "call": 64,
+    "½": 53,
+    "Raise 2,5×": 9,
+    "Pot": 92,
+    "All-in": 18,
+    "⅓": 69,
+    "¾": 30,
+    "Overbet": 32,
+    "Raise Pot": 14
+   },
+   "preLabels": {
+    "fold": 1883,
+    "Open": 311,
+    "call": 174,
+    "3-Bet": 96,
+    "check": 38,
+    "Iso-Raise": 35,
+    "All-in": 3,
+    "4-Bet": 5
+   },
+   "classes": {
+    "knapp": 1083,
+    "klar": 1199,
+    "eindeutig": 313,
+    "mehrere": 825
+   },
+   "chartApplied": 1000,
+   "chartGapBB": 228.68,
+   "wallMs": 64928,
+   "usedIn": [
+    "dG-g24-R"
+   ]
+  },
+  {
+   "id": "dG_g24-P_bots_gemischt_100BB_s24007_2500",
+   "group": "dG",
+   "hero": "g24-P",
+   "cond": "bots|gemischt|100",
+   "seed": 24007,
+   "hands": 2500,
+   "decisions": 3439,
+   "invalid": 0,
+   "bb100": 13.49,
+   "bb100Adj": -3.5,
+   "sdHand": 9.93,
+   "sdHandAdj": 8.31,
+   "allinHands": 15,
+   "avgMs": 19.7,
+   "maxMs": 126,
+   "maxIters": 5000,
+   "labels": {
+    "check": 399,
+    "fold": 136,
+    "call": 66,
+    "½": 33,
+    "⅓": 62,
+    "Raise 2,5×": 9,
+    "Pot": 79,
+    "All-in": 20,
+    "Overbet": 52,
+    "¾": 25,
+    "Raise Pot": 13
+   },
+   "preLabels": {
+    "fold": 1883,
+    "Open": 311,
+    "call": 174,
+    "3-Bet": 96,
+    "check": 38,
+    "Iso-Raise": 35,
+    "All-in": 3,
+    "4-Bet": 5
+   },
+   "classes": {
+    "knapp": 1160,
+    "klar": 1194,
+    "eindeutig": 323,
+    "mehrere": 762
+   },
+   "chartApplied": 1000,
+   "chartGapBB": 228.68,
+   "wallMs": 69902,
+   "usedIn": [
+    "dG-g24-P"
+   ]
+  },
+  {
+   "id": "dG_coach201-gto_bots_gemischt_100BB_s24007_2500",
+   "group": "dG",
+   "hero": "coach201-gto",
+   "cond": "bots|gemischt|100",
+   "seed": 24007,
+   "hands": 2500,
+   "decisions": 3371,
+   "invalid": 0,
+   "bb100": 14.15,
+   "bb100Adj": -3.04,
+   "sdHand": 10.41,
+   "sdHandAdj": 8.86,
+   "allinHands": 16,
+   "avgMs": 11.6,
+   "maxMs": 153,
+   "maxIters": 5000,
+   "labels": {
+    "call": 60,
+    "fold": 111,
+    "check": 365,
+    "½": 28,
+    "⅓": 66,
+    "Pot": 79,
+    "All-in": 21,
+    "Overbet": 52,
+    "¾": 25,
+    "Raise Pot": 12,
+    "Raise 2,5×": 11
+   },
+   "preLabels": {
+    "fold": 1918,
+    "Open": 311,
+    "call": 142,
+    "3-Bet": 95,
+    "check": 38,
+    "Iso-Raise": 29,
+    "All-in": 2,
+    "4-Bet": 6
+   },
+   "classes": {
+    "klar": 1176,
+    "knapp": 1120,
+    "eindeutig": 323,
+    "mehrere": 752
+   },
+   "chartApplied": 976,
+   "chartGapBB": 184.33,
+   "wallMs": 41096,
+   "usedIn": [
+    "dG-g24-0",
+    "dG-g24-R",
+    "dG-g24-P"
+   ]
+  },
+  {
+   "id": "dG_g24-0_bots_gemischt_100BB_s24008_2500",
+   "group": "dG",
+   "hero": "g24-0",
+   "cond": "bots|gemischt|100",
+   "seed": 24008,
+   "hands": 2500,
+   "decisions": 3486,
+   "invalid": 0,
+   "bb100": -6.96,
+   "bb100Adj": 2.56,
+   "sdHand": 11.22,
+   "sdHandAdj": 9.57,
+   "allinHands": 20,
+   "avgMs": 18.3,
+   "maxMs": 216,
+   "maxIters": 5000,
+   "labels": {
+    "⅓": 74,
+    "check": 412,
+    "fold": 96,
+    "¾": 28,
+    "Overbet": 27,
+    "call": 31,
+    "All-in": 24,
+    "Pot": 102,
+    "½": 46,
+    "Raise 3,5×": 15,
+    "Raise Pot": 34,
+    "Raise 2,5×": 32
+   },
+   "preLabels": {
+    "fold": 1906,
+    "3-Bet": 99,
+    "Open": 313,
+    "call": 170,
+    "check": 28,
+    "Iso-Raise": 38,
+    "All-in": 4,
+    "4-Bet": 7
+   },
+   "classes": {
+    "klar": 1181,
+    "knapp": 1134,
+    "mehrere": 884,
+    "eindeutig": 287
+   },
+   "chartApplied": 1024,
+   "chartGapBB": 246.74,
+   "wallMs": 66181,
+   "usedIn": [
+    "dG-g24-0"
+   ]
+  },
+  {
+   "id": "dG_g24-R_bots_gemischt_100BB_s24008_2500",
+   "group": "dG",
+   "hero": "g24-R",
+   "cond": "bots|gemischt|100",
+   "seed": 24008,
+   "hands": 2500,
+   "decisions": 3424,
+   "invalid": 0,
+   "bb100": -14.87,
+   "bb100Adj": -2.51,
+   "sdHand": 9.59,
+   "sdHandAdj": 8.08,
+   "allinHands": 15,
+   "avgMs": 18.7,
+   "maxMs": 204,
+   "maxIters": 4386,
+   "labels": {
+    "⅓": 70,
+    "check": 377,
+    "fold": 134,
+    "¾": 27,
+    "Overbet": 25,
+    "call": 46,
+    "Pot": 100,
+    "½": 45,
+    "Raise 2,5×": 9,
+    "All-in": 19,
+    "Raise Pot": 6,
+    "Raise 3,5×": 1
+   },
+   "preLabels": {
+    "fold": 1906,
+    "3-Bet": 99,
+    "Open": 313,
+    "call": 170,
+    "check": 28,
+    "Iso-Raise": 38,
+    "All-in": 4,
+    "4-Bet": 7
+   },
+   "classes": {
+    "klar": 1207,
+    "knapp": 1103,
+    "mehrere": 832,
+    "eindeutig": 282
+   },
+   "chartApplied": 1024,
+   "chartGapBB": 246.74,
+   "wallMs": 66302,
+   "usedIn": [
+    "dG-g24-R"
+   ]
+  },
+  {
+   "id": "dG_g24-P_bots_gemischt_100BB_s24008_2500",
+   "group": "dG",
+   "hero": "g24-P",
+   "cond": "bots|gemischt|100",
+   "seed": 24008,
+   "hands": 2500,
+   "decisions": 3448,
+   "invalid": 0,
+   "bb100": -16.8,
+   "bb100Adj": -3.78,
+   "sdHand": 8.93,
+   "sdHandAdj": 7.32,
+   "allinHands": 14,
+   "avgMs": 18.8,
+   "maxMs": 206,
+   "maxIters": 4386,
+   "labels": {
+    "⅓": 71,
+    "check": 422,
+    "fold": 140,
+    "¾": 14,
+    "call": 51,
+    "Pot": 78,
+    "All-in": 24,
+    "Overbet": 42,
+    "½": 25,
+    "Raise 2,5×": 10,
+    "Raise Pot": 5,
+    "Raise 3,5×": 1
+   },
+   "preLabels": {
+    "fold": 1906,
+    "3-Bet": 99,
+    "Open": 313,
+    "call": 170,
+    "check": 28,
+    "Iso-Raise": 38,
+    "All-in": 4,
+    "4-Bet": 7
+   },
+   "classes": {
+    "klar": 1199,
+    "knapp": 1190,
+    "mehrere": 754,
+    "eindeutig": 305
+   },
+   "chartApplied": 1024,
+   "chartGapBB": 246.74,
+   "wallMs": 66980,
+   "usedIn": [
+    "dG-g24-P"
+   ]
+  },
+  {
+   "id": "dG_coach201-gto_bots_gemischt_100BB_s24008_2500",
+   "group": "dG",
+   "hero": "coach201-gto",
+   "cond": "bots|gemischt|100",
+   "seed": 24008,
+   "hands": 2500,
+   "decisions": 3416,
+   "invalid": 0,
+   "bb100": -0.63,
+   "bb100Adj": 4.24,
+   "sdHand": 9.93,
+   "sdHandAdj": 7.64,
+   "allinHands": 14,
+   "avgMs": 12.1,
+   "maxMs": 158,
+   "maxIters": 5000,
+   "labels": {
+    "check": 410,
+    "½": 26,
+    "⅓": 60,
+    "Pot": 79,
+    "All-in": 23,
+    "call": 49,
+    "fold": 122,
+    "Overbet": 43,
+    "¾": 17,
+    "Raise 2,5×": 17,
+    "Raise Pot": 6,
+    "Raise 3,5×": 1
+   },
+   "preLabels": {
+    "fold": 1925,
+    "Open": 313,
+    "call": 161,
+    "3-Bet": 97,
+    "check": 28,
+    "Iso-Raise": 28,
+    "4-Bet": 9,
+    "All-in": 2
+   },
+   "classes": {
+    "klar": 1187,
+    "knapp": 1175,
+    "mehrere": 741,
+    "eindeutig": 313
+   },
+   "chartApplied": 1016,
+   "chartGapBB": 216.63,
+   "wallMs": 43706,
+   "usedIn": [
+    "dG-g24-0",
+    "dG-g24-R",
+    "dG-g24-P"
+   ]
+  }
+ ],
+ "absolute": [
+  {
+   "group": "dG",
+   "hero": "coach201-gto",
+   "heroName": "Coach 2.0.1 (gleichgewichtsnah)",
+   "cond": "bots|gemischt|100",
+   "condName": "Gegner-KI, gemischt, 100 BB",
+   "startBB": 100,
+   "runs": [
+    "dG_coach201-gto_bots_gemischt_100BB_s24001_2500",
+    "dG_coach201-gto_bots_gemischt_100BB_s24002_2500",
+    "dG_coach201-gto_bots_gemischt_100BB_s24003_2500",
+    "dG_coach201-gto_bots_gemischt_100BB_s24004_2500",
+    "dG_coach201-gto_bots_gemischt_100BB_s24005_2500",
+    "dG_coach201-gto_bots_gemischt_100BB_s24006_2500",
+    "dG_coach201-gto_bots_gemischt_100BB_s24007_2500",
+    "dG_coach201-gto_bots_gemischt_100BB_s24008_2500"
+   ],
+   "seeds": [
+    24001,
+    24002,
+    24003,
+    24004,
+    24005,
+    24006,
+    24007,
+    24008
+   ],
+   "adj": {
+    "bb100": 4.23,
+    "lo": -6.84,
+    "hi": 15.83,
+    "se": 5.82,
+    "hands": 20000,
+    "blocks": 40
+   },
+   "raw": {
+    "bb100": 0.68,
+    "lo": -10.78,
+    "hi": 12.15,
+    "se": 5.72,
+    "hands": 20000,
+    "blocks": 40
+   },
+   "decisions": 27450,
+   "invalid": 0
+  },
+  {
+   "group": "dG",
+   "hero": "g24-0",
+   "heroName": "gleichgewichtsnah, Stand 2.3",
+   "cond": "bots|gemischt|100",
+   "condName": "Gegner-KI, gemischt, 100 BB",
+   "startBB": 100,
+   "runs": [
+    "dG_g24-0_bots_gemischt_100BB_s24001_2500",
+    "dG_g24-0_bots_gemischt_100BB_s24002_2500",
+    "dG_g24-0_bots_gemischt_100BB_s24003_2500",
+    "dG_g24-0_bots_gemischt_100BB_s24004_2500",
+    "dG_g24-0_bots_gemischt_100BB_s24005_2500",
+    "dG_g24-0_bots_gemischt_100BB_s24006_2500",
+    "dG_g24-0_bots_gemischt_100BB_s24007_2500",
+    "dG_g24-0_bots_gemischt_100BB_s24008_2500"
+   ],
+   "seeds": [
+    24001,
+    24002,
+    24003,
+    24004,
+    24005,
+    24006,
+    24007,
+    24008
+   ],
+   "adj": {
+    "bb100": 8.58,
+    "lo": -2.65,
+    "hi": 20.14,
+    "se": 5.75,
+    "hands": 20000,
+    "blocks": 40
+   },
+   "raw": {
+    "bb100": 3.6,
+    "lo": -6.76,
+    "hi": 14.33,
+    "se": 5.36,
+    "hands": 20000,
+    "blocks": 40
+   },
+   "decisions": 28213,
+   "invalid": 0
+  },
+  {
+   "group": "dG",
+   "hero": "g24-P",
+   "heroName": "gleichgewichtsnah, alle Fold-Korrekturen 2.0.1",
+   "cond": "bots|gemischt|100",
+   "condName": "Gegner-KI, gemischt, 100 BB",
+   "startBB": 100,
+   "runs": [
+    "dG_g24-P_bots_gemischt_100BB_s24001_2500",
+    "dG_g24-P_bots_gemischt_100BB_s24002_2500",
+    "dG_g24-P_bots_gemischt_100BB_s24003_2500",
+    "dG_g24-P_bots_gemischt_100BB_s24004_2500",
+    "dG_g24-P_bots_gemischt_100BB_s24005_2500",
+    "dG_g24-P_bots_gemischt_100BB_s24006_2500",
+    "dG_g24-P_bots_gemischt_100BB_s24007_2500",
+    "dG_g24-P_bots_gemischt_100BB_s24008_2500"
+   ],
+   "seeds": [
+    24001,
+    24002,
+    24003,
+    24004,
+    24005,
+    24006,
+    24007,
+    24008
+   ],
+   "adj": {
+    "bb100": 4.3,
+    "lo": -7.23,
+    "hi": 16.47,
+    "se": 6.05,
+    "hands": 20000,
+    "blocks": 40
+   },
+   "raw": {
+    "bb100": 2.4,
+    "lo": -8.98,
+    "hi": 14.43,
+    "se": 6.04,
+    "hands": 20000,
+    "blocks": 40
+   },
+   "decisions": 27971,
+   "invalid": 0
+  },
+  {
+   "group": "dG",
+   "hero": "g24-R",
+   "heroName": "gleichgewichtsnah, Fold-Korrektur für Raises (2.0.1)",
+   "cond": "bots|gemischt|100",
+   "condName": "Gegner-KI, gemischt, 100 BB",
+   "startBB": 100,
+   "runs": [
+    "dG_g24-R_bots_gemischt_100BB_s24001_2500",
+    "dG_g24-R_bots_gemischt_100BB_s24002_2500",
+    "dG_g24-R_bots_gemischt_100BB_s24003_2500",
+    "dG_g24-R_bots_gemischt_100BB_s24004_2500",
+    "dG_g24-R_bots_gemischt_100BB_s24005_2500",
+    "dG_g24-R_bots_gemischt_100BB_s24006_2500",
+    "dG_g24-R_bots_gemischt_100BB_s24007_2500",
+    "dG_g24-R_bots_gemischt_100BB_s24008_2500"
+   ],
+   "seeds": [
+    24001,
+    24002,
+    24003,
+    24004,
+    24005,
+    24006,
+    24007,
+    24008
+   ],
+   "adj": {
+    "bb100": 8.58,
+    "lo": -2.47,
+    "hi": 19.49,
+    "se": 5.59,
+    "hands": 20000,
+    "blocks": 40
+   },
+   "raw": {
+    "bb100": 6.36,
+    "lo": -3.33,
+    "hi": 15.99,
+    "se": 4.94,
+    "hands": 20000,
+    "blocks": 40
+   },
+   "decisions": 27835,
+   "invalid": 0
+  }
+ ],
+ "comparisons": [
+  {
+   "id": "dG-g24-0",
+   "title": "Entwicklung P4: gleichgewichtsnah, Stand 2.3 gegen 2.0.1",
+   "group": "dG",
+   "a": "g24-0",
+   "b": "coach201-gto",
+   "aName": "gleichgewichtsnah, Stand 2.3",
+   "bName": "Coach 2.0.1 (gleichgewichtsnah)",
+   "adj": {
+    "diff": 4.35,
+    "lo": -4.05,
+    "hi": 12.52,
+    "se": 4.2,
+    "hands": 20000,
+    "pairs": 8,
+    "blocks": 40
+   },
+   "raw": {
+    "diff": 2.92,
+    "lo": -5.77,
+    "hi": 11.77,
+    "se": 4.4,
+    "hands": 20000,
+    "pairs": 8,
+    "blocks": 40
+   },
+   "decisionsA": 28213,
+   "decisionsB": 27450,
+   "invalidA": 0,
+   "invalidB": 0,
+   "seeds": [
+    24001,
+    24002,
+    24003,
+    24004,
+    24005,
+    24006,
+    24007,
+    24008
+   ],
+   "runsA": [
+    "dG_g24-0_bots_gemischt_100BB_s24001_2500",
+    "dG_g24-0_bots_gemischt_100BB_s24002_2500",
+    "dG_g24-0_bots_gemischt_100BB_s24003_2500",
+    "dG_g24-0_bots_gemischt_100BB_s24004_2500",
+    "dG_g24-0_bots_gemischt_100BB_s24005_2500",
+    "dG_g24-0_bots_gemischt_100BB_s24006_2500",
+    "dG_g24-0_bots_gemischt_100BB_s24007_2500",
+    "dG_g24-0_bots_gemischt_100BB_s24008_2500"
+   ],
+   "runsB": [
+    "dG_coach201-gto_bots_gemischt_100BB_s24001_2500",
+    "dG_coach201-gto_bots_gemischt_100BB_s24002_2500",
+    "dG_coach201-gto_bots_gemischt_100BB_s24003_2500",
+    "dG_coach201-gto_bots_gemischt_100BB_s24004_2500",
+    "dG_coach201-gto_bots_gemischt_100BB_s24005_2500",
+    "dG_coach201-gto_bots_gemischt_100BB_s24006_2500",
+    "dG_coach201-gto_bots_gemischt_100BB_s24007_2500",
+    "dG_coach201-gto_bots_gemischt_100BB_s24008_2500"
+   ],
+   "verdict": "nicht belegt",
+   "aAhead": 4,
+   "split": {},
+   "sharedRuns": [
+    "dG_coach201-gto_bots_gemischt_100BB_s24001_2500",
+    "dG_coach201-gto_bots_gemischt_100BB_s24002_2500",
+    "dG_coach201-gto_bots_gemischt_100BB_s24003_2500",
+    "dG_coach201-gto_bots_gemischt_100BB_s24004_2500",
+    "dG_coach201-gto_bots_gemischt_100BB_s24005_2500",
+    "dG_coach201-gto_bots_gemischt_100BB_s24006_2500",
+    "dG_coach201-gto_bots_gemischt_100BB_s24007_2500",
+    "dG_coach201-gto_bots_gemischt_100BB_s24008_2500"
+   ],
+   "sharedWith": [
+    "dG-g24-R",
+    "dG-g24-P"
+   ]
+  },
+  {
+   "id": "dG-g24-R",
+   "title": "Entwicklung P4: gleichgewichtsnah, Fold-Korrektur für Raises (2.0.1) gegen 2.0.1",
+   "group": "dG",
+   "a": "g24-R",
+   "b": "coach201-gto",
+   "aName": "gleichgewichtsnah, Fold-Korrektur für Raises (2.0.1)",
+   "bName": "Coach 2.0.1 (gleichgewichtsnah)",
+   "adj": {
+    "diff": 4.35,
+    "lo": -1.79,
+    "hi": 10.53,
+    "se": 3.16,
+    "hands": 20000,
+    "pairs": 8,
+    "blocks": 40
+   },
+   "raw": {
+    "diff": 5.68,
+    "lo": -1.47,
+    "hi": 12.75,
+    "se": 3.65,
+    "hands": 20000,
+    "pairs": 8,
+    "blocks": 40
+   },
+   "decisionsA": 27835,
+   "decisionsB": 27450,
+   "invalidA": 0,
+   "invalidB": 0,
+   "seeds": [
+    24001,
+    24002,
+    24003,
+    24004,
+    24005,
+    24006,
+    24007,
+    24008
+   ],
+   "runsA": [
+    "dG_g24-R_bots_gemischt_100BB_s24001_2500",
+    "dG_g24-R_bots_gemischt_100BB_s24002_2500",
+    "dG_g24-R_bots_gemischt_100BB_s24003_2500",
+    "dG_g24-R_bots_gemischt_100BB_s24004_2500",
+    "dG_g24-R_bots_gemischt_100BB_s24005_2500",
+    "dG_g24-R_bots_gemischt_100BB_s24006_2500",
+    "dG_g24-R_bots_gemischt_100BB_s24007_2500",
+    "dG_g24-R_bots_gemischt_100BB_s24008_2500"
+   ],
+   "runsB": [
+    "dG_coach201-gto_bots_gemischt_100BB_s24001_2500",
+    "dG_coach201-gto_bots_gemischt_100BB_s24002_2500",
+    "dG_coach201-gto_bots_gemischt_100BB_s24003_2500",
+    "dG_coach201-gto_bots_gemischt_100BB_s24004_2500",
+    "dG_coach201-gto_bots_gemischt_100BB_s24005_2500",
+    "dG_coach201-gto_bots_gemischt_100BB_s24006_2500",
+    "dG_coach201-gto_bots_gemischt_100BB_s24007_2500",
+    "dG_coach201-gto_bots_gemischt_100BB_s24008_2500"
+   ],
+   "verdict": "nicht belegt",
+   "aAhead": 6,
+   "split": {},
+   "sharedRuns": [
+    "dG_coach201-gto_bots_gemischt_100BB_s24001_2500",
+    "dG_coach201-gto_bots_gemischt_100BB_s24002_2500",
+    "dG_coach201-gto_bots_gemischt_100BB_s24003_2500",
+    "dG_coach201-gto_bots_gemischt_100BB_s24004_2500",
+    "dG_coach201-gto_bots_gemischt_100BB_s24005_2500",
+    "dG_coach201-gto_bots_gemischt_100BB_s24006_2500",
+    "dG_coach201-gto_bots_gemischt_100BB_s24007_2500",
+    "dG_coach201-gto_bots_gemischt_100BB_s24008_2500"
+   ],
+   "sharedWith": [
+    "dG-g24-0",
+    "dG-g24-P"
+   ]
+  },
+  {
+   "id": "dG-g24-P",
+   "title": "Entwicklung P4: gleichgewichtsnah, alle Fold-Korrekturen 2.0.1 gegen 2.0.1",
+   "group": "dG",
+   "a": "g24-P",
+   "b": "coach201-gto",
+   "aName": "gleichgewichtsnah, alle Fold-Korrekturen 2.0.1",
+   "bName": "Coach 2.0.1 (gleichgewichtsnah)",
+   "adj": {
+    "diff": 0.07,
+    "lo": -5.66,
+    "hi": 5.95,
+    "se": 2.96,
+    "hands": 20000,
+    "pairs": 8,
+    "blocks": 40
+   },
+   "raw": {
+    "diff": 1.72,
+    "lo": -5.9,
+    "hi": 9.37,
+    "se": 3.92,
+    "hands": 20000,
+    "pairs": 8,
+    "blocks": 40
+   },
+   "decisionsA": 27971,
+   "decisionsB": 27450,
+   "invalidA": 0,
+   "invalidB": 0,
+   "seeds": [
+    24001,
+    24002,
+    24003,
+    24004,
+    24005,
+    24006,
+    24007,
+    24008
+   ],
+   "runsA": [
+    "dG_g24-P_bots_gemischt_100BB_s24001_2500",
+    "dG_g24-P_bots_gemischt_100BB_s24002_2500",
+    "dG_g24-P_bots_gemischt_100BB_s24003_2500",
+    "dG_g24-P_bots_gemischt_100BB_s24004_2500",
+    "dG_g24-P_bots_gemischt_100BB_s24005_2500",
+    "dG_g24-P_bots_gemischt_100BB_s24006_2500",
+    "dG_g24-P_bots_gemischt_100BB_s24007_2500",
+    "dG_g24-P_bots_gemischt_100BB_s24008_2500"
+   ],
+   "runsB": [
+    "dG_coach201-gto_bots_gemischt_100BB_s24001_2500",
+    "dG_coach201-gto_bots_gemischt_100BB_s24002_2500",
+    "dG_coach201-gto_bots_gemischt_100BB_s24003_2500",
+    "dG_coach201-gto_bots_gemischt_100BB_s24004_2500",
+    "dG_coach201-gto_bots_gemischt_100BB_s24005_2500",
+    "dG_coach201-gto_bots_gemischt_100BB_s24006_2500",
+    "dG_coach201-gto_bots_gemischt_100BB_s24007_2500",
+    "dG_coach201-gto_bots_gemischt_100BB_s24008_2500"
+   ],
+   "verdict": "nicht belegt",
+   "aAhead": 3,
+   "split": {},
+   "sharedRuns": [
+    "dG_coach201-gto_bots_gemischt_100BB_s24001_2500",
+    "dG_coach201-gto_bots_gemischt_100BB_s24002_2500",
+    "dG_coach201-gto_bots_gemischt_100BB_s24003_2500",
+    "dG_coach201-gto_bots_gemischt_100BB_s24004_2500",
+    "dG_coach201-gto_bots_gemischt_100BB_s24005_2500",
+    "dG_coach201-gto_bots_gemischt_100BB_s24006_2500",
+    "dG_coach201-gto_bots_gemischt_100BB_s24007_2500",
+    "dG_coach201-gto_bots_gemischt_100BB_s24008_2500"
+   ],
+   "sharedWith": [
+    "dG-g24-0",
+    "dG-g24-R"
+   ]
+  }
+ ],
+ "shared": [
+  {
+   "id": "dG_coach201-gto_bots_gemischt_100BB_s24001_2500",
+   "hero": "coach201-gto",
+   "usedIn": [
+    "dG-g24-0",
+    "dG-g24-R",
+    "dG-g24-P"
+   ]
+  },
+  {
+   "id": "dG_coach201-gto_bots_gemischt_100BB_s24002_2500",
+   "hero": "coach201-gto",
+   "usedIn": [
+    "dG-g24-0",
+    "dG-g24-R",
+    "dG-g24-P"
+   ]
+  },
+  {
+   "id": "dG_coach201-gto_bots_gemischt_100BB_s24003_2500",
+   "hero": "coach201-gto",
+   "usedIn": [
+    "dG-g24-0",
+    "dG-g24-R",
+    "dG-g24-P"
+   ]
+  },
+  {
+   "id": "dG_coach201-gto_bots_gemischt_100BB_s24004_2500",
+   "hero": "coach201-gto",
+   "usedIn": [
+    "dG-g24-0",
+    "dG-g24-R",
+    "dG-g24-P"
+   ]
+  },
+  {
+   "id": "dG_coach201-gto_bots_gemischt_100BB_s24005_2500",
+   "hero": "coach201-gto",
+   "usedIn": [
+    "dG-g24-0",
+    "dG-g24-R",
+    "dG-g24-P"
+   ]
+  },
+  {
+   "id": "dG_coach201-gto_bots_gemischt_100BB_s24006_2500",
+   "hero": "coach201-gto",
+   "usedIn": [
+    "dG-g24-0",
+    "dG-g24-R",
+    "dG-g24-P"
+   ]
+  },
+  {
+   "id": "dG_coach201-gto_bots_gemischt_100BB_s24007_2500",
+   "hero": "coach201-gto",
+   "usedIn": [
+    "dG-g24-0",
+    "dG-g24-R",
+    "dG-g24-P"
+   ]
+  },
+  {
+   "id": "dG_coach201-gto_bots_gemischt_100BB_s24008_2500",
+   "hero": "coach201-gto",
+   "usedIn": [
+    "dG-g24-0",
+    "dG-g24-R",
+    "dG-g24-P"
+   ]
+  }
+ ],
+ "totals": {
+  "runs": 32,
+  "hands": 80000,
+  "coachDecisions": 111469,
+  "invalidCoach": 0,
+  "cpuSeconds": 1979
+ }
+}

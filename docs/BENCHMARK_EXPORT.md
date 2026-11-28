@@ -134,3 +134,9 @@ Aktionstypen aus einer festen Liste. Datensätze aus 2.0.x ohne `x` bleiben gül
 
 Neue Felder erhöhen `schemaVersion` nur, wenn sich Bedeutung oder Pflichtfelder ändern; zusätzliche optionale Felder sind
 abwärtskompatibel. Empfänger sollen unbekannte Felder ignorieren und `schemaVersion` prüfen.
+
+## Ergänzungen 2.2
+
+- Lerndaten: optionales Feld `pp` (Vorher-Nachher-Tests, höchstens 30): `{ id: "pp<Ziffern>", ts, state: "pre"|"training"|"fertig", cats: [Kategorie…],
+  pre: [{ cat, seed, s, l }], post: [...] }` mit `s` Bewertung 0–100 oder null, `l` EV-Verlust in BB. Geprüft in `validPP`, reparierbar.
+- Ereignisstrom „PokerTrainer-Ereignisse“, Schema 1: siehe `docs/PAI_INTEGRATION.md`. Der Benchmark-Export (Schema 1) bleibt unverändert.

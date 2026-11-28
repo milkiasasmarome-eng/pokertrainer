@@ -2,6 +2,109 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [2.3.1] – 2026-11-28
+
+Übernahme in Claude Code, Reproduzierbarkeit, offene Prüfbefunde, PAI-Schnittstelle, Untersuchung von P4. Keine Änderung an Strategie, Gegner-KI
+oder Datenformat (weiter 3). Nicht freigegeben, solange der Final Acceptance Test aussteht. Kriterien: `docs/ABNAHMEKRITERIEN_2.4.md`,
+Bericht: `docs/TESTBERICHT_2.3.1.md`.
+
+### Korrekturen
+- E23-10: Erklärtext nennt bei Raises „Der Raise gewinnt …“, bei All-ins „Der Einsatz …“ statt immer „Die Bet …“.
+- E23-14: Kürzung langer Aktionsfolgen in aufgedeckten Blättern endet die Straße mit „…“ statt eine Aktion aus der Mitte auszulassen.
+- C23-10: `tests/long.js calib` meldet die tatsächliche Händezahl.
+
+### Gleichgewichtsnaher Modus (P4)
+- Ursache des hohen Raise-Anteils (8 % statt 2,6 % bei 2.0.1) gefunden: Seit 2.1 fehlten im Modus die Fold-Korrekturen für Raises.
+  Raises und Jams gegen einen Einsatz bekommen sie wieder; Bets bleiben bei reiner MDF-Annahme (Prüfer B 7). Rückschalter `gtoRaise23`.
+- P4R auf neuen Seeds: +7,7 [3,8; 11,4] BB/100 gegen 2.0.1 (bestanden), +11,5 gegen den Stand 2.3; gegen unbekannte Strategien (Va23) +43 gegen 2.3,
+  aber weiter −25 gegen 2.0.1. Der Modus bleibt „experimentell“ und nicht voreingestellt. Der exploitative Modus ist unverändert.
+
+### PAI
+- Integrationstest gegen PAI 0.4.0-dev (Commit f4990fe) 18/18: PAI liest Format 3 selbst, lässt Trainingshände aus, lehnt Version 4 ab.
+  Test prüft die Punkte des Änderungsauftrags direkt am Original, sobald PAI Format 3 liest; der Commit von PAI steht im Ergebnis.
+
+### Dauerhafte Einrichtung
+- `CLAUDE.md`, `docs/UEBERGABE.md`; Projektstand und Lernprotokoll ins Repository übernommen (`docs/PROJEKTSTAND.md`, `docs/LERNPROTOKOLL.md`).
+
+## [2.3.0] – 2026-11-27
+
+Generalisierung, Ursachenanalyse der Regression 2.2 und unabhängige Validierung. Nicht freigegeben, solange der Final Acceptance Test aussteht.
+Ergebnisse: `docs/ERGEBNISSE_2.3.md` (automatisch), Bewertung: `docs/TESTBERICHT_2.3.md`, Ursachen: `docs/URSACHENANALYSE_2.3.md`.
+
+### Ergebnisse (Plan v23, 820.000 Hände)
+- P1 neue versiegelte Testgruppe: gegen 2.1.0 −1,3 [−3,4; 0,8], nicht unterlegen (Grenze 5). P2 Gegner-KI: +19,3 [16,0; 22,5]. P3 Testgruppe T: +28,6.
+- P4 nicht bestanden: gleichgewichtsnaher Modus gegen 2.0.1 −6,3 [−12,5; −0,1]; Modus jetzt „experimentell“ gekennzeichnet.
+- Gegen 2.2.0 auf der Gegner-KI −8,5 [−16,0; −1,0], auf F23 +12,1 [0,8; 22,5]. Short Stack 15/25 BB gegen 2.1.0 +2,5 [1,0; 3,8].
+- Qualitätsbewertung 9,48 (2.1.0: 9,47, 2.2.0: 9,42), Ziel 9,5 nicht erreicht (`docs/TESTBERICHT_2.3.md`).
+
+### Strategie
+- Ablationsstudie: Hauptursache der Regression 2.2 ist das Reaktionsmodell aus der Aktionstabelle, zweite Ursache die Range-Tabelle (`docs/URSACHENANALYSE_2.3.md`).
+- Hybrides Modell: Range und Reaktion mischen Populationstabelle und robustes Modell 2.1 je Gegner nach der Belastbarkeit der Tabelle
+  (Log-Likelihood der aufgedeckten Blätter unter der Tabelle, getrennt nach aggressiven und passiven Aktionen, mit Lage und Einsatzgröße, gepoolt
+  über den Tisch); Größensignale nur zur Hälfte vertraut.
+- Gegnergedächtnis: aufgedeckte Blätter speichern Bets mit Größe relativ zum Pot („Bet 3,00 (0,5 Pot)“), Datenformat unverändert 3.
+- Push/Fold-Hinweis: Handauswahl des Push/Fold-Modellspiels ausdrücklich als vereinfachtes Spiel gekennzeichnet, keine vollständige Strategie.
+- Varianten robust (A), adaptiv (B) und hybrid (C) mit Schaltern für Vergleichsläufe (`PT.ranges.ABL`); Modellwahl auf eigenen Validierungsgegnern.
+
+### Gegnergruppen und Validierung
+- Parametrische synthetische Gegner mit Gruppen Entwicklung, Training, Validierung, Kalibrierung (`tests/strategy/synth23.js`);
+  abschließende Testgruppe F23 von einem unabhängigen Prüfagenten (versiegelt, `tests/strategy/final23/`).
+- Abnahmekriterien mit Nichtunterlegenheitsgrenzen und Holm-Korrektur vor den Läufen (`docs/ABNAHMEKRITERIEN_2.3.md`).
+
+### Prüfbefunde aus 2.2
+- C-7 (Reparatur der Lerndaten), C-12 (Format-1-Gegner), D-2 (Export im Worker), D-5 (Spielerzahl der Zelle), D-6 (Tabellengewicht 0),
+  D-11 (Beschriftung All-in unter Nenngröße), A-15 (Mehrgegnerzelle mit All-in-Spielern); je ein Regressionstest (`tests/unit/pruefung-23.js`).
+
+### Unabhängige Prüfung
+- Fünf Prüfagenten vor den Hauptläufen (`docs/audit-2.3/`), Korrekturen mit Regressionstests (`tests/unit/pruefung-23.js`).
+
+### PAI
+- Zusätzliche Integrationstests (Reproduzierbarkeit, Fehlerbehandlung, Datenintegrität, Leckage) und Änderungsauftrag für PAI
+  (`docs/PAI_AENDERUNGSAUFTRAG.md`): PAI 0.1.0 liest Format 3 nach einer einzeiligen Änderung; geprüft an einer Kopie.
+
+## [2.2.0] – 2026-11-27
+
+Strategische Überarbeitung mit Folgeaudit, getrennten Gegnergruppen, vor den Tests festgelegten Kriterien und Berichten aus Rohdaten.
+Ergebnisse: `docs/ERGEBNISSE_2.2.md` (automatisch), Bewertung: `docs/TESTBERICHT_2.2.md`, Folgeaudit: `docs/audit-2.2/FOLGEAUDIT.md`.
+
+### Folgeaudit
+- Status des zwölften Befunds von Prüfer B (B10, Dokumentation) geklärt; Aufschlüsselung der 602.500 Hände (241 Läufe, 162.500 unabhängige Kartenfolgen);
+  identische Gegnerbedingungen innerhalb des 2.1-Vergleichs bestätigt, berichtsübergreifende Zahlen als nicht vergleichbar gekennzeichnet;
+  Unabhängigkeit der 500er-Blöcke geprüft (Autokorrelation Lag 5 ≈ −0,03); gleichgewichtsnahe „Regression“ und 15 BB als nicht belegt (zu wenig Blöcke) eingeordnet.
+
+### Strategie
+- **Range-Schätzung:** datenbasierte Aktions-Likelihoods nach absoluter Stärke, Lage, Einsatzgröße, Draw und Mehrgegner (angepasst an Gegnergruppe E),
+  dynamisch angepasst an die beobachteten Werte des Gegners (Bet-Anteil, Fold gegen Einsätze, C-Bet, WTSD). Ursache der River-Abweichung 2.1:
+  Likelihood relativ zur bereits verengten Range.
+- **Reaktionsmodell:** Fold/Call/Raise je Kombination aus derselben Tabelle, gemittelt mit dem 2.1-Modell; Fold-Raten je Größe auf Validierungs- und
+  Testgruppe kalibriert. Keine erzwungenen Größenhäufigkeiten.
+- **Short Stack:** gelöstes Push/Fold-Modellspiel (3–25 BB, Exploitability ≤ 0,0031 BB je Hand) für Push-Charts, Jam-Ranges der Gegner und Calls gegen Jams.
+- **Datenlage nach Gelegenheiten** statt nach Händen in der Unsicherheit des Coaches.
+
+### Gegner-KI
+- Feste Eigenheiten je Gegner: Größenempfindlichkeit (Calling Stations kaum, andere stark), Positionsspiel, Phasenwechsel der Spielweise, seltene Linien
+  (River-Overbet-Bluff, Check-Raise-Bluff am Turn); Push-Charts aus dem Modellspiel. Gegnergruppen für Entwicklung, Validierung und Test;
+  sechs abschließend unbekannte Teststrategien. Unveränderte Gegner-KI 2.1 als Referenzumgebung für getrennte Vergleiche.
+
+### Gegnergedächtnis und Lernen
+- Belastbarkeit je Wert nach Gelegenheiten, Verhaltenshypothesen („gestützt“/„Vermutung“) getrennt von Beobachtungen.
+- Fehlerfelder, wiederkehrende Fehler mit gezielter Übung, Verbesserung in zuvor schwachen Situationen, Vorher-Nachher-Test mit vergleichbaren
+  Situationen (Lerndaten-Feld `pp`, geprüft und reparierbar). Messmöglichkeit, kein Nachweis von Lernwirkung.
+
+### Integration
+- Ereignisstrom „PokerTrainer-Ereignisse“ (Schema 1) mit getrennten Empfehlungskanälen für PokerTrainer-Coach und PAI, Prüfung auf Beobachtbarkeit;
+  gemeinsame Integrationstests mit PAI 0.1.0 (Hand-Datensätze, Kennzahlen, Equity übereinstimmend; Sicherungsversion 3 von PAI noch nicht unterstützt).
+
+### Ergebnisse und bekannte Einschränkungen
+- Coach 2.2 gegen 2.1.0: +25,5 BB/100 [21,2; 29,9] (100.000 Hände), in der unveränderten Gegner-KI 2.1 +37,2 [26,0; 48,6].
+- **Regression:** gegen sechs abschließend unbekannte Strategien belegt schlechter als 2.1.0 (−16,8 [−30,4; −4,7]) und 2.0.1 (−21,8 [−35,8; −7,1]).
+- Gleichgewichtsnaher Modus nicht belegt schlechter als 2.0.1 (−0,9 [−13,6; 10,9]); Name bleibt „Gleichgewichtsnah“.
+- Qualitätsbewertung 9,42 (2.1.0: 9,47), Ziel 9,5 nicht erreicht (`docs/TESTBERICHT_2.2.md`).
+
+### Vergleiche und Berichte
+- Plan `v22` (154 Läufe, Hauptvergleich 100.000 Hände je Held), Referenzumgebung, Testgruppe, unbekannte Strategien, Stacktiefen, gleichgewichtsnaher Modus.
+- Kalibrierungsstudien `range-calib.js`, `equity-calib.js`, `calib-report.js`; Berichtsgenerator `tools/report-22.js`; Folgeaudit-Daten `tools/folgeaudit-2.1.js`.
+
 ## [2.1.0] – 2026-11-27
 
 Folgeaudit mit Überprüfung der externen Befunde A1–A6, vier unabhängigen Prüfagenten (A Mathematik, B Strategie, C Architektur/Sicherheit/Datenbank, D Oberfläche/Barrierefreiheit/PWA), statistisch abgesicherten Strategievergleichen und neuem Gegnergedächtnis. Details: `docs/AUDIT.md`, `docs/TESTBERICHT.md`, `docs/VALIDIERUNG_MATHE.md`, `docs/STRATEGIE.md`, `docs/audit-2.1/`.

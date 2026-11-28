@@ -1,0 +1,221 @@
+Spots: 538 (Bet 428, gegen Bet 110)
+
+## Reaktion je Größe
+{"key":"0.33","n":507,"obsFold":0.329,"obsRaise":0.037,"predFold":0.279,"predFoldGto":0.329,"predRaise":0.062,"seFold":0.021}
+{"key":"0.5","n":500,"obsFold":0.494,"obsRaise":0.04,"predFold":0.371,"predFoldGto":0.41,"predRaise":0.062,"seFold":0.022}
+{"key":"0.75","n":506,"obsFold":0.595,"obsRaise":0.038,"predFold":0.466,"predFoldGto":0.495,"predRaise":0.061,"seFold":0.022}
+{"key":"1","n":502,"obsFold":0.655,"obsRaise":0.036,"predFold":0.518,"predFoldGto":0.559,"predRaise":0.061,"seFold":0.021}
+{"key":"1.5","n":500,"obsFold":0.736,"obsRaise":0.046,"predFold":0.568,"predFoldGto":0.649,"predRaise":0.06,"seFold":0.02}
+
+## Reaktion heads-up
+{"key":"Bet St1 0.33","n":71,"obsFold":0.366,"obsRaise":0.056,"predFold":0.246,"predFoldGto":0.261,"predRaise":0.075,"seFold":0.057}
+{"key":"Bet St1 0.5","n":66,"obsFold":0.561,"obsRaise":0.061,"predFold":0.331,"predFoldGto":0.335,"predRaise":0.079,"seFold":0.061}
+{"key":"Bet St1 0.75","n":71,"obsFold":0.648,"obsRaise":0.056,"predFold":0.428,"predFoldGto":0.428,"predRaise":0.075,"seFold":0.057}
+{"key":"Bet St1 1","n":71,"obsFold":0.69,"obsRaise":0.056,"predFold":0.486,"predFoldGto":0.499,"predRaise":0.075,"seFold":0.055}
+{"key":"Bet St1 1.5","n":71,"obsFold":0.732,"obsRaise":0.056,"predFold":0.541,"predFoldGto":0.6,"predRaise":0.075,"seFold":0.053}
+{"key":"Bet St2 0.33","n":34,"obsFold":0.294,"obsRaise":0.088,"predFold":0.196,"predFoldGto":0.255,"predRaise":0.081,"seFold":0.078}
+{"key":"Bet St2 0.5","n":33,"obsFold":0.424,"obsRaise":0.091,"predFold":0.278,"predFoldGto":0.327,"predRaise":0.082,"seFold":0.086}
+{"key":"Bet St2 0.75","n":34,"obsFold":0.5,"obsRaise":0.088,"predFold":0.379,"predFoldGto":0.418,"predRaise":0.077,"seFold":0.086}
+{"key":"Bet St2 1","n":33,"obsFold":0.545,"obsRaise":0.061,"predFold":0.444,"predFoldGto":0.492,"predRaise":0.073,"seFold":0.087}
+{"key":"Bet St2 1.5","n":32,"obsFold":0.656,"obsRaise":0.063,"predFold":0.534,"predFoldGto":0.596,"predRaise":0.073,"seFold":0.084}
+{"key":"Bet St3 0.33","n":28,"obsFold":0.571,"obsRaise":0,"predFold":0.317,"predFoldGto":0.253,"predRaise":0.037,"seFold":0.094}
+{"key":"Bet St3 0.5","n":28,"obsFold":0.643,"obsRaise":0,"predFold":0.415,"predFoldGto":0.332,"predRaise":0.037,"seFold":0.091}
+{"key":"Bet St3 0.75","n":28,"obsFold":0.786,"obsRaise":0,"predFold":0.515,"predFoldGto":0.414,"predRaise":0.035,"seFold":0.078}
+{"key":"Bet St3 1","n":27,"obsFold":0.852,"obsRaise":0,"predFold":0.569,"predFoldGto":0.473,"predRaise":0.035,"seFold":0.068}
+{"key":"Bet St3 1.5","n":26,"obsFold":0.962,"obsRaise":0,"predFold":0.609,"predFoldGto":0.57,"predRaise":0.036,"seFold":0.038}
+{"key":"C-Bet St1 0.33","n":106,"obsFold":0.217,"obsRaise":0.047,"predFold":0.229,"predFoldGto":0.249,"predRaise":0.069,"seFold":0.04}
+{"key":"C-Bet St1 0.5","n":106,"obsFold":0.387,"obsRaise":0.057,"predFold":0.324,"predFoldGto":0.336,"predRaise":0.069,"seFold":0.047}
+{"key":"C-Bet St1 0.75","n":106,"obsFold":0.528,"obsRaise":0.057,"predFold":0.424,"predFoldGto":0.429,"predRaise":0.069,"seFold":0.048}
+{"key":"C-Bet St1 1","n":106,"obsFold":0.594,"obsRaise":0.057,"predFold":0.481,"predFoldGto":0.5,"predRaise":0.069,"seFold":0.048}
+{"key":"C-Bet St1 1.5","n":106,"obsFold":0.679,"obsRaise":0.075,"predFold":0.534,"predFoldGto":0.601,"predRaise":0.069,"seFold":0.045}
+{"key":"C-Bet St2 0.33","n":69,"obsFold":0.174,"obsRaise":0.043,"predFold":0.177,"predFoldGto":0.248,"predRaise":0.075,"seFold":0.046}
+{"key":"C-Bet St2 0.5","n":69,"obsFold":0.435,"obsRaise":0.043,"predFold":0.267,"predFoldGto":0.335,"predRaise":0.075,"seFold":0.06}
+{"key":"C-Bet St2 0.75","n":69,"obsFold":0.536,"obsRaise":0.043,"predFold":0.369,"predFoldGto":0.427,"predRaise":0.073,"seFold":0.06}
+{"key":"C-Bet St2 1","n":68,"obsFold":0.574,"obsRaise":0.044,"predFold":0.435,"predFoldGto":0.498,"predRaise":0.074,"seFold":0.06}
+{"key":"C-Bet St2 1.5","n":68,"obsFold":0.662,"obsRaise":0.074,"predFold":0.523,"predFoldGto":0.596,"predRaise":0.072,"seFold":0.057}
+{"key":"C-Bet St3 0.33","n":46,"obsFold":0.543,"obsRaise":0.043,"predFold":0.285,"predFoldGto":0.24,"predRaise":0.042,"seFold":0.073}
+{"key":"C-Bet St3 0.5","n":45,"obsFold":0.622,"obsRaise":0.044,"predFold":0.394,"predFoldGto":0.327,"predRaise":0.043,"seFold":0.072}
+{"key":"C-Bet St3 0.75","n":45,"obsFold":0.733,"obsRaise":0.022,"predFold":0.497,"predFoldGto":0.415,"predRaise":0.041,"seFold":0.066}
+{"key":"C-Bet St3 1","n":44,"obsFold":0.841,"obsRaise":0.023,"predFold":0.553,"predFoldGto":0.483,"predRaise":0.042,"seFold":0.055}
+{"key":"C-Bet St3 1.5","n":44,"obsFold":0.909,"obsRaise":0.045,"predFold":0.589,"predFoldGto":0.572,"predRaise":0.036,"seFold":0.043}
+
+## Reaktion nach Straße/Gegnerzahl
+{"key":"St1 n1 0.33","n":177,"obsFold":0.277,"obsRaise":0.051,"predFold":0.236,"predFoldGto":0.254,"predRaise":0.071,"seFold":0.034}
+{"key":"St1 n1 0.5","n":172,"obsFold":0.453,"obsRaise":0.058,"predFold":0.327,"predFoldGto":0.336,"predRaise":0.072,"seFold":0.038}
+{"key":"St1 n1 0.75","n":177,"obsFold":0.576,"obsRaise":0.056,"predFold":0.426,"predFoldGto":0.429,"predRaise":0.071,"seFold":0.037}
+{"key":"St1 n1 1","n":177,"obsFold":0.633,"obsRaise":0.056,"predFold":0.483,"predFoldGto":0.5,"predRaise":0.071,"seFold":0.036}
+{"key":"St1 n1 1.5","n":177,"obsFold":0.701,"obsRaise":0.068,"predFold":0.537,"predFoldGto":0.601,"predRaise":0.071,"seFold":0.034}
+{"key":"St1 n2 0.33","n":68,"obsFold":0.324,"obsRaise":0.015,"predFold":0.362,"predFoldGto":0.499,"predRaise":0.061,"seFold":0.057}
+{"key":"St1 n2 0.5","n":68,"obsFold":0.515,"obsRaise":0.015,"predFold":0.452,"predFoldGto":0.579,"predRaise":0.061,"seFold":0.061}
+{"key":"St1 n2 0.75","n":68,"obsFold":0.544,"obsRaise":0.015,"predFold":0.539,"predFoldGto":0.655,"predRaise":0.061,"seFold":0.06}
+{"key":"St1 n2 1","n":68,"obsFold":0.603,"obsRaise":0.015,"predFold":0.576,"predFoldGto":0.707,"predRaise":0.061,"seFold":0.059}
+{"key":"St1 n2 1.5","n":68,"obsFold":0.632,"obsRaise":0.015,"predFold":0.597,"predFoldGto":0.775,"predRaise":0.061,"seFold":0.058}
+{"key":"St1 n3+ 0.33","n":9,"obsFold":0.222,"obsRaise":0,"predFold":0.418,"predFoldGto":0.627,"predRaise":0.038,"seFold":0.139}
+{"key":"St1 n3+ 0.5","n":9,"obsFold":0.333,"obsRaise":0,"predFold":0.502,"predFoldGto":0.694,"predRaise":0.038,"seFold":0.157}
+{"key":"St1 n3+ 0.75","n":9,"obsFold":0.444,"obsRaise":0,"predFold":0.581,"predFoldGto":0.754,"predRaise":0.038,"seFold":0.166}
+{"key":"St1 n3+ 1","n":9,"obsFold":0.444,"obsRaise":0,"predFold":0.61,"predFoldGto":0.794,"predRaise":0.038,"seFold":0.166}
+{"key":"St1 n3+ 1.5","n":9,"obsFold":0.667,"obsRaise":0,"predFold":0.622,"predFoldGto":0.843,"predRaise":0.038,"seFold":0.157}
+{"key":"St2 n1 0.33","n":103,"obsFold":0.214,"obsRaise":0.058,"predFold":0.184,"predFoldGto":0.251,"predRaise":0.077,"seFold":0.04}
+{"key":"St2 n1 0.5","n":102,"obsFold":0.431,"obsRaise":0.059,"predFold":0.271,"predFoldGto":0.332,"predRaise":0.077,"seFold":0.049}
+{"key":"St2 n1 0.75","n":103,"obsFold":0.524,"obsRaise":0.058,"predFold":0.372,"predFoldGto":0.424,"predRaise":0.074,"seFold":0.049}
+{"key":"St2 n1 1","n":101,"obsFold":0.564,"obsRaise":0.05,"predFold":0.438,"predFoldGto":0.496,"predRaise":0.074,"seFold":0.049}
+{"key":"St2 n1 1.5","n":100,"obsFold":0.66,"obsRaise":0.07,"predFold":0.527,"predFoldGto":0.596,"predRaise":0.072,"seFold":0.047}
+{"key":"St2 n2 0.33","n":46,"obsFold":0.283,"obsRaise":0,"predFold":0.339,"predFoldGto":0.495,"predRaise":0.06,"seFold":0.066}
+{"key":"St2 n2 0.5","n":46,"obsFold":0.478,"obsRaise":0,"predFold":0.428,"predFoldGto":0.57,"predRaise":0.06,"seFold":0.074}
+{"key":"St2 n2 0.75","n":46,"obsFold":0.565,"obsRaise":0,"predFold":0.511,"predFoldGto":0.641,"predRaise":0.06,"seFold":0.073}
+{"key":"St2 n2 1","n":46,"obsFold":0.652,"obsRaise":0,"predFold":0.551,"predFoldGto":0.69,"predRaise":0.06,"seFold":0.07}
+{"key":"St2 n2 1.5","n":46,"obsFold":0.848,"obsRaise":0,"predFold":0.602,"predFoldGto":0.758,"predRaise":0.06,"seFold":0.053}
+{"key":"St2 n3+ 0.33","n":3,"obsFold":0.333,"obsRaise":0,"predFold":0.417,"predFoldGto":0.626,"predRaise":0.016,"seFold":0.272}
+{"key":"St2 n3+ 0.5","n":3,"obsFold":0.333,"obsRaise":0,"predFold":0.519,"predFoldGto":0.693,"predRaise":0.016,"seFold":0.272}
+{"key":"St2 n3+ 0.75","n":3,"obsFold":0.333,"obsRaise":0,"predFold":0.614,"predFoldGto":0.754,"predRaise":0.016,"seFold":0.272}
+{"key":"St2 n3+ 1","n":3,"obsFold":0.333,"obsRaise":0,"predFold":0.651,"predFoldGto":0.794,"predRaise":0.016,"seFold":0.272}
+{"key":"St2 n3+ 1.5","n":3,"obsFold":0.333,"obsRaise":0,"predFold":0.676,"predFoldGto":0.843,"predRaise":0.016,"seFold":0.272}
+{"key":"St3 n1 0.33","n":74,"obsFold":0.554,"obsRaise":0.027,"predFold":0.298,"predFoldGto":0.244,"predRaise":0.04,"seFold":0.058}
+{"key":"St3 n1 0.5","n":73,"obsFold":0.63,"obsRaise":0.027,"predFold":0.402,"predFoldGto":0.329,"predRaise":0.04,"seFold":0.057}
+{"key":"St3 n1 0.75","n":73,"obsFold":0.753,"obsRaise":0.014,"predFold":0.504,"predFoldGto":0.415,"predRaise":0.039,"seFold":0.05}
+{"key":"St3 n1 1","n":71,"obsFold":0.845,"obsRaise":0.014,"predFold":0.559,"predFoldGto":0.479,"predRaise":0.039,"seFold":0.043}
+{"key":"St3 n1 1.5","n":70,"obsFold":0.929,"obsRaise":0.029,"predFold":0.597,"predFoldGto":0.571,"predRaise":0.036,"seFold":0.031}
+{"key":"St3 n2 0.33","n":24,"obsFold":0.625,"obsRaise":0.042,"predFold":0.498,"predFoldGto":0.488,"predRaise":0.021,"seFold":0.099}
+{"key":"St3 n2 0.5","n":24,"obsFold":0.667,"obsRaise":0.042,"predFold":0.587,"predFoldGto":0.562,"predRaise":0.021,"seFold":0.096}
+{"key":"St3 n2 0.75","n":24,"obsFold":0.833,"obsRaise":0.042,"predFold":0.667,"predFoldGto":0.635,"predRaise":0.021,"seFold":0.076}
+{"key":"St3 n2 1","n":24,"obsFold":0.875,"obsRaise":0.042,"predFold":0.697,"predFoldGto":0.686,"predRaise":0.021,"seFold":0.068}
+{"key":"St3 n2 1.5","n":24,"obsFold":0.875,"obsRaise":0.042,"predFold":0.694,"predFoldGto":0.757,"predRaise":0.021,"seFold":0.068}
+{"key":"St3 n3+ 0.33","n":3,"obsFold":0.667,"obsRaise":0,"predFold":0.539,"predFoldGto":0.626,"predRaise":0.013,"seFold":0.272}
+{"key":"St3 n3+ 0.5","n":3,"obsFold":0.667,"obsRaise":0,"predFold":0.633,"predFoldGto":0.693,"predRaise":0.013,"seFold":0.272}
+{"key":"St3 n3+ 0.75","n":3,"obsFold":0.667,"obsRaise":0,"predFold":0.705,"predFoldGto":0.754,"predRaise":0.013,"seFold":0.272}
+{"key":"St3 n3+ 1","n":3,"obsFold":1,"obsRaise":0,"predFold":0.724,"predFoldGto":0.794,"predRaise":0.013,"seFold":0}
+{"key":"St3 n3+ 1.5","n":3,"obsFold":1,"obsRaise":0,"predFold":0.705,"predFoldGto":0.843,"predRaise":0.013,"seFold":0}
+
+## HUD-Typ
+{"key":"LAG 0.33","n":47,"obsFold":0.468,"obsRaise":0.085,"predFold":0.291,"predFoldGto":0.247,"predRaise":0.071,"seFold":0.073}
+{"key":"LAG 0.5","n":47,"obsFold":0.574,"obsRaise":0.085,"predFold":0.392,"predFoldGto":0.329,"predRaise":0.071,"seFold":0.072}
+{"key":"LAG 0.75","n":47,"obsFold":0.681,"obsRaise":0.085,"predFold":0.493,"predFoldGto":0.417,"predRaise":0.068,"seFold":0.068}
+{"key":"LAG 1","n":46,"obsFold":0.696,"obsRaise":0.087,"predFold":0.554,"predFoldGto":0.49,"predRaise":0.069,"seFold":0.068}
+{"key":"LAG 1.5","n":46,"obsFold":0.761,"obsRaise":0.087,"predFold":0.609,"predFoldGto":0.59,"predRaise":0.069,"seFold":0.063}
+{"key":"Nit 0.33","n":4,"obsFold":0.75,"obsRaise":0.25,"predFold":0.215,"predFoldGto":0.248,"predRaise":0.087,"seFold":0.217}
+{"key":"Nit 0.5","n":4,"obsFold":0.75,"obsRaise":0.25,"predFold":0.316,"predFoldGto":0.336,"predRaise":0.087,"seFold":0.217}
+{"key":"Nit 0.75","n":4,"obsFold":0.75,"obsRaise":0.25,"predFold":0.414,"predFoldGto":0.427,"predRaise":0.087,"seFold":0.217}
+{"key":"Nit 1","n":4,"obsFold":0.75,"obsRaise":0.25,"predFold":0.473,"predFoldGto":0.5,"predRaise":0.087,"seFold":0.217}
+{"key":"Nit 1.5","n":4,"obsFold":0.75,"obsRaise":0.25,"predFold":0.539,"predFoldGto":0.601,"predRaise":0.087,"seFold":0.217}
+{"key":"TAG 0.33","n":53,"obsFold":0.302,"obsRaise":0.057,"predFold":0.234,"predFoldGto":0.248,"predRaise":0.081,"seFold":0.063}
+{"key":"TAG 0.5","n":53,"obsFold":0.491,"obsRaise":0.057,"predFold":0.334,"predFoldGto":0.332,"predRaise":0.081,"seFold":0.069}
+{"key":"TAG 0.75","n":53,"obsFold":0.547,"obsRaise":0.057,"predFold":0.44,"predFoldGto":0.425,"predRaise":0.081,"seFold":0.068}
+{"key":"TAG 1","n":53,"obsFold":0.642,"obsRaise":0.038,"predFold":0.5,"predFoldGto":0.494,"predRaise":0.078,"seFold":0.066}
+{"key":"TAG 1.5","n":52,"obsFold":0.769,"obsRaise":0.077,"predFold":0.564,"predFoldGto":0.597,"predRaise":0.077,"seFold":0.058}
+{"key":"loose-passiv 0.33","n":103,"obsFold":0.194,"obsRaise":0.019,"predFold":0.184,"predFoldGto":0.252,"predRaise":0.068,"seFold":0.039}
+{"key":"loose-passiv 0.5","n":99,"obsFold":0.424,"obsRaise":0.02,"predFold":0.266,"predFoldGto":0.332,"predRaise":0.07,"seFold":0.05}
+{"key":"loose-passiv 0.75","n":102,"obsFold":0.549,"obsRaise":0.02,"predFold":0.364,"predFoldGto":0.424,"predRaise":0.069,"seFold":0.049}
+{"key":"loose-passiv 1","n":102,"obsFold":0.637,"obsRaise":0.02,"predFold":0.423,"predFoldGto":0.492,"predRaise":0.069,"seFold":0.048}
+{"key":"loose-passiv 1.5","n":102,"obsFold":0.725,"obsRaise":0.02,"predFold":0.488,"predFoldGto":0.589,"predRaise":0.066,"seFold":0.044}
+{"key":"sehr loose 0.33","n":68,"obsFold":0.397,"obsRaise":0.088,"predFold":0.251,"predFoldGto":0.251,"predRaise":0.054,"seFold":0.059}
+{"key":"sehr loose 0.5","n":68,"obsFold":0.485,"obsRaise":0.103,"predFold":0.343,"predFoldGto":0.335,"predRaise":0.054,"seFold":0.061}
+{"key":"sehr loose 0.75","n":68,"obsFold":0.618,"obsRaise":0.088,"predFold":0.443,"predFoldGto":0.425,"predRaise":0.05,"seFold":0.059}
+{"key":"sehr loose 1","n":65,"obsFold":0.677,"obsRaise":0.092,"predFold":0.501,"predFoldGto":0.497,"predRaise":0.052,"seFold":0.058}
+{"key":"sehr loose 1.5","n":64,"obsFold":0.703,"obsRaise":0.109,"predFold":0.557,"predFoldGto":0.593,"predRaise":0.048,"seFold":0.057}
+{"key":"unbekannt 0.33","n":79,"obsFold":0.304,"obsRaise":0.013,"predFold":0.25,"predFoldGto":0.255,"predRaise":0.062,"seFold":0.052}
+{"key":"unbekannt 0.5","n":76,"obsFold":0.487,"obsRaise":0.013,"predFold":0.342,"predFoldGto":0.336,"predRaise":0.063,"seFold":0.057}
+{"key":"unbekannt 0.75","n":79,"obsFold":0.62,"obsRaise":0.013,"predFold":0.444,"predFoldGto":0.429,"predRaise":0.062,"seFold":0.055}
+{"key":"unbekannt 1","n":79,"obsFold":0.646,"obsRaise":0.013,"predFold":0.503,"predFoldGto":0.498,"predRaise":0.062,"seFold":0.054}
+{"key":"unbekannt 1.5","n":79,"obsFold":0.734,"obsRaise":0.038,"predFold":0.564,"predFoldGto":0.599,"predRaise":0.062,"seFold":0.05}
+
+## Wert gegen Check (alle)
+{"key":"alle | 0.33","n":428,"realVsCheck":0.245,"se":0.815,"modelVsCheck":0.124}
+{"key":"alle | 0.5","n":421,"realVsCheck":0.498,"se":0.908,"modelVsCheck":0.072}
+{"key":"alle | 0.75","n":427,"realVsCheck":1.874,"se":1.024,"modelVsCheck":0.021}
+{"key":"alle | 1","n":423,"realVsCheck":1.958,"se":1.085,"modelVsCheck":-0.078}
+{"key":"alle | 1.5","n":421,"realVsCheck":0.611,"se":1.092,"modelVsCheck":-0.673}
+
+## Wert gegen Check nach Equity
+{"key":"Equity 35–60 % | 0.33","n":148,"realVsCheck":-0.489,"se":1.475,"modelVsCheck":-0.489}
+{"key":"Equity 35–60 % | 0.5","n":146,"realVsCheck":-0.656,"se":1.553,"modelVsCheck":-0.871}
+{"key":"Equity 35–60 % | 0.75","n":148,"realVsCheck":0.511,"se":1.021,"modelVsCheck":-1.256}
+{"key":"Equity 35–60 % | 1","n":145,"realVsCheck":0.219,"se":1.326,"modelVsCheck":-1.477}
+{"key":"Equity 35–60 % | 1.5","n":144,"realVsCheck":-0.301,"se":1.716,"modelVsCheck":-2.382}
+{"key":"Equity < 35 % | 0.33","n":162,"realVsCheck":-0.357,"se":0.771,"modelVsCheck":-0.812}
+{"key":"Equity < 35 % | 0.5","n":159,"realVsCheck":-0.909,"se":1.069,"modelVsCheck":-0.887}
+{"key":"Equity < 35 % | 0.75","n":162,"realVsCheck":-0.059,"se":1.667,"modelVsCheck":-0.856}
+{"key":"Equity < 35 % | 1","n":162,"realVsCheck":0.673,"se":1.752,"modelVsCheck":-1.124}
+{"key":"Equity < 35 % | 1.5","n":161,"realVsCheck":1.644,"se":1.796,"modelVsCheck":-2.166}
+{"key":"Equity ≥ 60 % | 0.33","n":118,"realVsCheck":1.991,"se":2.05,"modelVsCheck":2.178}
+{"key":"Equity ≥ 60 % | 0.5","n":116,"realVsCheck":3.879,"se":2.192,"modelVsCheck":2.574}
+{"key":"Equity ≥ 60 % | 0.75","n":117,"realVsCheck":6.275,"se":2.609,"modelVsCheck":2.848}
+{"key":"Equity ≥ 60 % | 1","n":116,"realVsCheck":5.928,"se":2.61,"modelVsCheck":3.134}
+{"key":"Equity ≥ 60 % | 1.5","n":116,"realVsCheck":0.31,"se":2.239,"modelVsCheck":3.52}
+
+## Strategien alle (428)
+{"policy":"Modell (beste EV)","vsCheck":0.461,"se":0.751}
+{"policy":"Modell, Größe frei nach Ausspielung (Orakel)","vsCheck":4.31,"se":0.85}
+{"policy":"immer Check","vsCheck":0,"se":0}
+{"policy":"Modell entscheidet Bet/Check, Größe fest 0.33","vsCheck":0.958,"se":0.594}
+{"policy":"immer Bet 0.33","vsCheck":0.245,"se":0.815}
+{"policy":"Modell entscheidet Bet/Check, Größe fest 0.5","vsCheck":1.413,"se":0.629}
+{"policy":"immer Bet 0.5","vsCheck":0.527,"se":0.893}
+{"policy":"Modell entscheidet Bet/Check, Größe fest 0.75","vsCheck":2.032,"se":0.762}
+{"policy":"immer Bet 0.75","vsCheck":1.89,"se":1.022}
+{"policy":"Modell entscheidet Bet/Check, Größe fest 1","vsCheck":1.523,"se":0.824}
+{"policy":"immer Bet 1","vsCheck":1.938,"se":1.086}
+{"policy":"Modell entscheidet Bet/Check, Größe fest 1.5","vsCheck":-0.494,"se":0.785}
+{"policy":"immer Bet 1.5","vsCheck":0.652,"se":1.111}
+
+## Strategien HU (354)
+{"policy":"Modell (beste EV)","vsCheck":0.515,"se":0.844}
+{"policy":"Modell, Größe frei nach Ausspielung (Orakel)","vsCheck":3.693,"se":0.768}
+{"policy":"immer Check","vsCheck":0,"se":0}
+{"policy":"Modell entscheidet Bet/Check, Größe fest 0.33","vsCheck":1.085,"se":0.677}
+{"policy":"immer Bet 0.33","vsCheck":0.317,"se":0.941}
+{"policy":"Modell entscheidet Bet/Check, Größe fest 0.5","vsCheck":1.541,"se":0.702}
+{"policy":"immer Bet 0.5","vsCheck":0.522,"se":1.023}
+{"policy":"Modell entscheidet Bet/Check, Größe fest 0.75","vsCheck":1.723,"se":0.732}
+{"policy":"immer Bet 0.75","vsCheck":1.482,"se":0.976}
+{"policy":"Modell entscheidet Bet/Check, Größe fest 1","vsCheck":0.987,"se":0.778}
+{"policy":"immer Bet 1","vsCheck":1.35,"se":1.03}
+{"policy":"Modell entscheidet Bet/Check, Größe fest 1.5","vsCheck":-0.714,"se":0.887}
+{"policy":"immer Bet 1.5","vsCheck":-0.025,"se":1.138}
+
+## Strategien Multiway (74)
+{"policy":"Modell (beste EV)","vsCheck":0.203,"se":1.619}
+{"policy":"Modell, Größe frei nach Ausspielung (Orakel)","vsCheck":7.263,"se":3.268}
+{"policy":"immer Check","vsCheck":0,"se":0}
+{"policy":"Modell entscheidet Bet/Check, Größe fest 0.33","vsCheck":0.35,"se":1.138}
+{"policy":"immer Bet 0.33","vsCheck":-0.101,"se":1.397}
+{"policy":"Modell entscheidet Bet/Check, Größe fest 0.5","vsCheck":0.801,"se":1.406}
+{"policy":"immer Bet 0.5","vsCheck":0.55,"se":1.67}
+{"policy":"Modell entscheidet Bet/Check, Größe fest 0.75","vsCheck":3.512,"se":2.69}
+{"policy":"immer Bet 0.75","vsCheck":3.837,"se":3.634}
+{"policy":"Modell entscheidet Bet/Check, Größe fest 1","vsCheck":4.088,"se":2.976}
+{"policy":"immer Bet 1","vsCheck":4.751,"se":3.903}
+{"policy":"Modell entscheidet Bet/Check, Größe fest 1.5","vsCheck":0.561,"se":1.63}
+{"policy":"immer Bet 1.5","vsCheck":3.891,"se":3.412}
+
+## Equity wenn gecallt
+{"key":"St1 0.33","n":119,"predEqWhenCalled":0.444,"obsEqWhenCalled":0.509,"se":0.031}
+{"key":"St1 0.5","n":84,"predEqWhenCalled":0.425,"obsEqWhenCalled":0.464,"se":0.037}
+{"key":"St1 0.75","n":65,"predEqWhenCalled":0.349,"obsEqWhenCalled":0.358,"se":0.037}
+{"key":"St1 1","n":55,"predEqWhenCalled":0.325,"obsEqWhenCalled":0.321,"se":0.039}
+{"key":"St1 1.5","n":41,"predEqWhenCalled":0.317,"obsEqWhenCalled":0.302,"se":0.045}
+{"key":"St2 0.33","n":75,"predEqWhenCalled":0.424,"obsEqWhenCalled":0.461,"se":0.044}
+{"key":"St2 0.5","n":52,"predEqWhenCalled":0.389,"obsEqWhenCalled":0.359,"se":0.049}
+{"key":"St2 0.75","n":43,"predEqWhenCalled":0.357,"obsEqWhenCalled":0.3,"se":0.05}
+{"key":"St2 1","n":39,"predEqWhenCalled":0.333,"obsEqWhenCalled":0.268,"se":0.049}
+{"key":"St2 1.5","n":27,"predEqWhenCalled":0.335,"obsEqWhenCalled":0.31,"se":0.065}
+{"key":"St3 0.33","n":31,"predEqWhenCalled":0.425,"obsEqWhenCalled":0.484,"se":0.091}
+{"key":"St3 0.5","n":25,"predEqWhenCalled":0.323,"obsEqWhenCalled":0.4,"se":0.1}
+{"key":"St3 0.75","n":17,"predEqWhenCalled":0.256,"obsEqWhenCalled":0.294,"se":0.114}
+{"key":"St3 1","n":10,"predEqWhenCalled":0.283,"obsEqWhenCalled":0.3,"se":0.153}
+{"key":"St3 1.5","n":3,"predEqWhenCalled":0.621,"obsEqWhenCalled":0.667,"se":0.333}
+
+## Gegen Bet
+{"key":"St1 call","n":68,"realVsFold":1.552,"se":3.923,"modelVsFold":2.134}
+{"key":"St1 fold","n":68,"realVsFold":0,"se":0,"modelVsFold":0}
+{"key":"St1 r2.5","n":68,"realVsFold":1.614,"se":3.124,"modelVsFold":1.187}
+{"key":"St1 r3.5","n":68,"realVsFold":0.753,"se":3.475,"modelVsFold":0.096}
+{"key":"St2 call","n":31,"realVsFold":-1.416,"se":4.174,"modelVsFold":-1.365}
+{"key":"St2 fold","n":31,"realVsFold":0,"se":0,"modelVsFold":0}
+{"key":"St2 r2.5","n":31,"realVsFold":-11.933,"se":6.219,"modelVsFold":-6.51}
+{"key":"St2 r3.5","n":31,"realVsFold":-15.796,"se":7.57,"modelVsFold":-8.919}
+{"key":"St3 call","n":11,"realVsFold":-3.209,"se":4.755,"modelVsFold":-0.147}
+{"key":"St3 fold","n":11,"realVsFold":0,"se":0,"modelVsFold":0}
+{"key":"St3 r2.5","n":11,"realVsFold":-15.909,"se":9.659,"modelVsFold":-2.448}
+{"key":"St3 r3.5","n":11,"realVsFold":-14.3,"se":11.472,"modelVsFold":-4.51}
+
+Modellwahl {"1":21,"check":217,"0.75":36,"1.5":71,"0.5":23,"0.33":60}

@@ -229,19 +229,25 @@ function validLearning(L) {
   for (var j = 0; j < L.srs.length; j++) if (!validSrs(L.srs[j])) return 'Wiederholung ' + (j + 1) + ' ungültig';
   if (!validQuiz(L.quiz)) return 'Quiz ungültig';
   if (!Array.isArray(L.sessions) || L.sessions.length > 5000) return 'Sessions ungültig';
+  for (var si = 0; si < L.sessions.length; si++) { var se = L.sessions[si]; if (!se || typeof se !== 'object' || Array.isArray(se)) return 'Session ' + (si + 1) + ' ungültig'; }   // D23-7: wie repairLearning
   if (!Array.isArray(L.goals) || L.goals.length > 20) return 'Ziele ungültig';
   for (var g = 0; g < L.goals.length; g++) if (!validGoal(L.goals[g])) return 'Ziel ' + (g + 1) + ' ungültig';
+  if (L.pp != null && !validPPList(L.pp)) return 'Vorher-Nachher-Tests ungültig';
   return null;
 }
 /** Gespeicherte Lerndaten reparieren statt verwerfen: ungültige Einträge werden entfernt, der Rest bleibt erhalten. */
 function repairLearning(L) {
   if (!L || typeof L !== 'object' || Array.isArray(L) || L.v !== 1) return null;
   var out = newLearning(), removed = 0;
-  if (Array.isArray(L.decisions)) L.decisions.slice(-DEC_MAX).forEach(function (d) { if (validDecision(d)) out.decisions.push(d); else removed++; });
-  if (Array.isArray(L.srs)) L.srs.slice(-300).forEach(function (it) { if (validSrs(it)) out.srs.push(it); else removed++; });
+  // 2.3 (Prüfbefund C-7): jede verworfene oder gekürzte Struktur zählt; gleiche Grenzen wie validLearning (Entscheidungen DEC_MAX, Wiederholungen 1.000, Sessions 5.000)
+  if (Array.isArray(L.decisions)) { removed += Math.max(0, L.decisions.length - DEC_MAX); L.decisions.slice(-DEC_MAX).forEach(function (d) { if (validDecision(d)) out.decisions.push(d); else removed++; }); } else if (L.decisions != null) removed++;
+  if (Array.isArray(L.srs)) { removed += Math.max(0, L.srs.length - 1000); L.srs.slice(-1000).forEach(function (it) { if (validSrs(it)) out.srs.push(it); else removed++; }); } else if (L.srs != null) removed++;
+  if (Array.isArray(L.sessions)) { removed += Math.max(0, L.sessions.length - 5000); L.sessions.slice(-5000).forEach(function (x) { if (x && typeof x === 'object' && !Array.isArray(x)) out.sessions.push(x); else removed++; }); } else if (L.sessions != null) removed++;
   if (validQuiz(L.quiz)) out.quiz = L.quiz; else removed++;
   if (Array.isArray(L.goals) && L.goals.length <= 20 && L.goals.every(validGoal)) out.goals = L.goals; else removed++;
   if (typeof L.created === 'number') out.created = L.created;
+  if (Array.isArray(L.pp)) { out.pp = []; var seen = {}; removed += Math.max(0, L.pp.length - PP_MAX); L.pp.slice(-PP_MAX).forEach(function (t) { if (validPP(t) && !seen[t.id]) { seen[t.id] = 1; out.pp.push(t); } else removed++; }); }
+  else if (L.pp != null) removed++;
   return { learning: out, removed: removed };
 }
 function mean(a) { return a.length ? a.reduce(function (s, x) { return s + x; }, 0) / a.length : null; }
@@ -280,6 +286,138 @@ function profile(L) {
   pri.sort(function (x, y) { return x.score - y.score; });
   out.priorities = pri;
   out.level = levelOf(out.all);
+  return out;
+}
+// ---------- 2.2: Lernwirkung messbar machen (Arbeitspaket 7) ----------
+/* Fehlerfelder: Zuordnung der Fehlerkategorien des Coaches zu den Feldern des Auftrags. Der EV-Verlust einer Entscheidung wird zu gleichen
+   Teilen auf ihre Kategorien verteilt (modellabhängige Schätzung, kein gemessener Verlust). */
+var AREAS = { betgroesse: 'Einsatzgröße', 'pot-odds': 'Pot Odds', draw: 'Pot Odds', mittelstark: 'Range-Einschätzung', 'zu-viel-call': 'Range-Einschätzung',
+  'zu-viel-fold': 'Range-Einschätzung', gegnertyp: 'Range-Einschätzung', 'zu-passiv': 'Aggression', 'zu-viel-bluff': 'Aggression',
+  'zu-viele-starthaende': 'Starthände und Position', position: 'Starthände und Position' };
+function errorAreas(L) {
+  var out = {}, D = L.decisions;
+  // Prüfer A 2.2 (A-12): je Entscheidung jedes Feld nur einmal zählen
+  var areasOf = function (d) { var u = []; d.c.forEach(function (c) { var a = AREAS[c] || 'Sonstiges'; if (u.indexOf(a) < 0) u.push(a); }); return u; };
+  D.forEach(function (d) { if (!d.c.length) return; var share = d.l / d.c.length;
+    d.c.forEach(function (c) { var a = AREAS[c] || 'Sonstiges', o = out[a] || (out[a] = { area: a, n: 0, loss: 0, recent: 0 }); o.loss += share; });
+    areasOf(d).forEach(function (a) { out[a].n++; }); });
+  D.slice(-100).forEach(function (d) { areasOf(d).forEach(function (a) { if (out[a]) out[a].recent++; }); });
+  return Object.keys(out).map(function (k) { return out[k]; }).sort(function (a, b) { return b.loss - a.loss; });
+}
+/** Wiederkehrende Fehler: gleiche Situation (Spot) und gleiche Fehlerkategorie mindestens dreimal mit Bewertung ≤ 45 */
+function recurring(L) {
+  var g = {}, D = L.decisions;
+  D.forEach(function (d, i) { if (d.s > 45) return; (d.t.length ? d.t : ['ohne']).forEach(function (t) { d.c.forEach(function (c) {
+    var k = t + '|' + c, o = g[k] || (g[k] = { spot: t, cat: c, n: 0, loss: 0, last: 0, idx: [] }); o.n++; o.loss += d.l; o.last = Math.max(o.last, d.ts || 0); o.idx.push(i); }); }); });
+  var N = D.length;
+  return Object.keys(g).map(function (k) { var o = g[k]; o.recent = o.idx.filter(function (i) { return i >= N - 100; }).length; delete o.idx; return o; })
+    .filter(function (o) { return o.n >= 3; }).sort(function (a, b) { return b.n - a.n || b.loss - a.loss; });
+}
+/** Verbesserung in zuvor problematischen Situationen: je Spot die ersten 10 gegen die letzten 10 Entscheidungen (ab 20 Entscheidungen),
+    „zuvor problematisch“, wenn die ersten 10 im Mittel unter 60 lagen. Differenz mit 95-%-Intervall (Welch, Normalnäherung). */
+/** Zweiseitiges 97,5-%-Quantil der t-Verteilung (Cornish-Fisher-Näherung, Fehler < 0,01 ab df = 2) */
+function tq(df) { if (!(df > 0)) return Infinity; var z = 1.959964, z3 = z * z * z, z5 = z3 * z * z; return z + (z3 + z) / (4 * df) + (5 * z5 + 16 * z3 + 3 * z) / (96 * df * df); }
+/** Welch-Intervall (Halbbreite, 95 %) für zwei Stichproben */
+function welch(a, b) { var sa = sd(a) || 0, sb = sd(b) || 0, va = sa * sa / a.length, vb = sb * sb / b.length, se = Math.sqrt(va + vb);
+  if (!(se > 0)) return { ci: Infinity, se: 0 };
+  var df = (va + vb) * (va + vb) / ((a.length > 1 ? va * va / (a.length - 1) : 0) + (b.length > 1 ? vb * vb / (b.length - 1) : 0) || 1); return { ci: tq(df) * se, se: se, df: df }; }
+/* Prüfer A 2.2 (A-4): Auswahl („zuvor schwach“) und Vorher-Messung getrennt, sonst entsteht Verbesserung allein durch Regression zur Mitte.
+   Entscheidungen 1–10 bestimmen „zuvor schwach“, 11–20 sind „vorher“, die letzten 10 „nachher“ (ab 30 Entscheidungen; sonst nicht berichtet). */
+function improvement(L) {
+  var out = [];
+  Object.keys(C.SPOTS).forEach(function (t) {
+    var l = L.decisions.filter(function (d) { return d.t.indexOf(t) >= 0; }); if (l.length < 30) return;
+    var sel = l.slice(0, 10).map(function (d) { return d.s; }), a = l.slice(10, 20).map(function (d) { return d.s; }), b = l.slice(-10).map(function (d) { return d.s; });
+    var ma = mean(a), mb = mean(b), w = welch(a, b);
+    out.push({ spot: t, name: C.SPOTS[t], n: l.length, before: ma, after: mb, diff: mb - ma, ci: w.ci, problem: mean(sel) < 60, sure: isFinite(w.ci) && Math.abs(mb - ma) > w.ci });
+  });
+  // Prüfer C 2.2: viele Situationen gleichzeitig → Holm-Korrektur für „eindeutig“ (p aus der Normalnäherung der Welch-Statistik)
+  var byP = out.filter(function (x) { return isFinite(x.ci) && x.ci > 0; }).map(function (x) { x.p = 2 * (1 - normCdf(Math.abs(x.diff) / (x.ci / 1.96))); return x; }).sort(function (a, b) { return a.p - b.p; });
+  var stop = false; out.forEach(function (x) { x.sure = false; });
+  byP.forEach(function (x, i) { if (!stop && x.p <= 0.05 / (byP.length - i)) x.sure = true; else stop = true; });
+  return out.sort(function (x, y) { return (y.problem - x.problem) || (y.diff - x.diff); });
+}
+/* Vorher-Nachher-Test: feste Testsituationen aus denselben Generatoren und Kategorien, vorher und nachher mit verschiedenen, aber vorab
+   festgelegten Seeds (vergleichbare, nicht identische Situationen; gleiches Gegnerfeld „gemischt“). Ergebnis: mittlere Entscheidungsqualität
+   und EV-Verlust je Phase, Differenz mit 95-%-Intervall. Das misst die Entscheidungsqualität dieses Nutzers in diesen Kategorien; eine
+   allgemeine pädagogische Wirksamkeit ist damit nicht nachgewiesen. */
+var PP_MAX = 30, PP_PER = 4;
+function prePostNew(L, opts) {
+  opts = opts || {};
+  var prof = opts.profile || profile(L), cats = (opts.cats || prof.priorities.filter(function (p) { return !p.explore && hasScen(p.tag); }).slice(0, 3).map(function (p) { return p.tag; }));
+  if (!opts.cats) ['cbet', 'river-call', 'blind-defense'].forEach(function (c) { if (cats.length < 3 && cats.indexOf(c) < 0) cats.push(c); });
+  var id = 'pp' + ((opts.now || Date.now()) % 1e10), per = opts.per || PP_PER, test = { id: id, ts: opts.now || Date.now(), cats: cats, state: 'pre', pre: [], post: [] };
+  // Prüfer C 2.2 (C-1): nur Seeds, für die der Generator eine Situation erzeugt (sonst ließe sich der Test nie abschließen)
+  var okSeed = function (c, base) { for (var k = 0; k < 25; k++) { var sd = PT.rng.hashStr(base + (k ? '|' + k : '')) >>> 0; if (opts.noCheck || generate(c, sd, { difficulty: 'gemischt', ts: 0 })) return sd; } return null; };
+  cats.forEach(function (c) { for (var i = 0; i < per; i++) ['pre', 'post'].forEach(function (ph) { var sd = okSeed(c, id + '|' + c + '|' + ph + '|' + i); if (sd != null) test[ph].push({ cat: c, seed: sd, s: null, l: null }); }); });
+  if (!Array.isArray(L.pp)) L.pp = [];
+  L.pp.push(test); if (L.pp.length > PP_MAX) L.pp.splice(0, L.pp.length - PP_MAX);
+  return test;
+}
+function prePostQueue(test, phase) { return test[phase].map(function (it, i) { return { key: 'pp:' + test.id + ':' + phase + ':' + i, cat: it.cat, seed: it.seed, diff: 'gemischt' }; }).filter(function (q, i) { return test[phase][i].s == null; }); }
+function prePostRecord(L, key, score, lossBB) {
+  var m = /^pp:([A-Za-z0-9]+):(pre|post):(\d+)$/.exec(key || ''); if (!m || !Array.isArray(L.pp)) return false;
+  var t = L.pp.filter(function (x) { return x.id === m[1]; })[0]; if (!t) return false;
+  var it = t[m[2]][+m[3]]; if (!it) return false;
+  it.s = Math.round(score); it.l = Math.round((lossBB || 0) * 100) / 100;
+  if (t.pre.every(function (x) { return x.s != null; }) && t.state === 'pre') t.state = 'training';
+  if (t.post.every(function (x) { return x.s != null; })) t.state = 'fertig';
+  return true;
+}
+function prePostResult(t) {
+  function ph(list) { var sc = list.filter(function (x) { return x.s != null; }); return { n: sc.length, score: mean(sc.map(function (x) { return x.s; })), sd: sd(sc.map(function (x) { return x.s; })), loss: mean(sc.map(function (x) { return x.l; })) }; }
+  var a = ph(t.pre), b = ph(t.post), res = { pre: a, post: b, byCat: {} };
+  // Prüfer A 2.2 (A-13): Urteil erst bei vollständigen Phasen, Welch-Intervall mit t-Quantil; ohne Streuung kein Intervall und kein Urteil
+  var complete = t.pre.every(function (x) { return x.s != null; }) && t.post.every(function (x) { return x.s != null; });
+  if (complete && a.n >= 2 && b.n >= 2) { var w = welch(t.pre.map(function (x) { return x.s; }), t.post.map(function (x) { return x.s; })); res.diff = b.score - a.score; res.ci = isFinite(w.ci) ? w.ci : null; res.sure = res.ci != null && Math.abs(res.diff) > res.ci; }
+  res.complete = complete;
+  t.cats.forEach(function (c) { var x = ph(t.pre.filter(function (i) { return i.cat === c; })), y = ph(t.post.filter(function (i) { return i.cat === c; })); res.byCat[c] = { pre: x.score, post: y.score, n: Math.min(x.n, y.n) }; });
+  return res;
+}
+var PP_KEYS = ['id', 'ts', 'state', 'cats', 'pre', 'post'], PP_ITEM = ['cat', 'seed', 's', 'l'];
+function validPP(t) {
+  if (!t || typeof t !== 'object' || Array.isArray(t) || Object.keys(t).some(function (k) { return PP_KEYS.indexOf(k) < 0; }) || typeof t.id !== 'string' || !/^pp[0-9]{1,12}$/.test(t.id) || typeof t.ts !== 'number' || ['pre', 'training', 'fertig'].indexOf(t.state) < 0) return false;
+  if (!Array.isArray(t.cats) || t.cats.length < 1 || t.cats.length > 6 || !t.cats.every(hasScen)) return false;
+  var okItem = function (it) { return it && typeof it === 'object' && !Array.isArray(it) && Object.keys(it).every(function (k) { return PP_ITEM.indexOf(k) >= 0; }) && t.cats.indexOf(it.cat) >= 0 && hasScen(it.cat) && isInt(it.seed, 0, 4294967295) && (it.s == null || num(it.s, 0, 100)) && (it.l == null || num(it.l, -1e6, 1e6)); };
+  if (!['pre', 'post'].every(function (ph) { return Array.isArray(t[ph]) && t[ph].length >= 1 && t[ph].length <= 40 && t[ph].every(okItem); })) return false;
+  var done = function (ph) { return t[ph].every(function (x) { return x.s != null; }); };
+  if (t.state === 'fertig' && !(done('pre') && done('post'))) return false;
+  if (t.state === 'training' && !done('pre')) return false;
+  return true;
+}
+function validPPList(a) { if (!Array.isArray(a) || a.length > PP_MAX || !a.every(validPP)) return false; var ids = {}; return a.every(function (t) { if (ids[t.id]) return false; ids[t.id] = 1; return true; }); }
+// ---------- 2.2: Gegnergedächtnis – Belastbarkeit je Wert und Verhaltenshypothesen (Arbeitspaket 6) ----------
+/** Belastbarkeit eines Werts nach seinen tatsächlichen Gelegenheiten (nicht nach gespielten Händen) */
+function statReliability(nd) { var n = nd ? nd[1] : 0; return n < 20 ? 'unsicher' : n < 100 ? 'Tendenz' : 'belastbar'; }
+/** Verhaltenshypothesen: Abweichung vom Populationsmittel nur, wenn das 95-%-Wilson-Intervall den Mittelwert nicht enthält
+    (gestützt) bzw. wenn der Rohwert um mehr als 10 Prozentpunkte abweicht, das Intervall ihn aber noch enthält (Vermutung).
+    Aufgedeckte Bluffs (Bet oder Raise am River mit einer Hand unter dem 30. Perzentil) werden getrennt gezählt. */
+var HYP = { vpip: ['spielt mehr Starthände als der Durchschnitt', 'spielt weniger Starthände als der Durchschnitt'], pfr: ['erhöht preflop häufiger', 'erhöht preflop seltener'],
+  threeBet: ['3-Bettet häufig', '3-Bettet selten'], foldTo3Bet: ['gibt gegen 3-Bets oft auf', 'verteidigt gegen 3-Bets häufig'],
+  cbetFlop: ['setzt am Flop häufig nach (C-Bet)', 'setzt am Flop selten nach'], foldToCbet: ['foldet oft gegen C-Bets', 'verteidigt gegen C-Bets häufig'],
+  afq: ['spielt postflop aggressiv', 'spielt postflop passiv'], wtsd: ['geht oft zum Showdown', 'geht selten zum Showdown'] };
+function normCdf(z) { var t = 1 / (1 + 0.2316419 * Math.abs(z)), d = 0.3989423 * Math.exp(-z * z / 2), p = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274)))); return z > 0 ? 1 - p : p; }
+function hypotheses(r) {
+  // Prüfer A 2.2 (A-14): Bezug ist das Populationsmittel der Gegner-KI (LIK.ref), gestützt nur nach Holm-Korrektur über alle geprüften Werte
+  var out = [], tab = PT.ranges.likelihoodTable && PT.ranges.likelihoodTable(), P = (tab && tab.ref) || PT.ranges.PRIOR, cand = [];
+  Object.keys(HYP).forEach(function (k) {
+    var nd = r.stats[k]; if (!nd || nd[1] < 10) return;
+    var raw = nd[0] / nd[1], m = P[k]; if (m == null) return;
+    var z = (raw - m) / Math.sqrt(m * (1 - m) / nd[1]), pv = 2 * (1 - normCdf(Math.abs(z)));
+    cand.push({ key: k, raw: raw, m: m, n: nd[1], ci: S.wilson(nd), p: pv });
+  });
+  cand.sort(function (a, b) { return a.p - b.p; });
+  var stop = false;
+  cand.forEach(function (c, i) { var sure = !stop && c.p <= 0.05 / (cand.length - i); if (!sure) stop = true;
+    if (sure || (c.n >= 30 && Math.abs(c.raw - c.m) > 0.1)) out.push({ key: c.key, text: HYP[c.key][c.raw > c.m ? 0 : 1], level: sure ? 'gestützt' : 'Vermutung', raw: c.raw, prior: c.m, n: c.n, ci: c.ci, p: c.p }); });
+  var bl = 0, sh = 0;
+  (r.shown || []).forEach(function (x) {
+    if (!x || typeof x.board !== 'string' || x.board.length < 10 || typeof x.cards !== 'string') return;
+    var b = PT.parseCards(x.board), c = PT.parseCards(x.cards); if (!b || !c || b.length < 5 || c.length !== 2) return;
+    sh++; var riv = x.actions && x.actions[3] ? String(x.actions[3]) : '';
+    if (/Bet|Raise/.test(riv) && B.percentile(c, b).p < 0.3) bl++;
+  });
+  if (bl >= 2) out.push({ key: 'riverBluff', text: 'zeigte am River nach Bet oder Raise mehrfach schwache Hände (' + bl + ' von ' + sh + ' aufgedeckten Blättern)', level: 'Vermutung', n: sh });
   return out;
 }
 function levelOf(all) {
@@ -527,5 +665,6 @@ function handText(h) {
 
 PT.training = { makeHandRecord: makeHandRecord, makeDecision: makeDecision, slimDecision: slimDecision, validHand: validHand, newLearning: newLearning, addDecision: addDecision, validLearning: validLearning, repairLearning: repairLearning, validView: validView, validSnap: validSnap,
   profile: profile, goalStatus: goalStatus, srsAdd: srsAdd, srsDue: srsDue, srsReview: srsReview, BOX_DAYS: BOX_DAYS, SCEN: SCEN, hasScen: hasScen, generate: generate,
-  quiz: quiz, QUIZ_TYPES: QUIZ_TYPES, handText: handText, levelOf: levelOf, defaultGoals: defaultGoals };
+  quiz: quiz, QUIZ_TYPES: QUIZ_TYPES, handText: handText, levelOf: levelOf, defaultGoals: defaultGoals,
+  AREAS: AREAS, errorAreas: errorAreas, recurring: recurring, improvement: improvement, prePostNew: prePostNew, prePostQueue: prePostQueue, prePostRecord: prePostRecord, prePostResult: prePostResult, validPP: validPP, statReliability: statReliability, hypotheses: hypotheses };
 })(typeof globalThis !== 'undefined' ? globalThis : (typeof self !== 'undefined' ? self : this));

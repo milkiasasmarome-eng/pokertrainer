@@ -1,0 +1,97 @@
+{
+ "date": "2026-11-28T13:14:28.421Z",
+ "pokertrainer": "2.3.1",
+ "pai": "0.4.0-dev",
+ "paiCommit": "f4990fee0e41efc94c31aa123e3d76db42734584",
+ "paiRoot": "assist",
+ "results": [
+  {
+   "name": "Ereignisstrom: Schema, Prüfsumme, nur beobachtbare Informationen",
+   "ok": true,
+   "detail": "ok, 183 Ereignisse aus 59 Händen"
+  },
+  {
+   "name": "Ereignisstrom: keine später aufgedeckten Gegnerkarten und keine künftigen Boardkarten im Entscheidungsabschnitt",
+   "ok": true,
+   "detail": "0 Funde"
+  },
+  {
+   "name": "Ereignisstrom: Prüfung lehnt verdeckte Karten im beobachteten Zustand ab",
+   "ok": true,
+   "detail": "Hand 1, Ereignis 1: verdeckte Karten im beobachteten Zustand"
+  },
+  {
+   "name": "Empfehlungskanäle getrennt: Trainer füllt nur „pokertrainer-coach“, Kanal „pai“ bleibt leer",
+   "ok": true
+  },
+  {
+   "name": "Versionsprüfung: PAI 0.4.0-dev liest Sicherungen des Trainers (Format 3)",
+   "ok": true,
+   "detail": "ok"
+  },
+  {
+   "name": "PAI-Adapter und PAI-Validator akzeptieren die Hand-Datensätze des Trainers",
+   "ok": true,
+   "detail": "60 von 60 Händen, 0 Fehler"
+  },
+  {
+   "name": "Unabhängigkeit: PAI übernimmt keine Coach-Bewertungen des Trainers",
+   "ok": true
+  },
+  {
+   "name": "Kennzahlen VPIP/PFR: PAI und Trainer zählen auf denselben Händen gleich (unabhängige Implementierungen)",
+   "ok": true,
+   "detail": "12 Vergleiche, 0 Abweichungen"
+  },
+  {
+   "name": "Equity: PAI und Trainer stimmen auf denselben Spots überein (Abweichung ≤ 0,01)",
+   "ok": true,
+   "detail": "25 Spots, größte Abweichung 0.0000"
+  },
+  {
+   "name": "Reproduzierbarkeit: gleiche Seeds ergeben denselben Ereignisstrom",
+   "ok": true,
+   "detail": "20f1b4cf / 20f1b4cf"
+  },
+  {
+   "name": "Fehlerbehandlung: veränderter Ereignisstrom wird mit Meldung abgelehnt",
+   "ok": true,
+   "detail": "Prüfsumme stimmt nicht"
+  },
+  {
+   "name": "Fehlerbehandlung: PAI lehnt unbekannte Sicherungsversion 4 mit Meldung ab",
+   "ok": true,
+   "detail": "Nicht unterstützte Version 4 (unterstützt: 2, 3)"
+  },
+  {
+   "name": "Datenintegrität: Aktionen und Board je Hand vollständig übernommen",
+   "ok": true,
+   "detail": "0 Abweichungen in 60 Händen"
+  },
+  {
+   "name": "Keine Datenleckage im Trainer: aufgedeckte Blätter nur von Plätzen am Showdown",
+   "ok": true,
+   "detail": "0 im Trainer, 0 nach PAI"
+  },
+  {
+   "name": "Keine Datenleckage nach PAI: umgewandelte Hände ohne Seed, Handnummer, Sitzung, Bewertungen",
+   "ok": true,
+   "detail": "0 Hände mit verbotenen Feldern"
+  },
+  {
+   "name": "Negativtest Leckageprüfung: eingeschleuste Karten gefoldeter Spieler werden erkannt",
+   "ok": true,
+   "detail": "5 eingeschleust, 5 erkannt"
+  },
+  {
+   "name": "PAI: validateHand lehnt Karten gefoldeter Spieler ab (Änderungsauftrag Punkt 4)",
+   "ok": true,
+   "detail": "0 von 5 angenommen"
+  },
+  {
+   "name": "Änderungsauftrag Punkte 1 und 3: Format 3 gelesen, Version 4 abgelehnt, Trainingshände nicht übernommen",
+   "ok": true,
+   "detail": "nativ: 55 von 60 Händen übernommen (5 Trainingshände ausgelassen), Version 4 abgelehnt: true"
+  }
+ ]
+}

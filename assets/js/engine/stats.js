@@ -161,8 +161,11 @@ function newRecord(id, name) {
 }
 function dbEnsure(db, id, name) { var r = db.opps[id]; if (!r) r = db.opps[id] = newRecord(id, name || (PT.bots ? PT.bots.nameOf(id) : id)); return r; }
 function shownEntry(rec, seat, cards) {
-  var streets = ['', '', '', ''];
-  rec.actions.forEach(function (a) { if (a.s !== seat) return; var t = PT.actionText(a); streets[a.st] = streets[a.st] ? streets[a.st] + ', ' + t : t; });
+  var streets = ['', '', '', ''], cut = [false, false, false, false];
+  // 2.3 (Prüfbefund B23-1): Bets mit Größe relativ zum Pot vor dem Einsatz („Bet 3,00 (0,5 Pot)“), damit das hybride Modell Größensignale prüfen kann
+  rec.actions.forEach(function (a) { if (a.s !== seat) return; var t = PT.actionText(a); if (a.t === 'bet' && a.pot > 0) t += ' (' + String(Math.round(a.a / a.pot * 1000) / 1000).replace('.', ',') + ' Pot)';   // C23-7: drei Stellen
+    if (cut[a.st]) return;   /* 2.4 (E23-14): nach der ersten Kürzung keine weiteren Aktionen dieser Straße, sonst entsteht eine Folge mit Lücke */
+    var nx = streets[a.st] ? streets[a.st] + ', ' + t : t; if (nx.length <= 300) streets[a.st] = nx; else { cut[a.st] = true; if (streets[a.st].length + 3 <= 300) streets[a.st] += ', …'; } });   // C23-6: höchstens 300 Zeichen je Straße (Prüfgrenze in validShown)
   return { hand: rec.no, ts: rec.ts, pos: rec.seats[seat].pos, cards: cards, board: rec.board.join(''), actions: streets, net: rec.net[seat] };
 }
 function applyToRecord(r, I, ts) {

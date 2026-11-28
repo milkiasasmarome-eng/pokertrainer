@@ -212,9 +212,12 @@ module.exports = async function (H) {
       else await p.route('**/assets/js/worker.js*', r => r.fulfill({ status: 404, body: '' }));
       await p.goto(BASE + 'index.html#tisch'); await ready(p);
       await p.evaluate(() => window.PTUI.setSetting('speed', 'sehrschnell'));
-      await p.click('#bNext');
       let tip = false;
-      for (let i = 0; i < 30; i++) { const st = await waitTurnOrNext(p); if (st.next) break; await p.waitForFunction(() => /badge c-/.test(document.getElementById('tipBox').innerHTML), null, { timeout: 15000 }); tip = true; await p.click('#bCall'); }
+      /* 2.3.1: bis zu drei Hände – endet eine Hand ohne eigene Entscheidung (Walk, alle folden), gibt es keinen Tipp (zufälliger Fehlschlag im CI) */
+      for (let hnd = 0; hnd < 3 && !tip; hnd++) {
+        await p.click('#bNext');
+        for (let i = 0; i < 30; i++) { const st = await waitTurnOrNext(p); if (st.next) break; await p.waitForFunction(() => /badge c-/.test(document.getElementById('tipBox').innerHTML), null, { timeout: 15000 }); tip = true; await p.click('#bCall'); }
+      }
       ok(tip, variant + ': Tipp erscheint');
       ok(await p.evaluate(() => window.PTUI.Analyzer.mode()) === 'Hauptthread', variant + ': Analyse im Hauptthread');
       await c.close();
@@ -431,7 +434,7 @@ module.exports = async function (H) {
     await p.evaluate(() => navigator.serviceWorker.ready); await p.waitForTimeout(1200);
     await p.evaluate(() => window.PTUI.setSetting('speed', 'sehrschnell'));
     await playHand(p); await p.waitForTimeout(500);
-    await p.click('#bNext'); const st = await waitTurnOrNext(p); ok(st.my, 'Hand läuft, Held am Zug');
+    let st = { my: false }; for (let k = 0; k < 5 && !st.my; k++) { if (await p.locator('#bNext').isEnabled()) await p.click('#bNext'); st = await waitTurnOrNext(p); } ok(st.my, 'Hand läuft, Held am Zug');   /* 2.3.1: bis zu fünf Hände (Hand ohne eigene Entscheidung möglich) */
     H.bumpUpdateSite();
     await p.evaluate(() => window.PTUI.swReg.update());
     await p.waitForSelector('#notice [data-act="swupdate"]', { timeout: 20000 });

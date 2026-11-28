@@ -3,8 +3,8 @@
 (function (G) {
 'use strict';
 var PT = G.PT || (G.PT = {});
-PT.VERSION = '2.1.0';
-PT.BUILD = '2026-11-27';
+PT.VERSION = '2.3.1';
+PT.BUILD = '2026-11-28';
 
 // ---------- Hilfen ----------
 function clamp(x, a, b) { return x < a ? a : x > b ? b : x; }
