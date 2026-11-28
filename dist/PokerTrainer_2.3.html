@@ -3885,7 +3885,7 @@ function respond(opp, ctx, heroAdd, potBefore, nResp, kind) {
   // Prüfer B, Befund 7: Im gleichgewichtsnahen Modus gilt die Gleichgewichtsannahme MDF ohne die Populationskorrekturen (Overbet-/Raise-
   // Korrektur und konservativer Abschlag). Diese machten jeden reinen Bluff strukturell −EV (Fold-Rate unter der Break-even-Rate),
   // sodass der Modus praktisch nie bluffte; im Gleichgewicht ist ein Bluff gegen MDF-Verteidigung gerade indifferent.
-  var popAdj = ctx.mode !== 'gto';
+  var popAdj = ctx.mode !== 'gto' || !!R.ABL.gtoPopAdj || (!!R.ABL.gtoRaiseAdj && (kind === 'raise' || kind === 'jam' && ctx.L.toCall > 0));
   if (ctx.street > 0 && popAdj) {
     // Korrektur für Overbets und Raises: polarisierte große Einsätze und Raises gegen eine gezeigte Bet werden seltener gefoldet,
     // als die reine MDF-Annahme für eine Einzelhand nahelegt (Modellannahme).
