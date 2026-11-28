@@ -12,9 +12,9 @@ Oberflächentexte, Tests, Doku. Kriterien vorab: [ABNAHMEKRITERIEN_2.4.md](ABNAH
 | Build | `node tools/check-build.js`: zweimal gebaut, identisch, eingecheckt aktuell |
 | Version | `node tools/check-version.js`: einheitlich 2.3.1 |
 | Unit-Tests `node tests/run.js` (voll, mit Mathe-Referenz) | 140 bestanden, 0 fehlgeschlagen (2.3.0: 137; neu E23-14, E23-10, Modus-Schalter) |
-| Browsertests `tests/e2e.js` | 52 bestanden; zwei zufällige Fehlschläge (Hand ohne eigene Entscheidung) in den Tests behoben |
+| Browsertests `tests/e2e.js` | 52 bestanden; vier Tests, die zufällig an einer Hand ohne eigene Entscheidung scheiterten, warten jetzt bis zu drei bzw. fünf Hände |
 | Gedächtnis-Browsertests | 3 bestanden |
-| CI auf PR #3 | Schnelltests grün; Browsertests nach der Testkorrektur siehe PR |
+| CI auf PR #3 | Commit `cff3f5f`: Schnelltests und Browsertests grün, Veröffentlichung übersprungen (nur von `main`) |
 | Gleichheit 2.3.0 / 2.3.1 (vor der Modusänderung) | Seed 23801 bitgleich (3.558 Entscheidungen, Summe 1.244,4 BB) |
 | Langläufer (1 Mio. Hände), 7-Karten-Prüfung | nicht wiederholt: Regeln, Handbewertung, Equity, Gegner-KI unverändert (Begründung CLAUDE.md) |
 
