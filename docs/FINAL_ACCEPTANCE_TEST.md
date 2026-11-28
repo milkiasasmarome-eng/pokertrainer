@@ -1,61 +1,55 @@
-# Final Acceptance Test – PokerTrainer 2.3.0 (vorbereitet)
+# Final Acceptance Test – PokerTrainer 2.3.1 (vorbereitet)
 
-Nach der Projektanweisung „Poker“ ist der Final Acceptance Test die Abnahme vor einer Freigabe. Er wird gemeinsam im Chat durchgegangen: Fall für Fall, Antwort je Fall „passt“ oder Fehlerbeschreibung. Ein Fehler wird sofort behoben, der Fall wiederholt und im Lernprotokoll vermerkt. Nach dem letzten bestandenen Fall und dem Wort „Freigabe“ entstehen PokerTrainer_Freigabe und Abschluss_PokerTrainer.
+Kompakte Abnahme: Alles technisch Prüfbare läuft automatisch (Teil A). Von Hand bleibt nur, was ein Programm nicht beurteilen kann (Teil B, fünf
+Bündel, zusammen etwa 30–40 Minuten). Antwort je Bündel: „passt“ oder Fehlerbeschreibung mit Nummer. Ein Fehler wird behoben, das Bündel wiederholt
+und im Lernprotokoll vermerkt. Nach dem letzten bestandenen Bündel und dem Wort **„Freigabe“** folgt die Veröffentlichung (Teil C).
 
-Prüfgegenstand: Offline-Datei `dist/PokerTrainer_2.3.html` bzw. das Artefakt PokerTrainer_Entwurf, Version 2.3.0 (Fußzeile). Die Website
-https://milkiasasmarome-eng.github.io/pokertrainer/ zeigt bis zur Freigabe weiter 2.1.0. Fälle 15 und 31 hängen an Website und Service Worker und
-laufen nach „Freigabe“ als Abnahme der Veröffentlichung; bei Fehler Rückweg über den Zweig `sicherung-2.1.0`.
-Der Final Acceptance Test zu 2.2.0 wurde auf Anweisung abgebrochen; 2.2.0 ist nicht freigegeben und als `sicherung-2.2.0` gesichert.
+**Prüfgegenstand:** Offline-Datei `dist/PokerTrainer_2.3.html` aus dem Zweig `entwicklung-2.3` (Fußzeile **2.3.1**). Download:
+`https://github.com/milkiasasmarome-eng/pokertrainer/raw/entwicklung-2.3/dist/PokerTrainer_2.3.html`, dann per Doppelklick öffnen.
+Alternativ lokal: im Repository `python3 -m http.server 8767`, dann `http://127.0.0.1:8767/`. Die öffentliche Website zeigt bis zur Freigabe 2.1.0.
+Der Final Acceptance Test zu 2.3.0 (Fall 1 offen) entfällt: 2.3.1 enthält 2.3.0 vollständig (Entscheidungen bitgleich, `tests/results/report-24.json`).
 
-## Normalweg je Funktion
+## Teil A – automatisch geprüft (kein Handgriff nötig)
+
+| Bereich (frühere Fälle) | Nachweis | Ergebnis 2.3.1 |
+|---|---|---|
+| Spielablauf, Beträge, Tipp-Modi, Tastatur, keine Hand ohne „Nächste Hand“, Tipp ≤ 2 s (1–6, 23, 28, 30) | `tests/e2e.js` Tests 2–3; `tests/run.js` | bestanden |
+| Live-Anzeige, Gegnerdetails, alle Bereiche (3, 20) | `tests/e2e.js` Tests 4–5 | bestanden |
+| Export/Import, beschädigte Datei, Sicherung vor Import, Neustart, Wiederaufnahme (9–11, 24) | `tests/e2e.js` 6, 11, 13, 31–35 | bestanden |
+| Replayer, Benchmark-, Ereignisexport, Exportsperre (12, 13, 21, 22b) | `tests/e2e.js` 8; `tests/run.js` (Benchmark, Ereignisstrom, D23-1) | bestanden |
+| Training, Quiz (14) | `tests/e2e.js` 9 | bestanden |
+| Offline, PWA-Start, Einzeldatei, Update während einer Hand (15, 16, 31 lokal) | `tests/e2e.js` 14, 18, 30, 37 | bestanden |
+| Ohne Sprachfunktion, zweiter Tab, abgesicherter Start (25–27) | `tests/e2e.js` 12, 15, 26, 28, 36 | bestanden |
+| Barrierefreiheit (WCAG 2.2 AA, Tastatur, Fokus), Layout 320–1366 px | `tests/e2e.js` 16–17, 38–42, 49 | bestanden |
+| Keine fremden Verbindungen, keine Skriptfehler | `tests/e2e.js` 51–52 | bestanden |
+| Aufgedeckte Blätter mit Größe, Kürzung ohne Lücke, Raise-Text (22a, neu) | `tests/run.js` (C23-6, E23-14, E23-10) | bestanden |
+| Push/Fold-Hinweis 15 BB (22) | `tests/run.js` (B23-10) | bestanden |
+| PAI-Schnittstelle | `tests/pai-integration.mjs` 18/18 gegen PAI f4990fe; PAI-eigener Test 18 + 1 beschreibend | bestanden |
+
+Befehle und Zahlen: `docs/TESTBERICHT_2.3.1.md`.
+
+## Teil B – von Hand (nicht automatisierbar)
+
+| Bündel | Du tust | Muss passieren |
+|---|---|---|
+| **B1 Spielgefühl und Coach** (10 min) | Offline-Datei öffnen, Fußzeile ansehen. 10–15 Hände spielen, dabei Fold, Check, Call, Bet und Raise (Betrag eintippen). Tipps lesen, einmal Strategie „Gleichgewichtsnah (experimentell)“ wählen. | Fußzeile 2.3.1. Tipps sind verständlich, passen zur Lage und tragen „Faustregel, kein Solver-Ergebnis“. Bei empfohlenem Raise ohne Value heißt es „Der Raise gewinnt …“. Nichts wirkt unplausibel oder widersprüchlich. |
+| **B2 Sprache** (5 min) | Sprachausgabe einschalten, einige Entscheidungen; zweimal schnell hintereinander handeln. | Eine deutsche Systemstimme liest den Tipp verständlich vor (Zahlen, Prozente, Kartennamen). Nur der jüngste Tipp wird gesprochen. |
+| **B3 Gedächtnis und Daten** (10 min) | Tempo „schnell“, 30 Hände. Einen Gegner mit Showdowns anklicken. Datenbank exportieren, Seite schließen, neu öffnen, exportierte Datei importieren. | Ein Gegner wechselt nach 30 Händen; im Dialog stehen Bets mit Größe („Bet 3,00 (0,5 Pot)“). Nach dem Neuöffnen ist alles da; der Import verlangt eine Bestätigung und ergibt denselben Stand. |
+| **B4 Lernen** (10 min) | Fortschritt → „Neuen Vorher-Nachher-Test starten“, durchspielen; eine Trainingskategorie üben. | Test endet von selbst mit Hinweis; Fortschritt zeigt den Vorher-Wert und Fehlerfelder. Texte sind verständlich. |
+| **B5 Smartphone** (5 min) | Offline-Datei auf dem eigenen Smartphone öffnen (oder lokale Adresse im WLAN), eine Hand spielen, Tipp lesen. | Alles lesbar und bedienbar ohne Querscrollen; Karten und Knöpfe groß genug. |
+
+Danach: Wort **„Freigabe“** oder Fehlerliste. Lizenz und Anbieterkennzeichnung (`docs/RECHTLICHES.md`) sind vor einer Veröffentlichung zu entscheiden;
+der Trainer erfindet keine Angaben.
+
+## Teil C – Live-Nachprüfung nach „Freigabe“ (erst nach der Veröffentlichung möglich)
+
+Veröffentlichung: Zweig `entwicklung-2.3` nach `main` (Pull Request #3); das CI testet und veröffentlicht nur von `main` und prüft die Live-Seite
+automatisch (`tests/smoke-live.js`: Version 2.3.1 in HTML, Service Worker und Offline-Datei, Start im Browser, keine fremden Verbindungen).
 
 | Nr. | Du tust | Muss passieren |
 |---|---|---|
-| 1 | Offline-Datei bzw. Artefakt öffnen, „Nächste Hand“ wählen | Hand startet, du siehst zwei eigene Karten, fünf Gegner mit Namen; Fußzeile zeigt 2.3.0 |
-| 2 | Eine Hand mit Fold, Check, Call und Bet/Raise (Betrag eintippen) zu Ende spielen | Aktionen werden ausgeführt, Pot und Stacks stimmen, am Ende Ergebnis mit Gewinner |
-| 3 | Live-Anzeige ansehen, auf einen Gegnerplatz klicken | Am Platz: Name, Hände, VPIP, PFR, 3-Bet, Belastbarkeit, Spielertyp; Klick zeigt alle Werte und aufgedeckte Blätter |
-| 4 | Tipp-Modus „vorher“ (Standard) | Vor deiner Aktion erscheint ein Tipp mit Aktion, Betrag, Begründung und dem Hinweis „Faustregel, kein Solver-Ergebnis“ |
-| 5 | Tipp-Modus „nachher“, dann handeln | Nach der Aktion erscheint ein Urteil mit Begründung |
-| 6 | Tipp-Modus „aus“ | Kein Tipp, kein Urteil |
-| 7 | Sprachausgabe einschalten | Der Tipp wird auf Deutsch vorgelesen |
-| 8 | 30 Hände spielen (Tempo „schnell“ hilft) | Ein Gegner verlässt den Tisch, ein anderer setzt sich; der Gegangene steht in der Gegnerdatenbank im Archiv |
-| 9 | Browser schließen, Seite neu öffnen | Gegnerwerte, Handhistorie und Lernfortschritt sind erhalten; eine unterbrochene Hand wird fortgesetzt |
-| 10 | Gegner → „Datenbank exportieren“ | Datei wird gespeichert |
-| 11 | Gegner → Import der eben exportierten Datei | Vorher entsteht automatisch eine Sicherung; danach ist die Datenbank gleich |
-| 12 | Handhistorie → eine Hand im Replayer Schritt für Schritt, „Entscheidung erneut treffen“ | Stand „damals bekannt / später bekannt“ getrennt, neue Analyse ohne spätere Karten |
-| 13 | Handhistorie → „Export Benchmark“ | Datei je Entscheidung mit Spielzustand, Empfehlung, Alternativen und EV; spätere Showdown-Informationen getrennt |
-| 14 | Training → eine Kategorie starten | Passende Situationen, Bewertung, Fortschritt in der Lernübersicht |
-| 15 | App installieren (Browser-Menü), offline öffnen | App startet ohne Internet |
-| 16 | Offline-Datei per Doppelklick öffnen | Trainer läuft ohne Internet, Version 2.3.0 |
-| 17 | Fortschritt → „Neuen Vorher-Nachher-Test starten“, alle Situationen spielen | Training startet mit „Vorher-Test“ in der Leiste, endet nach der letzten Situation von selbst mit Hinweis; unter Fortschritt steht „Vorher: … (12 Situationen)“ und die Aufforderung zum Training |
-| 18 | Danach eine der genannten Kategorien üben und „Nachher-Test starten“ | Nach dem Nachher-Test zeigt Fortschritt Vorher, Nachher und die Differenz mit ± Intervall; unter dem Test steht, dass damit keine allgemeine Lernwirkung nachgewiesen ist |
-| 19 | Fortschritt ansehen, nachdem einige Fehler bewertet wurden | Tabellen „Fehlerfelder“ und „Verbesserung in zuvor schwachen Situationen“; bei mindestens drei gleichen Fehlern in derselben Situation ein Eintrag unter „Wiederkehrende Fehler“ mit „Gezielt üben“ |
-| 20 | Auf einen Gegnerplatz klicken (Gegner mit vielen Händen) | Tabelle mit Spalte „Belastbarkeit des Werts“ (unsicher/Tendenz/belastbar je Wert) und Abschnitt „Verhaltenshypothesen“ mit „gestützt“ oder „Vermutung“ |
-| 21 | Handhistorie → „Export Ereignisse (PAI)“ | Datei „PokerTrainer_Ereignisse_v1_…json“; Meldung mit Zahl der Entscheidungen |
-| 22 | Einstellungen → Startstack 15 BB, neue Session, eine Hand in einem ungeöffneten Pot | Mit einer Hand außerhalb des Charts: Fold „laut der Handauswahl des Push/Fold-Modellspiels bei 15 BB effektiv“ und der Hinweis, dass das Modellspiel ein vereinfachtes Spiel nur mit All-in oder Fold ist, keine vollständige Strategie; vorgelesen wird nur der erste Satz |
-| 22a | Nach einigen Showdowns einen Gegner anklicken, aufgedeckte Blätter ansehen | Bets stehen mit Größe, z. B. „Bet 3,00 (0,5 Pot)“ |
-| 22b | Handhistorie → „Export Benchmark“, sofort danach noch einmal klicken | Beim zweiten Klick: „Ein Export läuft bereits.“; Knöpfe sind während des Exports deaktiviert; danach genau eine Datei |
+| C1 | Website mit vorhandenen Daten aus 2.1.0 öffnen (Browser oder installierte App) | Hinweis auf die neue Version; nach Bestätigung Neuladen; Gegnerwerte, Handhistorie, Lernfortschritt bleiben (Datenformat unverändert 3) |
+| C2 | App installieren (Browser-Menü), Flugmodus, App öffnen | App startet ohne Internet, Fußzeile 2.3.1 |
 
-## Fehlerfälle
-
-| Nr. | Du tust | Muss passieren |
-|---|---|---|
-| 23 | Ungültigen Betrag eingeben (unter Minimum, über Stack, Text) | Meldung, keine Aktion |
-| 24 | Eine beschädigte Datei importieren (z. B. Text in eine .json-Datei geschrieben) | Meldung „Import abgelehnt“, bestehende Daten unverändert |
-| 25 | Seite mit `#ohne-sprache` am Ende der Adresse öffnen | Hinweis, dass keine Sprachausgabe verfügbar ist; Trainer läuft ohne Ton |
-| 26 | Trainer in einem zweiten Tab öffnen | Zweiter Tab ist schreibgeschützt und bietet „Hier weiterspielen“ an, sobald der erste geschlossen ist |
-| 27 | Seite mit `?start=sicher` öffnen | Abgesicherter Start; gespeicherte Daten bleiben unberührt |
-
-## Grenzen
-
-| Nr. | Du tust | Muss passieren |
-|---|---|---|
-| 28 | Mehrere Entscheidungen im Modus „vorher“ | Jeder Tipp erscheint binnen zwei Sekunden |
-| 29 | Mit Sprachausgabe schnell hintereinander zwei Entscheidungen treffen | Nur der jüngste Tipp wird gesprochen, der ältere bricht ab |
-| 30 | Nach Handende nichts tun | Keine neue Hand ohne „Nächste Hand“ |
-
-## Übernahme
-
-| Nr. | Du tust | Muss passieren |
-|---|---|---|
-| 31 | Installierte App bzw. Website mit Daten aus 2.1.0 öffnen, nachdem 2.3.0 veröffentlicht ist | Hinweis auf die neue Version, nach Bestätigung Neuladen; Gegnerwerte, Handhistorie und Lernfortschritt bleiben erhalten (keine Formatänderung der Datenbank) |
+**Rückweg bei Fehler:** Merge auf `main` mit `git revert` rückgängig machen; das CI veröffentlicht dann wieder den Stand von `sicherung-2.1.0`.
+Daten bleiben erhalten (gleiches Format 3); eine eigene Exportdatei vor C1 genügt als Sicherung.

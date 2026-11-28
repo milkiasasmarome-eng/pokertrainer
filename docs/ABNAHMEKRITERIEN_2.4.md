@@ -68,3 +68,20 @@ Damit wird val24 eine **Replikation von P4 auf unberührten Seeds** für den unv
 Begründung für das gepoolte Urteil: Ein zweiter Test nach einem nicht bestandenen ersten darf nicht allein entscheiden (sonst „testen, bis es passt“).
 Die gepoolte Schätzung nutzt alle vorab geplanten Daten zu derselben Frage. Die Kennzeichnung „experimentell“ entfällt nur, wenn P4-gesamt besteht
 und G3 nicht belegt schlechter ist. dev24 fließt nicht ein (Entwicklungsdaten).
+
+## Ergebnis val24 und dritter Zyklus (nach val24, vor dev24b)
+
+val24 (`tools/report-24.js` → `tests/results/report-24.json`): ID identisch (2.3.1 = 2.3.0 auf Seed 23801, 3.558 Entscheidungen); P4' −2,04
+[−7,90; 3,69]; **P4-gesamt −4,16 [−8,81; 0,20], untere Grenze −9,77 < −8: P4 nicht bestanden**; G3 (Ka23) −31,58 [−50,0; −14,3], belegt schlechter,
+Raise-Anteil 7,6 % gegen 3,1 %. G3 stützt H-G1, ist aber beschreibend; eine Wahl nach G3 wäre Auswahl nach Testdaten.
+
+Dritter Zyklus (letzter für den Modus in dieser Runde), Helden g24-0, g24-R, 2.0.1 gleichgewichtsnah:
+
+| Schritt | Gruppe | Seeds | Regel |
+|---|---|---|---|
+| Abstimmung | synth23 Tr23 (Trainingsgruppe) | 24501–24506 | beschreibend; R − g24-0 > 0 als Vorbedingung |
+| Wahl | synth23 Va23 (Validierungsgruppe, für den Modus bisher ungenutzt) | 24511–24516 | **R wird übernommen, wenn R − g24-0 auf Tr23 > 0 und auf Va23 > 0 mit unterer Intervallgrenze > −5**; sonst bleibt der Modus unverändert |
+| Prüfung (nur bei Übernahme) | Gegner-KI 2.2, gemischt, 100 BB | 24601–24624 (60.000 Hände, unberührt) | P4R: R gegen 2.0.1 nicht unterlegen (δ 8, einseitig 2,5 %); R gegen g24-0 beschreibend |
+
+Eine unberührte Gruppe unbekannter Strategien für einen abschließenden Generalisierungsnachweis gibt es in dieser Runde nicht (E, Tr, Va, Ka und F23
+sind genutzt). Der Modus bleibt daher in jedem Fall „experimentell“.

@@ -1,0 +1,105 @@
+{
+ "date": "2026-11-28T12:31:18.989Z",
+ "method": "all-in-bereinigt, gepaart nach Seed, Block-Bootstrap 500 Hände; Nichtunterlegenheit: konservativeres Verfahren (geschichtet/zweistufig), einseitig 2,5 %",
+ "results": [
+  {
+   "id": "P4",
+   "title": "P4 (Plan v23, 2.3.0): gleichgewichtsnah gegen 2.0.1",
+   "seeds": 24,
+   "hands": 60000,
+   "blocks": 120,
+   "diff": -6.28,
+   "lo": -12.49,
+   "hi": -0.13,
+   "verdict": "belegt schlechter",
+   "aAhead": 9,
+   "raiseShare": 8.1,
+   "raiseShareRef": 2.7,
+   "invalid": 0,
+   "decisions": 85021,
+   "ni": {
+    "delta": 8,
+    "lo": -14.82,
+    "loStrat": -12.13,
+    "loHier": -14.82,
+    "p": 0.3465,
+    "verdict": "Nichtunterlegenheit nicht belegt"
+   }
+  },
+  {
+   "id": "P4'",
+   "title": "P4' (Plan val24, 2.3.1, neue Seeds): gleichgewichtsnah gegen 2.0.1",
+   "seeds": 24,
+   "hands": 60000,
+   "blocks": 120,
+   "diff": -2.04,
+   "lo": -7.9,
+   "hi": 3.69,
+   "verdict": "nicht belegt",
+   "aAhead": 9,
+   "raiseShare": 7.9,
+   "raiseShareRef": 2.6,
+   "invalid": 0,
+   "decisions": 85551,
+   "ni": {
+    "delta": 8,
+    "lo": -9.3,
+    "loStrat": -7.82,
+    "loHier": -9.3,
+    "p": 0.0567,
+    "verdict": "Nichtunterlegenheit nicht belegt"
+   }
+  },
+  {
+   "id": "P4-gesamt",
+   "title": "P4-gesamt (P4 ∪ P4′, Urteil): gleichgewichtsnah gegen 2.0.1",
+   "seeds": 48,
+   "hands": 120000,
+   "blocks": 240,
+   "diff": -4.16,
+   "lo": -8.81,
+   "hi": 0.2,
+   "verdict": "nicht belegt",
+   "aAhead": 18,
+   "raiseShare": 8,
+   "raiseShareRef": 2.6,
+   "invalid": 0,
+   "decisions": 170572,
+   "ni": {
+    "delta": 8,
+    "lo": -9.77,
+    "loStrat": -8.27,
+    "loHier": -9.77,
+    "p": 0.0905,
+    "verdict": "Nichtunterlegenheit nicht belegt"
+   }
+  },
+  {
+   "id": "G3",
+   "title": "G3: gleichgewichtsnah gegen 2.0.1, synth23 Ka23 (beschreibend)",
+   "seeds": 6,
+   "hands": 15000,
+   "blocks": 30,
+   "diff": -31.58,
+   "lo": -50,
+   "hi": -14.3,
+   "verdict": "belegt schlechter",
+   "aAhead": 1,
+   "raiseShare": 7.6,
+   "raiseShareRef": 3.1,
+   "invalid": 0,
+   "decisions": 20324
+  }
+ ],
+ "identity": {
+  "ok": true,
+  "sumBB": [
+   1244.4,
+   1244.4
+  ],
+  "decisions": [
+   3558,
+   3558
+  ]
+ }
+}

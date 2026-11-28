@@ -114,6 +114,17 @@ function plan(name) {
     G('vG', ['coach23-gto', 'coach201-gto'], { comp: 'bots' }, Array.from({ length: 24 }, (_, i) => 24401 + i));
     G('vKa', ['coach23-gto', 'coach201-gto'], { comp: 'p23:Ka' }, Array.from({ length: 6 }, (_, i) => 24451 + i));
   }
+  if (name === 'dev24b') {
+    // 2.4 dritter Zyklus (docs/ABNAHMEKRITERIEN_2.4.md): Abstimmung Tr23, Wahl Va23
+    const G = (group, heroes, cond, seeds) => seeds.forEach(sd => heroes.forEach(hk => jobs.push({ group, hero: hk, comp: cond.comp, difficulty: 'gemischt', startBB: 100, seed: sd, hands: 2500, env: 'neu', pool: cond.pool || null })));
+    const HS = ['g24-0', 'g24-R', 'coach201-gto'];
+    G('dTr', HS, { comp: 'p23:Tr' }, Array.from({ length: 6 }, (_, i) => 24501 + i));
+    G('dVa', HS, { comp: 'p23:Va' }, Array.from({ length: 6 }, (_, i) => 24511 + i));
+  }
+  if (name === 'val24b') {
+    const G = (group, heroes, cond, seeds) => seeds.forEach(sd => heroes.forEach(hk => jobs.push({ group, hero: hk, comp: cond.comp, difficulty: 'gemischt', startBB: 100, seed: sd, hands: 2500, env: 'neu', pool: cond.pool || null })));
+    G('vR', ['g24-R', 'coach201-gto', 'g24-0'], { comp: 'bots' }, Array.from({ length: 24 }, (_, i) => 24601 + i));
+  }
   if (name === 'tune23') {
     // 2.3 Abstimmung freier Parameter des Modells C nur auf Trainingsgruppen (Tr23 und Gegner-KI E)
     const G = (group, heroes, cond, seeds) => seeds.forEach(sd => heroes.forEach(hk => jobs.push({ group, hero: hk, comp: cond.comp, difficulty: 'gemischt', startBB: 100, seed: sd, hands: 2500, env: 'neu', pool: cond.pool || null })));
@@ -136,7 +147,7 @@ function plan(name) {
     ['polar', 'sizetell', 'trapper', 'ipaggro', 'nitlag', 'minraiser'].forEach((k, i) => G('a1final', HS, { comp: 'final:' + k }, [23001 + i]));
     G('a1V', HS, { comp: 'bots', pool: 'V' }, [23101, 23102, 23103, 23104]);
   }
-  if (name === 'v23' || name === 'sel23' || name === 'abl23' || name === 'tune23' || name === 'dev24' || name === 'val24') { /* Pläne 2.3 oben */ } else if (name === 'v22') {
+  if (name === 'v23' || name === 'sel23' || name === 'abl23' || name === 'tune23' || name === 'dev24' || name === 'val24' || name === 'dev24b' || name === 'val24b') { /* Pläne 2.3 oben */ } else if (name === 'v22') {
     // 2.2: Plan vor den Läufen festgelegt (docs/ABNAHMEKRITERIEN_2.2.md). Seeds 22001 ff. kommen in keiner Entwicklung vor.
     const G = (group, heroes, cond, seeds, env) => seeds.forEach(sd => heroes.forEach(hk => jobs.push({ group, hero: hk, comp: cond.comp, difficulty: cond.difficulty, startBB: cond.startBB, seed: sd, hands: 2500, env: env || 'neu', pool: cond.pool || null })));
     const range = (a, n) => Array.from({ length: n }, (_, i) => a + i);
@@ -279,6 +290,8 @@ function aggregate(planName, runs, h) {
   }
   if (planName === 'dev24') ['g24-0', 'g24-R', 'g24-P'].forEach(a => compare('dG-' + a, 'Entwicklung P4: ' + HEROES[a].name + ' gegen 2.0.1', 'dG', a, 'coach201-gto', []));
   if (planName === 'val24') { compare('P4s', "P4': gleichgewichtsnah 2.3.1 gegen 2.0.1, neue Seeds", 'vG', 'coach23-gto', 'coach201-gto', [], 8); compare('G3', 'G3: gleichgewichtsnah 2.3.1 gegen 2.0.1, synth23 Ka23', 'vKa', 'coach23-gto', 'coach201-gto', []); }
+  if (planName === 'dev24b') ['dTr', 'dVa'].forEach(g => { compare(g + '-R0', g + ': g24-R gegen g24-0', g, 'g24-R', 'g24-0', []); compare(g + '-R201', g + ': g24-R gegen 2.0.1', g, 'g24-R', 'coach201-gto', []); compare(g + '-0201', g + ': g24-0 gegen 2.0.1', g, 'g24-0', 'coach201-gto', []); });
+  if (planName === 'val24b') { compare('P4R', 'P4R: g24-R gegen 2.0.1, neue Seeds', 'vR', 'g24-R', 'coach201-gto', [], 8); compare('vR-0', 'g24-R gegen g24-0, neue Seeds', 'vR', 'g24-R', 'g24-0', []); }
   if (planName === 'tune23') ['t-C', 't-w0', 't-z', 't-zr', 't-zsq', 't-z1', 'varC7'].forEach(a => { compare('tuTr-' + a, 'Abstimmung Tr23: ' + HEROES[a].name + ' gegen 2.1.0', 'tuTr', a, 'coach210', []); compare('tuE-' + a, 'Abstimmung Gegner-KI E: ' + HEROES[a].name + ' gegen 2.1.0', 'tuE', a, 'coach210', []); });
   if (planName === 'sel23') {
     [['varA', 'coach210'], ['varB', 'coach210'], ['varC', 'coach210'], ['varS', 'coach210'], ['varC2', 'coach210'], ['varC', 'varB'], ['varC', 'varA'], ['varB', 'varA'], ['varS', 'varB'], ['varC2', 'varB'], ['varC3', 'coach210'], ['varC3', 'varB'], ['varC5', 'coach210'], ['varC5', 'varB'], ['varC5', 'varC'], ['varCz', 'coach210'], ['varCz', 'varB'], ['varCz', 'varA'], ['varCz1', 'coach210'], ['varCz1', 'varB'], ['varCz1', 'varA'], ['varC7', 'coach210'], ['varC7', 'varB7'], ['varC7', 'varCz'], ['varB7', 'varB']].forEach(([a, b]) => {

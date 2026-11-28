@@ -1,5 +1,30 @@
 # Änderungsauftrag an das PAI-Projekt (Adaptive Poker Intelligence)
 
+## Stand 28.11.2026 (PokerTrainer 2.3.1): Prüfung gegen PAI 0.4.0-dev
+
+Geprüft gegen https://github.com/milkiasasmarome-eng/Assist, Zweig `entwicklung/0.4.0`, Commit `f4990fee0e41efc94c31aa123e3d76db42734584`
+(Version `0.4.0-dev`). Trainer: Commit `6d6e575` (2.3.1, eingefrorener Stand). Weitere PAI-Zweige: `main` = `referenz/v0.1.0` (`1b0c4da`),
+`referenz/v0.2.0` (`8f64825`), `referenz/v0.3.0` = `referenz/v0.3.1-kandidat` (`9ba0f89`). Das PAI-Repository wurde nicht verändert.
+
+| Punkt | Inhalt | Stand in PAI f4990fe | Nachweis |
+|---|---|---|---|
+| 1 | Format 2 und 3 lesen, Version 4 ablehnen | **erledigt** | `tests/pai-integration.mjs` 18/18 (`tests/results/pai-integration.json`), PAI-Test K1 |
+| 2 | Positivliste je Hand, nie Seed/Handnummer/Sitzung/Bewertungen | **erledigt** (`HAND_KEYS` in `src/data/hand.js`, Neuaufbau in `convertHand`) | Trainer-Test „Keine Datenleckage nach PAI“, PAI-Test K4 |
+| 3 | Trainingsszenarien nicht übernehmen | **erledigt** (Hände mit `training` ≠ null werden übersprungen und gezählt) | Trainer-Test „Änderungsauftrag Punkte 1 und 3“ (5 von 5 ausgelassen) |
+| 4 | `shown` nur für Plätze am Showdown | **erledigt** | Trainer-Test „PAI: validateHand lehnt Karten gefoldeter Spieler ab“ (0 von 5 angenommen) |
+| 5 | Testfälle | **erledigt** (`tests/unit/v04-integration.test.js`, `tests/compat-pokertrainer.mjs`) | PAI-Kompatibilitätstest gegen Trainer 6d6e575: 18 bestanden, 1 beschreibend, 0 Fehler (`tests/results/pai-compat-E231.json`) |
+| 6 | Dokumentation der Importquellen | teilweise: `docs/INTEGRATION_BERICHT_0.4.md` beschreibt Version 3; `docs/DATENBANKSCHEMA.md` nennt die Versionen nicht ausdrücklich | – |
+| 7 | Unabhängigkeit | **erfüllt** (PAI-Tests U1–U3, K9: kein Trainer-Code im PAI-Prozess, keine Coach-Werte in der PAI-Eingabe) | PAI-Test U1–U3 |
+| 8 | Schema für den Kanal `pai` | **offen**, getrennt; PAI schlägt im Zweig `pai-schnittstelle-2.1` (Trainer-PR #1) eine Echtzeit-Schnittstelle `pai-events-v1` vor, die in 2.2/2.3 nicht enthalten ist | – |
+
+Offene Bitte an PAI (neu): Punkt 6 in `docs/DATENBANKSCHEMA.md` ergänzen. Ob der Trainer die Echtzeit-Schnittstelle aus `pai-schnittstelle-2.1` bzw.
+`docs/patches/pokertrainer-2.3.0-pai-schnittstelle.patch` übernimmt, ist eine gesonderte Entscheidung des Auftraggebers (neue Funktion, eigener
+Auftrag; nicht Teil von 2.3.1).
+
+---
+
+## Ursprünglicher Auftrag (Stand 27.11.2026, gegen PAI 0.1.0)
+
 Stand: 27.11.2026. Geprüft gegen https://github.com/milkiasasmarome-eng/Assist, Zweig `main`, Commit `1b0c4da` (Version 0.1.0, letzter Stand
 vom 26.11.2026). Das PAI-Repository wurde nicht verändert.
 
