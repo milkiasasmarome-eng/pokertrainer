@@ -1,7 +1,8 @@
 {
- "date": "2026-11-28T10:56:45.101Z",
+ "date": "2026-11-28T11:51:57.667Z",
  "pokertrainer": "2.3.0",
- "pai": "0.1.0",
+ "pai": "0.4.0-dev",
+ "paiCommit": "f4990fee0e41efc94c31aa123e3d76db42734584",
  "paiRoot": "assist",
  "results": [
   {
@@ -24,9 +25,9 @@
    "ok": true
   },
   {
-   "name": "Versionsprüfung: PAI 0.1.0 liest Sicherungen des Trainers (Format 3)",
-   "ok": false,
-   "detail": "PAI lehnt ab: Nicht unterstützte Version 3 (unterstützt: 2) (bekannte Inkompatibilität, Anpassung in docs/PAI_INTEGRATION.md)"
+   "name": "Versionsprüfung: PAI 0.4.0-dev liest Sicherungen des Trainers (Format 3)",
+   "ok": true,
+   "detail": "ok"
   },
   {
    "name": "PAI-Adapter und PAI-Validator akzeptieren die Hand-Datensätze des Trainers",
@@ -60,7 +61,7 @@
   {
    "name": "Fehlerbehandlung: PAI lehnt unbekannte Sicherungsversion 4 mit Meldung ab",
    "ok": true,
-   "detail": "Nicht unterstützte Version 4 (unterstützt: 2)"
+   "detail": "Nicht unterstützte Version 4 (unterstützt: 2, 3)"
   },
   {
    "name": "Datenintegrität: Aktionen und Board je Hand vollständig übernommen",
@@ -83,14 +84,14 @@
    "detail": "5 eingeschleust, 5 erkannt"
   },
   {
-   "name": "Hinweis PAI 0.1.0: validateHand lehnt Karten gefoldeter Spieler ab (Änderungsauftrag Punkt 4)",
-   "ok": false,
-   "detail": "4 von 5 angenommen (bekannt, Auftrag an PAI)"
+   "name": "PAI: validateHand lehnt Karten gefoldeter Spieler ab (Änderungsauftrag Punkt 4)",
+   "ok": true,
+   "detail": "0 von 5 angenommen"
   },
   {
-   "name": "Nach Änderungsauftrag (Kopie von PAI): Format 3 wird gelesen, unbekannte Versionen weiter abgelehnt",
+   "name": "Änderungsauftrag Punkte 1 und 3: Format 3 gelesen, Version 4 abgelehnt, Trainingshände nicht übernommen",
    "ok": true,
-   "detail": "60 von 60 Händen aus Format 3, Version 4 abgelehnt: true"
+   "detail": "nativ: 55 von 60 Händen übernommen (5 Trainingshände ausgelassen), Version 4 abgelehnt: true"
   }
  ]
 }

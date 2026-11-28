@@ -66,6 +66,10 @@ const HEROES = {
   'abl-D': { kind: 'coach', root: ROOT, mode: 'exploit', abl: { dataHands: true }, name: 'Ablation: Datenlage nach Händen (2.1)' },
   'abl-RS': { kind: 'coach', root: ROOT, mode: 'exploit', abl: { rangeLegacy: true, respLegacy: true }, name: 'Ablation: Range und Reaktion 2.1' },
   'abl-RSD': { kind: 'coach', root: ROOT, mode: 'exploit', abl: { rangeLegacy: true, respLegacy: true, dataHands: true }, name: 'Ablation: Range, Reaktion, Datenlage 2.1' },
+  // 2.4 Entwicklung gleichgewichtsnaher Modus (P4): Fold-Korrekturen 2.0.1 im Modus wieder für Raises (R) bzw. für alle Einsätze (P)
+  'g24-0': { kind: 'coach', root: ROOT, mode: 'gto', name: 'gleichgewichtsnah, Stand 2.3' },
+  'g24-R': { kind: 'coach', root: ROOT, mode: 'gto', abl: { gtoRaiseAdj: true }, name: 'gleichgewichtsnah, Fold-Korrektur für Raises (2.0.1)' },
+  'g24-P': { kind: 'coach', root: ROOT, mode: 'gto', abl: { gtoPopAdj: true }, name: 'gleichgewichtsnah, alle Fold-Korrekturen 2.0.1' },
   'coach220': { kind: 'coach', root: V220, mode: 'exploit', name: 'Coach 2.2.0 (exploitativ)' },
   'coach220-gto': { kind: 'coach', root: V220, mode: 'gto', name: 'Coach 2.2.0 (gleichgewichtsnah)' },
   'coach210': { kind: 'coach', root: V210, mode: 'exploit', name: 'Coach 2.1.0 (exploitativ)' },
@@ -98,6 +102,11 @@ function plan(name) {
     ['polar', 'sizetell', 'trapper', 'ipaggro', 'nitlag', 'minraiser'].forEach((k, i) => G('sReg', ['coach23', 'coach210'], { comp: 'final:' + k }, [23951 + i]));
     [15, 25].forEach((sb, i) => G('sKurz', ['coach23', 'coach210'].concat(sb === 15 ? ['pushfold'] : []), { comp: 'bots', startBB: sb }, range(23971 + 10 * i, 4)));
   }
+  if (name === 'dev24') {
+    // 2.4 Entwicklung P4 (docs/ABNAHMEKRITERIEN_2.4.md): Seeds 24001 ff. nur hier
+    const G = (group, heroes, cond, seeds) => seeds.forEach(sd => heroes.forEach(hk => jobs.push({ group, hero: hk, comp: cond.comp, difficulty: 'gemischt', startBB: 100, seed: sd, hands: 2500, env: 'neu', pool: cond.pool || null })));
+    G('dG', ['g24-0', 'g24-R', 'g24-P', 'coach201-gto'], { comp: 'bots' }, Array.from({ length: 8 }, (_, i) => 24001 + i));
+  }
   if (name === 'tune23') {
     // 2.3 Abstimmung freier Parameter des Modells C nur auf Trainingsgruppen (Tr23 und Gegner-KI E)
     const G = (group, heroes, cond, seeds) => seeds.forEach(sd => heroes.forEach(hk => jobs.push({ group, hero: hk, comp: cond.comp, difficulty: 'gemischt', startBB: 100, seed: sd, hands: 2500, env: 'neu', pool: cond.pool || null })));
@@ -120,7 +129,7 @@ function plan(name) {
     ['polar', 'sizetell', 'trapper', 'ipaggro', 'nitlag', 'minraiser'].forEach((k, i) => G('a1final', HS, { comp: 'final:' + k }, [23001 + i]));
     G('a1V', HS, { comp: 'bots', pool: 'V' }, [23101, 23102, 23103, 23104]);
   }
-  if (name === 'v23' || name === 'sel23' || name === 'abl23' || name === 'tune23') { /* Pläne 2.3 oben */ } else if (name === 'v22') {
+  if (name === 'v23' || name === 'sel23' || name === 'abl23' || name === 'tune23' || name === 'dev24' || name === 'val24') { /* Pläne 2.3 oben */ } else if (name === 'v22') {
     // 2.2: Plan vor den Läufen festgelegt (docs/ABNAHMEKRITERIEN_2.2.md). Seeds 22001 ff. kommen in keiner Entwicklung vor.
     const G = (group, heroes, cond, seeds, env) => seeds.forEach(sd => heroes.forEach(hk => jobs.push({ group, hero: hk, comp: cond.comp, difficulty: cond.difficulty, startBB: cond.startBB, seed: sd, hands: 2500, env: env || 'neu', pool: cond.pool || null })));
     const range = (a, n) => Array.from({ length: n }, (_, i) => a + i);
@@ -261,6 +270,7 @@ function aggregate(planName, runs, h) {
     compare('S5', 'S5: Coach 2.3 gegen 2.1.0, 15 und 25 BB', 'sKurz', 'coach23', 'coach210', ['stack']);
     compare('S6', 'S6: Coach 2.3 gegen Push/Fold-Referenz, 15 BB', 'sKurz', 'coach23', 'pushfold', []);
   }
+  if (planName === 'dev24') ['g24-0', 'g24-R', 'g24-P'].forEach(a => compare('dG-' + a, 'Entwicklung P4: ' + HEROES[a].name + ' gegen 2.0.1', 'dG', a, 'coach201-gto', []));
   if (planName === 'tune23') ['t-C', 't-w0', 't-z', 't-zr', 't-zsq', 't-z1', 'varC7'].forEach(a => { compare('tuTr-' + a, 'Abstimmung Tr23: ' + HEROES[a].name + ' gegen 2.1.0', 'tuTr', a, 'coach210', []); compare('tuE-' + a, 'Abstimmung Gegner-KI E: ' + HEROES[a].name + ' gegen 2.1.0', 'tuE', a, 'coach210', []); });
   if (planName === 'sel23') {
     [['varA', 'coach210'], ['varB', 'coach210'], ['varC', 'coach210'], ['varS', 'coach210'], ['varC2', 'coach210'], ['varC', 'varB'], ['varC', 'varA'], ['varB', 'varA'], ['varS', 'varB'], ['varC2', 'varB'], ['varC3', 'coach210'], ['varC3', 'varB'], ['varC5', 'coach210'], ['varC5', 'varB'], ['varC5', 'varC'], ['varCz', 'coach210'], ['varCz', 'varB'], ['varCz', 'varA'], ['varCz1', 'coach210'], ['varCz1', 'varB'], ['varCz1', 'varA'], ['varC7', 'coach210'], ['varC7', 'varB7'], ['varC7', 'varCz'], ['varB7', 'varB']].forEach(([a, b]) => {

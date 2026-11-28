@@ -94,10 +94,16 @@ check('Keine Datenleckage nach PAI: umgewandelte Hände ohne Seed, Handnummer, S
 const inj = JSON.parse(JSON.stringify(conv.hands)); let injected = 0; inj.forEach((h, i) => { const src = hands[i], ok = showdownSeats(src); const f = src.seats.map(s => s.seat).find(s => !ok.has(s)); if (f != null && injected < 5) { h.shown = (h.shown || []).concat([{ seat: f, cards: 'AsAd' }]); injected++; } });
 check('Negativtest Leckageprüfung: eingeschleuste Karten gefoldeter Spieler werden erkannt', injected > 0 && leakIn(inj) === injected, injected + ' eingeschleust, ' + leakIn(inj) + ' erkannt');
 let paiTakes = 0; inj.forEach(h => { const v = validateHand(h); if (v.ok && (h.shown || []).some(x => x.cards === 'AsAd')) paiTakes++; });
-check('Hinweis PAI 0.1.0: validateHand lehnt Karten gefoldeter Spieler ab (Änderungsauftrag Punkt 4)', paiTakes === 0, paiTakes + ' von ' + injected + ' angenommen (bekannt, Auftrag an PAI)');
+check('PAI: validateHand lehnt Karten gefoldeter Spieler ab (Änderungsauftrag Punkt 4)', paiTakes === 0, paiTakes + ' von ' + injected + ' angenommen');
 // (10) Kompatibilität nach dem Änderungsauftrag (docs/PAI_AENDERUNGSAUFTRAG.md): Kopie von PAI mit der beschriebenen Änderung, das PAI-Repository bleibt unverändert
+// 2.4: PAI ab 0.3/0.4 liest Format 3 selbst; dann prüft der Test den Auftrag direkt am Original (Trainingshände nicht übernommen, Punkt 3)
 let patchedOk = null, patchedDetail = '';
-try {
+if (v3err === null) {
+  const tr = JSON.parse(JSON.stringify(backupV3)); tr.payload.hands.slice(0, 5).forEach(h => { h.training = { cat: 'test' }; });
+  const rt = fromPokerTrainerBackup(tr);
+  patchedOk = rt.hands.length === hands.length - 5 && rt.errors.length === 0 && !!v4err;
+  patchedDetail = 'nativ: ' + rt.hands.length + ' von ' + hands.length + ' Händen übernommen (5 Trainingshände ausgelassen), Version 4 abgelehnt: ' + !!v4err;
+} else try {
   const os = await import('os'); const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'pai-auftrag-'));
   fs.cpSync(path.join(PAI, 'src'), path.join(tmp, 'src'), { recursive: true }); fs.copyFileSync(path.join(PAI, 'package.json'), path.join(tmp, 'package.json'));
   const f = path.join(tmp, 'src', 'data', 'adapters', 'pokertrainer.js'); const src0 = fs.readFileSync(f, 'utf8');
@@ -108,10 +114,11 @@ try {
     patchedOk = r3.errors.length === 0 && r3.hands.length === hands.length && !!r4; patchedDetail = r3.hands.length + ' von ' + hands.length + ' Händen aus Format 3, Version 4 abgelehnt: ' + !!r4; }
   fs.rmSync(tmp, { recursive: true, force: true });
 } catch (e) { patchedOk = false; patchedDetail = e.message; }
-check('Nach Änderungsauftrag (Kopie von PAI): Format 3 wird gelesen, unbekannte Versionen weiter abgelehnt', patchedOk, patchedDetail);
-const out = { date: new Date().toISOString(), pokertrainer: PT.VERSION, pai: paiVersion, paiRoot: path.basename(PAI), results };
+check('Änderungsauftrag Punkte 1 und 3: Format 3 gelesen, Version 4 abgelehnt, Trainingshände nicht übernommen' + (v3err === null ? '' : ' (Kopie von PAI)'), patchedOk, patchedDetail);
+let paiCommit = null; try { paiCommit = (await import('child_process')).execFileSync('git', ['-C', PAI, 'rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(); } catch (e) { /* kein Git */ }
+const out = { date: new Date().toISOString(), pokertrainer: PT.VERSION, pai: paiVersion, paiCommit, paiRoot: path.basename(PAI), results };
 fs.writeFileSync(path.join(HERE, 'results', 'pai-integration.json'), JSON.stringify(out, null, 1));
 console.log(results.filter(r => r.ok).length + ' von ' + results.length + ' bestanden');
 // 2.3 (Prüfbefund E23-11): Exit-Code ≠ 0 bei Fehlern, die nicht ausdrücklich an PAI hängen (Versionsprüfung Format 3, validateHand für gefoldete Plätze)
-const paiDep = r => /^Versionsprüfung: PAI|^Hinweis PAI/.test(r.name);
+const paiDep = r => /^Versionsprüfung: PAI|^PAI: validateHand|^Änderungsauftrag/.test(r.name);
 if (results.some(r => !r.ok && !paiDep(r))) process.exitCode = 1;
