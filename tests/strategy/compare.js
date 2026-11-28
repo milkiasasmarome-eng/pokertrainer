@@ -67,8 +67,8 @@ const HEROES = {
   'abl-RS': { kind: 'coach', root: ROOT, mode: 'exploit', abl: { rangeLegacy: true, respLegacy: true }, name: 'Ablation: Range und Reaktion 2.1' },
   'abl-RSD': { kind: 'coach', root: ROOT, mode: 'exploit', abl: { rangeLegacy: true, respLegacy: true, dataHands: true }, name: 'Ablation: Range, Reaktion, Datenlage 2.1' },
   // 2.4 Entwicklung gleichgewichtsnaher Modus (P4): Fold-Korrekturen 2.0.1 im Modus wieder für Raises (R) bzw. für alle Einsätze (P)
-  'g24-0': { kind: 'coach', root: ROOT, mode: 'gto', name: 'gleichgewichtsnah, Stand 2.3' },
-  'g24-R': { kind: 'coach', root: ROOT, mode: 'gto', abl: { gtoRaiseAdj: true }, name: 'gleichgewichtsnah, Fold-Korrektur für Raises (2.0.1)' },
+  'g24-0': { kind: 'coach', root: ROOT, mode: 'gto', abl: { gtoRaise23: true }, name: 'gleichgewichtsnah, Stand 2.3' },
+  'g24-R': { kind: 'coach', root: ROOT, mode: 'gto', name: 'gleichgewichtsnah, Fold-Korrektur für Raises (2.0.1)' },
   'g24-P': { kind: 'coach', root: ROOT, mode: 'gto', abl: { gtoPopAdj: true }, name: 'gleichgewichtsnah, alle Fold-Korrekturen 2.0.1' },
   'coach220': { kind: 'coach', root: V220, mode: 'exploit', name: 'Coach 2.2.0 (exploitativ)' },
   'coach220-gto': { kind: 'coach', root: V220, mode: 'gto', name: 'Coach 2.2.0 (gleichgewichtsnah)' },

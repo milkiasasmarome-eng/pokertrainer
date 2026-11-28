@@ -25,14 +25,16 @@ module.exports = function (T) {
     ok(/Der Raise gewinnt/.test(tr) && !/Die Bet gewinnt/.test(tr), tr.slice(0, 120));
     ok(/Die Bet gewinnt/.test(tb), tb.slice(0, 120));
   });
-  test('2.4: Entwicklungsschalter des gleichgewichtsnahen Modus sind im Produktstand aus und ändern den exploitativen Modus nicht', () => {
-    ok(!PT.ranges.ABL.gtoRaiseAdj && !PT.ranges.ABL.gtoPopAdj, JSON.stringify(PT.ranges.ABL));
+  test('2.3.1 (H-G1): gleichgewichtsnah mit Fold-Korrektur für Raises; Rückschalter gtoRaise23 = Stand 2.3; exploitativ unverändert', () => {
+    ok(!PT.ranges.ABL.gtoRaise23 && !PT.ranges.ABL.gtoPopAdj, JSON.stringify(PT.ranges.ABL));
     const h = T.spot('BTN', 'AhKd', 'Kc8s4d2h', [['H', 'raise', 2.5], ['BB', 'call'], ['BB', 'check'], ['H', 'bet', 2], ['BB', 'raise', 7]]);
     const run = (mode, abl) => { Object.assign(PT.ranges.ABL, abl); PT.equity.cacheClear(); const a = PT.coach.analyze({ view: PT.bots.publicView(h, 0), opps: {}, settings: { mode, level: 'standard' }, seed: 7, live: true, skipModel: true });
-      delete PT.ranges.ABL.gtoRaiseAdj; delete PT.ranges.ABL.gtoPopAdj; return a.actions.map(x => x.label + ':' + x.ev.toFixed(3)).join('|'); };
-    ok(run('exploit', {}) === run('exploit', { gtoRaiseAdj: true }), 'exploitativ unabhängig vom Schalter');
-    const g0 = run('gto', {}), gR = run('gto', { gtoRaiseAdj: true });
-    ok(g0 !== gR, 'Negativtest: Schalter wirkt im gleichgewichtsnahen Modus auf den Raise-Zweig');
+      delete PT.ranges.ABL.gtoRaise23; delete PT.ranges.ABL.gtoPopAdj; return a; };
+    const sig = a => a.actions.map(x => x.label + ':' + x.ev.toFixed(3)).join('|');
+    ok(sig(run('exploit', {})) === sig(run('exploit', { gtoRaise23: true })), 'exploitativ unabhängig vom Schalter');
+    const g = run('gto', {}), g0 = run('gto', { gtoRaise23: true });
+    const fr = a => { const r = a.actions.find(x => x.type === 'raise' && x.parts && x.parts.folds); return r ? r.parts.folds[0].f : null; };
+    ok(fr(g) != null && fr(g0) != null && fr(g) < fr(g0) - 0.01, 'Fold-Schätzung gegen Raises niedriger als im Stand 2.3 (' + fr(g) + ' < ' + fr(g0) + ')');
     ok(JSON.stringify(PT.ranges.ABL) === JSON.stringify({ hybrid: true }), 'Schalter zurückgesetzt');
   });
 };

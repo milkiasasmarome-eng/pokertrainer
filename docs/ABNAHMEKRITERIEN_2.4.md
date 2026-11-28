@@ -85,3 +85,13 @@ Dritter Zyklus (letzter für den Modus in dieser Runde), Helden g24-0, g24-R, 2.
 
 Eine unberührte Gruppe unbekannter Strategien für einen abschließenden Generalisierungsnachweis gibt es in dieser Runde nicht (E, Tr, Va, Ka und F23
 sind genutzt). Der Modus bleibt daher in jedem Fall „experimentell“.
+
+## Ergebnis dev24b und Übernahme (vor val24b)
+
+| Gruppe | R − g24-0 | R − 2.0.1 | g24-0 − 2.0.1 |
+|---|---|---|---|
+| Tr23 (Abstimmung) | +52,25 [41,07; 63,38] | +5,14 [−7,33; 17,66] | −47,11 [−63,33; −31,49] |
+| Va23 (Wahl) | +43,07 [32,35; 55,17] | −25,30 [−43,28; −7,74] | −68,37 [−87,58; −50,14] |
+
+Regel erfüllt (beide > 0, untere Grenze auf Va23 > −5): **R wird Produktstand des gleichgewichtsnahen Modus** (`ev.js`, Rückschalter `gtoRaise23`).
+Stand eingefroren vor val24b; während val24b keine Änderung an Engine-Dateien.
