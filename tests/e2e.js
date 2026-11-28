@@ -295,7 +295,7 @@ async function playHand(page, policy) {
 
   await test('Neuladen während einer laufenden Hand: exakte Wiederaufnahme', async () => {
     await page.evaluate(() => { location.hash = '#tisch'; }); await page.waitForTimeout(300);
-    await page.click('#bNext'); const st = await waitTurnOrNext(page);
+    let st = { my: false }; for (let k = 0; k < 5 && !st.my; k++) { if (await page.locator('#bNext').isEnabled()) await page.click('#bNext'); st = await waitTurnOrNext(page); }   /* 2.3.1: bis zu fünf Hände */
     ok(st.my, 'Held am Zug');
     const before = await page.evaluate(() => ({ no: window.PTUI.S.hand.no, acts: window.PTUI.S.hand.actions.length, cards: window.PT.cardsStr(window.PTUI.S.hand.p[0].cards) }));
     await page.reload(); await page.waitForFunction(() => window.PTUI && window.PTUI.S.ready);

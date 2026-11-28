@@ -434,7 +434,7 @@ module.exports = async function (H) {
     await p.evaluate(() => navigator.serviceWorker.ready); await p.waitForTimeout(1200);
     await p.evaluate(() => window.PTUI.setSetting('speed', 'sehrschnell'));
     await playHand(p); await p.waitForTimeout(500);
-    await p.click('#bNext'); const st = await waitTurnOrNext(p); ok(st.my, 'Hand läuft, Held am Zug');
+    let st = { my: false }; for (let k = 0; k < 5 && !st.my; k++) { if (await p.locator('#bNext').isEnabled()) await p.click('#bNext'); st = await waitTurnOrNext(p); } ok(st.my, 'Hand läuft, Held am Zug');   /* 2.3.1: bis zu fünf Hände (Hand ohne eigene Entscheidung möglich) */
     H.bumpUpdateSite();
     await p.evaluate(() => window.PTUI.swReg.update());
     await p.waitForSelector('#notice [data-act="swupdate"]', { timeout: 20000 });
